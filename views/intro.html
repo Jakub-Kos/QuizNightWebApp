@@ -21,40 +21,38 @@
                         color: #042335; font-size: 30px;">Začínáme v 19:50</h2>      
                 <img src="../images/logo-informal-bw.svg" style="width: 10%; height: auto; position: absolute; top: 57%; left: 50%; transform: translate(-50%, -50%);">
             </section>
-            <section>
-                <section>Vertical Slide 1</section>
-                <section>Vertical Slide 2</section>
+            <section data-background-gradient="linear-gradient(to bottom, #042335, #053049)" data-vertical-align="top">
+                <h1>PRAVIDLA</h1>
+                <p class="fragment fade-in">2 části po 3 kolech s 8-10 otázkami</p>
+                <p class="fragment fade-in">Co otázka to bod</p>
             </section>
-            <section data-background="../zkouskove.jpg">
-                <h2>Slide with Background</h2>
+            <section data-background-gradient="linear-gradient(to bottom, #042335, #053049)" data-vertical-align="top">
+                <h1>Ceny</h1>
+                <p class="fragment fade-in">Jízdenka domů</p>
             </section>
-            <section data-transition="zoom">
-                <h2>Zoom Transition</h2>
+            <section data-background-gradient="linear-gradient(to bottom, #042335, #053049)" data-vertical-align="top">
+                <a href="./index.php?page=menu" class="play-button">PLAY</a>
             </section>
-            <section>
-                <pre><code data-trim>
-                function hello() {
-                    console.log("Hello, world!");
-                }
-                </code></pre>
-            </section>
-            <section data-auto-animate>
-                <h2>Animate This!</h2>
-            </section>
-            <section data-auto-animate>
-                <h2>Changed Content!</h2>
-            </section>
-            <section data-markdown>
-                <script type="text/template">
-                ## Markdown Slide
-                - Bullet 1
-                - Bullet 2
-                </script>
-            </section>
-                                                                        
         </div>
     </div>
+    <style>
+        .play-button {
+            background-color: #dda434; 
+            color: white;
+            font-size: 150px;
+            padding: 50px 70px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 50px; /* Rounded button */
+            cursor: pointer;
+            box-shadow: 0 40px 60px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+        }
 
+        .play-button:hover {
+            background-color: #e8b550; /* Darker green on hover */
+        }
+    </style>
     <script src="../reveal.js/dist/reveal.js"></script>
     <script src="../reveal.js/plugin/zoom/zoom.js"></script>
     <script src="../reveal.js/plugin/notes/notes.js"></script>

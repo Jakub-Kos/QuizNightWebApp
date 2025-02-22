@@ -2,6 +2,7 @@
 $pages = [
     'questions'   => 'Questions',
     'main'        => 'Main',
+    'menu'        => 'Menu',
     'leaderboard' => 'LeaderBoard',
     'answers'     => 'Answers',
 ];

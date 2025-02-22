@@ -14,7 +14,7 @@ class LeaderBoardViewer {
         <head>
             <meta charset='UTF-8'>
             <title>Questions</title>
-            <link rel='stylesheet' type='text/css' href='./views/leaderBoard.css'>
+            <link rel='stylesheet' type='text/css' href='./styles/leaderBoard.css'>
         </head> ";
         // Extract header
         $header = array_shift($questions);
