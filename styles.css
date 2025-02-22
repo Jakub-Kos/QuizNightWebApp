@@ -1,0 +1,22 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #222;
+    color: white;
+}
+.container {
+    margin-top: 50px;
+}
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px;
+    background: #ff9800;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+.btn:hover {
+    background: #e68900;
+}
