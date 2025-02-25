@@ -41,7 +41,7 @@ class QuestionsViewer {
             $answer = $currentRow[4];
             if ($answer === "") $answer = "Text";
 
-            if ($type === "Written"){
+            if ($type === "Written" || $type === "Numeric"){
                 echo "
                     <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
                         <h1>Otázka #$number</h1>

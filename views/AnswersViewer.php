@@ -43,7 +43,7 @@ class AnswersViewer {
 
             $correct = $currentRow[8];
 
-            if ($type === "Written"){
+            if ($type === "Written" || $type === "Numeric"){
                 echo "
                 <section>
                     <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
@@ -148,6 +148,74 @@ class AnswersViewer {
                                 <div class='content'>No</div>
                             </div>
                         </div>
+                    </section>
+                </section>
+                ";
+            }
+            else if ($type === "Image"){
+                echo "
+                <section>
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <img src='../source/$currentRow[9]'>
+                    </section>
+                    
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <img src='../source/$currentRow[9]'>
+                        <div class='type correct'>$correct</div>
+                    </section>
+                </section>
+                ";
+            }
+            else if ($type === "Audio"){
+                echo "
+                <section>
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <audio controls>
+                            <source src='../source/$currentRow[9]'>
+                        </audio>
+                    </section>
+
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <audio controls>
+                            <source src='../source/$currentRow[9]'>
+                        </audio>
+                        <div class='type correct'>$correct</div>
+                    </section>
+                </section>
+                ";
+            }
+            else if ($type === "Video"){
+                echo "
+                <section>
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <video controls>
+                            <source src='../source/$currentRow[9]'>
+                        </video>
+                    </section>
+
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <video controls>
+                            <source src='../source/$currentRow[9]'>
+                        </video>
+                        <div class='type correct'>$correct</div>
                     </section>
                 </section>
                 ";
