@@ -97,8 +97,41 @@ class QuestionsViewer {
                     </section>
                 ";
             }
+            else if ($type === "Image"){
+                echo "
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <img src='../source/$currentRow[9]'>
+                    </section>
+                ";
+            }
+            else if ($type === "Audio"){
+                echo "
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <audio controls>
+                            <source src='../source/$currentRow[9]'>
+                        </audio>
+                    </section>
+                ";
+            }
+            else if ($type === "Video"){
+                echo "
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <video controls>
+                            <source src='../source/$currentRow[9]'>
+                        </video>
+                    </section>
+                ";
+            }
         }
-
         echo '
                     <section data-background-gradient="linear-gradient(to bottom, #042335, #053049)" data-vertical-align="top">
                         <h1 style="padding: 25% 0">
