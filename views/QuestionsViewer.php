@@ -8,58 +8,133 @@ class QuestionsViewer {
             return;
         }
     
-        echo "
+        echo '
         <!DOCTYPE html>
-        <html lang='en'>
+        <html lang="en">
         <head>
-            <meta charset='UTF-8'>
-            <title>Questions</title>
-            <link rel='stylesheet' type='text/css' href='./styles/main.css'>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Presentation</title>
+
+            <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+            <link rel="stylesheet" href="../styles/black.css">
+            <link rel="stylesheet" type="text/css" href="./styles/questions.css">
         </head>
         <body>
-            <h1>Article list</h1>
-            <hr>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Filter favourites?</th>
-                        <th>
-                            <input type='checkbox' class='filter' id='filter'>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id='articles'>
-        ";
+            <div class="reveal">
+                <div class="slides">
+        ';
+        $roundName = htmlspecialchars($questions[0][0], ENT_QUOTES, 'UTF-8');
+        $parts = explode("-",$roundName);
         echo "
-            $questions
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>$parts[0]</h1>
+                        <h1 class='r-fit-text' style='padding: 20% 0; color: #dda434'>$parts[1]</h1>
+                    </section>
         ";
-        echo "
-                </tbody>
-            </table>
-            <hr>
-            <div class='buttons'>
-                <button id='previous'>Previous</button>
-                <button id='next'>Next</button>
-                <span id='page'>Page 1 / 3</span>
-                <button id='createArticle'>Create article</button>
+
+        for ($id = 0; $id < 10; $id++){
+            $currentRow = $questions[$id];
+            $number = $currentRow[1];
+            $question = $currentRow[2];
+            $type = $currentRow[3];
+            $answer = $currentRow[4];
+            if ($answer === "") $answer = "Text";
+
+            if ($type === "Written"){
+                echo "
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h2>$question</h2>
+                        <div class='type'>$answer</div>
+                    </section>
+                ";
+            }
+            else if ($type === "ABCD"){
+                echo "
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <div class='grid-container'>
+                            <div class='box'>
+                                <div class='label'>A</div>
+                                <div class='content'>$currentRow[4]</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>B</div>
+                                <div class='content'>$currentRow[5]</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>C</div>
+                                <div class='content'>$currentRow[6]</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>D</div>
+                                <div class='content'>$currentRow[7]</div>
+                            </div>
+                        </div>
+                    </section>
+                ";
+            }
+            else if ($type === "Yes/No"){
+                echo "
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <div class='grid-container'>
+                            <div class='box'>
+                                <div class='label'>Y</div>
+                                <div class='content'>Yes</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>N</div>
+                                <div class='content'>No</div>
+                            </div>
+                        </div>
+                    </section>
+                ";
+            }
+        }
+
+        echo '
+                    <section data-background-gradient="linear-gradient(to bottom, #042335, #053049)" data-vertical-align="top">
+                        <h1 style="padding: 25% 0">
+                        <a href="./index.php?page=menu" class="play-button">Back to Menu</a></h1>
+                    </section>
+        ';
+
+        echo '
+                </div>
             </div>
+            <script src="../reveal.js/dist/reveal.js"></script>
+            <script src="../reveal.js/plugin/zoom/zoom.js"></script>
+            <script src="../reveal.js/plugin/notes/notes.js"></script>
+            <script src="../reveal.js/plugin/search/search.js"></script>
+            <script src="../reveal.js/plugin/markdown/markdown.js"></script>
+            <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+            <script>
 
-            <dialog id='createArticlePopup' style='display: none;'>
-                <form action='' id='createArticleForm' method='POST'>
-                    <h2>Create Article</h2>
-                    <label>Name
-                        <input type='text' id='articleName' name='name' maxlength='32' placeholder='Enter article name' required>
-                    </label>    
-                    <div class='buttons'>
-                        <button type='submit' id='createButton'>Create</button>
-                        <button type='button' id='cancelButton'>Cancel</button>
-                    </div>
-                </form>
-            </dialog>
+                // Also available as an ES module, see:
+                // https://revealjs.com/initialization/
+                Reveal.initialize({
+                    controls: true,
+                    progress: true,
+                    center: false,
+                    hash: true,
+                    width: 1920,
+                    height: 1080,
 
-            <script src='./scripts/pagination.js'></script>
-            <script src='./scripts/popup.js'></script>
+                    autoSlide: 60000,
+                    // Learn about plugins: https://revealjs.com/plugins/
+                    plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+                });
+
+            </script>
         </body>
-        </html>";
+        </html>
+        ';
     }
 }

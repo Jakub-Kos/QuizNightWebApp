@@ -2,7 +2,7 @@ RewriteEngine On
 
 Options -MultiViews
 
-RewriteCond %{REQUEST_URI} !index\.php$
+RewriteCond %{REQUEST_URI} !index\.php
 RewriteRule ^$ index.php?page=main [L]
 RewriteRule ^(main|leaderboard)$ index.php?page=$1 [L]
 RewriteRule ^(questions|answers)/(\d+)$ index.php?page=$1&id=$2 [L]

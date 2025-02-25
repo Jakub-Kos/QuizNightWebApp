@@ -21,7 +21,14 @@ class QuizModel {
 
     public function getQuestionRoundList($round){
         global $sheet_config;
-        return $this->getDataSheet($sheet_config['questions']);
+        $data = $this->getDataSheet($sheet_config['questions']);
+
+        $filteredRows = [];
+
+        for ($i = ($round - 1) * 10 + 1;  $i < ($round) * 10 + 1; $i++){
+            $filteredRows[] = $data[$i];
+        }
+        return $filteredRows;
     }
 
     public function getStatisticsRoundList($round){

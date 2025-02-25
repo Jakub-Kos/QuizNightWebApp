@@ -1,7 +1,7 @@
 body {
     font-family: 'League Spartan', sans-serif;
     margin: 20px;
-    background-color: #042335;
+    background: linear-gradient(to bottom, #042335, #053049);
     color: white;
     text-align: center;
 }
@@ -9,12 +9,17 @@ h1 {
     font-size: 4em;
     margin-bottom: 30px;
 }
+
 .podium {
     display: flex;
     justify-content: center;
     align-items: flex-end;
     gap: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
+}
+
+.table-container {
+    height: 75%;
 }
 .podium .first, .podium .second, .podium .third {
     text-align: center;
@@ -39,34 +44,42 @@ h1 {
     order: 3;
 }
 .podium h2 {
-    font-size: 3em;
+    font-size: 2em;
 }
 
 .podium p {
-    font-size: 1.5em;
+    font-size: 1em;
 }
+
+
 table {
     width: 100%;
     border-collapse: collapse;
+    border-radius: 20px;
     margin-top: 20px;
-    background-color: #dda434;
+    background-color: #ffcc00;
     color: #042335;
-    font-size: 1.5em;
+    font-size: 1.2em;
+    height: 100%; /* Makes sure it fills the available space */
 }
 th, td {
     border: 1px solid #042335;
-    padding: 10px;
+    padding: 2px;
 }
 th {
     background-color: #042335;
     color: white;
 }
-table td:nth-child(1), /* 1st column */
-table td:nth-child(2), /* 3rd column */
-table td:nth-child(3)  /* 4th column */ 
-{
-    background-color: #f8a90c; /* Column background color */
+table td:nth-child(2),
+table td:nth-child(3),
+table td:nth-child(4),
+table td:nth-child(5),
+table td:nth-child(6),
+table td:nth-child(7) { /* Round columns */
+    width: calc(60% / 6); /* Equally spaced rounds */
+    background-color: #f8a90c;
 }
-table th:nth-child(3) {
-    width: 50px; /* Adjust this value for the desired width */
+
+table td:nth-child(8) { /* Score column */
+    width: 20%; /* Allowing more space */
 }

@@ -1,0 +1,63 @@
+.play-button {
+    background-color: #dda434; 
+    color: white;
+    font-size: 150px; /* Min 12px, scales with screen */
+    padding: 50px 70px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 50px; /* Rounded button */
+    cursor: pointer;
+    box-shadow: 0 40px 60px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+}
+
+.play-button:hover {
+    background-color: #e8b550; /* Darker green on hover */
+}
+
+.type {
+    padding: 10px;
+    background-color: #dda434; 
+    border-radius: 20px; 
+    text-align: center;
+    font-size: 50px;
+}
+
+.grid-container {
+    font-size: 50px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Space between boxes */
+}
+
+.box {
+    width: calc(50% - 57px);
+    text-align: center;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: #dda434;
+    border-radius: 20px;
+}
+
+.label {
+    background: black;
+    color: white; 
+    height: 100%;
+    width: 30%; /* Adjust this for desired left-side width */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border-radius: 20px 0 0 20px;
+}
+
+.content {
+    padding: 10px;
+}
+
+.correct {
+    background: rgb(12, 104, 12);
+}

@@ -9,34 +9,24 @@ $pages = [
 
 // Extract the route from the query string
 $page = $_GET['page'] ?? 'main'; // Default to 'main' if no page is specified
-
-// Validate the requested page
-if (array_key_exists($page, $pages)) {
-    $controllerFile = __DIR__ . "/controllers/" . $pages[$page] . "Controller.php";
-    
-    if (file_exists($controllerFile)) {
-        require $controllerFile;
-        $controllerClass = $pages[$page] . "Controller";
-        
-        if (class_exists($controllerClass)) {
-            $controller = new $controllerClass();
-            $id = $_GET['id'] ?? null;
-
-            // Dispatching: Call the correct method with or without an ID
-            if ($id !== null) {
-                $controller->handle($id);
-            } else {
-                $controller->handle();
-            }
-        } else {
-            http_response_code(500);
-            echo "Error: Controller class '$controllerClass' not found.";
-        }
-    } else {
-        http_response_code(404);
-        echo "Error: Controller file for '$page' not found.";
-    }
-} else {
+// Routing
+if (isset($pages[$page])) {
+    require "./controllers/" . $pages[$page] . "Controller.php";
+    $id = $_GET['id'] ?? null;
+    $controllerClass = $pages[$page] . "Controller";
+    $controller = new $controllerClass();
+}
+else{
     http_response_code(404);
-    echo "Error: Page '$page' not recognized.";
+    echo $page;
+    echo "Help";
+    exit;
+}
+// Dispatching
+if (isset($controller)) {
+    if (isset($id)) {
+        $controller->handle($id); // Pass parameters if available
+    } else {
+        $controller->handle(); // No parameters needed
+    }
 }

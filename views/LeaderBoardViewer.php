@@ -37,6 +37,7 @@ class LeaderBoardViewer {
         echo '</div>';
 
         // Display the table
+        echo '<div class="table-container">';
         echo '<table>';
         echo '<tr>';
         foreach ($header as $head) {
@@ -51,5 +52,6 @@ class LeaderBoardViewer {
             echo '</tr>';
         }
         echo '</table>';
+        echo '</div>';
     }
 }
