@@ -29,7 +29,7 @@ class AnswersViewer {
         echo "
                     <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
                         <h1>$parts[0]</h1>
-                        <h1 class='r-fit-text' style='padding: 20% 0; color: #dda434'>$parts[1]</h1>
+                        <h4 class='r-fit-text' style='padding: 10% 0; color: #dda434'>$parts[1]</h1>
                     </section>
         ";
 
@@ -68,7 +68,7 @@ class AnswersViewer {
                     <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
                         <h1>Otázka #$number</h1>
                         <hr>
-                        <h1>$question</h1>
+                        <h2>$question</h2>
                         <div class='grid-container'>
                             <div class='box'>
                                 <div class='label'>A</div>
@@ -92,7 +92,7 @@ class AnswersViewer {
                     <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
                         <h1>Otázka #$number</h1>
                         <hr>
-                        <h1>$question</h1>
+                        <h2>$question</h2>
                         <div class='grid-container'>
                             <div class='box " . ($correct === "A" ? "correct" : "") . "'>
                                 <div class='label'>A</div>
@@ -158,14 +158,14 @@ class AnswersViewer {
                     <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
                         <h1>Otázka #$number</h1>
                         <hr>
-                        <h1>$question</h1>
+                        <h2>$question</h2>
                         <img src='../source/$currentRow[9]'>
                     </section>
                     
                     <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
                         <h1>Otázka #$number</h1>
                         <hr>
-                        <h1>$question</h1>
+                        <h2>$question</h2>
                         <img src='../source/$currentRow[9]'>
                         <div class='type correct'>$correct</div>
                     </section>
@@ -203,6 +203,50 @@ class AnswersViewer {
                         <h1>Otázka #$number</h1>
                         <hr>
                         <h1>$question</h1>
+                        <video controls preload='auto'>
+                            <source src='../source/$currentRow[9]'>
+                        </video>
+                    </section>
+
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <video controls>
+                            <source src='../source/$currentRow[9]'>
+                        </video>
+                        <div class='type correct'>$correct</div>
+                    </section>
+                </section>
+                ";
+            }
+            else if ($type === "PImage"){
+                echo "
+                <section>
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <img src='../source/$currentRow[9]'>
+                    </section>
+                    
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <img src='../source/$currentRow[9]'>
+                        <div class='type correct'>$correct</div>
+                    </section>
+                </section>
+                ";
+            }
+            else if ($type === "PVideo"){
+                echo "
+                <section>
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
                         <video controls>
                             <source src='../source/$currentRow[9]'>
                         </video>
@@ -220,12 +264,67 @@ class AnswersViewer {
                 </section>
                 ";
             }
+            else if ($type === "Sort"){
+                echo "
+                <section>
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <div class='grid-container'>
+                            <div class='box'>
+                                <div class='label'>1</div>
+                                <div class='content'>$currentRow[4]</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>2</div>
+                                <div class='content'>$currentRow[5]</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>3</div>
+                                <div class='content'>$currentRow[6]</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>4</div>
+                                <div class='content'>$currentRow[7]</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
+                        <h1>Otázka #$number</h1>
+                        <hr>
+                        <h1>$question</h1>
+                        <div class='grid-container'>
+                            <div class='grid-container'>
+                            <div class='box'>
+                                <div class='label'>1</div>
+                                <div class='content'>$currentRow[4]</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>2</div>
+                                <div class='content'>$currentRow[5]</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>3</div>
+                                <div class='content'>$currentRow[6]</div>
+                            </div>
+                            <div class='box'>
+                                <div class='label'>4</div>
+                                <div class='content'>$currentRow[7]</div>
+                            </div>
+                        </div>
+                        <div class='type correct' style:'width:100%'>$correct</div>
+                    </section>
+                </section>
+                ";
+            }
         }
 
         echo '
                     <section data-background-gradient="linear-gradient(to bottom, #042335, #053049)" data-vertical-align="top">
                         <h1 style="padding: 25% 0">
-                        <a href="./index.php?page=menu" class="play-button">Back to Menu</a></h1>
+                        <a href="./index.php?page=menu" class="play-button">Zpět</a></h1>
                     </section>
         ';
 

@@ -21,6 +21,7 @@
     border-radius: 20px; 
     text-align: center;
     font-size: 50px;
+    color: black;
 }
 
 .grid-container {
@@ -40,6 +41,7 @@
     position: relative;
     background: #dda434;
     border-radius: 20px;
+    margin: 0 auto;
 }
 
 .label {
@@ -56,6 +58,8 @@
 
 .content {
     padding: 10px;
+    color: black;
+    width: 70%;
 }
 
 .correct {
