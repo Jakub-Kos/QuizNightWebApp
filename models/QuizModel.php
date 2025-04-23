@@ -19,9 +19,25 @@ class QuizModel {
         return $data;
     }
 
+    private function getLocalDataSheet($sheetName) {
+        // Ensure the file exists before attempting to read it
+        if (!file_exists($sheetName)) {
+            throw new Exception("File not fooooound: " . $sheetName);
+        }
+    
+        // Read the file contents
+        $csvData = file_get_contents($sheetName);
+        
+        // Convert CSV data into an array
+        $data = array_map('str_getcsv', explode("\n", trim($csvData)));
+        
+        return $data;
+    }
+
     public function getQuestionRoundList($round){
         global $sheet_config;
-        $data = $this->getDataSheet($sheet_config['questions']);
+        //$data = $this->getDataSheet($sheet_config['questions']);
+        $data = $this->getLocalDataSheet(__DIR__ . '/questions.csv');
 
         $filteredRows = [];
 

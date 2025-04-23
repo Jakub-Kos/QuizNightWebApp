@@ -124,7 +124,7 @@ class QuestionsViewer {
                     <section data-background-gradient='linear-gradient(to bottom, #042335, #053049)' data-vertical-align='top'>
                         <h1>Otázka #$number</h1>
                         <hr>
-                        <h1>$question</h1>
+                        <h2>$question</h2>
                         <video controls>
                             <source src='../source/$currentRow[9]'>
                         </video>
