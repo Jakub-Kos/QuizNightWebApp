@@ -1,3 +1,15 @@
+/* hide podium slots until populated */
+.podium .first,
+.podium .second,
+.podium .third {
+  display: none;
+}
+
+/* when JS fills & marks visible */
+.podium .visible {
+  display: block;
+}
+
 body {
     font-family: 'League Spartan', sans-serif;
     margin: 20px;
@@ -51,7 +63,6 @@ h1 {
     font-size: 1em;
 }
 
-
 table {
     width: 100%;
     border-collapse: collapse;
@@ -69,18 +80,51 @@ th, td {
 th {
     background-color: #042335;
     color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
-table td:nth-child(2),
+
 table td:nth-child(3),
 table td:nth-child(4),
 table td:nth-child(5),
 table td:nth-child(6),
-table td:nth-child(7) { /* Round columns */
+table td:nth-child(7),
+table td:nth-child(8) { /* Round columns */
     width: calc(60% / 6); /* Equally spaced rounds */
     background-color: #f8a90c;
 }
 
-table td:nth-child(8) { /* Score column */
+table td:nth-child(9) { /* Score column */
     width: 20%; /* Allowing more space */
 }
 
+/* button and animation enhancements */
+button {
+  background: #ffcc00;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s, background 0.3s;
+}
+button:hover {
+  transform: scale(1.05);
+  background: #ffd633;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* new-row fade-in-up animation */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.new-row {
+  animation: fadeInUp 0.5s ease-out;
+}

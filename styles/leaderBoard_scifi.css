@@ -1,0 +1,165 @@
+/* 1) Import a sci-fi font */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+:root {
+    --bg-color: #053049;
+    --accent: #white;
+    --accent2: #ffcc00;
+    --neon-glow: drop-shadow(0 0 3px var(--accent))
+                drop-shadow(0 0 6px var(--accent));
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+}
+
+body {
+    font-family: 'League Spartan', sans-serif;
+    background: linear-gradient(to bottom, #021019, #032031);
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* subtle moving noise overlay for atmosphere */
+body::before {
+    content: '';
+    position: absolute; top:0; left:0; right:0; bottom:0;
+    background: url('data:image/svg+xml,...') repeat; /* tiny noise data-URI */
+    opacity: 0.02;
+    pointer-events: none;
+}
+
+/* 2) Reveal button styling */
+#reveal-btn {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s;
+    filter: var(--neon-glow);
+}
+#reveal-btn:not([disabled]):hover {
+    color: var(--accent2);
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px var(--accent2));
+}
+#reveal-btn[disabled] {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* 3) Podium */
+.podium {
+    display: flex; 
+    justify-content: center; 
+    gap: 2rem;
+    margin: 2rem 0;
+    perspective: 800px;
+
+    align-items: stretch;      /* <-- centers the panels vertically if the .podium has a fixed height */
+}
+.podium > div {
+    flex: 1;
+
+    display: flex;            /* keep child as flex‐container */
+    flex-direction: column;
+    justify-content: center;  /* center its content vertically */
+    align-items: center;      /* center its content horizontally */
+
+    background: rgba(26, 26, 37, 0.6);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    text-align: center;
+    padding: 1rem;
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    filter: var(--neon-glow);
+}
+.podium > div.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+.podium .first  { border-color: gold; background-color: gold; order: 2;}
+.podium .second { border-color: silver; background-color: silver; order: 1;}
+.podium .third  { border-color: #cd7f32; background-color: #cd7f32; order: 3;}
+
+.medalist h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 4px var(--accent), 0 0 8px var(--accent);
+    color: black;
+}
+
+.podium p {
+    color:black;
+    font-size: 1.5rem;
+}
+
+/* animate pulse on reveal */
+@keyframes glow-pulse {
+    0%,100% { filter: var(--neon-glow); }
+    50%    { filter: drop-shadow(0 0 20px var(--accent)); }
+}
+.podium.visible .medalist {
+    animation: glow-pulse 2s infinite ease-in-out;
+}
+
+/* 4) Table container: glassmorphism + grid */
+.table-container {
+    overflow-x: auto;
+    margin-top: 2rem;
+}
+table {
+    width: 99%;
+    border-collapse: collapse;
+    background: rgba(20,20,30,0.7);
+    backdrop-filter: blur(4px);
+}
+th, td {
+    padding: 0.4rem 1rem; /* CHANGE THE FIRST WHEN IT DOESNT FIT ON PAGE*/
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+thead th {
+    color: var(--accent);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+tbody tr {
+    transition: background 0.2s, transform 0.2s;
+}
+tbody tr:hover {
+    background: rgba(255,255,255,0.05);
+    transform: scaleX(1.01);
+}
+
+/* new-row slide-in */
+@keyframes slideIn {
+    from { opacity:0; transform: translateX(-30px); }
+    to   { opacity:1; transform: translateX(0); }
+}
+.new-row {
+    animation: slideIn 0.4s ease-out forwards;
+}
+
+/* Optional: rank-based row highlights */
+tbody tr[data-position="1"] { background: rgba(255,215,0,0.15); }
+tbody tr[data-position="2"] { background: rgba(192,192,192,0.15); }
+tbody tr[data-position="3"] { background: rgba(205,127,50,0.15); }
+
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .podium { flex-direction: column; }
+    .podium > div { margin-bottom: 1rem; }
+}
