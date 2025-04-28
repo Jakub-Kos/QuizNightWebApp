@@ -33,7 +33,7 @@ class LeaderBoardViewer {
         $jsonData = json_encode($data, JSON_HEX_TAG);
 
         // 4) Add “Position” to header
-        array_unshift($header, 'Position');
+        array_unshift($header, 'Pozice');
 
         // 5) Emit HTML + CSS + JS
         echo <<<HTML
@@ -47,7 +47,10 @@ class LeaderBoardViewer {
   <link rel="stylesheet" href="../styles/leaderBoard_scifi.css">
 </head>
 <body>
-  <button id="reveal-btn">Show next from bottom</button>
+  <div class="top-bar">
+      <button id="reveal-btn">Zobrazit další tým</button>
+      <div id="round-indicator"></div>
+  </div>
 
   <div class="podium" id="podium">
     <div class="first"></div>
@@ -85,6 +88,47 @@ HTML;
         }
       });
 
+      // — compute per‐round status (0=not started,1=in progress,2=finished)
+      const roundStatus = [];
+      const totalTeams  = teams.length;
+      for (let r = 1; r <= numRounds; r++) {
+        const filled = teams.filter(t => t.cells[r] !== '' && t.cells[r] != null).length;
+        if      (filled === 0)          roundStatus.push(0);
+        else if (filled < totalTeams)   roundStatus.push(1);
+        else                             roundStatus.push(2);
+      }
+
+      // — build the indicator UI
+      const indicator = document.getElementById('round-indicator');
+      const textEl    = document.createElement('div');
+      textEl.id       = 'round-text';
+      indicator.appendChild(textEl);
+
+      const boxesEl   = document.createElement('div');
+      boxesEl.id      = 'round-boxes';
+      indicator.appendChild(boxesEl);
+
+      roundStatus.forEach(status => {
+        const box = document.createElement('div');
+        box.classList.add('round-rect',
+          status === 2 ? 'finished'
+        : status === 1 ? 'in-progress'
+        : 'not-started'
+        );
+        boxesEl.appendChild(box);
+      });
+
+      // — helper to pick current round & label
+      function updateRoundIndicator() {
+        // count boxes that are either in-progress (1) or finished (2)
+        const progressedCount = roundStatus.filter(s => s > 0).length;
+        // any round currently in-progress?
+        const inProg = roundStatus.includes(1);
+        // build the text
+        textEl.textContent = (progressedCount) + '/' + numRounds + ' kolo' + (inProg ? ' se opravuje...' : '');
+      }
+      updateRoundIndicator();
+
       const byPoints = teams.reduce((acc, t) => { (acc[t.points] = acc[t.points] || []).push(t); return acc; }, {});
       const sortedPts = Object.keys(byPoints).map(Number).sort((a,b) => a - b);
 
@@ -101,7 +145,7 @@ HTML;
       btn.addEventListener('click', function() {
         if (grpIdx >= sortedPts.length) {
           btn.disabled = true;
-          btn.textContent = 'All revealed';
+          btn.textContent = 'Všechny týmy zobrazeny';
           return;
         }
         const pts = sortedPts[grpIdx++];

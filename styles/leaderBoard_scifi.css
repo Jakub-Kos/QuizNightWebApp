@@ -163,3 +163,50 @@ tbody tr[data-position="3"] { background: rgba(205,127,50,0.15); }
     .podium { flex-direction: column; }
     .podium > div { margin-bottom: 1rem; }
 }
+
+
+
+/* ─── Top bar (button + indicator) ─── */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  /* ─── Round indicator container ─── */
+  #round-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;  /* align under the button */
+    gap: 0.25rem;           /* small vertical gap */
+  }
+  #round-text {
+    font-size: 1rem;
+    color: var(--accent);
+  }
+  /* 2) Spread the little rectangles: */
+  #round-boxes {
+    display: flex;
+    gap: 0.5rem;            /* horizontal spacing between rects */
+    margin-top: 0.25rem;    /* extra breathing room under the text */
+  }
+  
+  /* ─── The little leaning rectangles ─── */
+  .round-rect {
+    width: 20px;
+    height: 10px;
+    /*margin-left: -5px;  /* lean on each other */
+    clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+    background: lightgray;
+    margin-left: 0 !important;
+  }
+  #round-boxes .round-rect:first-child {
+    margin-left: 0;
+  }
+  
+  /* statuses */
+  .round-rect.finished    { background: green; }
+  .round-rect.in-progress { background: orange; }
+  .round-rect.not-started { background: gray; }
