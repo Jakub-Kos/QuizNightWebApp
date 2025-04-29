@@ -36,8 +36,8 @@ class QuizModel {
 
     public function getQuestionRoundList($round){
         global $sheet_config;
-        //$data = $this->getDataSheet($sheet_config['questions']);
-        $data = $this->getLocalDataSheet(__DIR__ . '/questions.csv');
+        $data = $this->getDataSheet($sheet_config['questions']);
+        //$data = $this->getLocalDataSheet(__DIR__ . '/questions.csv');
 
         $filteredRows = [];
 

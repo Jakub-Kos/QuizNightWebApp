@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&display=swap');
 /* Set full-page layout with no scrolling */
 html, body {
-    background: linear-gradient(to bottom, #042335, #053049);
+    background: linear-gradient(to bottom, #021019, #032031);
     height: 100%;
     width: 100%;
     margin: 0;
@@ -64,7 +64,7 @@ html, body {
     justify-content: space-between;
     padding: 20px;
     margin: 20px;
-    background-color: #f8a90c;
+    background-color: #ffcc00;
     color: white;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
