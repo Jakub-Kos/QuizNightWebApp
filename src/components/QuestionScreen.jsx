@@ -64,7 +64,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     type: currentRaw[3] ? String(currentRaw[3]).trim() : "Written",
     options: { A: currentRaw[4], B: currentRaw[5], C: currentRaw[6], D: currentRaw[7] },
     answer: currentRaw[8],
-    source: currentRaw[9] ? `/source/${currentRaw[9]}` : null
+    source: currentRaw[9] ? `source/${currentRaw[9]}` : null
   } : null;
 
   const getExpectedAnswerText = (type) => {

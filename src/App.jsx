@@ -43,7 +43,7 @@ function parseCSVRow(str) {
 }
 
 export default function App() {
-  const { data: rawData, loading } = useQuizData("/questions.csv");
+  const { data: rawData, loading } = useQuizData("questions.csv");
 
   const urlParams = new URLSearchParams(window.location.search);
   const isPresenter = urlParams.get("presenter") === "true";
