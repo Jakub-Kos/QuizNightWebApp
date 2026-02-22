@@ -1,3 +1,12 @@
+<div align="center">
+
+![Version](https://img.shields.io/badge/version-2.0.0-blue?style=for-the-badge)
+![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+
+</div>
 # Quiz Night OS v2.0
 
 A high-octane, TV-broadcast quality Pub Quiz Engine built with React. 
@@ -12,6 +21,23 @@ Quiz Night OS transforms a standard pub quiz into a professional game show exper
 * **🔥 Streak Mechanics:** Teams that score the maximum points in consecutive rounds trigger the "On Fire" UI, complete with animated CSS flames and glowing auras.
 * **⏱️ Pressure Timer:** A Host-controlled countdown system (30s, 60s, 90s) with a dynamic progress bar that transitions from green, to yellow, to a flashing red warning.
 * **🎬 Cinematic Half-Time:** A rotating glass-morphism spotlight that showcases team avatars, quotes, and a dynamic sparkline graph of their tournament rank history.
+
+## 📸 Visual Preview
+
+### Welcome Screen
+![Welcome Screen](public/screenshots/WelcomeScreen.png)
+
+### Rounds Dashboard
+![Rounds Dashboard](public/screenshots/Dashboard.png)
+
+### Questions Screen
+![Questions Screen](public/screenshots/Questions.png)
+
+### Pause Screen
+![Pause Screen](public/screenshots/PauseScreen.png)
+
+### Leaderboard Screen
+![Leaderboard Screen](public/screenshots/Leaderboard.png)
 
 ## 🛠️ Tech Stack
 
