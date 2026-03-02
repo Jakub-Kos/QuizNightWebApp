@@ -7,6 +7,7 @@
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 
 </div>
+
 # Quiz Night OS v2.0
 
 A high-octane, TV-broadcast quality Pub Quiz Engine built with React. 
