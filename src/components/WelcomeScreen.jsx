@@ -5,71 +5,277 @@ import { Clock, Users, Trophy, Medal, TrendingUp, Target, Crown, Play, Timer, Ro
 
 // --- SUB-COMPONENT: RANK GRAPH (BAR CHART VERSION) ---
 const RankGraph = ({ history }) => {
-  if (!history || history.length === 0) {
-    return (
-      <div className="flex-1 flex items-center justify-center border border-white/5 bg-white/5 rounded-xl text-gray-500 italic text-sm">
-        No matches played yet
-      </div>
-    );
-  }
-
-  const lowestRank = Math.max(...history, 16);
-
-  return (
-    <div className="w-full h-full flex items-end justify-between gap-2 pt-6 pb-2 px-2">
-      {history.map((rank, i) => {
-        // --- CUSTOM HEIGHT LOGIC ---
-        let heightPercent;
-        heightPercent = Math.max(15, ((lowestRank - rank) / lowestRank) * 80);
-
-        // --- COLOR LOGIC ---
-        let barClass = "bg-white/10 group-hover:bg-white/20"; // Default
-        let textClass = "text-gray-500";
-
-        if (rank === 1) { // GOLD
-          barClass = "bg-gradient-to-t from-yellow-600 to-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.6)]";
-          textClass = "text-yellow-400 scale-125";
-        } else if (rank === 2) { // SILVER
-          barClass = "bg-gradient-to-t from-slate-500 to-slate-300 shadow-[0_0_10px_rgba(203,213,225,0.4)]";
-          textClass = "text-slate-300 scale-110";
-        } else if (rank === 3) { // BRONZE
-          barClass = "bg-gradient-to-t from-orange-800 to-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]";
-          textClass = "text-orange-500 scale-105";
-        }
-
+    if (!history || history.length === 0) {
         return (
-          <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group relative">
-
-            {/* Rank Label */}
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 + 0.5 }}
-              className={`text-1xl font-bold mb-2 font-mono transition-transform ${textClass}`}
-            >
-              #{rank}
-            </motion.span>
-
-            {/* The Bar */}
-            <motion.div
-              initial={{ height: "0%" }}
-              animate={{ height: `${heightPercent}%` }}
-              transition={{ duration: 0.6, delay: i * 0.1, type: "spring", bounce: 0.2 }}
-              className={`w-full max-w-[40px] rounded-t-lg relative overflow-hidden transition-all duration-300 ${barClass}`}
-            >
-              {/* Shine effect for Gold only */}
-              {rank === 1 && (
-                <div className="absolute inset-0 bg-white/30 translate-y-full animate-[shimmer_2s_infinite]" />
-              )}
-            </motion.div>
-
-            {/* X-Axis Label */}
-            <span className="text-1xl text-gray-600 mt-2 font-mono uppercase">Q{i + 1}</span>
-          </div>
+            <div className="flex-1 flex items-center justify-center border border-white/5 bg-white/5 rounded-xl text-gray-500 italic text-sm">
+                No matches played yet
+            </div>
         );
-      })}
-    </div>
-  );
+    }
+
+    // Use justify-around so a single item centers itself instead of sticking to the left
+    const containerAlignment = history.length <= 2 ? "justify-around" : "justify-between";
+
+    return (
+        <div className={`w-full h-full flex items-end ${containerAlignment} gap-2 pt-6 pb-2 px-2`}>
+            {history.map((rank, i) => {
+                // --- CUSTOM HEIGHT LOGIC ---
+                // Rank 1 gets 95% height. Scales down by 4.5% per rank. Minimum height is 30%.
+                const heightPercent = Math.max(30, 95 - ((rank - 1) * 4.5));
+
+                // --- COLOR LOGIC ---
+                // Default (4th place and below) - Using the readable "Deep Tech Blue"
+                let barClass = "bg-gradient-to-t from-blue-950 to-blue-800 border border-blue-500/20 group-hover:from-blue-900 group-hover:to-blue-700 shadow-[0_0_10px_rgba(30,58,138,0.2)]";
+                let textClass = "text-blue-400/70 group-hover:text-blue-300 transition-colors";
+
+                if (rank === 1) { // GOLD
+                    barClass = "bg-gradient-to-t from-yellow-600 to-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.6)]";
+                    textClass = "text-yellow-400 scale-125";
+                } else if (rank === 2) { // SILVER
+                    barClass = "bg-gradient-to-t from-slate-500 to-slate-300 shadow-[0_0_10px_rgba(203,213,225,0.4)]";
+                    textClass = "text-slate-300 scale-110";
+                } else if (rank === 3) { // BRONZE
+                    barClass = "bg-gradient-to-t from-orange-800 to-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]";
+                    textClass = "text-orange-500 scale-105";
+                }
+
+                // Make the bar much wider if there's only 1 match in the history
+                const barWidth = history.length === 1 ? "max-w-[80px]" : "max-w-[45px]";
+
+                return (
+                    <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group relative">
+
+                        {/* Rank Label (Fixed text-1xl to text-xl) */}
+                        <motion.span
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.1 + 0.5 }}
+                            className={`text-xl font-bold mb-2 font-mono transition-transform ${textClass}`}
+                        >
+                            #{rank}
+                        </motion.span>
+
+                        {/* The Bar */}
+                        <motion.div
+                            initial={{ height: "0%" }}
+                            animate={{ height: `${heightPercent}%` }}
+                            transition={{ duration: 0.6, delay: i * 0.1, type: "spring", bounce: 0.2 }}
+                            className={`w-full ${barWidth} rounded-t-lg relative overflow-hidden transition-all duration-300 ${barClass}`}
+                        >
+                            {/* Shine effect for Gold only */}
+                            {rank === 1 && (
+                                <div className="absolute inset-0 bg-white/30 translate-y-full animate-[shimmer_2s_infinite]" />
+                            )}
+                        </motion.div>
+
+                        {/* X-Axis Label (Fixed text-1xl to text-xl) */}
+                        <span className="text-xl text-gray-600 mt-2 font-mono uppercase">Q{i + 1}</span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
+// --- SUB-COMPONENT: SLOT MACHINE NUMBER ---
+const SlotMachineRank = ({ rank, delay }) => {
+    // 1. Create a "strip" of fake numbers to spin through, ending with the real rank
+    const fakeSpins = [12, 5, 16, 8, 2, 14, 7, 11, 4, 9, 15, 3];
+    const allSpins = [...fakeSpins, rank];
+
+    // 2. Format the numbers
+    const formatRank = (r, isFinal) => {
+        if (!isFinal) return `#${r}`;
+        if (r === 1) return "1st";
+        if (r === 2) return "2nd";
+        if (r === 3) return "3rd";
+        return `#${r}`;
+    };
+
+    const itemHeight = 40;
+
+    return (
+        // FIX: Removed absolute positioning. Used items-start to pin the strip to the top.
+        // ADDED: w-[60px] to ensure the container never collapses to 0 width.
+        <div className="h-[40px] w-[60px] overflow-hidden flex justify-center items-start leading-none">
+            <motion.div
+                className="flex flex-col items-center"
+                initial={{ y: 0 }}
+                animate={{ y: -(allSpins.length - 1) * itemHeight }}
+                transition={{
+                    duration: 2.5,
+                    delay: delay,
+                    ease: [0.15, 0.85, 0.2, 1], // The "grinding to a halt" slot machine friction
+                }}
+            >
+                {allSpins.map((val, idx) => {
+                    const isFinal = idx === allSpins.length - 1;
+                    return (
+                        <span
+                            key={idx}
+                            className={`h-[40px] flex items-center justify-center font-black ${
+                                isFinal && val === 1 ? 'text-2xl' : 'text-3xl'
+                            }`}
+                        >
+              {formatRank(val, isFinal)}
+            </span>
+                    );
+                })}
+            </motion.div>
+        </div>
+    );
+};
+// --- SUB-COMPONENT: RECENT FORM BADGES (Sports Style) ---
+const RecentFormBadges = ({ history }) => {
+    if (!history || history.length === 0) {
+        return (
+            <div className="flex-1 flex items-center justify-center border border-white/5 bg-white/5 rounded-xl text-gray-500 italic text-sm">
+                No matches played yet
+            </div>
+        );
+    }
+
+    return (
+        <div className="w-full h-full flex items-center justify-center gap-4 pt-4 pb-2 px-2 overflow-x-auto">
+            {history.map((rank, i) => {
+
+                // --- EMPTY SLOT (Did not play this volume) ---
+                if (rank === "?") {
+                    return (
+                        <div
+                            key={i}
+                            className="flex-shrink-0 w-28 h-28 rounded-2xl border-2 border-dashed border-white/10 bg-black/20 flex flex-col items-center justify-center relative"
+                        >
+              <span className="font-mono text-[10px] absolute top-1.5 uppercase tracking-widest text-white/30 font-bold">
+                Vol.{i + 1}
+              </span>
+                            <div className="mt-3 w-3 h-1 rounded-full bg-white/10"></div>
+                        </div>
+                    );
+                }
+
+                // --- BADGE COLOR & ICON LOGIC ---
+                // Default (4th place and below)
+                let badgeClass = "bg-blue-950/80 border-blue-800 text-blue-300 shadow-[0_2px_10px_rgba(30,58,138,0.2)]";
+
+                // Use our new Slot Machine component! Stagger the spin delay based on index.
+                let rankContent = <SlotMachineRank rank={rank} delay={0.2 + (i * 0.15)} />;
+
+                if (rank === 1) { // GOLD
+                    badgeClass = "bg-gradient-to-br from-yellow-400 to-yellow-600 border-yellow-300 text-yellow-950 shadow-[0_0_20px_rgba(234,179,8,0.5)] scale-110 z-10";
+                    rankContent = (
+                        <div className="flex flex-col items-center">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 2.2 + (i * 0.15), type: "spring" }} // Crown pops in right as spin finishes
+                            >
+                                <Crown size={18} className="mb-0.5" strokeWidth={3} />
+                            </motion.div>
+                            <SlotMachineRank rank={rank} delay={0.2 + (i * 0.15)} />
+                        </div>
+                    );
+                } else if (rank === 2) { // SILVER
+                    badgeClass = "bg-gradient-to-br from-slate-300 to-slate-400 border-slate-200 text-slate-900 shadow-[0_0_15px_rgba(203,213,225,0.4)] scale-105 z-10";
+                } else if (rank === 3) { // BRONZE
+                    badgeClass = "bg-gradient-to-br from-orange-400 to-orange-600 border-orange-300 text-orange-950 shadow-[0_0_15px_rgba(249,115,22,0.4)] scale-105 z-10";
+                }
+
+                return (
+                    <motion.div
+                        key={i}
+                        // Removed the aggressive popup animation, replaced with a smooth, fast fade-in
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.4 }}
+                        className={`flex-shrink-0 w-28 h-28 rounded-2xl border-2 flex flex-col items-center justify-center relative overflow-hidden ${badgeClass}`}
+                    >
+                        {/* Shine effect for Gold only */}
+                        {rank === 1 && (
+                            <div className="absolute inset-0 bg-white/40 -translate-x-full animate-[shimmer_2s_infinite]" />
+                        )}
+
+                        {/* Volume / Match Label */}
+                        <span className="font-mono text-[10px] absolute top-1.5 uppercase tracking-widest opacity-60 font-bold">
+              Vol.{i + 1}
+            </span>
+
+                        {/* Main Rank Display (The Slot Machine) */}
+                        <div className="mt-3">
+                            {rankContent}
+                        </div>
+                    </motion.div>
+                );
+            })}
+        </div>
+    );
+};
+
+// --- SUB-COMPONENT: ACHIEVEMENT SLOTS (Replaces RankGraph) ---
+const AchievementSlots = ({ history }) => {
+    // We expect exactly 5 quizzes total until now.
+    const TOTAL_QUIZZES = 5;
+    const safeHistory = history || [];
+
+    return (
+        <div className="w-full h-full flex items-center justify-between gap-3 pt-4 pb-2 px-2">
+            {Array.from({ length: TOTAL_QUIZZES }).map((_, i) => {
+                const rank = safeHistory[i];
+                const hasPlayed = rank !== undefined;
+
+                // --- EMPTY SLOT (Did not play this volume) ---
+                if (!hasPlayed) {
+                    return (
+                        <div key={i} className="flex-1 aspect-square max-w-[85px] rounded-2xl border-2 border-dashed border-white/10 bg-black/20 flex flex-col items-center justify-center relative">
+                            <span className="text-white/20 font-mono text-xs absolute top-2 uppercase tracking-widest">Vol.{i + 1}</span>
+                            <div className="w-3 h-3 rounded-full bg-white/5 mt-3"></div>
+                        </div>
+                    );
+                }
+
+                // --- FILLED SLOT COLOR LOGIC ---
+                // Default (4th place and below) - Deep Blue
+                let slotClass = "bg-gradient-to-br from-blue-950 to-slate-900 border-blue-500/30 shadow-[0_0_15px_rgba(30,58,138,0.3)]";
+                let textClass = "text-blue-300";
+
+                if (rank === 1) { // GOLD
+                    slotClass = "bg-gradient-to-br from-yellow-400 to-yellow-600 border-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.6)]";
+                    textClass = "text-yellow-950 scale-110";
+                } else if (rank === 2) { // SILVER
+                    slotClass = "bg-gradient-to-br from-slate-300 to-slate-500 border-slate-200 shadow-[0_0_15px_rgba(203,213,225,0.4)]";
+                    textClass = "text-slate-900 scale-105";
+                } else if (rank === 3) { // BRONZE
+                    slotClass = "bg-gradient-to-br from-orange-400 to-orange-700 border-orange-300 shadow-[0_0_15px_rgba(249,115,22,0.4)]";
+                    textClass = "text-orange-950 scale-105";
+                }
+
+                // --- FILLED SLOT RENDER ---
+                return (
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.1, type: "spring", bounce: 0.4 }}
+                        className={`flex-1 aspect-square max-w-[85px] rounded-2xl border flex flex-col items-center justify-center relative overflow-hidden ${slotClass}`}
+                    >
+                        {/* Shine effect for Gold only */}
+                        {rank === 1 && (
+                            <div className="absolute inset-0 bg-white/40 -translate-x-full animate-[shimmer_2s_infinite]" />
+                        )}
+
+                        {/* Volume Label */}
+                        <span className={`font-mono text-xs absolute top-2 uppercase tracking-widest ${rank <= 3 ? 'text-black/50' : 'text-white/40'}`}>
+              Vol.{i + 1}
+            </span>
+
+                        {/* Rank Number */}
+                        <span className={`text-3xl font-black mt-3 ${textClass}`}>
+              #{rank}
+            </span>
+                    </motion.div>
+                );
+            })}
+        </div>
+    );
 };
 
 // --- SUB-COMPONENT: ROTATING HEADER ITEM ---
@@ -176,6 +382,20 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
   const activeTeam = TEAMS_DATA[activeIndex];
   const ActiveIcon = activeTeam.icon;
 
+  // 1. Determine the team name size
+  const nameSize = activeTeam.name.length > 15 ? 'text-5xl' : 'text-7xl';
+
+  // 2. Base quote size (one Tailwind size smaller than the name)
+  let quoteSize = activeTeam.name.length > 15 ? 'text-4xl' : 'text-5xl';
+
+  // 3. Apply the quote's own rules to shrink it further if it's too long
+  if (activeTeam.quote?.length > 120) {
+      quoteSize = 'text-3xl';
+  } else if (activeTeam.quote?.length > 80) {
+      quoteSize = 'text-4xl';
+  } else if (activeTeam.quote?.length > 50) {
+      quoteSize = 'text-4xl';
+  }
   return (
     <motion.div
       initial={{ y: 0 }}
@@ -269,15 +489,21 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                                 <div className="absolute -bottom-32 -right-32 opacity-10 rotate-12 scale-[3] text-white">
                                     <ActiveIcon size={250} />
                                 </div>
-                                <div className="w-64 h-64 rounded-3xl bg-white/5 mb-8 flex items-center justify-center shadow-inner border border-white/10 relative z-10 overflow-hidden group">
+                                <div className="w-75 h-75 rounded-3xl bg-white/5 mb-8 flex items-center justify-center shadow-inner border border-white/10 relative z-10 overflow-hidden group">
                                     {activeTeam.image ? (
                                         <img src={activeTeam.image} alt={activeTeam.name} className="w-full h-full object-cover transition-all duration-700" />
                                     ) : (
                                         <ActiveIcon size={140} className="text-white/80 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" />
                                     )}
                                 </div>
-                                <h2 className="text-7xl font-black text-center leading-none mb-6 z-10 drop-shadow-lg tracking-tight">{activeTeam.name}</h2>
-                                <p className="text-4xl text-gray-400 italic text-center z-10 px-4 leading-relaxed">"{activeTeam.quote}"</p>
+                                <h2 className={`font-black text-center leading-none mb-6 z-10 drop-shadow-lg tracking-tight ${nameSize}`}>
+                                    {activeTeam.name}
+                                </h2>
+                                <p className={`text-gray-400 italic text-center z-10 px-4 leading-relaxed ${
+                                    !activeTeam.quote ? 'hidden' : quoteSize
+                                }`}>
+                                    "{activeTeam.quote}"
+                                </p>
                                 <div className="mt-auto flex gap-4 z-10">
                                     <span className="px-6 py-3 bg-white/10 rounded-full flex items-center gap-3 text-4xl font-bold uppercase tracking-wider border border-white/10">
                                         <Users size={48} /> {activeTeam.players} {t.players}
@@ -333,7 +559,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                                     <TrendingUp size={32}/> {t.season_history}
                                  </h3>
                                  <div className="flex-1">
-                                    <RankGraph history={activeTeam.rankHistory} />
+                                    <RecentFormBadges history={activeTeam.rankHistory} />
                                  </div>
                             </div>
                         </motion.div>
