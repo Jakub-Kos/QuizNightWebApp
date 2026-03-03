@@ -4,10 +4,10 @@ import { Coffee, Play, Pause, Plus, Minus, ArrowLeft, Trophy, Medal, TrendingUp 
 import { TEAMS_DATA } from "../data/teams";
 
 const getRankText = (rank) => {
-    if (rank === 1) return "1ST PLACE";
-    if (rank === 2) return "2ND PLACE";
-    if (rank === 3) return "3RD PLACE";
-    return `${rank}TH PLACE`;
+    if (rank === 1) return "1. MÍSTĚ";
+    if (rank === 2) return "2. MÍSTĚ";
+    if (rank === 3) return "3. MÍSTĚ";
+    return `${rank}. MÍSTĚ`;
 };
 
 const RankGraph = ({ history, maxRank }) => {
@@ -23,7 +23,7 @@ const RankGraph = ({ history, maxRank }) => {
 
     return (
         <div className="mt-8 flex flex-col items-start relative z-10">
-            <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.3em] mb-6">Tournament Rank Trend</span>
+            <span className="text-[20px] font-bold text-white/30 uppercase tracking-[0.3em] mb-6">Trend pořadí</span>
             <svg width={width + padding*2} height={height + padding*2} className="overflow-visible -ml-[20px]">
                 <polyline
                     points={history.map((r, i) => `${padding + (i / (history.length - 1)) * width},${padding + ((r - 1) / (maxRank - 1 || 1)) * height}`).join(" ")}
@@ -37,14 +37,14 @@ const RankGraph = ({ history, maxRank }) => {
                     return (
                         <g key={i}>
                             <circle cx={x} cy={y} r={isLast ? "6" : "4"} fill={isLast ? "#60A5FA" : "#fff"} />
-                            <text x={x} y={y - 14} fill={isLast ? "#60A5FA" : "rgba(255,255,255,0.6)"} fontSize="14" fontWeight="900" textAnchor="middle" className="drop-shadow-md">
+                            <text x={x} y={y - 14} fill={isLast ? "#60A5FA" : "rgba(255,255,255,0.6)"} fontSize="30" fontWeight="900" textAnchor="middle" className="drop-shadow-md">
                                 {rank}.
                             </text>
                         </g>
                     )
                 })}
             </svg>
-            <div className="flex justify-between w-[350px] mt-2 text-[10px] text-white/30 font-bold tracking-widest uppercase">
+            <div className="flex justify-between w-[350px] mt-2 text-[20px] text-white/30 font-bold tracking-widest uppercase">
                 <span>Start</span>
                 <span>Current</span>
             </div>
@@ -220,8 +220,8 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                     {formatTime(timeLeft)}
                 </div>
 
-                <div className="text-white/40 font-bold tracking-[0.4em] text-xs uppercase mt-4">
-                    {timeLeft === 0 ? "WE ARE RESUMING SHORTLY!" : "UNTIL THE SECOND HALF BEGINS"}
+                <div className="text-white/40 font-bold tracking-[0.4em] text-xl uppercase mt-4">
+                    {timeLeft === 0 ? "ZA CHVÍLI ZAČÍNÁME!" : "DO ZAČÁTKU DRUHÉ POLOVINY"}
                 </div>
             </div>
 
@@ -253,7 +253,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                                 <div className="flex items-center gap-3 mb-4">
                                     {currentTeam.rank === 1 ? <Trophy size={32} className="text-yellow-500" /> : <Medal size={32} className="text-white/30" />}
                                     <span className={`text-xl font-bold tracking-[0.3em] uppercase ${currentTeam.rank === 1 ? 'text-yellow-500' : 'text-white/40'}`}>
-                                        Currently in {getRankText(currentTeam.rank)}
+                                        Aktuálně na {getRankText(currentTeam.rank)}
                                     </span>
                                 </div>
 
