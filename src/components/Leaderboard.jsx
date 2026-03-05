@@ -261,7 +261,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
                 <div className="flex items-center gap-6">
                     <Trophy size={48} className="text-yellow-500" />
                     <div>
-                        <h1 className="text-5xl font-black uppercase tracking-[0.2em] text-white leading-none">Global Standings</h1>
+                        <h1 className="text-5xl font-black uppercase tracking-[0.2em] text-white leading-none">Celkové pořadí</h1>
                         <h2 className="text-blue-400 font-bold tracking-[0.4em] text-sm uppercase mt-2">
                             {isShuffled ? "Official Final Results" : `${selectedRound} Reveal`}
                         </h2>
@@ -280,7 +280,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
             </div>
 
             <div className="flex-1 w-full overflow-hidden relative">
-                <div className="grid grid-cols-2 grid-flow-row gap-x-12 gap-y-2.5 w-full content-start">
+                <div className="grid grid-cols-2 grid-flow-row gap-x-16 gap-y-5 w-full content-start">
 
                     {activeTeamsList.map((team) => {
                         const isWinner = isShuffled && team.displayRank === 1;
@@ -291,7 +291,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
                                 layout
                                 transition={{ type: "spring", bounce: 0.25, duration: 1.2 }}
                                 key={team.name}
-                                className={`relative flex items-stretch h-[60px] rounded-r-xl overflow-hidden shadow-lg transition-colors duration-700 ${
+                                className={`relative flex items-stretch h-[80px] rounded-r-2xl overflow-hidden shadow-lg transition-colors duration-700 ${
                                     isWinner
                                         ? "bg-black/80 border border-yellow-500/80 shadow-[0_0_30px_rgba(234,179,8,0.2)]"
                                         : team.isRevealed

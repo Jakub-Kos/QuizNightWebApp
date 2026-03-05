@@ -77,7 +77,7 @@ export default function App() {
           try {
               // CACHE BUSTER: Prevents Google Sheets from serving deleted 5-minute-old data
               const timestamp = new Date().getTime();
-              const res = await fetch(`https://docs.google.com/spreadsheets/d/e/2PACX-1vTPi2K8Mi8kFMlROt4F5V0TtPY2f1RLRJvgjN1TGiQelOLja0bFBu6zk_lOzlQk6K3QvOr-PLRQZvkn/pub?gid=728177247&single=true&output=csv&_cb=${timestamp}`, { cache: "no-store" });
+              const res = await fetch(`https://docs.google.com/spreadsheets/d/e/2PACX-1vTc7xeSY_i7arNqlYwJKIukSjZS-cpBVAjsol62xtGE_bxJLHCrdpAi_pMfpijJ3y7zTJzmYnl7CWiL/pub?gid=728177247&single=true&output=csv&_cb=${timestamp}`, { cache: "no-store" });
               const text = await res.text();
 
               const rows = text.split('\n').map(row => parseCSVRow(row));
@@ -129,30 +129,37 @@ export default function App() {
       return () => clearInterval(interval);
   }, []);
 
-  const rounds = useMemo(() => {
-    if (!rawData || rawData.length === 0) return [];
-    const parsedRounds = [];
-    let currentRound = null;
+    const rounds = useMemo(() => {
+        if (!rawData || rawData.length === 0) return [];
+        const parsedRounds = [];
+        let currentRound = null;
 
-    rawData.forEach((row) => {
-      const col0 = row[0] ? String(row[0]).trim() : "";
-      const col1 = row[1] ? String(row[1]).trim() : "";
+        rawData.forEach((row) => {
+            const col0 = row[0] ? String(row[0]).trim() : "";
+            const col1 = row[1] ? String(row[1]).trim() : "";
 
-      if (col0.toLowerCase().startsWith("kolo") && !col0.toLowerCase().includes("q#")) {
+            if (col0.toLowerCase().startsWith("kolo") && !col0.toLowerCase().includes("q#")) {
+                if (currentRound) parsedRounds.push(currentRound);
+                const parts = col0.split("-");
+                currentRound = { id: `round-${parsedRounds.length + 1}`, number: parts[0].replace(/kolo/i, "").trim(), title: parts.slice(1).join("-").trim(), questions: [] };
+            }
+
+            // RESTORED: "col1 && !isNaN(col1)" prevents the header row ("Q#") from being added!
+            if (currentRound && col1 && !isNaN(col1)) {
+                const hasText = row[2] && String(row[2]).trim() !== "";
+                const hasMedia = row[9] && String(row[9]).trim() !== "";
+                const hasAnswer = row[8] && String(row[8]).trim() !== "";
+
+                // hasAnswer allows the secondary Top5 rows to pass through
+                if (hasText || hasMedia || hasAnswer) {
+                    currentRound.questions.push(row);
+                }
+            }
+        });
+
         if (currentRound) parsedRounds.push(currentRound);
-        const parts = col0.split("-");
-        currentRound = { id: `round-${parsedRounds.length + 1}`, number: parts[0].replace(/kolo/i, "").trim(), title: parts.slice(1).join("-").trim(), questions: [] };
-      }
-
-      if (currentRound && col1 && !isNaN(col1)) {
-        const hasText = row[2] && String(row[2]).trim() !== "";
-        const hasMedia = row[9] && String(row[9]).trim() !== "";
-        if (hasText || hasMedia) currentRound.questions.push(row);
-      }
-    });
-    if (currentRound) parsedRounds.push(currentRound);
-    return parsedRounds;
-  }, [rawData]);
+        return parsedRounds;
+    }, [rawData]);
 
   const activeRound = useMemo(() => rounds.find(r => r.id === activeRoundId) || null, [rounds, activeRoundId]);
 
