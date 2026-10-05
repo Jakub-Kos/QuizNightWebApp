@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator } from "lucide-react";
+import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle } from "lucide-react";
 import { getQuiz, updateQuiz, listMedia, putMedia, deleteMedia } from "../quiz/storage";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
 import { fetchSheetCsv, SheetError } from "../quiz/sheets";
@@ -166,6 +166,7 @@ export default function QuizEditor({ id, t }) {
           <a href="#/" className="flex items-center gap-2 text-gray-400 hover:text-white">
             <ArrowLeft size={18} /> {t.settings_exit}
           </a>
+          <a href="#/help" className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm"><HelpCircle size={16} /> {t.lib_help}</a>
           <span className="ml-auto text-xs text-gray-500">{saveState === "saving" ? t.ed_saving : t.ed_saved}</span>
           <a href={quizHash(quiz.id, "check")} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20">
             <ScanSearch size={18} /> {t.chk_open}
@@ -178,7 +179,7 @@ export default function QuizEditor({ id, t }) {
         <input value={quiz.title} onChange={(e) => update({ title: e.target.value })} placeholder={t.ed_untitled}
           className="w-full bg-transparent font-['League_Spartan'] text-4xl font-black tracking-wide border-b border-white/10 pb-3 focus:outline-none focus:border-yellow-500/60" />
 
-        <Section title={t.ed_questions} help={t.ed_questions_help}>
+        <Section title={t.ed_questions} help={t.ed_questions_help} helpId="questions">
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <Link2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -213,7 +214,7 @@ export default function QuizEditor({ id, t }) {
           )}
         </Section>
 
-        <Section title={t.ed_media} help={t.ed_media_help}>
+        <Section title={t.ed_media} help={t.ed_media_help} helpId="media">
           {missing.length > 0 && (
             <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 space-y-2">
               <p className="flex items-center gap-2 text-red-200 font-bold text-sm"><AlertTriangle size={16} /> {t.ed_missing} ({missing.length})</p>
@@ -272,7 +273,7 @@ export default function QuizEditor({ id, t }) {
           t={t}
         />
 
-        <Section title={t.ed_scores} help={t.ed_scores_help}>
+        <Section title={t.ed_scores} help={t.ed_scores_help} helpId="scores">
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <Link2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />

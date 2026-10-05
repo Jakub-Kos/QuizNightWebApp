@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch } from "lucide-react";
+import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle } from "lucide-react";
 import { listQuizzes, saveQuiz, deleteQuiz, requestPersistence } from "../quiz/storage";
 import { createQuiz, loadQuizBundle, DEMO_ID } from "../quiz/model";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -79,6 +79,10 @@ export default function Library({ t, lang, onLanguage }) {
             <h1 className="font-['League_Spartan'] text-5xl font-black uppercase tracking-widest text-yellow-400">Quiz Night</h1>
             <p className="text-gray-400 mt-3 max-w-xl">{t.lib_subtitle}</p>
           </div>
+          <div className="flex flex-wrap items-center gap-3">
+          <a href="#/help" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm">
+            <HelpCircle size={16} /> {t.lib_help}
+          </a>
           <div className="flex gap-1 bg-white/5 rounded-xl p-1">
             {LANGUAGES.map(([code, name]) => (
               <button key={code} onClick={() => onLanguage(code)}
@@ -86,6 +90,7 @@ export default function Library({ t, lang, onLanguage }) {
                 {name}
               </button>
             ))}
+          </div>
           </div>
         </header>
 

@@ -1,0 +1,17 @@
+Kolo,Q#,Otázka,Typ Odpovědi,A,B,C,D,Správná odpověď,Zdroj
+Kolo 1 - Ukázkové kolo,1,Jaké je hlavní město Francie?,Written,,,,,Paříž,
+,2,Kolik nohou má pavouk?,Numeric,,,,,8,
+,3,Která planeta je největší?,ABCD,Mars,Jupiter,Venuše,Merkur,B,
+,4,Je velryba savec?,Yes/No,,,,,Yes,
+,5,Co je na obrázku?,Image,,,,,Eiffelova věž,obrazek.jpg
+,6,Kde byla fotka pořízena?,PImage,,,,,Řím,foto.jpg
+,7,Kdo zpívá tuto píseň?,Audio,,,,,Queen,pisen.mp3
+,8,Co se stane dál?,Video,,,,,Gól,klip.mp4
+,9,Kdo dal tento gól?,PVideo,,,,,Messi,gol.mp4
+,10,Vyjmenujte 5 největších zemí světa,Top5,,,,,Rusko,
+,11,,,,,,,Kanada,
+,12,,,,,,,Čína,
+,13,,,,,,,USA,
+,14,,,,,,,Brazílie,
+Kolo 2 - Druhé kolo,1,Kolik je 2 + 2?,Numeric,,,,,4,
+,2,Kdo napsal Babičku?,Written,,,,,Božena Němcová,

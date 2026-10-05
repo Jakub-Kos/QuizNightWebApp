@@ -9,7 +9,8 @@ export function toCsvUrl(url) {
   if (published) return `https://docs.google.com/spreadsheets/d/e/${published[1]}/pub?output=csv${gid ? `&single=true&gid=${gid}` : ""}`;
 
   const shared = u.match(/docs\.google\.com\/spreadsheets\/d\/([\w-]+)/);
-  if (shared) return `https://docs.google.com/spreadsheets/d/${shared[1]}/export?format=csv&gid=${gid || 0}`;
+  // Without a tab id Google exports the first tab (tab ids are random, so there may be no tab 0)
+  if (shared) return `https://docs.google.com/spreadsheets/d/${shared[1]}/export?format=csv${gid ? `&gid=${gid}` : ""}`;
 
   return u;
 }

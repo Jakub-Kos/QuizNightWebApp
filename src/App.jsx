@@ -7,6 +7,7 @@ import Library from "./components/Library";
 import QuizEditor from "./components/QuizEditor";
 import QuizCheck from "./components/QuizCheck";
 import ScoresEntry from "./components/ScoresEntry";
+import HelpPage from "./components/HelpPage";
 
 export default function App() {
   const route = useHashRoute();
@@ -18,6 +19,7 @@ export default function App() {
   }
   if (route.name === "edit") return <QuizEditor key={route.id} id={route.id} t={t} />;
   if (route.name === "check") return <QuizCheck key={route.id} id={route.id} t={t} />;
+  if (route.name === "help") return <HelpPage section={route.section} lang={lang} t={t} />;
   if (route.name === "scores") return <ScoresEntry key={route.id} id={route.id} t={t} />;
   return <Library t={t} lang={lang} onLanguage={setLang} />;
 }

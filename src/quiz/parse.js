@@ -1,7 +1,12 @@
 import Papa from "papaparse";
 
 // questions.csv columns (by position; row 1 is a header):
-// 0 round marker ("Kolo N - Title"), 1 Q#, 2 text, 3 type, 4-7 options A-D, 8 answer, 9 media file
+// 0 round marker ("Kolo N - Title" or "Round N - Title"), 1 Q#, 2 text, 3 type, 4-7 options A-D, 8 answer, 9 media file
+
+// Word that starts a round marker, and that marks a round column in a scores sheet
+const ROUND_WORD = /^(kolo|round)\b/i;
+const ROUND_COLUMN = /kolo|round/i;
+const TEAM_COLUMN = /název týmu|team name/i;
 export function parseQuestionsCsv(text) {
   const rows = Papa.parse(text || "", { header: false, skipEmptyLines: false }).data;
   return groupRounds(rows).map((round) => ({ ...round, questions: buildQuestions(round.rows) }));
@@ -15,13 +20,13 @@ function groupRounds(rows) {
     const col0 = row[0] ? String(row[0]).trim() : "";
     const col1 = row[1] ? String(row[1]).trim() : "";
 
-    // The header row ("Kolo,Q#,...") also starts with "Kolo"; its Q# cell tells it apart
-    if (col0.toLowerCase().startsWith("kolo") && col1.toLowerCase() !== "q#") {
+    // The header row ("Kolo,Q#,..." / "Round,Q#,...") also starts with the word; its Q# cell tells it apart
+    if (ROUND_WORD.test(col0) && col1.toLowerCase() !== "q#") {
       if (current) rounds.push(current);
       const parts = col0.split("-");
       current = {
         id: `round-${rounds.length + 1}`,
-        number: parts[0].replace(/kolo/i, "").trim(),
+        number: parts[0].replace(ROUND_WORD, "").trim(),
         title: parts.slice(1).join("-").trim(),
         rows: [],
       };
@@ -83,18 +88,18 @@ export function isRoundHidden(round) {
   return title === "KOLO" || title.includes("TEST") || title.includes("KOLO X") || round.questions.length === 0;
 }
 
-// Published Google Sheet with team names in "Název týmu" and one column per round containing "kolo"
+// Scores sheet: a "Název týmu" / "Team name" column and one column per round whose name contains "kolo" or "round"
 export function parseScoresCsv(text) {
   const rows = Papa.parse(text || "", { header: false }).data.map((row) => row.map((c) => String(c ?? "").trim()));
 
-  const headerIdx = rows.findIndex((row) => row.some((col) => col.includes("Název týmu")));
+  const headerIdx = rows.findIndex((row) => row.some((col) => TEAM_COLUMN.test(col)));
   if (headerIdx === -1) return null;
 
   const headers = rows[headerIdx];
-  const teamNameIdx = headers.findIndex((h) => h.includes("Název týmu"));
+  const teamNameIdx = headers.findIndex((h) => TEAM_COLUMN.test(h));
   const roundColumns = headers
     .map((name, index) => ({ name, index }))
-    .filter((h) => h.name.toLowerCase().includes("kolo"));
+    .filter((h) => ROUND_COLUMN.test(h.name));
 
   const teams = [];
   for (const row of rows.slice(headerIdx + 1)) {

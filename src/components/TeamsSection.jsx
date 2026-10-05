@@ -61,6 +61,7 @@ export default function TeamsSection({ teams, onChange, mediaUrl, hasMedia, onUp
     <Section
       title={t.tm_title}
       help={t.tm_help}
+      helpId="teams"
       actions={(
         <>
           <button onClick={() => teamsCsv.current.click()} className={btnCls}><Users size={16} /> {t.tm_import}</button>
