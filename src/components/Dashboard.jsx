@@ -1,28 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Eye, Trophy, CheckCircle, Circle, Coffee } from "lucide-react"; // ADDED COFFEE ICON
+import { Play, Eye, Trophy, CheckCircle, Circle, Coffee, RotateCcw } from "lucide-react"; // ADDED COFFEE ICON
 import { isRoundHidden } from "../quiz/parse";
+import { useQuiz } from "../quiz/context";
+import { useCompletedRounds } from "../hooks/useCompletedRounds";
 
 export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, onOpenPause, t }) { // ADDED onOpenPause
   const [hoveredRound, setHoveredRound] = useState(null);
 
-  const [completedRounds, setCompletedRounds] = useState(() => {
-      const saved = localStorage.getItem("quizCompletedRounds");
-      return saved ? JSON.parse(saved) : [];
-  });
+  const { quiz } = useQuiz();
+  const [completedRounds, setCompletedRounds] = useCompletedRounds(quiz.id);
 
-  useEffect(() => {
-      localStorage.setItem("quizCompletedRounds", JSON.stringify(completedRounds));
-  }, [completedRounds]);
-
-  const toggleCompleted = (e, roundTitle) => {
+  const toggleCompleted = (e, roundId) => {
       e.stopPropagation();
-      setCompletedRounds(prev =>
-          prev.includes(roundTitle) ? prev.filter(title => title !== roundTitle) : [...prev, roundTitle]
-      );
+      setCompletedRounds(completedRounds.includes(roundId) ? completedRounds.filter(id => id !== roundId) : [...completedRounds, roundId]);
   };
 
   const visibleRounds = rounds.filter(r => !isRoundHidden(r));
+  // Only this quiz's visible rounds count, so the bar never passes 100 %
+  const completedCount = visibleRounds.filter(r => completedRounds.includes(r.id)).length;
+  const progress = visibleRounds.length ? completedCount / visibleRounds.length : 0;
 
   const getExpandedTitleClass = (text) => {
       if (!text) return "text-6xl";
@@ -58,14 +55,19 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
               <div className="flex justify-between items-end">
                   <h1 className="text-2xl font-black text-white/50 uppercase tracking-[0.3em]">Live Progress</h1>
                   <span className="text-blue-400 font-mono font-bold tracking-widest text-xl">
-                      {completedRounds.length} <span className="text-white/30">/ {visibleRounds.length}</span>
+                      {completedCount} <span className="text-white/30">/ {visibleRounds.length}</span>
+                      {completedCount > 0 && (
+                          <button onClick={() => setCompletedRounds([])} title={t.calib_reset} className="ml-3 align-middle text-white/30 hover:text-white transition-colors">
+                              <RotateCcw size={16} className="inline" />
+                          </button>
+                      )}
                   </span>
               </div>
               <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/10">
                   <motion.div
                       className="h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.6)] rounded-full"
                       initial={{ width: 0 }}
-                      animate={{ width: `${(completedRounds.length / visibleRounds.length) * 100}%` }}
+                      animate={{ width: `${progress * 100}%` }}
                       transition={{ duration: 0.8, type: "spring" }}
                   />
               </div>
@@ -107,7 +109,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
             <div className="flex w-full max-w-[1600px] h-[70cqh] gap-4" onMouseLeave={() => setHoveredRound(null)}>
                 {visibleRounds.map((round, index) => {
                     const isHovered = hoveredRound === index;
-                    const isCompleted = completedRounds.includes(round.title);
+                    const isCompleted = completedRounds.includes(round.id);
 
                     const parts = (round.title || "").split("-");
                     const themeName = parts.length > 1 ? parts.slice(1).join("-").trim() : round.title;
@@ -188,7 +190,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                                             </button>
                                         </div>
 
-                                        <button onClick={(e) => toggleCompleted(e, round.title)} className={`px-6 py-3 rounded-full border text-[10px] sm:text-xs font-bold tracking-widest flex items-center gap-2 transition-all ${isCompleted ? "bg-transparent text-white/30 border-white/10 hover:text-white/80 hover:border-white/30" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"}`}>
+                                        <button onClick={(e) => toggleCompleted(e, round.id)} className={`px-6 py-3 rounded-full border text-[10px] sm:text-xs font-bold tracking-widest flex items-center gap-2 transition-all ${isCompleted ? "bg-transparent text-white/30 border-white/10 hover:text-white/80 hover:border-white/30" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"}`}>
                                             {isCompleted ? <Circle size={16} /> : <CheckCircle size={16} />}
                                             {isCompleted ? "MARK AS UNFINISHED" : "MARK AS FINISHED"}
                                         </button>
