@@ -10,6 +10,7 @@ import { quizHash } from "../hooks/useHashRoute";
 import FileDrop from "./FileDrop";
 import { Section, Status, inputCls, btnCls } from "./EditorParts";
 import TeamsSection from "./TeamsSection";
+import IntroSection from "./IntroSection";
 import { saveTeamImage } from "../quiz/teams";
 
 export default function QuizEditor({ id, t }) {
@@ -47,8 +48,8 @@ export default function QuizEditor({ id, t }) {
   useEffect(() => {
     if (!dirty.current) return;
     // Only the fields edited here; settings and scores are saved by other windows
-    const { title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams } = quiz;
-    const timer = setTimeout(() => updateQuiz(quiz.id, (q) => ({ ...q, title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams })).then(() => {
+    const { title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes } = quiz;
+    const timer = setTimeout(() => updateQuiz(quiz.id, (q) => ({ ...q, title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes })).then(() => {
       dirty.current = false;
       setSaveState("saved");
     }), 400);
@@ -285,6 +286,8 @@ export default function QuizEditor({ id, t }) {
           onUploadImage={uploadTeamImage}
           t={t}
         />
+
+        <IntroSection quiz={quiz} onChange={update} t={t} />
       </div>
     </div>
   );

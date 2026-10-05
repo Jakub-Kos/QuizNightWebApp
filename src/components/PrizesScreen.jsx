@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
-import { Trophy, Medal, Crown } from "lucide-react";
+import { Trophy, Medal, Gift } from "lucide-react";
 
-export default function PrizesScreen({ onNext, t }) {
+// prizes: { first, second, third, extra } texts from the quiz (quiz/intro.js); empty texts show only the place
+export default function PrizesScreen({ prizes: texts, onNext, t }) {
   const prizes = [
     {
         rank: 2,
         label: t.prize_silver,
+        text: texts.second,
         icon: <Medal size={64} />,
         color: "from-slate-400 to-slate-600",
         glow: "shadow-slate-400/30",
@@ -16,6 +18,7 @@ export default function PrizesScreen({ onNext, t }) {
     {
         rank: 1,
         label: t.prize_gold,
+        text: texts.first,
         icon: <Trophy size={80} />,
         color: "from-yellow-300 to-yellow-600",
         glow: "shadow-yellow-500/50",
@@ -26,6 +29,7 @@ export default function PrizesScreen({ onNext, t }) {
     {
         rank: 3,
         label: t.prize_bronze,
+        text: texts.third,
         icon: <Medal size={56} />,
         color: "from-orange-400 to-orange-700",
         glow: "shadow-orange-500/30",
@@ -89,6 +93,11 @@ export default function PrizesScreen({ onNext, t }) {
 
                       <div className="w-12 h-1 bg-white/10 rounded-full my-6" />
 
+                      {/* What this place wins */}
+                      {p.text && (
+                          <p className="relative z-10 text-3xl font-bold text-white text-center leading-snug line-clamp-4 break-words">{p.text}</p>
+                      )}
+
                       {/* 1st Place Special Shimmer */}
                       {p.rank === 1 && (
                          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent translate-y-full group-hover:animate-[shimmer_2s_infinite]" />
@@ -97,6 +106,20 @@ export default function PrizesScreen({ onNext, t }) {
               </motion.div>
           ))}
       </div>
+
+      {/* --- SPECIAL PRIZE --- */}
+      {texts.extra && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="relative z-10 flex items-center gap-4 px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-2xl"
+        >
+            <Gift size={32} className="text-pink-400 shrink-0" />
+            <span className="text-white/50 uppercase tracking-widest font-bold">{t.prize_last}</span>
+            <span className="text-white font-bold">{texts.extra}</span>
+        </motion.div>
+      )}
 
       {/* --- FOOTER BUTTON --- */}
       <motion.div

@@ -60,6 +60,8 @@ export function createQuiz(fields = {}) {
     questionsSheetUrl: "",
     scoresSheetUrl: "",
     teams: [],
+    rules: { enabled: true, items: null }, // see quiz/intro.js
+    prizes: { enabled: true, first: "", second: "", third: "", extra: "" },
     ...fields,
     settings: { ...DEFAULT_SETTINGS, ...fields.settings },
   };

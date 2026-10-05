@@ -5,6 +5,7 @@ import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
 import { parseQuestionsCsv } from "../quiz/parse";
 import { resolveTeams } from "../quiz/model";
+import { rulesFor, prizesFor } from "../quiz/intro";
 import { updateQuiz } from "../quiz/storage";
 import { useScores } from "../hooks/useScores";
 import { quizHash, navigate } from "../hooks/useHashRoute";
@@ -55,6 +56,12 @@ export default function QuizShow({ bundle, isPresenter }) {
   const liveLeaderboard = useScores(quiz, rounds);
   const teams = useMemo(() => resolveTeams(quiz.teams, resolveMedia), [quiz.teams, resolveMedia]);
   const quizContext = useMemo(() => ({ quiz, rounds, teams, resolveMedia }), [quiz, rounds, teams, resolveMedia]);
+
+  // Rules and prizes screens follow the welcome screen unless the quiz turns them off
+  const rules = rulesFor(quiz, t);
+  const prizes = prizesFor(quiz);
+  const afterWelcome = rules ? SCENES.RULES : prizes ? SCENES.PRIZES : SCENES.DASHBOARD;
+  const afterRules = prizes ? SCENES.PRIZES : SCENES.DASHBOARD;
 
   const activeRound = useMemo(() => rounds.find(r => r.id === activeRoundId) || null, [rounds, activeRoundId]);
 
@@ -119,9 +126,9 @@ export default function QuizShow({ bundle, isPresenter }) {
       )}
 
       <AnimatePresence mode="wait">
-        {scene === SCENES.WELCOME && <WelcomeScreen key="welcome" onStart={() => setScene(SCENES.RULES)} startTime={config.startTime} showTime={config.showTime} config={config} t={t} />}
-        {scene === SCENES.RULES && <RulesScreen key="rules" onNext={() => setScene(SCENES.PRIZES)} t={t} />}
-        {scene === SCENES.PRIZES && <PrizesScreen key="prizes" onNext={() => setScene(SCENES.DASHBOARD)} t={t} />}
+        {scene === SCENES.WELCOME && <WelcomeScreen key="welcome" onStart={() => setScene(afterWelcome)} startTime={config.startTime} showTime={config.showTime} config={config} t={t} />}
+        {scene === SCENES.RULES && rules && <RulesScreen key="rules" rules={rules} onNext={() => setScene(afterRules)} t={t} />}
+        {scene === SCENES.PRIZES && prizes && <PrizesScreen key="prizes" prizes={prizes} onNext={() => setScene(SCENES.DASHBOARD)} t={t} />}
 
         {scene === SCENES.DASHBOARD && (
           <Dashboard key="dashboard" rounds={rounds} onSelectRound={startRound} onOpenLeaderboard={() => setScene(SCENES.LEADERBOARD)} onOpenPause={() => setScene(SCENES.PAUSE)} t={t} />

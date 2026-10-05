@@ -55,6 +55,8 @@ export async function readImport(files) {
     questionsSheetUrl: info.questionsSheetUrl || "",
     scoresSheetUrl: info.scoresSheetUrl || "",
     teams: Array.isArray(info.teams) ? info.teams : [],
+    ...(info.rules && { rules: info.rules }),
+    ...(info.prizes && { prizes: info.prizes }),
     settings: info.settings,
     questionsCsv: csv ? await csv.blob.text() : "",
   });
