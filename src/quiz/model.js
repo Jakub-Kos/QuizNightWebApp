@@ -62,6 +62,9 @@ async function loadDemo() {
   });
 }
 
+// A web address instead of an uploaded file name (e.g. a team photo hosted elsewhere); used as given
+export const isUrl = (name) => /^https?:\/\//i.test(String(name || "").trim());
+
 // CSV cells may say "photo.JPG" or "source/photo.jpg"; match on the lowercase base name
 export const mediaKey = (name) => String(name || "").trim().split(/[\\/]/).pop().toLowerCase();
 
@@ -71,7 +74,7 @@ export async function loadQuizBundle(id) {
     const quiz = await loadDemo();
     return {
       quiz,
-      resolveMedia: (name) => (name ? `${import.meta.env.BASE_URL}source/${String(name).trim()}` : null),
+      resolveMedia: (name) => (!name ? null : isUrl(name) ? String(name).trim() : `${import.meta.env.BASE_URL}source/${String(name).trim()}`),
       hasMedia: () => true,
       dispose: () => {},
     };
@@ -90,8 +93,8 @@ export async function loadQuizBundle(id) {
 
   return {
     quiz,
-    resolveMedia: (name) => (name ? urls.get(mediaKey(name)) ?? null : null),
-    hasMedia: (name) => urls.has(mediaKey(name)),
+    resolveMedia: (name) => (!name ? null : isUrl(name) ? String(name).trim() : urls.get(mediaKey(name)) ?? null),
+    hasMedia: (name) => isUrl(name) || urls.has(mediaKey(name)),
     dispose: () => urls.forEach((url) => URL.revokeObjectURL(url)),
   };
 }

@@ -1,4 +1,5 @@
 import { isRoundHidden } from "./parse";
+import { isUrl } from "./model";
 
 // Types QuestionScreen renders. Image/Video (and any other type) show their media inline with a written answer;
 // PImage/PVideo show the media full screen first.
@@ -83,7 +84,7 @@ export function validateQuiz(quiz, rounds, hasMedia) {
       }
 
       if (q.media) {
-        if (!hasMedia(q.media)) issue("error", "media_missing", { file: q.media });
+        if (!isUrl(q.media) && !hasMedia(q.media)) issue("error", "media_missing", { file: q.media });
         const kind = mediaKind(q.media);
         if (kind !== "other" && kind !== expectedMediaKind(type)) issue("warning", "media_kind", { file: q.media, type });
       } else if (MEDIA_REQUIRED.includes(type)) {
@@ -93,7 +94,7 @@ export function validateQuiz(quiz, rounds, hasMedia) {
   });
 
   quiz.teams.forEach((team) => {
-    if (team.image && !hasMedia(team.image)) add("error", "team_image_missing", -1, -1, { team: team.name, file: team.image });
+    if (team.image && !isUrl(team.image) && !hasMedia(team.image)) add("error", "team_image_missing", -1, -1, { team: team.name, file: team.image });
   });
 
   return issues;

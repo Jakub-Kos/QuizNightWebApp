@@ -1,5 +1,5 @@
 import { zipSync, unzipSync, strToU8 } from "fflate";
-import { createQuiz, mediaKey } from "./model";
+import { createQuiz, mediaKey, isUrl } from "./model";
 import { parseQuestionsCsv } from "./parse";
 import { listMedia, saveQuiz, putMedia, requestPersistence } from "./storage";
 
@@ -20,12 +20,12 @@ export const isMediaFile = (name) => ext(name) in MIME;
 const baseName = (path) => path.split("/").pop();
 const isJunk = (path) => path.startsWith("__MACOSX/") || path.includes("/__MACOSX/") || baseName(path).startsWith(".");
 
-// Media file names a quiz refers to (question column 9 and team images)
+// Media file names a quiz refers to (question column 9 and team images); web addresses are not files
 export function referencedMedia(quiz) {
   const names = new Set();
   parseQuestionsCsv(quiz.questionsCsv).forEach((r) => r.questions.forEach((q) => q.media && names.add(q.media)));
   quiz.teams.forEach((t) => t.image && names.add(t.image));
-  return [...names];
+  return [...names].filter((name) => !isUrl(name));
 }
 
 // Turn dropped/selected files (a .zip, a folder, or loose files) into { quiz, media }
