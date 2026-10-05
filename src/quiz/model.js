@@ -13,6 +13,15 @@ export const TEAM_COLORS = [
   "from-sky-500 to-blue-700", "from-stone-700 to-stone-900",
 ];
 
+// Stored teams -> what the scenes render: image URL, icon component, a color for every team
+export const resolveTeams = (teams, resolveMedia) => teams.map((team, i) => ({
+  ...team,
+  id: team.id ?? i + 1,
+  image: resolveMedia(team.image),
+  icon: TEAM_ICONS[team.icon] || TEAM_ICONS.Brain,
+  color: team.color || TEAM_COLORS[i % TEAM_COLORS.length],
+}));
+
 export const DEFAULT_SETTINGS = {
   showTime: true,
   startTime: "20:00",

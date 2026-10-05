@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
 import { TRANSLATIONS } from "./data/translations";
 import { useHashRoute } from "./hooks/useHashRoute";
 import { useUiLanguage } from "./hooks/useUiLanguage";
-import { loadQuizBundle } from "./quiz/model";
+import { useQuizBundle } from "./hooks/useQuizBundle";
 import QuizShow from "./components/QuizShow";
 import Library from "./components/Library";
 import QuizEditor from "./components/QuizEditor";
+import QuizCheck from "./components/QuizCheck";
 
 export default function App() {
   const route = useHashRoute();
@@ -16,24 +16,12 @@ export default function App() {
     return <ShowRoute key={route.id} id={route.id} isPresenter={route.name === "presenter"} t={t} />;
   }
   if (route.name === "edit") return <QuizEditor key={route.id} id={route.id} t={t} />;
+  if (route.name === "check") return <QuizCheck key={route.id} id={route.id} t={t} />;
   return <Library t={t} lang={lang} onLanguage={setLang} />;
 }
 
 function ShowRoute({ id, isPresenter, t }) {
-  const [state, setState] = useState({ status: "loading" });
-
-  useEffect(() => {
-    let bundle = null;
-    let cancelled = false;
-    loadQuizBundle(id)
-      .then((b) => {
-        bundle = b;
-        if (cancelled) b?.dispose();
-        else setState(b ? { status: "ready", bundle: b } : { status: "missing" });
-      })
-      .catch((err) => !cancelled && setState({ status: "error", message: String(err) }));
-    return () => { cancelled = true; bundle?.dispose(); };
-  }, [id]);
+  const state = useQuizBundle(id);
 
   if (state.status === "ready") return <QuizShow bundle={state.bundle} isPresenter={isPresenter} />;
 

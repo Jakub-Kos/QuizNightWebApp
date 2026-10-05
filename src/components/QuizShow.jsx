@@ -4,7 +4,7 @@ import { Settings, ArrowLeft } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
 import { parseQuestionsCsv } from "../quiz/parse";
-import { TEAM_ICONS, TEAM_COLORS } from "../quiz/model";
+import { resolveTeams } from "../quiz/model";
 import { saveQuiz } from "../quiz/storage";
 import { useLiveScores } from "../hooks/useLiveScores";
 import { quizHash, navigate } from "../hooks/useHashRoute";
@@ -54,13 +54,7 @@ export default function QuizShow({ bundle, isPresenter }) {
   const liveLeaderboard = useLiveScores(quiz.scoresSheetUrl);
 
   const rounds = useMemo(() => parseQuestionsCsv(quiz.questionsCsv), [quiz.questionsCsv]);
-  const teams = useMemo(() => quiz.teams.map((team, i) => ({
-    ...team,
-    id: team.id ?? i + 1,
-    image: resolveMedia(team.image),
-    icon: TEAM_ICONS[team.icon] || TEAM_ICONS.Brain,
-    color: team.color || TEAM_COLORS[i % TEAM_COLORS.length],
-  })), [quiz.teams, resolveMedia]);
+  const teams = useMemo(() => resolveTeams(quiz.teams, resolveMedia), [quiz.teams, resolveMedia]);
   const quizContext = useMemo(() => ({ quiz, rounds, teams, resolveMedia }), [quiz, rounds, teams, resolveMedia]);
 
   const activeRound = useMemo(() => rounds.find(r => r.id === activeRoundId) || null, [rounds, activeRoundId]);

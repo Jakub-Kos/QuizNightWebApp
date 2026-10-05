@@ -5,10 +5,11 @@ import { useState, useEffect } from "react";
 //   #/quiz/<id>              show (TV window)
 //   #/quiz/<id>/presenter    show (host window)
 //   #/quiz/<id>/edit         quiz setup
+//   #/quiz/<id>/check        quiz check (problems + thumbnails)
 function parse(hash) {
   const parts = hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
   if (parts[0] === "quiz" && parts[1]) {
-    const view = parts[2] === "presenter" ? "presenter" : parts[2] === "edit" ? "edit" : "show";
+    const view = ["presenter", "edit", "check"].includes(parts[2]) ? parts[2] : "show";
     return { name: view, id: parts[1] };
   }
   return { name: "library" };

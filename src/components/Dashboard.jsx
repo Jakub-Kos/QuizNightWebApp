@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Eye, Trophy, CheckCircle, Circle, Coffee } from "lucide-react"; // ADDED COFFEE ICON
+import { isRoundHidden } from "../quiz/parse";
 
 export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, onOpenPause, t }) { // ADDED onOpenPause
   const [hoveredRound, setHoveredRound] = useState(null);
@@ -21,10 +22,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
       );
   };
 
-  const visibleRounds = rounds.filter(r => {
-      const title = (r.title || "").toUpperCase();
-      return title !== "KOLO" && !title.includes("TEST") && !title.includes("KOLO X") && r.questions.length !== 0;
-  });
+  const visibleRounds = rounds.filter(r => !isRoundHidden(r));
 
   const getExpandedTitleClass = (text) => {
       if (!text) return "text-6xl";

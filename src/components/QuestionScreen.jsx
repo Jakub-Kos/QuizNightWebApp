@@ -4,9 +4,13 @@ import { ArrowLeft, ArrowRight, Check, X, Edit3, Hash, Clock, ListOrdered } from
 import { useStageSize } from "../hooks/useDisplay";
 import { useQuiz } from "../quiz/context";
 
-export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t = {} }) {
-    const [qIndex, setQIndex] = useState(-1);
-    const [step, setStep] = useState(0);
+// preview: { qIndex, step } renders one fixed frame (quiz check thumbnails): no keys, sync or timer
+export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t = {}, preview = null }) {
+    const [stateQIndex, setQIndex] = useState(-1);
+    const [stateStep, setStep] = useState(0);
+    const isPreview = preview !== null;
+    const qIndex = isPreview ? preview.qIndex : stateQIndex;
+    const step = isPreview ? preview.step : stateStep;
     const [timer, setTimer] = useState(0);
     const stageSize = useStageSize();
 
@@ -14,14 +18,15 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     const modeText = isQuestionsOnly ? "Q ONLY MODE" : "REVEAL MODE";
 
     // --- 2-WAY PRESENTER SYNC ---
-    const channel = useMemo(() => new BroadcastChannel('quiz-question-sync'), []);
+    const channel = useMemo(() => (isPreview ? null : new BroadcastChannel('quiz-question-sync')), [isPreview]);
     const isReceivingRef = useRef(false);
 
     useEffect(() => {
-        channel.postMessage({ type: 'Q_REQUEST', sender: isPresenter ? 'presenter' : 'main' });
+        channel?.postMessage({ type: 'Q_REQUEST', sender: isPresenter ? 'presenter' : 'main' });
     }, [channel, isPresenter]);
 
     useEffect(() => {
+        if (!channel) return;
         if (isReceivingRef.current) {
             isReceivingRef.current = false;
             return;
@@ -34,6 +39,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     }, [qIndex, step, isPresenter, channel]);
 
     useEffect(() => {
+        if (!channel) return;
         const handleQSync = (e) => {
             const { type, payload, sender } = e.data;
             const myRole = isPresenter ? 'presenter' : 'main';
@@ -84,17 +90,18 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     // --- TIMER LOGIC ---
     useEffect(() => {
         let interval;
-        const isRunning = isQuestionsOnly && qIndex >= 0 && step > 0;
+        const isRunning = !isPreview && isQuestionsOnly && qIndex >= 0 && step > 0;
         if (isRunning) {
             interval = setInterval(() => setTimer(t => t + 1), 1000);
         }
         return () => clearInterval(interval);
-    }, [step, qIndex, isQuestionsOnly]);
+    }, [step, qIndex, isQuestionsOnly, isPreview]);
 
     useEffect(() => { setTimer(0); }, [qIndex]);
 
     // --- CONTROLS ---
     useEffect(() => {
+        if (isPreview) return;
         const handleKeyDown = (e) => {
             if (e.key === "ArrowRight") next();
             if (e.key === "ArrowLeft") prev();
@@ -102,7 +109,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [step, qIndex, isQuestionsOnly, isPresenter]);
+    }, [step, qIndex, isQuestionsOnly, isPresenter, isPreview]);
 
     const next = () => {
         if (qIndex === -1) { setQIndex(0); setStep(0); return; }

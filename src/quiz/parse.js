@@ -77,6 +77,12 @@ function buildQuestions(rows) {
   return qs;
 }
 
+// Rounds the Dashboard leaves out: placeholders, test rounds and empty rounds
+export function isRoundHidden(round) {
+  const title = (round.title || "").toUpperCase();
+  return title === "KOLO" || title.includes("TEST") || title.includes("KOLO X") || round.questions.length === 0;
+}
+
 // Published Google Sheet with team names in "Název týmu" and one column per round containing "kolo"
 export function parseScoresCsv(text) {
   const rows = Papa.parse(text || "", { header: false }).data.map((row) => row.map((c) => String(c ?? "").trim()));

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch } from "lucide-react";
 import { getQuiz, saveQuiz, listMedia, putMedia, deleteMedia } from "../quiz/storage";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
 import { fetchSheetCsv, SheetError } from "../quiz/sheets";
@@ -166,6 +166,9 @@ export default function QuizEditor({ id, t }) {
             <ArrowLeft size={18} /> {t.settings_exit}
           </a>
           <span className="ml-auto text-xs text-gray-500">{saveState === "saving" ? t.ed_saving : t.ed_saved}</span>
+          <a href={quizHash(quiz.id, "check")} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20">
+            <ScanSearch size={18} /> {t.chk_open}
+          </a>
           <a href={quizHash(quiz.id)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold">
             <Play size={18} /> {t.lib_open}
           </a>
