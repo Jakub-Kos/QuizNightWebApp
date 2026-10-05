@@ -54,6 +54,18 @@ export const getQuiz = (id) =>
 export const saveQuiz = (quiz) =>
   tx(["quizzes"], "readwrite", (t) => promisify(t.objectStore("quizzes").put({ ...quiz, updatedAt: Date.now() })));
 
+// Read-modify-write in one transaction, so windows editing different fields of the same quiz
+// (show settings, setup page, score entry) do not overwrite each other's changes
+export const updateQuiz = (id, change) =>
+  tx(["quizzes"], "readwrite", async (t) => {
+    const store = t.objectStore("quizzes");
+    const quiz = await promisify(store.get(id));
+    if (!quiz) return null;
+    const next = { ...change(quiz), updatedAt: Date.now() };
+    store.put(next);
+    return next;
+  });
+
 export const deleteQuiz = (id) =>
   tx(["quizzes", "media"], "readwrite", async (t) => {
     t.objectStore("quizzes").delete(id);

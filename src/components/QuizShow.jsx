@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Settings, ArrowLeft } from "lucide-react";
+import { Settings, ArrowLeft, Calculator } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
 import { parseQuestionsCsv } from "../quiz/parse";
 import { resolveTeams } from "../quiz/model";
-import { saveQuiz } from "../quiz/storage";
-import { useLiveScores } from "../hooks/useLiveScores";
+import { updateQuiz } from "../quiz/storage";
+import { useScores } from "../hooks/useScores";
 import { quizHash, navigate } from "../hooks/useHashRoute";
 
 import WelcomeScreen from "./WelcomeScreen";
@@ -47,21 +47,21 @@ export default function QuizShow({ bundle, isPresenter }) {
   const updateConfig = (next) => {
     setConfig(next);
     // The built-in demo is read-only; its settings only last for this session
-    if (!quiz.builtin) saveQuiz({ ...quiz, settings: next });
+    if (!quiz.builtin) updateQuiz(quiz.id, (q) => ({ ...q, settings: next }));
   };
 
   const t = TRANSLATIONS[config.language] || TRANSLATIONS.en;
-  const liveLeaderboard = useLiveScores(quiz.scoresSheetUrl);
-
   const rounds = useMemo(() => parseQuestionsCsv(quiz.questionsCsv), [quiz.questionsCsv]);
+  const liveLeaderboard = useScores(quiz, rounds);
   const teams = useMemo(() => resolveTeams(quiz.teams, resolveMedia), [quiz.teams, resolveMedia]);
   const quizContext = useMemo(() => ({ quiz, rounds, teams, resolveMedia }), [quiz, rounds, teams, resolveMedia]);
 
   const activeRound = useMemo(() => rounds.find(r => r.id === activeRoundId) || null, [rounds, activeRoundId]);
 
+  // Only local changes are broadcast (see QuestionScreen): lastSyncedRef holds the state at mount or last received
   const appChannel = useMemo(() => new BroadcastChannel('quiz-app-sync'), []);
-  const isReceivingRef = useRef(false);
-  const isInitialMount = useRef(true);
+  const syncKey = JSON.stringify([scene, activeRoundId, playMode]);
+  const lastSyncedRef = useRef(syncKey);
 
   useEffect(() => {
     const handleGlobalKey = (e) => {
@@ -76,10 +76,10 @@ export default function QuizShow({ bundle, isPresenter }) {
   useEffect(() => { appChannel.postMessage({ type: 'REQUEST_STATE', sender: isPresenter ? 'presenter' : 'main' }); }, [appChannel, isPresenter]);
 
   useEffect(() => {
-    if (isInitialMount.current) { isInitialMount.current = false; return; }
-    if (isReceivingRef.current) { isReceivingRef.current = false; return; }
+    if (syncKey === lastSyncedRef.current) return;
+    lastSyncedRef.current = syncKey;
     appChannel.postMessage({ type: 'STATE_UPDATE', sender: isPresenter ? 'presenter' : 'main', payload: { scene, activeRoundId, playMode } });
-  }, [scene, activeRoundId, playMode, isPresenter, appChannel]);
+  }, [syncKey, scene, activeRoundId, playMode, isPresenter, appChannel]);
 
   useEffect(() => {
     const handleAppSync = (e) => {
@@ -88,7 +88,7 @@ export default function QuizShow({ bundle, isPresenter }) {
       if (sender === myRole) return;
 
       if (type === 'STATE_UPDATE') {
-          isReceivingRef.current = true;
+          lastSyncedRef.current = JSON.stringify([payload.scene, payload.activeRoundId, payload.playMode]);
           setScene(payload.scene); setActiveRoundId(payload.activeRoundId); setPlayMode(payload.playMode);
       } else if (type === 'REQUEST_STATE') {
           appChannel.postMessage({ type: 'STATE_UPDATE', sender: myRole, payload: { scene, activeRoundId, playMode } });
@@ -174,6 +174,13 @@ export default function QuizShow({ bundle, isPresenter }) {
     </AnimatePresence>
     {isCalibrating && <CalibrationControls display={display} onUpdate={setDisplay} onClose={() => setIsCalibrating(false)} t={t} />}
     {!isPresenter && !isCalibrating && <FullscreenHint t={t} />}
+    {isPresenter && !quiz.builtin && !quiz.scoresSheetUrl && (
+      <button
+        onClick={() => window.open(window.location.origin + window.location.pathname + quizHash(quiz.id, 'scores'), 'ScoresWindow', 'width=1100,height=750')}
+        className="fixed bottom-4 left-4 z-[150] flex items-center gap-2 px-4 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold shadow-xl font-sans">
+        <Calculator size={18} /> {t.sc_title}
+      </button>
+    )}
     </QuizContext.Provider>
   );
 }

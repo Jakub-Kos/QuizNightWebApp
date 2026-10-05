@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch } from "lucide-react";
-import { getQuiz, saveQuiz, listMedia, putMedia, deleteMedia } from "../quiz/storage";
+import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator } from "lucide-react";
+import { getQuiz, updateQuiz, listMedia, putMedia, deleteMedia } from "../quiz/storage";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
 import { fetchSheetCsv, SheetError } from "../quiz/sheets";
 import { referencedMedia, isMediaFile } from "../quiz/package";
@@ -8,29 +8,15 @@ import { mediaKey } from "../quiz/model";
 import { formatBytes, fmt } from "../quiz/files";
 import { quizHash } from "../hooks/useHashRoute";
 import FileDrop from "./FileDrop";
+import { Section, Status, inputCls, btnCls } from "./EditorParts";
+import TeamsSection from "./TeamsSection";
+import { teamImageName } from "../quiz/teams";
 
 function sheetErrorText(err, t) {
   if (err instanceof SheetError && err.message.startsWith("http_")) return t.ed_err_http;
   if (err instanceof SheetError) return t.ed_err_network;
   return String(err.message || err);
 }
-
-const Section = ({ title, help, children }) => (
-  <section className="rounded-2xl bg-white/[0.04] border border-white/10 p-6 space-y-4">
-    <div>
-      <h2 className="font-['League_Spartan'] text-xl font-bold uppercase tracking-widest">{title}</h2>
-      {help && <p className="text-sm text-gray-400 mt-1">{help}</p>}
-    </div>
-    {children}
-  </section>
-);
-
-const Status = ({ status }) => status && (
-  <p className={`flex items-start gap-2 text-sm ${status.ok ? "text-green-300" : "text-red-300"}`}>
-    {status.ok ? <CheckCircle2 size={16} className="shrink-0 mt-0.5" /> : <AlertTriangle size={16} className="shrink-0 mt-0.5" />}
-    {status.text}
-  </p>
-);
 
 export default function QuizEditor({ id, t }) {
   const [quiz, setQuiz] = useState(undefined); // undefined = loading, null = not found
@@ -66,7 +52,9 @@ export default function QuizEditor({ id, t }) {
   // Autosave every change shortly after it happens
   useEffect(() => {
     if (!dirty.current) return;
-    const timer = setTimeout(() => saveQuiz(quiz).then(() => {
+    // Only the fields edited here; settings and scores are saved by other windows
+    const { title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams } = quiz;
+    const timer = setTimeout(() => updateQuiz(quiz.id, (q) => ({ ...q, title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams })).then(() => {
       dirty.current = false;
       setSaveState("saved");
     }), 400);
@@ -85,6 +73,7 @@ export default function QuizEditor({ id, t }) {
   const mediaKeys = useMemo(() => new Set(media.map((m) => mediaKey(m.name))), [media]);
   const missing = referenced.filter((name) => !mediaKeys.has(mediaKey(name)));
   const usedKeys = new Set(referenced.map(mediaKey));
+  const mediaUrlByKey = useMemo(() => new Map(media.map((m) => [mediaKey(m.name), m.url])), [media]);
 
   const loadSheet = async () => {
     setBusy("sheet");
@@ -126,6 +115,15 @@ export default function QuizEditor({ id, t }) {
     setBusy(null);
   };
 
+  // Team photos are stored as team-<id>.<ext>; a new photo replaces the previous one
+  const uploadTeamImage = async (team, file) => {
+    const name = teamImageName(team, file);
+    if (team.image && team.image.startsWith("team-") && mediaKey(team.image) !== mediaKey(name)) await deleteMedia(id, team.image);
+    await putMedia(id, [{ name, blob: file }]);
+    await reloadMedia();
+    return name;
+  };
+
   const removeMedia = async (name) => {
     await deleteMedia(id, name);
     await reloadMedia();
@@ -135,9 +133,14 @@ export default function QuizEditor({ id, t }) {
     setBusy("scores");
     try {
       const parsed = parseScoresCsv(await fetchSheetCsv(quiz.scoresSheetUrl));
-      setScoresStatus(parsed
-        ? { ok: true, text: fmt(t.ed_scores_ok, { teams: parsed.teams.length, rounds: parsed.rounds.length }) }
-        : { ok: false, text: t.ed_err_format });
+      // The leaderboard matches Sheet rows to teams by name; unmatched rows get no photo or color
+      const known = new Set(quiz.teams.map((team) => team.name.trim().toLowerCase()));
+      const unmatched = parsed ? parsed.teams.map((row) => row.name).filter((name) => !known.has(name.trim().toLowerCase())) : [];
+      setScoresStatus(!parsed
+        ? { ok: false, text: t.ed_err_format }
+        : unmatched.length && quiz.teams.length
+          ? { ok: false, text: `${fmt(t.ed_scores_ok, { teams: parsed.teams.length, rounds: parsed.rounds.length })} ${fmt(t.ed_scores_unmatched, { names: unmatched.join(", ") })}` }
+          : { ok: true, text: fmt(t.ed_scores_ok, { teams: parsed.teams.length, rounds: parsed.rounds.length }) });
     } catch (err) {
       setScoresStatus({ ok: false, text: sheetErrorText(err, t) });
     }
@@ -155,8 +158,6 @@ export default function QuizEditor({ id, t }) {
   }
 
   const totalSize = media.reduce((n, m) => n + m.blob.size, 0);
-  const inputCls = "w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-yellow-500/60";
-  const btnCls = "flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-sm whitespace-nowrap disabled:opacity-50";
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans">
@@ -262,6 +263,15 @@ export default function QuizEditor({ id, t }) {
           )}
         </Section>
 
+        <TeamsSection
+          teams={quiz.teams}
+          onChange={(teams) => update({ teams })}
+          mediaUrl={(name) => mediaUrlByKey.get(mediaKey(name))}
+          hasMedia={(name) => mediaKeys.has(mediaKey(name))}
+          onUploadImage={uploadTeamImage}
+          t={t}
+        />
+
         <Section title={t.ed_scores} help={t.ed_scores_help}>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
@@ -274,6 +284,11 @@ export default function QuizEditor({ id, t }) {
             </button>
           </div>
           <Status status={scoresStatus} />
+          {!quiz.scoresSheetUrl && (
+            <a href={quizHash(quiz.id, "scores")} className={`${btnCls} w-fit`}>
+              <Calculator size={16} /> {t.sc_open}
+            </a>
+          )}
         </Section>
       </div>
     </div>

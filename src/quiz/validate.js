@@ -35,7 +35,13 @@ export function validateQuiz(quiz, rounds, hasMedia) {
 
   if (rounds.length === 0) add("error", "no_rounds");
   if (quiz.teams.length === 0) add("info", "no_teams");
-  if (!quiz.scoresSheetUrl) add("info", "no_scores");
+  if (!quiz.scoresSheetUrl && !quiz.builtin) add("info", "no_scores");
+
+  const names = quiz.teams.map((t) => String(t.name || "").trim().toLowerCase());
+  quiz.teams.forEach((team, i) => {
+    if (!names[i]) add("warning", "team_no_name");
+    else if (names.indexOf(names[i]) !== i) add("warning", "team_duplicate", -1, -1, { team: team.name });
+  });
 
   rounds.forEach((round, ri) => {
     if (isRoundHidden(round)) add("warning", "round_hidden", ri);

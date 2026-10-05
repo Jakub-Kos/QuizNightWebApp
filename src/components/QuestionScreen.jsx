@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check, X, Edit3, Hash, Clock, ListOrdered } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, X, Edit3, Hash, Clock, ListOrdered, Maximize2, Minimize2 } from "lucide-react";
 import { useStageSize } from "../hooks/useDisplay";
 import { useQuiz } from "../quiz/context";
 
@@ -8,9 +8,12 @@ import { useQuiz } from "../quiz/context";
 export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t = {}, preview = null }) {
     const [stateQIndex, setQIndex] = useState(-1);
     const [stateStep, setStep] = useState(0);
+    // zoom: the question's image enlarged to fill the screen
+    const [stateZoom, setZoom] = useState(false);
     const isPreview = preview !== null;
     const qIndex = isPreview ? preview.qIndex : stateQIndex;
     const step = isPreview ? preview.step : stateStep;
+    const zoom = isPreview ? false : stateZoom;
     const [timer, setTimer] = useState(0);
     const stageSize = useStageSize();
 
@@ -18,25 +21,25 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     const modeText = isQuestionsOnly ? "Q ONLY MODE" : "REVEAL MODE";
 
     // --- 2-WAY PRESENTER SYNC ---
+    // Only local changes are broadcast: the state at mount and states received from the other window are
+    // remembered in lastSyncedRef, so a window joining mid-round adopts the other's state instead of resetting it
     const channel = useMemo(() => (isPreview ? null : new BroadcastChannel('quiz-question-sync')), [isPreview]);
-    const isReceivingRef = useRef(false);
+    const syncKey = JSON.stringify([qIndex, step, zoom]);
+    const lastSyncedRef = useRef(syncKey);
 
     useEffect(() => {
         channel?.postMessage({ type: 'Q_REQUEST', sender: isPresenter ? 'presenter' : 'main' });
     }, [channel, isPresenter]);
 
     useEffect(() => {
-        if (!channel) return;
-        if (isReceivingRef.current) {
-            isReceivingRef.current = false;
-            return;
-        }
+        if (!channel || syncKey === lastSyncedRef.current) return;
+        lastSyncedRef.current = syncKey;
         channel.postMessage({
             type: 'Q_UPDATE',
             sender: isPresenter ? 'presenter' : 'main',
-            payload: { qIndex, step }
+            payload: { qIndex, step, zoom }
         });
-    }, [qIndex, step, isPresenter, channel]);
+    }, [syncKey, qIndex, step, zoom, isPresenter, channel]);
 
     useEffect(() => {
         if (!channel) return;
@@ -47,20 +50,21 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
             if (sender === myRole) return;
 
             if (type === 'Q_UPDATE') {
-                isReceivingRef.current = true;
+                lastSyncedRef.current = JSON.stringify([payload.qIndex, payload.step, payload.zoom ?? false]);
                 setQIndex(payload.qIndex);
                 setStep(payload.step);
+                setZoom(payload.zoom ?? false);
             } else if (type === 'Q_REQUEST') {
                 channel.postMessage({
                     type: 'Q_UPDATE',
                     sender: myRole,
-                    payload: { qIndex, step }
+                    payload: { qIndex, step, zoom }
                 });
             }
         };
         channel.addEventListener('message', handleQSync);
         return () => channel.removeEventListener('message', handleQSync);
-    }, [qIndex, step, isPresenter, channel]);
+    }, [qIndex, step, zoom, isPresenter, channel]);
 
 
     // Questions arrive parsed (quiz/parse.js); media file names resolve to URLs here
@@ -71,6 +75,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     );
 
     const question = qIndex >= 0 ? processedQuestions[qIndex] : null;
+    const hasImage = Boolean(question?.source) && !question.type.includes("Video") && question.type !== "Audio";
 
     const getExpectedAnswerText = (type) => {
         switch(type) {
@@ -105,13 +110,15 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
         const handleKeyDown = (e) => {
             if (e.key === "ArrowRight") next();
             if (e.key === "ArrowLeft") prev();
-            if (e.key === "Escape") onBack();
+            if (e.key === "Escape") { if (zoom) setZoom(false); else onBack(); }
+            if (e.key.toLowerCase() === "z" && hasImage) setZoom(z => !z);
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [step, qIndex, isQuestionsOnly, isPresenter, isPreview]);
+    }, [step, qIndex, zoom, hasImage, isQuestionsOnly, isPresenter, isPreview]);
 
     const next = () => {
+        setZoom(false);
         if (qIndex === -1) { setQIndex(0); setStep(0); return; }
         const maxSteps = getStepsForType(question.type);
         if (step < maxSteps - 1) {
@@ -125,6 +132,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     };
 
     const prev = () => {
+        setZoom(false);
         if (step > 0) {
             setStep(prev => prev - 1);
         } else {
@@ -150,7 +158,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
         return (
             <div className="h-full w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col">
                 {/* Header */}
-                <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-6">
+                <div className="flex flex-wrap justify-between items-center gap-4 mb-8 border-b border-white/10 pb-6">
                     <div>
                         <h1 className="text-3xl font-black text-yellow-500 tracking-widest uppercase">Host Dashboard</h1>
                         <div className="flex items-center gap-3 mt-2">
@@ -158,7 +166,12 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                             <span className="text-blue-400 font-mono text-sm">{modeText}</span>
                         </div>
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-4">
+                        {hasImage && (
+                            <button onClick={() => setZoom(z => !z)} className={`px-6 py-4 font-bold rounded-xl transition-all flex items-center gap-2 ${zoom ? "bg-yellow-500 text-black" : "bg-white/10 hover:bg-white/20 text-white"}`}>
+                                {zoom ? <Minimize2 size={20} /> : <Maximize2 size={20} />} {zoom ? "CLOSE IMAGE" : "ENLARGE IMAGE"}
+                            </button>
+                        )}
                         <button onClick={prev} className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all">
                             &lt; PREVIOUS
                         </button>
@@ -319,7 +332,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                             {question.type === "PVideo" ? (
                                 <video src={question.source} controls autoPlay className="max-h-full max-w-full rounded-2xl shadow-2xl border border-white/10" />
                             ) : (
-                                <img src={question.source} alt="Visual" className="max-h-full max-w-full rounded-2xl shadow-2xl border border-white/10" />
+                                <img src={question.source} alt="Visual" onClick={isPreview ? undefined : () => setZoom(true)} className="max-h-full max-w-full rounded-2xl shadow-2xl border border-white/10 cursor-zoom-in" />
                             )}
                         </motion.div>
                     )}
@@ -339,7 +352,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                             <audio controls src={question.source} className="w-full" />
                                         </div>
                                     ) : (
-                                        <img src={question.source} className="max-h-[40cqh] rounded-2xl border border-white/20" />
+                                        <img src={question.source} onClick={isPreview ? undefined : () => setZoom(true)} className="max-h-[40cqh] rounded-2xl border border-white/20 cursor-zoom-in" />
                                     )}
                                 </div>
                             )}
@@ -421,6 +434,17 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* ENLARGED IMAGE */}
+            <AnimatePresence>
+                {zoom && hasImage && (
+                    <motion.div key="zoom" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
+                        onClick={() => setZoom(false)}
+                        className="absolute inset-0 z-50 bg-black/95 flex items-center justify-center p-[2cqh] cursor-zoom-out">
+                        <img src={question.source} alt="Visual" className="w-full h-full object-contain" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* --- FOOTER --- */}
             <div className="h-[10cqh] border-t border-white/5 bg-black/50 backdrop-blur-md flex items-center justify-between px-10 relative z-30">
