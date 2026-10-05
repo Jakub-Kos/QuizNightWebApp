@@ -46,6 +46,19 @@ export function importTeamsCsv(text, existing, hasMedia) {
   return { teams, added, updated };
 }
 
+// Team names from a scores Sheet (parseScoresCsv result) added after the existing teams.
+// Teams already in the list (same name, any letter case) are kept as they are.
+export function addTeamsFromScores(scores, existing) {
+  const teams = [...existing];
+  let added = 0;
+  for (const { name } of scores.teams) {
+    if (teams.some((t) => sameName(t.name, name))) continue;
+    teams.push(newTeam({ name: name.trim() }));
+    added++;
+  }
+  return { teams, added, existing: scores.teams.length - added };
+}
+
 // Past results: a team-name column, one rank column per past quiz (header containing "rank", "pořadí" or
 // "umístění") and optionally an accuracy column. Fills the stats shown on the welcome screen.
 export function importHistoryCsv(text, existing) {

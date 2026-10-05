@@ -17,6 +17,13 @@ export function toCsvUrl(url) {
 
 export class SheetError extends Error {}
 
+// Message for a failed fetchSheetCsv, from the UI translations
+export function sheetErrorText(err, t) {
+  if (err instanceof SheetError && err.message.startsWith("http_")) return t.ed_err_http;
+  if (err instanceof SheetError) return t.ed_err_network;
+  return String(err.message || err);
+}
+
 export async function fetchSheetCsv(url) {
   const csvUrl = toCsvUrl(url);
   // Cache buster: Google otherwise serves copies up to 5 minutes old

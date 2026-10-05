@@ -1,15 +1,19 @@
 import { useRef, useState } from "react";
-import { Plus, Users, History, Trash2, Camera, Crown, Target } from "lucide-react";
+import { Plus, Users, History, Trash2, Camera, Crown, Target, Sheet, Loader2 } from "lucide-react";
 import { TEAM_COLORS, TEAM_ICONS } from "../quiz/model";
-import { newTeam, importTeamsCsv, importHistoryCsv } from "../quiz/teams";
+import { newTeam, importTeamsCsv, importHistoryCsv, addTeamsFromScores } from "../quiz/teams";
+import { fetchSheetCsv, sheetErrorText } from "../quiz/sheets";
+import { parseScoresCsv } from "../quiz/parse";
 import { fmt } from "../quiz/files";
 import { Section, Status, btnCls } from "./EditorParts";
 
 const fieldCls = "bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-yellow-500/60";
 
-// teams: stored team records; mediaUrl(name) -> thumbnail URL; onUploadImage(team, file) -> stored file name
-export default function TeamsSection({ teams, onChange, mediaUrl, hasMedia, onUploadImage, t }) {
+// teams: stored team records; mediaUrl(name) -> thumbnail URL; onUploadImage(team, file) -> stored file name;
+// scoresSheetUrl: the quiz's live scores Sheet, whose team names can be loaded as teams
+export default function TeamsSection({ teams, onChange, mediaUrl, hasMedia, scoresSheetUrl, onUploadImage, t }) {
   const [status, setStatus] = useState(null);
+  const [loadingScores, setLoadingScores] = useState(false);
   const teamsCsv = useRef(null);
   const historyCsv = useRef(null);
   const photoInput = useRef(null);
@@ -46,6 +50,23 @@ export default function TeamsSection({ teams, onChange, mediaUrl, hasMedia, onUp
     setStatus({ ok: result.matched > 0, text: fmt(t.tm_history_imported, result) });
   });
 
+  const loadFromScores = async () => {
+    setLoadingScores(true);
+    try {
+      const scores = parseScoresCsv(await fetchSheetCsv(scoresSheetUrl));
+      if (!scores) setStatus({ ok: false, text: t.ed_err_format });
+      else if (scores.teams.length === 0) setStatus({ ok: false, text: t.tm_from_scores_none });
+      else {
+        const result = addTeamsFromScores(scores, teams);
+        onChange(result.teams);
+        setStatus({ ok: true, text: fmt(t.tm_from_scores_done, result) });
+      }
+    } catch (err) {
+      setStatus({ ok: false, text: sheetErrorText(err, t) });
+    }
+    setLoadingScores(false);
+  };
+
   const onPhoto = async (e) => {
     const file = e.target.files[0];
     e.target.value = "";
@@ -64,6 +85,9 @@ export default function TeamsSection({ teams, onChange, mediaUrl, hasMedia, onUp
       helpId="teams"
       actions={(
         <>
+          <button onClick={loadFromScores} disabled={!scoresSheetUrl || loadingScores} title={scoresSheetUrl ? "" : t.tm_from_scores_need} className={btnCls}>
+            {loadingScores ? <Loader2 size={16} className="animate-spin" /> : <Sheet size={16} />} {t.tm_from_scores}
+          </button>
           <button onClick={() => teamsCsv.current.click()} className={btnCls}><Users size={16} /> {t.tm_import}</button>
           <button onClick={() => historyCsv.current.click()} disabled={teams.length === 0} className={btnCls}><History size={16} /> {t.tm_import_history}</button>
         </>

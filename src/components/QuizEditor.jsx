@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle } from "lucide-react";
 import { getQuiz, updateQuiz, listMedia, putMedia, deleteMedia } from "../quiz/storage";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
-import { fetchSheetCsv, SheetError } from "../quiz/sheets";
+import { fetchSheetCsv, sheetErrorText } from "../quiz/sheets";
 import { referencedMedia, isMediaFile } from "../quiz/package";
 import { mediaKey } from "../quiz/model";
 import { formatBytes, fmt } from "../quiz/files";
@@ -11,12 +11,6 @@ import FileDrop from "./FileDrop";
 import { Section, Status, inputCls, btnCls } from "./EditorParts";
 import TeamsSection from "./TeamsSection";
 import { teamImageName } from "../quiz/teams";
-
-function sheetErrorText(err, t) {
-  if (err instanceof SheetError && err.message.startsWith("http_")) return t.ed_err_http;
-  if (err instanceof SheetError) return t.ed_err_network;
-  return String(err.message || err);
-}
 
 export default function QuizEditor({ id, t }) {
   const [quiz, setQuiz] = useState(undefined); // undefined = loading, null = not found
@@ -264,15 +258,6 @@ export default function QuizEditor({ id, t }) {
           )}
         </Section>
 
-        <TeamsSection
-          teams={quiz.teams}
-          onChange={(teams) => update({ teams })}
-          mediaUrl={(name) => mediaUrlByKey.get(mediaKey(name))}
-          hasMedia={(name) => mediaKeys.has(mediaKey(name))}
-          onUploadImage={uploadTeamImage}
-          t={t}
-        />
-
         <Section title={t.ed_scores} help={t.ed_scores_help} helpId="scores">
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
@@ -291,6 +276,16 @@ export default function QuizEditor({ id, t }) {
             </a>
           )}
         </Section>
+
+        <TeamsSection
+          teams={quiz.teams}
+          onChange={(teams) => update({ teams })}
+          mediaUrl={(name) => mediaUrlByKey.get(mediaKey(name))}
+          hasMedia={(name) => mediaKeys.has(mediaKey(name))}
+          scoresSheetUrl={quiz.scoresSheetUrl}
+          onUploadImage={uploadTeamImage}
+          t={t}
+        />
       </div>
     </div>
   );

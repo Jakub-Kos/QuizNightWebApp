@@ -17,7 +17,7 @@ export const HELP = {
         items: [
           "Write the questions in Google Sheets (or any spreadsheet) with the columns from the template.",
           "In the library click New quiz, paste the Sheet link (or upload the CSV) and drop in the images.",
-          "Add the teams. Then either link a scores Sheet or type the points into the score table during the quiz.",
+          "Link a scores Sheet (or plan to type the points into the score table during the quiz), then add the teams: with a Sheet, Load names from live scores fills them in.",
           "Open Check: fix everything red and look through the question thumbnails.",
           "Start the show on the TV and press `Shift+P` on your laptop to open the presenter window.",
         ],
@@ -137,7 +137,7 @@ export const HELP = {
       {
         id: "teams", title: "Teams",
         items: [
-          "Add teams by hand, or import a CSV with a `Název týmu` (or `Team name`) column and optional `Počet hráčů` / `Players` and `Motto` / `Quote` columns. A Google Form registration export works as it is.",
+          "If the quiz has a live scores Sheet, Load names from live scores adds every team from it. Add teams by hand, or import a CSV with a `Název týmu` (or `Team name`) column and optional `Počet hráčů` / `Players` and `Motto` / `Quote` columns. A Google Form registration export works as it is.",
           "Photos: click the square next to a team to upload one. Google Drive links from a form cannot be shown.",
           "Past results: a CSV with the team name and one column per past quiz whose name contains `Rank`, plus an optional `Accuracy` column. They appear on the welcome screen.",
           "Team names must match the names in the scores, otherwise photos and colors are missing on the leaderboard.",
@@ -179,7 +179,7 @@ export const HELP = {
         items: [
           "Napište otázky v Google Tabulkách (nebo jiné tabulce) se sloupci podle šablony.",
           "V knihovně klikněte na Nový kvíz, vložte odkaz na tabulku (nebo nahrajte CSV) a přetáhněte obrázky.",
-          "Přidejte týmy. Pak buď připojte tabulku s body, nebo body zapisujte během kvízu do tabulky bodů.",
+          "Připojte tabulku s body (nebo body zapisujte během kvízu do tabulky bodů) a pak přidejte týmy: s tabulkou je doplní tlačítko Načíst názvy ze živého skóre.",
           "Otevřete Kontrolu: opravte vše červené a projděte si náhledy otázek.",
           "Spusťte show na televizi a na notebooku stiskněte `Shift+P` pro okno moderátora.",
         ],
@@ -299,7 +299,7 @@ export const HELP = {
       {
         id: "teams", title: "Týmy",
         items: [
-          "Týmy přidejte ručně, nebo importujte CSV se sloupcem `Název týmu` (nebo `Team name`) a nepovinnými sloupci `Počet hráčů` a `Motto`. Export registrací z Google Formuláře funguje rovnou.",
+          "Pokud má kvíz tabulku se živým skóre, tlačítko Načíst názvy ze živého skóre z ní přidá všechny týmy. Týmy přidejte ručně, nebo importujte CSV se sloupcem `Název týmu` (nebo `Team name`) a nepovinnými sloupci `Počet hráčů` a `Motto`. Export registrací z Google Formuláře funguje rovnou.",
           "Fotky: klikněte na čtvereček u týmu a nahrajte ji. Odkazy na fotky na Google Disku z formuláře zobrazit nejdou.",
           "Minulé výsledky: CSV s názvem týmu a jedním sloupcem za každý minulý kvíz, který má v názvu `Rank`, plus nepovinný sloupec `Accuracy`. Ukážou se na úvodní obrazovce.",
           "Názvy týmů musí odpovídat názvům v bodech, jinak v žebříčku chybí fotky a barvy.",
@@ -341,7 +341,7 @@ export const HELP = {
         items: [
           "Írd meg a kérdéseket a Google Táblázatokban (vagy bármilyen táblázatkezelőben) a sablon oszlopaival.",
           "A könyvtárban kattints az Új kvíz gombra, illeszd be a táblázat linkjét (vagy töltsd fel a CSV-t), és húzd be a képeket.",
-          "Add hozzá a csapatokat. Aztán vagy kapcsolj egy pontszám táblázatot, vagy a kvíz alatt írd a pontokat a pont táblázatba.",
+          "Kapcsolj egy pontszám táblázatot (vagy a kvíz alatt írd a pontokat a pont táblázatba), aztán add hozzá a csapatokat: táblázattal a Nevek betöltése az élő pontszámokból gomb kitölti őket.",
           "Nyisd meg az Ellenőrzést: javíts ki mindent, ami piros, és nézd át a kérdések előnézetét.",
           "Indítsd el a show-t a tévén, és a laptopon nyomd meg a `Shift+P`-t a műsorvezetői ablakhoz.",
         ],
@@ -461,7 +461,7 @@ export const HELP = {
       {
         id: "teams", title: "Csapatok",
         items: [
-          "A csapatokat add hozzá kézzel, vagy importálj egy CSV-t `Název týmu` (vagy `Team name`) oszloppal és nem kötelező `Počet hráčů` / `Players` és `Motto` / `Quote` oszlopokkal. A Google Űrlap regisztrációs exportja így ahogy van, működik.",
+          "Ha a kvíznek van élő pontszám táblázata, a Nevek betöltése az élő pontszámokból gomb az összes csapatot hozzáadja belőle. A csapatokat add hozzá kézzel, vagy importálj egy CSV-t `Název týmu` (vagy `Team name`) oszloppal és nem kötelező `Počet hráčů` / `Players` és `Motto` / `Quote` oszlopokkal. A Google Űrlap regisztrációs exportja így ahogy van, működik.",
           "Fotók: kattints a csapat melletti négyzetre a feltöltéshez. Az űrlapból származó Google Drive linkek nem jeleníthetők meg.",
           "Korábbi eredmények: CSV a csapatnévvel és minden korábbi kvízhez egy oszloppal, amelynek nevében `Rank` szerepel, valamint nem kötelező `Accuracy` oszloppal. A nyitóképernyőn jelennek meg.",
           "A csapatneveknek egyezniük kell a pontszámokban szereplő nevekkel, különben a ranglistán hiányoznak a fotók és a színek.",
