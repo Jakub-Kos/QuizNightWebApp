@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuiz } from "../quiz/context";
+import { isPresent } from "../quiz/teams";
 import { Clock, Users, Trophy, Medal, TrendingUp, Target, Crown, Play, Timer, RotateCw } from "lucide-react";
 
 // --- SUB-COMPONENT: RANK GRAPH (BAR CHART VERSION) ---
@@ -296,7 +297,9 @@ const NO_TEAM = { id: 0, name: "", quote: "", color: "from-purple-600 to-indigo-
 
 // --- MAIN COMPONENT ---
 export default function WelcomeScreen({ onStart, startTime, showTime, config, t }) {
-  const { quiz, teams } = useQuiz();
+  const { quiz, teams: allTeams } = useQuiz();
+  // Teams marked absent at the attendance check are not introduced
+  const teams = useMemo(() => allTeams.filter(isPresent), [allTeams]);
   const splitDelay = config?.splitDelay || 3000;
   const cycleDuration = config?.cycleDuration || 8000;
   const headerInterval = config?.headerInterval || 5000;

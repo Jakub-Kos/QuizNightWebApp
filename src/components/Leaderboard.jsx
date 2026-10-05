@@ -2,9 +2,12 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Minus as MinusIcon, Trophy, Crown, CheckCircle, HelpCircle, Shuffle, Database, Flame } from "lucide-react";
 import { useQuiz } from "../quiz/context";
+import { isPresent, directionText } from "../quiz/teams";
+import VenueMap from "./VenueMap";
 
 export default function Leaderboard({ isPresenter, data, availableRounds, latestRoundName, lastSync, onClose, t }) {
-  const { teams } = useQuiz();
+  const tr = t;
+  const { quiz, teams } = useQuiz();
   const [frozenData] = useState(() => data || []);
   const [frozenRounds] = useState(() => availableRounds || []);
 
@@ -158,6 +161,16 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
   // UI rendering remains exactly the same below...
   if (isPresenter) {
       const activeGroupIndex = Math.floor((revealStep) / 2);
+
+      // Where to look: the group being revealed now, or the leader(s) once all groups are applied
+      const sameName = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
+      const metaFor = (name) => teams.find(meta => sameName(meta.name, name));
+      const seated = teams.filter(team => team.seat && isPresent(team));
+      const topTotal = Math.max(0, ...initialTeams.map(team => team.total));
+      const focusNames = revealStep >= maxStep - 1
+          ? initialTeams.filter(team => team.total === topTotal).map(team => team.name)
+          : (scoreGroups[activeGroupIndex]?.teams || []).map(team => team.name);
+      const focusIds = new Set(focusNames.map(name => metaFor(name)?.id).filter(Boolean));
       const isCardStep = revealStep % 2 === 1 && revealStep < maxStep;
 
       let nextActionText = "START REVEAL";
@@ -206,7 +219,25 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
                   </button>
               </div>
 
-              <div className="flex-1 bg-white/5 rounded-2xl border border-white/10 overflow-y-auto p-6 custom-scrollbar">
+              <div className="flex-1 min-h-0 flex flex-col gap-6">
+              {/* Where to look: the wide seating map across the full width, above the reveal order */}
+              {seated.length > 0 && (
+                  <div className="h-[24vh] min-h-[170px] shrink-0 bg-white/5 rounded-2xl border border-white/10 p-4 flex gap-4">
+                      <div className="flex-1 min-w-0 flex flex-col">
+                          <h3 className="text-sm font-bold text-white/30 uppercase tracking-widest">{tr.att_look}</h3>
+                          <VenueMap arc={quiz.settings?.venueArc || 180} teams={seated} highlight={focusIds} youLabel={tr.att_you} fill markerScale={1.8} className="flex-1 min-h-0" />
+                      </div>
+                      <ul className="w-72 shrink-0 space-y-2 self-center overflow-y-auto max-h-full">
+                          {focusNames.map(name => (
+                              <li key={name} className="flex justify-between items-baseline gap-3">
+                                  <span className="text-lg font-black truncate">{name}</span>
+                                  <span className="text-lg font-bold text-yellow-300 whitespace-nowrap">{directionText(metaFor(name)?.seat, tr) || "—"}</span>
+                              </li>
+                          ))}
+                      </ul>
+                  </div>
+              )}
+              <div className="flex-1 min-h-0 bg-white/5 rounded-2xl border border-white/10 overflow-y-auto p-6 custom-scrollbar">
                   <h3 className="text-sm font-bold text-white/30 uppercase tracking-widest mb-6">Reveal Order (Lowest to Highest)</h3>
                   {scoreGroups.map((group, gIdx) => (
                       <div key={gIdx} className={`mb-6 p-4 rounded-xl border ${revealStep >= (gIdx * 2) + 2 ? 'bg-blue-900/30 border-blue-500/30' : 'bg-black/40 border-white/10'}`}>
@@ -218,6 +249,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
                               {group.teams.map(t => (
                                   <div key={t.name} className="flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded text-sm font-bold border border-white/5">
                                       {t.name}
+                                      {metaFor(t.name)?.seat && <span className="ml-1 text-xs font-normal text-yellow-300/80">{directionText(metaFor(t.name).seat, tr)}</span>}
                                       {t.isHighestRound && <Crown size={14} className="text-yellow-500 ml-1" />}
                                       {t.isOnFire && <Flame size={14} className="text-orange-500" fill="currentColor" />}
                                   </div>
@@ -230,6 +262,8 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
                           <Shuffle size={18}/> FINAL STEP: Shuffle Standings
                       </h4>
                   </div>
+              </div>
+
               </div>
           </div>
       )

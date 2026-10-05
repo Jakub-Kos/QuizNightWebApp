@@ -13,6 +13,13 @@ export const TEAM_COLORS = [
   "from-sky-500 to-blue-700", "from-stone-700 to-stone-900",
 ];
 
+// One solid color per TEAM_COLORS gradient, for places that cannot use Tailwind classes (SVG)
+const TEAM_HEX = ["#9333ea", "#dc2626", "#2563eb", "#059669", "#f97316", "#eab308", "#0ea5e9", "#57534e"];
+export const teamHex = (team, index) => {
+  const i = TEAM_COLORS.indexOf(team.color);
+  return TEAM_HEX[i >= 0 ? i : index % TEAM_HEX.length];
+};
+
 // Stored teams -> what the scenes render: image URL, icon component, a color for every team
 export const resolveTeams = (teams, resolveMedia) => teams.map((team, i) => ({
   ...team,

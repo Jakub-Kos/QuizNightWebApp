@@ -7,12 +7,13 @@ import { useState, useEffect } from "react";
 //   #/quiz/<id>/edit         quiz setup
 //   #/quiz/<id>/check        quiz check (problems + thumbnails)
 //   #/quiz/<id>/scores       manual score entry
+//   #/quiz/<id>/attendance   attendance check and seating map
 //   #/help, #/help/<section> help page
 function parse(hash) {
   const parts = hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
   if (parts[0] === "help") return { name: "help", section: parts[1] || null };
   if (parts[0] === "quiz" && parts[1]) {
-    const view = ["presenter", "edit", "check", "scores"].includes(parts[2]) ? parts[2] : "show";
+    const view = ["presenter", "edit", "check", "scores", "attendance"].includes(parts[2]) ? parts[2] : "show";
     return { name: view, id: parts[1] };
   }
   return { name: "library" };

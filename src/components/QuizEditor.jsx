@@ -10,7 +10,7 @@ import { quizHash } from "../hooks/useHashRoute";
 import FileDrop from "./FileDrop";
 import { Section, Status, inputCls, btnCls } from "./EditorParts";
 import TeamsSection from "./TeamsSection";
-import { teamImageName } from "../quiz/teams";
+import { saveTeamImage } from "../quiz/teams";
 
 export default function QuizEditor({ id, t }) {
   const [quiz, setQuiz] = useState(undefined); // undefined = loading, null = not found
@@ -111,9 +111,7 @@ export default function QuizEditor({ id, t }) {
 
   // Team photos are stored as team-<id>.<ext>; a new photo replaces the previous one
   const uploadTeamImage = async (team, file) => {
-    const name = teamImageName(team, file);
-    if (team.image && team.image.startsWith("team-") && mediaKey(team.image) !== mediaKey(name)) await deleteMedia(id, team.image);
-    await putMedia(id, [{ name, blob: file }]);
+    const name = await saveTeamImage(id, team, file);
     await reloadMedia();
     return name;
   };
@@ -278,6 +276,7 @@ export default function QuizEditor({ id, t }) {
         </Section>
 
         <TeamsSection
+          quizId={quiz.id}
           teams={quiz.teams}
           onChange={(teams) => update({ teams })}
           mediaUrl={(name) => mediaUrlByKey.get(mediaKey(name))}

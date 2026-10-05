@@ -1,4 +1,7 @@
 import Papa from "papaparse";
+import { putMedia, deleteMedia } from "./storage";
+import { mediaKey } from "./model";
+import { fmt } from "./files";
 
 export function newTeam(fields = {}) {
   return { id: crypto.randomUUID(), name: "", quote: "", players: 0, image: null, color: null, icon: "Brain", isNew: true, ...fields };
@@ -93,3 +96,30 @@ export function importHistoryCsv(text, existing) {
 
 // Team photos are stored as media named after the team id, so renaming a team keeps its photo
 export const teamImageName = (team, file) => `team-${team.id}.${file.name.split(".").pop().toLowerCase()}`;
+
+// Stores a team photo and returns its media name; a new photo replaces the team's previous one
+export async function saveTeamImage(quizId, team, file) {
+  const name = teamImageName(team, file);
+  if (team.image && team.image.startsWith("team-") && mediaKey(team.image) !== mediaKey(name)) await deleteMedia(quizId, team.image);
+  await putMedia(quizId, [{ name, blob: file }]);
+  return name;
+}
+
+// Attendance: team.present is true (arrived), false (absent) or unset (not checked yet).
+// Teams that were not checked count as present, so quizzes without attendance work as before.
+export const isPresent = (team) => team.present !== false;
+
+// team.seat = { angle, dist }: where the team sits as seen by the moderator. angle in degrees,
+// 0 straight ahead, negative to the left; dist 0..1 from the moderator to the edge of the room.
+export function seatDirection(seat) {
+  if (!seat) return null;
+  const deg = Math.round(Math.abs(seat.angle) / 5) * 5;
+  return { deg, side: deg === 0 ? "front" : seat.angle < 0 ? "left" : "right" };
+}
+
+// "40° left" / "straight ahead" in the UI language; null when the team has no seat
+export function directionText(seat, t) {
+  const dir = seatDirection(seat);
+  if (!dir) return null;
+  return dir.side === "front" ? t.att_dir_front : fmt(dir.side === "left" ? t.att_dir_left : t.att_dir_right, { deg: dir.deg });
+}

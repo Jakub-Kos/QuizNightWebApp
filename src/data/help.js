@@ -156,6 +156,7 @@ export const HELP = {
         items: [
           "Drag the window to the TV and press F11. Calibrate each new screen once with `Shift+C`.",
           "On your laptop press `Shift+P`: the presenter window controls the TV and shows the answers.",
+          "Before the start, open Attendance (button in the presenter window): tick the teams that came, correct the players and place each team on the seating map (180° or 270° around you). During the leaderboard reveal the presenter window then shows which way to face each team.",
           "Every round has two buttons: Questions (questions only, with a timer, for the writing part) and Answers (goes through again and reveals them).",
           "Keys: `→` next step, `←` back, `Z` enlarge the image, `Esc` back to the dashboard, `Shift+D` dashboard, `Shift+C` calibration, `Shift+P` presenter.",
         ],
@@ -318,6 +319,7 @@ export const HELP = {
         items: [
           "Přetáhněte okno na televizi a stiskněte F11. Každou novou obrazovku jednou zkalibrujte přes `Shift+C`.",
           "Na notebooku stiskněte `Shift+P`: okno moderátora ovládá televizi a ukazuje odpovědi.",
+          "Před začátkem otevřete Docházku (tlačítko v okně moderátora): zaškrtněte přítomné týmy, opravte počty hráčů a každý tým umístěte na mapu sálu (180° nebo 270° kolem vás). Při odhalování žebříčku pak okno moderátora ukáže, kam se k týmu otočit.",
           "Každé kolo má dvě tlačítka: Otázky (jen otázky s časovačem, na psaní) a Odpovědi (projde kolo znovu a odhalí odpovědi).",
           "Klávesy: `→` další krok, `←` zpět, `Z` zvětšit obrázek, `Esc` zpět na přehled, `Shift+D` přehled, `Shift+C` kalibrace, `Shift+P` moderátor.",
         ],
@@ -480,6 +482,7 @@ export const HELP = {
         items: [
           "Húzd az ablakot a tévére, és nyomd meg az F11-et. Minden új képernyőt egyszer kalibrálj a `Shift+C`-vel.",
           "A laptopon nyomd meg a `Shift+P`-t: a műsorvezetői ablak irányítja a tévét és mutatja a válaszokat.",
+          "Kezdés előtt nyisd meg a Jelenlétet (gomb a műsorvezetői ablakban): jelöld be a jelenlévő csapatokat, javítsd a létszámot, és helyezd el a csapatokat a terem térképén (180° vagy 270° körülötted). A ranglista felfedésekor a műsorvezetői ablak megmutatja, merre fordulj az egyes csapatokhoz.",
           "Minden körnek két gombja van: Kérdések (csak kérdések időzítővel, az íráshoz) és Válaszok (újra végigmegy és felfedi őket).",
           "Billentyűk: `→` következő lépés, `←` vissza, `Z` kép nagyítása, `Esc` vissza az áttekintőhöz, `Shift+D` áttekintő, `Shift+C` kalibrálás, `Shift+P` műsorvezető.",
         ],

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Settings, ArrowLeft, Calculator } from "lucide-react";
+import { Settings, ArrowLeft, Calculator, ClipboardCheck } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -174,12 +174,22 @@ export default function QuizShow({ bundle, isPresenter }) {
     </AnimatePresence>
     {isCalibrating && <CalibrationControls display={display} onUpdate={setDisplay} onClose={() => setIsCalibrating(false)} t={t} />}
     {!isPresenter && !isCalibrating && <FullscreenHint t={t} />}
-    {isPresenter && !quiz.builtin && !quiz.scoresSheetUrl && (
-      <button
-        onClick={() => window.open(window.location.origin + window.location.pathname + quizHash(quiz.id, 'scores'), 'ScoresWindow', 'width=1100,height=750')}
-        className="fixed bottom-4 left-4 z-[150] flex items-center gap-2 px-4 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold shadow-xl font-sans">
-        <Calculator size={18} /> {t.sc_title}
-      </button>
+    {/* Host tools in the presenter window, each opened in its own window */}
+    {isPresenter && !quiz.builtin && (
+      <div className="fixed bottom-4 left-4 z-[150] flex gap-2 font-sans">
+        <button
+          onClick={() => window.open(window.location.origin + window.location.pathname + quizHash(quiz.id, 'attendance'), 'AttendanceWindow', 'width=1200,height=800')}
+          className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold shadow-xl backdrop-blur">
+          <ClipboardCheck size={18} /> {t.att_title}
+        </button>
+        {!quiz.scoresSheetUrl && (
+          <button
+            onClick={() => window.open(window.location.origin + window.location.pathname + quizHash(quiz.id, 'scores'), 'ScoresWindow', 'width=1100,height=750')}
+            className="flex items-center gap-2 px-4 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold shadow-xl">
+            <Calculator size={18} /> {t.sc_title}
+          </button>
+        )}
+      </div>
     )}
     </QuizContext.Provider>
   );

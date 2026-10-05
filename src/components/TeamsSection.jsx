@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { Plus, Users, History, Trash2, Camera, Crown, Target, Sheet, Loader2 } from "lucide-react";
+import { Plus, Users, History, Trash2, Camera, Crown, Target, Sheet, Loader2, ClipboardCheck } from "lucide-react";
+import { quizHash } from "../hooks/useHashRoute";
 import { TEAM_COLORS, TEAM_ICONS } from "../quiz/model";
 import { newTeam, importTeamsCsv, importHistoryCsv, addTeamsFromScores } from "../quiz/teams";
 import { fetchSheetCsv, sheetErrorText } from "../quiz/sheets";
@@ -11,7 +12,7 @@ const fieldCls = "bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-s
 
 // teams: stored team records; mediaUrl(name) -> thumbnail URL; onUploadImage(team, file) -> stored file name;
 // scoresSheetUrl: the quiz's live scores Sheet, whose team names can be loaded as teams
-export default function TeamsSection({ teams, onChange, mediaUrl, hasMedia, scoresSheetUrl, onUploadImage, t }) {
+export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMedia, scoresSheetUrl, onUploadImage, t }) {
   const [status, setStatus] = useState(null);
   const [loadingScores, setLoadingScores] = useState(false);
   const teamsCsv = useRef(null);
@@ -143,9 +144,16 @@ export default function TeamsSection({ teams, onChange, mediaUrl, hasMedia, scor
         })}
       </ul>
 
-      <button onClick={addTeam} className={`${btnCls} w-full border border-dashed border-white/15 bg-transparent`}>
-        <Plus size={16} /> {t.tm_add}
-      </button>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <button onClick={addTeam} className={`${btnCls} flex-1 border border-dashed border-white/15 bg-transparent`}>
+          <Plus size={16} /> {t.tm_add}
+        </button>
+        {teams.length > 0 && (
+          <a href={quizHash(quizId, "attendance")} className={btnCls}>
+            <ClipboardCheck size={16} /> {t.att_title}
+          </a>
+        )}
+      </div>
     </Section>
   );
 }

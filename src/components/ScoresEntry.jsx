@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ArrowLeft, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
+import BackButton from "./BackButton";
 import { getQuiz, updateQuiz } from "../quiz/storage";
 import { parseQuestionsCsv } from "../quiz/parse";
 import { scoredRounds, roundLabel, announceScores } from "../quiz/scores";
+import { isPresent } from "../quiz/teams";
 import { quizHash } from "../hooks/useHashRoute";
 
 // Score table for quizzes without a scores Sheet; usually opened from the presenter window.
@@ -32,7 +34,8 @@ export default function ScoresEntry({ id, t }) {
   }, [id, scores]);
 
   const rounds = useMemo(() => (quiz ? scoredRounds(parseQuestionsCsv(quiz.questionsCsv)) : []), [quiz]);
-  const teams = quiz ? quiz.teams.filter((team) => team.name.trim()) : [];
+  // Teams marked absent at the attendance check get no row
+  const teams = quiz ? quiz.teams.filter((team) => team.name.trim() && isPresent(team)) : [];
 
   const setScore = (teamId, roundNumber, value) => {
     dirty.current = true;
@@ -73,9 +76,7 @@ export default function ScoresEntry({ id, t }) {
     <div className="min-h-screen bg-[#050505] text-white font-sans">
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
         <header className="flex flex-wrap items-center gap-4">
-          <a href={quizHash(quiz.id, "edit")} className="flex items-center gap-2 text-gray-400 hover:text-white">
-            <ArrowLeft size={18} /> {t.lib_edit}
-          </a>
+          <BackButton quizId={quiz.id} t={t} />
           <h1 className="font-['League_Spartan'] text-3xl font-black">{t.sc_title}: {quiz.title}</h1>
           <span className="ml-auto text-xs text-gray-500">{saveState === "saving" ? t.ed_saving : t.ed_saved}</span>
         </header>
