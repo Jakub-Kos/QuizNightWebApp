@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Coffee, Play, Pause, Plus, Minus, ArrowLeft, Trophy, Medal, TrendingUp } from "lucide-react";
 import { useQuiz } from "../quiz/context";
+import TeamAvatar from "./TeamAvatar";
 
 const getRankText = (rank) => {
     if (rank === 1) return "1. MÍSTĚ";
@@ -108,9 +109,9 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
               rank: finalRank,
               rankHistory: historyByTeam[t.name],
               image: teamMeta.image,
+              initials: teamMeta.initials,
               color: teamMeta.color || "from-blue-900 to-blue-950",
-              quote: teamMeta.quote || "Taking a well-deserved break...",
-              IconComponent: teamMeta.icon
+              quote: teamMeta.quote || "",
           };
       });
   }, [leaderboardData, availableRounds, teams]);
@@ -239,15 +240,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                         >
                             <div className={`absolute top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br ${currentTeam.color} opacity-20 blur-[100px] pointer-events-none rounded-full -translate-x-1/2 -translate-y-1/2`} />
 
-                            <div className="w-[400px] h-[400px] rounded-3xl overflow-hidden shrink-0 border border-white/10 shadow-2xl bg-white/5 flex items-center justify-center relative z-10">
-                                {currentTeam.image ? (
-                                    <img src={currentTeam.image} alt={currentTeam.name} className="w-full h-full object-cover" />
-                                ) : currentTeam.IconComponent ? (
-                                    <currentTeam.IconComponent size={150} className="text-white/50" />
-                                ) : (
-                                    <span className="text-[150px] font-black text-white/30">{currentTeam.name.charAt(0)}</span>
-                                )}
-                            </div>
+                            <TeamAvatar team={currentTeam} className="w-[400px] h-[400px] rounded-3xl border border-white/10 shadow-2xl relative z-10" textClass="text-[150px]" />
 
                             <div className="flex-1 flex flex-col justify-center relative z-10 h-full py-2">
 
@@ -264,12 +257,14 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
 
                                 <div className="flex justify-between items-start gap-12 w-full pr-10">
                                     <div className="flex-1">
-                                        <div className="relative pl-6">
-                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-white/20 rounded-full" />
-                                            <p className="text-2xl text-white/60 font-medium italic leading-relaxed line-clamp-2">
-                                                "{currentTeam.quote}"
-                                            </p>
-                                        </div>
+                                        {currentTeam.quote && (
+                                            <div className="relative pl-6">
+                                                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-white/20 rounded-full" />
+                                                <p className="text-2xl text-white/60 font-medium italic leading-relaxed line-clamp-2">
+                                                    "{currentTeam.quote}"
+                                                </p>
+                                            </div>
+                                        )}
 
                                         <RankGraph history={currentTeam.rankHistory} maxRank={sortedTeams.length} />
                                     </div>

@@ -2,6 +2,9 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuiz } from "../quiz/context";
 import { isPresent } from "../quiz/teams";
+import { teamInitials } from "../quiz/initials";
+import TeamAvatar from "./TeamAvatar";
+import TeamWall from "./TeamWall";
 import { Clock, Users, Trophy, Medal, TrendingUp, Target, Crown, Play, Timer, RotateCw } from "lucide-react";
 
 // --- SUB-COMPONENT: RANK GRAPH (BAR CHART VERSION) ---
@@ -287,13 +290,22 @@ const RotatingHeaderItem = ({ children }) => (
     exit={{ rotateX: 90, y: -50, opacity: 0 }}
     transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
     className="absolute inset-0 flex flex-col items-center justify-center backface-hidden"
-    style={{ transformOrigin: "50% 50% -20px" }}
+    // Kept on its own layer for the whole animation, so the browser does not switch how it draws it mid-flip
+    style={{ transformOrigin: "50% 50% -20px", willChange: "transform, opacity" }}
   >
     {children}
   </motion.div>
 );
 
-const NO_TEAM = { id: 0, name: "", quote: "", color: "from-purple-600 to-indigo-900", icon: () => null };
+const NO_TEAM = { id: 0, name: "", quote: "", color: "from-purple-600 to-indigo-900" };
+
+// Cards suit teams with photos, mottos or past results; teams known only by name get the team wall.
+// config.welcomeLayout: "auto" (default), "cards" or "wall".
+function chooseLayout(teams, setting) {
+  if (setting === "cards" || setting === "wall") return setting;
+  const rich = teams.filter((team) => team.image || team.quote || !team.isNew).length;
+  return rich < teams.length / 2 ? "wall" : "cards";
+}
 
 // --- MAIN COMPONENT ---
 export default function WelcomeScreen({ onStart, startTime, showTime, config, t }) {
@@ -303,6 +315,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
   const splitDelay = config?.splitDelay || 3000;
   const cycleDuration = config?.cycleDuration || 8000;
   const headerInterval = config?.headerInterval || 5000;
+  const layout = chooseLayout(teams, config?.welcomeLayout);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [viewState, setViewState] = useState("center");
@@ -349,7 +362,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
 
   // --- MAIN ANIMATION LOGIC ---
   useEffect(() => {
-    if (isExiting) return;
+    if (isExiting || layout === "wall") return;
 
     // Always reset to center when index changes
     setViewState("center");
@@ -368,7 +381,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
     }
 
     return () => { clearTimeout(splitTimer); clearTimeout(foldTimer); clearTimeout(nextTimer); };
-  }, [activeIndex, splitDelay, cycleDuration, isExiting, isPaused, teams.length]);
+  }, [activeIndex, splitDelay, cycleDuration, isExiting, isPaused, teams.length, layout]);
 
   // --- HANDLERS ---
   const handleStart = () => {
@@ -387,7 +400,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
   // A new quiz may have no teams yet: the card stack and roster are hidden then
   const hasTeams = teams.length > 0;
   const activeTeam = teams[activeIndex] || NO_TEAM;
-  const ActiveIcon = activeTeam.icon;
+  const hasQuote = Boolean(activeTeam.quote);
 
   // 1. Determine the team name size
   const nameSize = activeTeam.name.length > 15 ? 'text-5xl' : 'text-7xl';
@@ -412,7 +425,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
     >
 
       <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
-      <div className={`absolute inset-0 opacity-20 bg-gradient-to-r ${activeTeam.color} blur-[150px] transition-colors duration-1000`} />
+      <div className={`absolute inset-0 opacity-20 bg-gradient-to-r ${layout === "wall" ? "from-purple-600 to-indigo-900" : activeTeam.color} blur-[150px] transition-colors duration-1000`} />
 
       <div className="relative w-full h-full flex flex-col isolate">
 
@@ -421,14 +434,15 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
            <AnimatePresence mode="wait">
               {(headerState === 0 || !showTime) && (
                 <RotatingHeaderItem key="title">
-                   <h1 className="text-8xl font-black text-white uppercase tracking-[0.1em] drop-shadow-2xl">{t.title}</h1>
+                   {/* text-shadow, not a drop-shadow filter: filters inside the 3D rotation are drawn out of step and flicker */}
+                   <h1 className="text-8xl font-black text-white uppercase tracking-[0.1em]" style={{ textShadow: "0 18px 40px rgba(0,0,0,0.45)" }}>{t.title}</h1>
                 </RotatingHeaderItem>
               )}
               {headerState === 1 && showTime && (
                  <RotatingHeaderItem key="time">
                     <div className="flex flex-col items-center">
                         <span className="text-3xl text-yellow-500 font-bold tracking-[0.3em] mb-2 uppercase">{t.event_schedule}</span>
-                        <div className="flex items-center gap-4 text-white font-mono text-6xl font-bold bg-white/5 px-8 py-2 rounded-2xl border border-white/10 backdrop-blur-md">
+                        <div className="flex items-center gap-4 text-white font-mono text-6xl font-bold bg-white/[0.07] px-8 py-2 rounded-2xl border border-white/10">
                            <Clock size={48} className="text-yellow-500" />
                            <span>{startTime}</span>
                         </div>
@@ -439,7 +453,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                  <RotatingHeaderItem key="countdown">
                     <div className="flex flex-col items-center">
                         <span className="text-4xl text-green-500 font-bold tracking-[0.3em] mb-2 uppercase">{t.get_ready}</span>
-                        <div className="flex items-center gap-4 text-white font-mono text-6xl font-bold bg-white/5 px-8 py-2 rounded-2xl border border-white/10 backdrop-blur-md">
+                        <div className="flex items-center gap-4 text-white font-mono text-6xl font-bold bg-white/[0.07] px-8 py-2 rounded-2xl border border-white/10">
                            <Timer size={48} className="text-green-500" />
                            <span>{countdownText}</span>
                         </div>
@@ -455,7 +469,12 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
             {!hasTeams && (
                 <h1 className="w-full pr-32 text-center text-8xl font-black uppercase tracking-widest text-white/90">{quiz.title}</h1>
             )}
-            {hasTeams && (<>
+            {hasTeams && layout === "wall" && (
+                <div className="absolute inset-0">
+                    <TeamWall teams={teams} introMs={Math.max(3000, cycleDuration * 0.6)} pauseMs={config?.introPause ?? 2600} t={t} />
+                </div>
+            )}
+            {hasTeams && layout === "cards" && (<>
             <div className="relative w-[600px] h-[800px] z-20">
                 <AnimatePresence mode="popLayout">
 
@@ -496,17 +515,11 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                         transition={{ type: "spring", bounce: 0.2, duration: 0.8 }}
                     >
                         <div className={`w-full h-full rounded-[3rem] bg-gradient-to-br ${activeTeam.color} p-3 shadow-[0_0_80px_rgba(0,0,0,0.6)]`}>
-                            <div className="h-full w-full bg-black/85 backdrop-blur-md rounded-[2.5rem] p-10 flex flex-col items-center text-white relative overflow-hidden border border-white/5">
-                                <div className="absolute -bottom-32 -right-32 opacity-10 rotate-12 scale-[3] text-white">
-                                    <ActiveIcon size={250} />
+                            <div className={`h-full w-full bg-black/85 backdrop-blur-md rounded-[2.5rem] p-10 flex flex-col items-center text-white relative overflow-hidden border border-white/5 ${hasQuote ? "" : "justify-center"}`}>
+                                <div className="absolute -bottom-24 -right-16 opacity-[0.07] rotate-12 text-white font-black text-[320px] leading-none select-none">
+                                    {activeTeam.initials || teamInitials(activeTeam.name)}
                                 </div>
-                                <div className="w-75 h-75 rounded-3xl bg-white/5 mb-8 flex items-center justify-center shadow-inner border border-white/10 relative z-10 overflow-hidden group">
-                                    {activeTeam.image ? (
-                                        <img src={activeTeam.image} alt={activeTeam.name} className="w-full h-full object-cover transition-all duration-700" />
-                                    ) : (
-                                        <ActiveIcon size={140} className="text-white/80 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" />
-                                    )}
-                                </div>
+                                <TeamAvatar team={activeTeam} className="w-75 h-75 rounded-3xl mb-8 shadow-inner border border-white/10 relative z-10" textClass="text-[140px]" />
                                 <h2 className={`font-black text-center leading-none mb-6 z-10 drop-shadow-lg tracking-tight ${nameSize}`}>
                                     {activeTeam.name}
                                 </h2>
@@ -515,11 +528,13 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                                 }`}>
                                     "{activeTeam.quote}"
                                 </p>
-                                <div className="mt-auto flex gap-4 z-10">
-                                    <span className="px-6 py-3 bg-white/10 rounded-full flex items-center gap-3 text-4xl font-bold uppercase tracking-wider border border-white/10">
-                                        <Users size={48} /> {activeTeam.players} {t.players}
-                                    </span>
-                                </div>
+                                {activeTeam.players > 0 && (
+                                    <div className={`${hasQuote ? "mt-auto" : "mt-4"} flex gap-4 z-10`}>
+                                        <span className="px-6 py-3 bg-white/10 rounded-full flex items-center gap-3 text-4xl font-bold uppercase tracking-wider border border-white/10">
+                                            <Users size={48} /> {activeTeam.players} {t.players}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </motion.div>
@@ -593,7 +608,6 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                    {teams.map((team, i) => {
                        const isActive = i === activeIndex;
                        const isPast = i < activeIndex;
-                       const TIcon = team.icon;
 
                        return (
                            <motion.div
@@ -605,13 +619,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                                    ${isPast ? "opacity-30 grayscale border-transparent hover:opacity-100 hover:grayscale-0" : "opacity-70 hover:opacity-100 hover:border-white/30"}
                                `}
                            >
-                               {team.image ? (
-                                   <img src={team.image} className="w-full h-full object-cover" />
-                               ) : (
-                                   <div className="w-full h-full flex items-center justify-center text-white/50 group-hover:text-white">
-                                        <TIcon size={28} />
-                                   </div>
-                               )}
+                               <TeamAvatar team={team} className="w-full h-full" textClass="text-3xl" />
                                <div className={`absolute top-1 left-1 text-[15px] font-bold px-1.5 rounded
                                    ${isActive ? "bg-yellow-500 text-black" : "bg-black/50 text-white/50"}`}>
                                    {i + 1}

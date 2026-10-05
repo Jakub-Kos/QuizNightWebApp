@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Minus as MinusIcon, Trophy, 
 import { useQuiz } from "../quiz/context";
 import { isPresent, directionText } from "../quiz/teams";
 import VenueMap from "./VenueMap";
+import TeamAvatar from "./TeamAvatar";
 
 export default function Leaderboard({ isPresenter, data, availableRounds, latestRoundName, lastSync, onClose, t }) {
   const tr = t;
@@ -71,8 +72,8 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
               prevRoundPoints,
               color: teamMeta.color || "from-gray-500 to-gray-700",
               image: teamMeta.image,
-              IconComponent: teamMeta.icon,
-              quote: teamMeta.quote || "Waiting for scores..."
+              initials: teamMeta.initials,
+              quote: teamMeta.quote || ""
           };
       });
 
@@ -358,9 +359,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
                                 <div className={`w-[6px] shrink-0 bg-gradient-to-b ${team.color} ${team.isRevealed ? "opacity-100" : "opacity-30"} relative z-20`} />
 
                                 <div className="flex-1 flex items-center px-4 overflow-hidden gap-4 relative z-20">
-                                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/20 bg-white/5 flex items-center justify-center">
-                                        {team.image ? <img src={team.image} className="w-full h-full object-cover" /> : team.IconComponent ? <team.IconComponent size={20} className="text-white/50" /> : <span className="text-lg font-black text-white/50">{team.name.charAt(0)}</span>}
-                                    </div>
+                                    <TeamAvatar team={team} className="w-10 h-10 rounded-full border border-white/20" textClass="text-sm" />
                                     <span className={`font-black text-xl tracking-widest uppercase truncate ${isWinner ? 'text-yellow-400' : showFire ? 'text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]' : 'text-white'} ${!team.isRevealed && 'opacity-50'}`}>
                                         {team.name}
                                     </span>
@@ -443,12 +442,10 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
                                             <Flame size={56} className={`absolute -top-8 text-orange-500 drop-shadow-[0_0_30px_rgba(249,115,22,1)] z-20 animate-bounce ${isAbsoluteMax ? 'left-12' : ''}`} fill="currentColor" />
                                         )}
 
-                                        <div className="w-32 h-32 rounded-full overflow-hidden bg-white/10 border-4 border-white/20 flex items-center justify-center mb-6 relative z-10">
-                                            {team.image ? <img src={team.image} className="w-full h-full object-cover" /> : team.IconComponent ? <team.IconComponent size={60} className="text-white/80" /> : <span className="text-5xl font-black text-white/50">{team.name.charAt(0)}</span>}
-                                        </div>
+                                        <TeamAvatar team={team} className="w-32 h-32 rounded-full border-4 border-white/20 mb-6 relative z-10" textClass="text-5xl" />
 
                                         <h3 className="text-2xl font-black text-white uppercase tracking-wider text-center relative z-10 leading-tight mb-2">{team.name}</h3>
-                                        <p className="text-sm text-white/50 italic text-center relative z-10">"{team.quote}"</p>
+                                        {team.quote && <p className="text-sm text-white/50 italic text-center relative z-10">"{team.quote}"</p>}
                                     </motion.div>
                                 )
                             })}

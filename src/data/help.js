@@ -141,6 +141,7 @@ export const HELP = {
           "Photos: click the square next to a team to upload one. Google Drive links from a form cannot be shown.",
           "Past results: a CSV with the team name and one column per past quiz whose name contains `Rank`, plus an optional `Accuracy` column. They appear on the welcome screen.",
           "Team names must match the names in the scores, otherwise photos and colors are missing on the leaderboard.",
+          "Photos, mottos and past results are optional. When fewer than half of the teams have a photo or motto, the welcome screen shows all teams at once as a team wall instead of one card at a time; teams without a photo get their initials. Settings in the show can force either layout.",
         ],
       },
       {
@@ -304,6 +305,7 @@ export const HELP = {
           "Fotky: klikněte na čtvereček u týmu a nahrajte ji. Odkazy na fotky na Google Disku z formuláře zobrazit nejdou.",
           "Minulé výsledky: CSV s názvem týmu a jedním sloupcem za každý minulý kvíz, který má v názvu `Rank`, plus nepovinný sloupec `Accuracy`. Ukážou se na úvodní obrazovce.",
           "Názvy týmů musí odpovídat názvům v bodech, jinak v žebříčku chybí fotky a barvy.",
+          "Fotky, motta a minulé výsledky jsou nepovinné. Když fotku nebo motto má méně než polovina týmů, úvodní obrazovka ukáže všechny týmy najednou jako stěnu týmů místo jedné karty po druhé; týmy bez fotky dostanou své iniciály. V nastavení show lze zvolit jedno nebo druhé natrvalo.",
         ],
       },
       {
@@ -467,6 +469,7 @@ export const HELP = {
           "Fotók: kattints a csapat melletti négyzetre a feltöltéshez. Az űrlapból származó Google Drive linkek nem jeleníthetők meg.",
           "Korábbi eredmények: CSV a csapatnévvel és minden korábbi kvízhez egy oszloppal, amelynek nevében `Rank` szerepel, valamint nem kötelező `Accuracy` oszloppal. A nyitóképernyőn jelennek meg.",
           "A csapatneveknek egyezniük kell a pontszámokban szereplő nevekkel, különben a ranglistán hiányoznak a fotók és a színek.",
+          "A fotók, mottók és korábbi eredmények nem kötelezők. Ha a csapatok kevesebb mint felének van fotója vagy mottója, a nyitóképernyő egyszerre mutatja az összes csapatot csapatfalként egyenkénti kártyák helyett; a fotó nélküli csapatok a kezdőbetűiket kapják. A show beállításaiban bármelyik elrendezés kiválasztható.",
         ],
       },
       {

@@ -2,6 +2,7 @@ import { Brain, Rocket, Zap, Crown, Flame, Shield, Beer, Glasses, Gavel, Microsc
 import { DEMO_TEAMS } from "./demoTeams";
 import { getQuiz, listMedia } from "./storage";
 import { fetchSheetCsv } from "./sheets";
+import { uniqueInitials } from "./initials";
 
 // Teams store the icon by name so they can live in IndexedDB and zip files
 export const TEAM_ICONS = { Brain, Rocket, Zap, Crown, Flame, Shield, Beer, Glasses, Gavel, Microscope };
@@ -20,14 +21,20 @@ export const teamHex = (team, index) => {
   return TEAM_HEX[i >= 0 ? i : index % TEAM_HEX.length];
 };
 
-// Stored teams -> what the scenes render: image URL, icon component, a color for every team
-export const resolveTeams = (teams, resolveMedia) => teams.map((team, i) => ({
-  ...team,
-  id: team.id ?? i + 1,
-  image: resolveMedia(team.image),
-  icon: TEAM_ICONS[team.icon] || TEAM_ICONS.Brain,
-  color: team.color || TEAM_COLORS[i % TEAM_COLORS.length],
-}));
+// Stored teams -> what the scenes render: image URL, icon component, a color and distinct initials for
+// every team. Teams without a name (e.g. an empty row) are left out; colors are assigned first so they
+// match the setup page.
+export function resolveTeams(teams, resolveMedia) {
+  const resolved = teams.map((team, i) => ({
+    ...team,
+    id: team.id ?? i + 1,
+    image: resolveMedia(team.image),
+    icon: TEAM_ICONS[team.icon] || TEAM_ICONS.Brain,
+    color: team.color || TEAM_COLORS[i % TEAM_COLORS.length],
+  })).filter((team) => String(team.name || "").trim());
+  const initials = uniqueInitials(resolved.map((team) => team.name));
+  return resolved.map((team, i) => ({ ...team, initials: initials[i] }));
+}
 
 export const DEFAULT_SETTINGS = {
   showTime: true,
@@ -36,6 +43,8 @@ export const DEFAULT_SETTINGS = {
   cycleDuration: 8000,
   headerInterval: 5000,
   language: "cs",
+  welcomeLayout: "auto", // "auto" | "cards" | "wall", see WelcomeScreen
+  introPause: 2600, // ms between two team intros on the team wall
 };
 
 export const DEMO_ID = "demo";

@@ -94,6 +94,36 @@ export default function SettingsModal({ onClose, onOpenCalibration, onExit, conf
               <Clock size={14} /> {t.display_options}
             </h3>
 
+            {/* Welcome screen layout */}
+            <div className="bg-black/20 p-4 rounded-xl border border-white/5 space-y-3">
+              <span className="text-gray-200 font-medium">{t.set_layout}</span>
+              <div className="flex gap-2">
+                {["auto", "cards", "wall"].map((value) => (
+                  <button key={value} onClick={() => handleChange("welcomeLayout", value)}
+                    className={`flex-1 py-2 rounded-lg border text-sm font-bold transition-all ${(config.welcomeLayout || "auto") === value ? "bg-yellow-500 text-black border-yellow-500" : "bg-black/20 text-gray-400 border-white/5 hover:bg-white/5"}`}>
+                    {t[`set_layout_${value}`]}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500">{t.set_layout_help}</p>
+            </div>
+
+            {/* Pause between team intros on the team wall (not used by the card layout) */}
+            {config.welcomeLayout !== "cards" && (
+              <div className="bg-black/20 p-4 rounded-xl border border-white/5">
+                <div className="flex justify-between text-gray-300 text-sm mb-3">
+                  <span>{t.set_intro_pause}</span>
+                  <span className="font-mono text-green-400">{(config.introPause ?? 2600) / 1000}s</span>
+                </div>
+                <input
+                  type="range" min="1000" max="10000" step="500"
+                  value={config.introPause ?? 2600}
+                  onChange={(e) => handleChange("introPause", parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500"
+                />
+              </div>
+            )}
+
             {/* Toggle: Show Clock */}
             <div className="flex items-center justify-between bg-black/20 p-4 rounded-xl border border-white/5">
               <span className="text-gray-200 font-medium">{t.show_clock}</span>
