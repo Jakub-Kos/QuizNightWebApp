@@ -55,7 +55,31 @@ function buildQuestions(rows) {
     const type = row[3] ? String(row[3]).trim() : "Written";
     const media = row[9] ? String(row[9]).trim() : null;
 
-    if (type === "Top5") {
+    if (type === "Sort") {
+      // Items in the correct order, from the question row and the following rows without text or type:
+      // the item in column A (4), the letter it is shown under in the answer column (8), optionally a
+      // picture in Zdroj. Without column A the answer column holds the item itself (letters then mixed automatically).
+      const item = (r) => {
+        const option = String(r[4] ?? "").trim();
+        const answer = String(r[8] ?? "").trim();
+        const isLetter = /^[a-z]$/i.test(answer);
+        return {
+          text: option || (isLetter ? "" : answer),
+          letter: option || isLetter ? answer.toUpperCase() || null : null,
+          media: r[9] ? String(r[9]).trim() : null,
+        };
+      };
+      const items = [item(row)];
+      let j = 1;
+      while (i + j < rows.length) {
+        const nextRow = rows[i + j];
+        if (nextRow[2] || nextRow[3]) break;
+        items.push(item(nextRow));
+        j++;
+      }
+      qs.push({ id: row[1], text: row[2], type: "Sort", options: {}, answer: "", media: null, items: items.filter((it) => it.text || it.media) });
+      i += j;
+    } else if (type === "Top5") {
       // Following rows without text or type only add answers
       const answers = [row[8]];
       let j = 1;

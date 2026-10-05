@@ -55,9 +55,9 @@ export const HELP = {
             ["`Video`", "A video player under the question.", "File in Zdroj."],
             ["`PVideo`", "The video full screen first (starts by itself), then the question.", "File in Zdroj."],
             ["`Top5`", "Five hidden answers, revealed together.", "First answer on the question row; the other four on the next rows with only a number in Q# and the answer."],
+            ["`Sort`", "2–10 items shown mixed up with letters A, B, C…; the reveal puts them in order and shows the letters, e.g. `C A D B`. With pictures in Zdroj the items are picture cards.", "The items in the correct order, the first on the question row, the others on the next rows with only a number in Q#. Each row: the item in column `A`, the letter it is shown under in the answer column (A, B, C… each once, mixed up), optionally a picture in Zdroj. The answer column then reads the answer top to bottom, e.g. `B D A C`, ready for marking. Without letters the show mixes the items itself and Check tells you which letters it picked."],
           ],
         },
-        note: "The `Sort` type is not supported.",
         examples: {
           "Written": {
             "text": "What is the capital of France?",
@@ -101,6 +101,11 @@ export const HELP = {
             "text": "How many seconds did the clip last?",
             "answer": "5"
           },
+          "Sort": {
+            "text": "Put these inventions in order, oldest first",
+            "items": ["Printing press", "Steam engine", "Telephone", "Aeroplane", "Internet"],
+            "letters": ["C", "A", "E", "B", "D"]
+          },
           "Top5": {
             "text": "Name the 5 largest countries",
             "answer": [
@@ -112,7 +117,7 @@ export const HELP = {
             ]
           }
         },
-        mediaStep: "Media first", previewHint: "Click a preview to enlarge it.",
+        mediaStep: "Media first", previewHint: "Each type shows the rows to write into the questions sheet and what they look like on screen. Click a preview to enlarge it.", sheetLabel: "In the sheet",
       },
       {
         id: "media", title: "Images and media",
@@ -220,9 +225,9 @@ export const HELP = {
             ["`Video`", "Videopřehrávač pod otázkou.", "Soubor ve sloupci Zdroj."],
             ["`PVideo`", "Nejdřív video přes celou obrazovku (spustí se samo), pak otázka.", "Soubor ve sloupci Zdroj."],
             ["`Top5`", "Pět skrytých odpovědí, odhalí se najednou.", "První odpověď na řádku otázky; zbylé čtyři na dalších řádcích jen s číslem v Q# a odpovědí."],
+            ["`Sort`", "2–10 položek zamíchaných a označených písmeny A, B, C…; při odhalení se seřadí a ukáže se pořadí písmen, např. `C A D B`. S obrázky ve sloupci Zdroj jsou položky obrázkové karty.", "Položky ve správném pořadí, první na řádku otázky, další na následujících řádcích jen s číslem v Q#. Na každém řádku: položka ve sloupci `A`, písmeno, pod kterým se zobrazí, ve sloupci odpovědi (A, B, C… každé jednou, zamíchaně), případně obrázek ve Zdroji. Sloupec odpovědi pak shora dolů ukazuje odpověď, např. `B D A C`, připravenou na opravování. Bez písmen show položky zamíchá sama a Kontrola vypíše, která písmena zvolila."],
           ],
         },
-        note: "Typ `Sort` není podporovaný.",
         examples: {
           "Written": {
             "text": "Jaké je hlavní město Francie?",
@@ -266,6 +271,11 @@ export const HELP = {
             "text": "Kolik sekund trvalo video?",
             "answer": "5"
           },
+          "Sort": {
+            "text": "Seřaďte vynálezy od nejstaršího",
+            "items": ["Knihtisk", "Parní stroj", "Telefon", "Letadlo", "Internet"],
+            "letters": ["C", "A", "E", "B", "D"]
+          },
           "Top5": {
             "text": "Vyjmenujte 5 největších zemí světa",
             "answer": [
@@ -277,7 +287,7 @@ export const HELP = {
             ]
           }
         },
-        mediaStep: "Nejdřív médium", previewHint: "Kliknutím na náhled ho zvětšíte.",
+        mediaStep: "Nejdřív médium", previewHint: "U každého typu jsou řádky, které napíšete do tabulky otázek, a jak pak vypadají na obrazovce. Kliknutím na náhled ho zvětšíte.", sheetLabel: "V tabulce",
       },
       {
         id: "media", title: "Obrázky a média",
@@ -385,9 +395,9 @@ export const HELP = {
             ["`Video`", "Videólejátszó a kérdés alatt.", "Fájl a Zdroj oszlopban."],
             ["`PVideo`", "Először a videó teljes képernyőn (magától indul), aztán a kérdés.", "Fájl a Zdroj oszlopban."],
             ["`Top5`", "Öt rejtett válasz, egyszerre fedi fel őket.", "Az első válasz a kérdés sorában; a többi négy a következő sorokban, csak egy számmal a Q#-ben és a válasszal."],
+            ["`Sort`", "2–10 elem összekeverve, A, B, C… betűkkel; a felfedéskor sorba rendeződnek, és megjelenik a betűk sorrendje, pl. `C A D B`. Ha a Zdroj oszlopban képek vannak, az elemek képkártyák.", "Az elemek helyes sorrendben, az első a kérdés sorában, a többi a következő sorokban, csak egy számmal a Q#-ben. Minden sorban: az elem az `A` oszlopban, a betű, amely alatt megjelenik, a válasz oszlopban (A, B, C…, mindegyik egyszer, összekeverve), és ha kell, kép a Zdrojban. A válasz oszlop így fentről lefelé a választ mutatja, pl. `B D A C`, javításra készen. Betűk nélkül a show maga keveri össze az elemeket, és az Ellenőrzés kiírja, milyen betűket választott."],
           ],
         },
-        note: "A `Sort` típus nem támogatott.",
         examples: {
           "Written": {
             "text": "Mi Franciaország fővárosa?",
@@ -431,6 +441,11 @@ export const HELP = {
             "text": "Hány másodperces volt a videó?",
             "answer": "5"
           },
+          "Sort": {
+            "text": "Rakd sorrendbe a találmányokat, a legrégebbivel kezdve",
+            "items": ["Könyvnyomtatás", "Gőzgép", "Telefon", "Repülőgép", "Internet"],
+            "letters": ["C", "A", "E", "B", "D"]
+          },
           "Top5": {
             "text": "Sorold fel a világ 5 legnagyobb országát",
             "answer": [
@@ -442,7 +457,7 @@ export const HELP = {
             ]
           }
         },
-        mediaStep: "Először a média", previewHint: "Kattints egy előnézetre a nagyításhoz.",
+        mediaStep: "Először a média", previewHint: "Minden típusnál ott vannak a sorok, amelyeket a kérdések táblázatába írsz, és hogy hogyan néznek ki a képernyőn. Kattints egy előnézetre a nagyításhoz.", sheetLabel: "A táblázatban",
       },
       {
         id: "media", title: "Képek és média",

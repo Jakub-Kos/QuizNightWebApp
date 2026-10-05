@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowRight, Check, X, Edit3, Hash, Clock, ListOrdered, Maxim
 import { useStageSize } from "../hooks/useDisplay";
 import { useQuiz } from "../quiz/context";
 import { fmt } from "../quiz/files";
+import { sortLayout } from "../quiz/sort";
+import SortItems from "./SortItems";
 
 // preview: { qIndex, step } renders one fixed frame (quiz check thumbnails): no keys, sync or timer
 export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t = {}, preview = null }) {
@@ -71,7 +73,13 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     // Questions arrive parsed (quiz/parse.js); media file names resolve to URLs here
     const { resolveMedia } = useQuiz();
     const processedQuestions = useMemo(
-        () => roundData.questions.map(q => ({ ...q, source: resolveMedia(q.media) })),
+        () => roundData.questions.map(q => {
+            const resolved = { ...q, source: resolveMedia(q.media) };
+            if (q.type !== "Sort") return resolved;
+            // Sort: items with their pictures, mixed up the same way in every window
+            const items = (q.items || []).map(it => ({ ...it, source: resolveMedia(it.media) }));
+            return { ...resolved, items, sort: sortLayout({ ...q, items }) };
+        }),
         [roundData.questions, resolveMedia]
     );
 
@@ -227,7 +235,21 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                 {/* Highlight the Answer securely for the Host */}
                                 <div className="mt-auto bg-green-900/30 border border-green-500/50 p-6 rounded-2xl flex flex-col gap-2">
                                     <span className="text-green-500/80 font-bold uppercase tracking-widest text-xs">{t.correct_answer}</span>
-                                    {question.type === "Top5" ? (
+                                    {question.type === "Sort" ? (
+                                        <div className="flex flex-col gap-3 mt-1">
+                                            <span className="text-4xl font-black text-green-400 tracking-wider">{question.sort.answer}</span>
+                                            {/* Correct order, read down the columns */}
+                                            <div className="grid grid-cols-2 gap-x-6 gap-y-1" style={{ gridTemplateRows: `repeat(${Math.ceil(question.sort.correct.length / 2)}, auto)`, gridAutoFlow: "column" }}>
+                                            {question.sort.correct.map(it => (
+                                                <div key={it.letter} className="flex gap-3 items-center min-w-0">
+                                                    <span className="text-green-500/50 font-bold font-mono text-sm w-8">{it.place}.</span>
+                                                    <span className="text-xl font-black text-green-400">{it.letter}</span>
+                                                    <span className="text-xl font-bold text-green-200 truncate">{it.text || it.media}</span>
+                                                </div>
+                                            ))}
+                                            </div>
+                                        </div>
+                                    ) : question.type === "Top5" ? (
                                         <div className="flex flex-col gap-2 mt-2">
                                             {question.answer.map((ans, i) => (
                                                 <div key={i} className="flex gap-3 items-center">
@@ -398,6 +420,9 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                         })}
                                     </div>
                                 )}
+
+                                {/* Sort Layout */}
+                                {question.type === "Sort" && <SortItems layout={question.sort} revealed={showAnswer} t={t} />}
 
                                 {/* Top5 Layout */}
                                 {question.type === "Top5" && (

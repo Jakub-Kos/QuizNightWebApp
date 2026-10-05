@@ -23,7 +23,10 @@ const isJunk = (path) => path.startsWith("__MACOSX/") || path.includes("/__MACOS
 // Media file names a quiz refers to (question column 9 and team images); web addresses are not files
 export function referencedMedia(quiz) {
   const names = new Set();
-  parseQuestionsCsv(quiz.questionsCsv).forEach((r) => r.questions.forEach((q) => q.media && names.add(q.media)));
+  parseQuestionsCsv(quiz.questionsCsv).forEach((r) => r.questions.forEach((q) => {
+    if (q.media) names.add(q.media);
+    q.items?.forEach((it) => it.media && names.add(it.media));
+  }));
   quiz.teams.forEach((t) => t.image && names.add(t.image));
   return [...names].filter((name) => !isUrl(name));
 }

@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { MotionConfig } from "framer-motion";
 import { X } from "lucide-react";
+import Papa from "papaparse";
 import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
+import { parseQuestionsCsv } from "../quiz/parse";
 import { useDisplaySettings } from "../hooks/useDisplay";
 import { StageFrame } from "./Stage";
 import QuestionScreen from "./QuestionScreen";
@@ -11,6 +13,25 @@ import Rich from "./RichText";
 // Sample files shipped with the demo in public/source/
 const MEDIA = { Image: "pad_BM2.webp", PImage: "1944paris.jpg", Audio: "audio.m4a", Video: "video.mp4", PVideo: "video.mp4" };
 const resolveMedia = (name) => (name ? `${import.meta.env.BASE_URL}source/${name}` : null);
+
+// Header of the questions sheet template (public/templates), with the column letters of Google Sheets
+const SHEET_HEAD = ["Kolo", "Q#", "Otázka", "Typ Odpovědi", "A", "B", "C", "D", "Správná odpověď", "Zdroj"];
+const COLUMN_LETTERS = "ABCDEFGHIJ".split("");
+
+// The sheet rows that make up a type's example, written the way the help table tells users to
+function exampleRows(type, example) {
+  const options = ["A", "B", "C", "D"].map((o) => example.options?.[o] ?? "");
+  const row = (number, text, typeCell, opts, answer, media) => ["", String(number), text, typeCell, ...opts, answer, media];
+  const none = ["", "", "", ""];
+  if (type === "Top5") {
+    const [first, ...rest] = example.answer;
+    return [row(1, example.text, type, none, first, ""), ...rest.map((answer, i) => row(i + 2, "", "", none, answer, ""))];
+  }
+  if (type === "Sort") {
+    return example.items.map((item, i) => row(i + 1, i ? "" : example.text, i ? "" : type, [item, "", "", ""], example.letters?.[i] ?? "", ""));
+  }
+  return [row(1, example.text, type, options, example.answer ?? "", MEDIA[type] || "")];
+}
 
 // Steps of QuestionScreen worth showing per type: PImage/PVideo show their media alone first
 function framesFor(type, labels) {
@@ -27,17 +48,21 @@ export default function HelpTypes({ section, lang, t }) {
   const labels = { media: section.mediaStep, question: t.chk_view_question, answer: t.chk_view_answer };
   const [open, setOpen] = useState(null); // { qIndex, step }
 
-  // One round holding an example question for every type, in table order
+  // Sheet rows of every type's example, and one round holding the questions the real parser makes of
+  // them, in table order: the previews are exactly what those rows produce
+  const sheets = useMemo(() => section.table.rows.map(([type]) => {
+    type = type.replace(/`/g, "");
+    return exampleRows(type, section.examples[type] || {});
+  }), [section]);
   const round = useMemo(() => ({
     id: "help-types",
     number: "1",
     title: "",
-    questions: section.table.rows.map((row, i) => {
-      const type = row[0].replace(/`/g, "");
-      const example = section.examples[type] || {};
-      return { id: String(i + 1), type, text: example.text, options: example.options || {}, answer: example.answer ?? "", media: MEDIA[type] || null };
+    questions: sheets.flatMap((rows) => {
+      const marked = rows.map((r, i) => (i ? r : ["Kolo 1 - Help", ...r.slice(1)]));
+      return parseQuestionsCsv(Papa.unparse([SHEET_HEAD, ...marked]))[0]?.questions ?? [];
     }),
-  }), [section]);
+  }), [sheets]);
   const context = useMemo(() => ({ quiz: {}, rounds: [round], teams: [], resolveMedia }), [round]);
 
   useEffect(() => {
@@ -64,6 +89,7 @@ export default function HelpTypes({ section, lang, t }) {
                 <p className="text-gray-300"><Rich text={onScreen} /></p>
                 <p className="text-gray-400 basis-full"><span className="text-gray-500">{section.table.head[2]}:</span> <Rich text={fillIn} /></p>
               </div>
+              <SheetRows rows={sheets[qIndex]} label={section.sheetLabel} />
               {/* Frames share the full width: two per row for most types, three when the media comes first */}
               <div className={`grid gap-3 items-start ${framesFor(round.questions[qIndex].type, labels).length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
                 {framesFor(round.questions[qIndex].type, labels).map(([label, step]) => (
@@ -94,5 +120,37 @@ export default function HelpTypes({ section, lang, t }) {
         )}
       </MotionConfig>
     </QuizContext.Provider>
+  );
+}
+
+// The example's rows as they look in Google Sheets: column letters, the template header, then the rows
+function SheetRows({ rows, label }) {
+  const cell = "border border-white/10 px-1.5 py-1 whitespace-nowrap";
+  return (
+    <div className="space-y-1">
+      <span className="text-xs text-gray-500">{label}</span>
+      <div className="overflow-x-auto [color-scheme:dark]">
+        <table className="text-xs font-mono border-collapse">
+          <thead>
+            <tr className="bg-white/[0.06] text-gray-500 text-center">
+              <th className={`${cell} w-8`} />
+              {COLUMN_LETTERS.map((letter) => <th key={letter} className={`${cell} font-normal`}>{letter}</th>)}
+            </tr>
+            <tr className="text-gray-400">
+              <td className={`${cell} bg-white/[0.06] text-gray-500 text-center`}>1</td>
+              {SHEET_HEAD.map((name) => <td key={name} className={`${cell} font-bold`}>{name}</td>)}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, r) => (
+              <tr key={r}>
+                <td className={`${cell} bg-white/[0.06] text-gray-500 text-center`}>{r + 2}</td>
+                {row.map((value, c) => <td key={c} className={`${cell} ${value ? "text-yellow-200" : ""}`}>{value}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
