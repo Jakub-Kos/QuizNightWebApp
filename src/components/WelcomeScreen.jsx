@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TEAMS_DATA } from "../data/teams";
+import { useQuiz } from "../quiz/context";
 import { Clock, Users, Trophy, Medal, TrendingUp, Target, Crown, Play, Timer, RotateCw } from "lucide-react";
 
 // --- SUB-COMPONENT: RANK GRAPH (BAR CHART VERSION) ---
@@ -292,8 +292,11 @@ const RotatingHeaderItem = ({ children }) => (
   </motion.div>
 );
 
+const NO_TEAM = { id: 0, name: "", quote: "", color: "from-purple-600 to-indigo-900", icon: () => null };
+
 // --- MAIN COMPONENT ---
 export default function WelcomeScreen({ onStart, startTime, showTime, config, t }) {
+  const { quiz, teams } = useQuiz();
   const splitDelay = config?.splitDelay || 3000;
   const cycleDuration = config?.cycleDuration || 8000;
   const headerInterval = config?.headerInterval || 5000;
@@ -354,15 +357,15 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
     let nextTimer, foldTimer;
 
     // Only auto-cycle if NOT paused
-    if (!isPaused) {
+    if (!isPaused && teams.length > 1) {
         foldTimer = setTimeout(() => setViewState("center"), cycleDuration - 600);
         nextTimer = setTimeout(() => {
-            setActiveIndex((prev) => (prev + 1) % TEAMS_DATA.length);
+            setActiveIndex((prev) => (prev + 1) % teams.length);
         }, cycleDuration);
     }
 
     return () => { clearTimeout(splitTimer); clearTimeout(foldTimer); clearTimeout(nextTimer); };
-  }, [activeIndex, splitDelay, cycleDuration, isExiting, isPaused]); // Added isPaused dependency
+  }, [activeIndex, splitDelay, cycleDuration, isExiting, isPaused, teams.length]);
 
   // --- HANDLERS ---
   const handleStart = () => {
@@ -377,8 +380,10 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
       setIsPaused(true); // Stop auto-rotation
   };
 
-  const getIndex = (offset) => (activeIndex + offset) % TEAMS_DATA.length;
-  const activeTeam = TEAMS_DATA[activeIndex];
+  const getIndex = (offset) => (activeIndex + offset) % teams.length;
+  // A new quiz may have no teams yet: the card stack and roster are hidden then
+  const hasTeams = teams.length > 0;
+  const activeTeam = teams[activeIndex] || NO_TEAM;
   const ActiveIcon = activeTeam.icon;
 
   // 1. Determine the team name size
@@ -444,12 +449,16 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
         {/* 2. MAIN CONTENT */}
         <div className="h-[65cqh] w-full relative flex items-center pl-32 perspective-1000">
 
+            {!hasTeams && (
+                <h1 className="w-full pr-32 text-center text-8xl font-black uppercase tracking-widest text-white/90">{quiz.title}</h1>
+            )}
+            {hasTeams && (<>
             <div className="relative w-[600px] h-[800px] z-20">
                 <AnimatePresence mode="popLayout">
 
                     {[2, 1].map((offset) => {
                         const stackIdx = getIndex(offset);
-                        const stackTeam = TEAMS_DATA[stackIdx];
+                        const stackTeam = teams[stackIdx];
                         return (
                             <motion.div
                                 key={`stack-${stackTeam.id}`}
@@ -569,7 +578,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
 
             <div className="absolute right-24 top-10 bottom-32 w-[550px] z-10 flex flex-col justify-start">
                <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
-                   <h3 className="text-gray-500 text-3xl uppercase tracking-widest">{t.roster} ({TEAMS_DATA.length})</h3>
+                   <h3 className="text-gray-500 text-3xl uppercase tracking-widest">{t.roster} ({teams.length})</h3>
                    {isPaused && (
                        <button onClick={() => setIsPaused(false)} className="flex items-center gap-2 text-1xl font-bold text-green-400 bg-green-400/10 px-3 py-1 rounded-full animate-pulse hover:bg-green-400/20">
                            <RotateCw size={12}/> {t.resume_autoplay}
@@ -578,7 +587,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                </div>
 
                <div className="grid grid-cols-4 gap-3">
-                   {TEAMS_DATA.map((team, i) => {
+                   {teams.map((team, i) => {
                        const isActive = i === activeIndex;
                        const isPast = i < activeIndex;
                        const TIcon = team.icon;
@@ -616,6 +625,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                    })}
                </div>
             </div>
+            </>)}
 
         </div>
 

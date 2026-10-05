@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Coffee, Play, Pause, Plus, Minus, ArrowLeft, Trophy, Medal, TrendingUp } from "lucide-react";
-import { TEAMS_DATA } from "../data/teams";
+import { useQuiz } from "../quiz/context";
 
 const getRankText = (rank) => {
     if (rank === 1) return "1. MÍSTĚ";
@@ -53,6 +53,7 @@ const RankGraph = ({ history, maxRank }) => {
 };
 
 export default function PauseScreen({ isPresenter, leaderboardData, availableRounds, onBack, t }) {
+  const { teams } = useQuiz();
   const [timeLeft, setTimeLeft] = useState(30 * 60);
   const [isActive, setIsActive] = useState(false);
   const [spotlightIndex, setSpotlightIndex] = useState(0);
@@ -100,7 +101,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
               finalRank = index + 1;
           }
 
-          const teamMeta = TEAMS_DATA.find(meta => meta.name.toLowerCase() === t.name.toLowerCase()) || {};
+          const teamMeta = teams.find(meta => meta.name.toLowerCase() === t.name.toLowerCase()) || {};
           return {
               name: t.name,
               total: t.score,
@@ -112,7 +113,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
               IconComponent: teamMeta.icon
           };
       });
-  }, [leaderboardData, availableRounds]);
+  }, [leaderboardData, availableRounds, teams]);
 
   const channel = useMemo(() => new BroadcastChannel('quiz-pause-sync'), []);
 

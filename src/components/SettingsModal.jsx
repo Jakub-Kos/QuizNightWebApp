@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { X, Save, Clock, Zap, Maximize, Globe, ChevronUp, ChevronDown } from "lucide-react";
+import { X, Save, Clock, Zap, Maximize, Globe, ChevronUp, ChevronDown, Library } from "lucide-react";
 
-export default function SettingsModal({ onClose, onOpenCalibration, config, onUpdate, t }) {
+export default function SettingsModal({ onClose, onOpenCalibration, onExit, config, onUpdate, t }) {
   const handleChange = (key, value) => {
     onUpdate({ ...config, [key]: value });
   };
@@ -206,8 +206,11 @@ export default function SettingsModal({ onClose, onOpenCalibration, config, onUp
         </div>
 
         {/* --- FOOTER --- */}
-        <div className="p-4 bg-black/40 text-right border-t border-gray-700">
-          <button onClick={onClose} className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl flex items-center gap-2 ml-auto hover:scale-105 transition-transform">
+        <div className="p-4 bg-black/40 border-t border-gray-700 flex items-center justify-between gap-2">
+          <button onClick={onExit} className="px-4 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl flex items-center gap-2 transition-colors">
+            <Library size={18} /> {t.settings_exit}
+          </button>
+          <button onClick={onClose} className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform">
             <Save size={18} /> {t.save_close}
           </button>
         </div>

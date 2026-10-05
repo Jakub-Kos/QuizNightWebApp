@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Minus as MinusIcon, Trophy, Crown, CheckCircle, HelpCircle, Shuffle, Database, Flame } from "lucide-react";
-import { TEAMS_DATA } from "../data/teams";
+import { useQuiz } from "../quiz/context";
 
 export default function Leaderboard({ isPresenter, data, availableRounds, latestRoundName, lastSync, onClose, t }) {
+  const { teams } = useQuiz();
   const [frozenData] = useState(() => data || []);
   const [frozenRounds] = useState(() => availableRounds || []);
 
@@ -52,7 +53,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
       const prevRoundName = roundIndex > 0 ? frozenRounds[roundIndex - 1] : null;
 
       const enriched = frozenData.map(team => {
-          const teamMeta = TEAMS_DATA.find(t => t.name.toLowerCase() === team.name.toLowerCase()) || {};
+          const teamMeta = teams.find(t => t.name.toLowerCase() === team.name.toLowerCase()) || {};
 
           const total = includedRounds.reduce((sum, r) => sum + (team.scores[r] || 0), 0);
           const previousTotal = previousRounds.reduce((sum, r) => sum + (team.scores[r] || 0), 0);
@@ -99,7 +100,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
 
       const finalTeams = withPrevRank.map(t => ({ ...t, groupIndex: uniqueScores.indexOf(t.roundPoints) }));
       return { initialTeams: finalTeams, scoreGroups: groups };
-  }, [frozenData, frozenRounds, selectedRound]);
+  }, [frozenData, frozenRounds, selectedRound, teams]);
 
   const maxStep = scoreGroups.length * 2 + 1;
   const isShuffled = revealStep === maxStep;

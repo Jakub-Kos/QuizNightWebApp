@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, X, Edit3, Hash, Clock, ListOrdered } from "lucide-react";
 import { useStageSize } from "../hooks/useDisplay";
+import { useQuiz } from "../quiz/context";
 
 export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t = {} }) {
     const [qIndex, setQIndex] = useState(-1);
@@ -56,52 +57,12 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     }, [qIndex, step, isPresenter, channel]);
 
 
-    // --- DATA PROCESSING (Handles Top5 grouping) ---
-    const processedQuestions = useMemo(() => {
-        const qs = [];
-        let i = 0;
-
-        while (i < roundData.questions.length) {
-            const row = roundData.questions[i];
-            const type = row[3] ? String(row[3]).trim() : "Written";
-
-            if (type === "Top5") {
-                // Start an array with the first answer
-                const answers = [row[8]];
-                let j = 1;
-
-                // Keep grabbing subsequent rows until we hit a new question text or question type
-                while (i + j < roundData.questions.length) {
-                    const nextRow = roundData.questions[i + j];
-                    if (nextRow[2] || nextRow[3]) break; // A new question starts here
-                    answers.push(nextRow[8]);
-                    j++;
-                }
-
-                qs.push({
-                    id: row[1],
-                    text: row[2],
-                    type: "Top5",
-                    options: {},
-                    answer: answers, // Array of answers
-                    source: row[9] ? `source/${row[9]}` : null
-                });
-
-                i += j; // Skip the rows we just absorbed
-            } else {
-                qs.push({
-                    id: row[1],
-                    text: row[2],
-                    type: type,
-                    options: { A: row[4], B: row[5], C: row[6], D: row[7] },
-                    answer: row[8],
-                    source: row[9] ? `source/${row[9]}` : null
-                });
-                i++;
-            }
-        }
-        return qs;
-    }, [roundData.questions]);
+    // Questions arrive parsed (quiz/parse.js); media file names resolve to URLs here
+    const { resolveMedia } = useQuiz();
+    const processedQuestions = useMemo(
+        () => roundData.questions.map(q => ({ ...q, source: resolveMedia(q.media) })),
+        [roundData.questions, resolveMedia]
+    );
 
     const question = qIndex >= 0 ? processedQuestions[qIndex] : null;
 

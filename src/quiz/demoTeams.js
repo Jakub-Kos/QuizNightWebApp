@@ -1,10 +1,9 @@
-import { Brain, Rocket, Zap, Crown, Flame, Shield, Beer, Glasses, Gavel, Microscope } from "lucide-react";
-
-export const TEAMS_DATA = [
+// Fictional teams for the built-in demo quiz
+export const DEMO_TEAMS = [
   {
     id: 1,
     name: "The Quizzards",
-    icon: Brain,
+    icon: "Brain",
     image: null,
     color: "from-purple-600 to-indigo-900",
     quote: "You're a hazard, Harry.",
@@ -18,7 +17,7 @@ export const TEAMS_DATA = [
   {
     id: 2,
     name: "Team Rocket",
-    icon: Rocket,
+    icon: "Rocket",
     image: null,
     color: "from-red-600 to-pink-900",
     quote: "Prepare for trouble!",
@@ -32,7 +31,7 @@ export const TEAMS_DATA = [
   {
     id: 3,
     name: "Les Quizerables",
-    icon: Shield,
+    icon: "Shield",
     image: null,
     color: "from-blue-600 to-cyan-800",
     quote: "One day more...",
@@ -46,7 +45,7 @@ export const TEAMS_DATA = [
   {
     id: 4,
     name: "Agatha Quiztie",
-    icon: Crown,
+    icon: "Crown",
     image: null,
     color: "from-emerald-600 to-teal-900",
     quote: "The butler did it.",
@@ -60,7 +59,7 @@ export const TEAMS_DATA = [
     {
     id: 5,
     name: "New Kids",
-    icon: Flame,
+    icon: "Flame",
     image: null,
     color: "from-orange-500 to-red-600",
     quote: "Here for the beer.",
@@ -74,7 +73,7 @@ export const TEAMS_DATA = [
     {
     id: 6,
     name: "Beer Pressure",
-    icon: Beer,
+    icon: "Beer",
     image: "https://images.unsplash.com/photo-1555658636-6e4a36218be7?auto=format&fit=crop&w=800&q=80",
     color: "from-yellow-500 to-orange-700",
     quote: "We're just here for the pints.",
@@ -88,7 +87,7 @@ export const TEAMS_DATA = [
   {
     id: 7,
     name: "Risky Quizness",
-    icon: Glasses,
+    icon: "Glasses",
     image: "https://images.unsplash.com/photo-1485875437342-9b39470b3d95?auto=format&fit=crop&w=800&q=80",
     color: "from-sky-500 to-blue-700",
     quote: "Slide into the DMs.",
@@ -102,7 +101,7 @@ export const TEAMS_DATA = [
   {
     id: 8,
     name: "Quiz Pro Quo",
-    icon: Gavel,
+    icon: "Gavel",
     image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80",
     color: "from-stone-700 to-stone-900",
     quote: "I ate his liver with fava beans.",
