@@ -47,14 +47,14 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
   };
 
   return (
-    <div className="h-screen w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan'] selection:bg-yellow-500/30">
+    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan'] selection:bg-yellow-500/30">
 
       <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0 pointer-events-none" />
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-900/10 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-yellow-600/5 blur-[120px] rounded-full pointer-events-none" />
 
       {/* --- HEADER --- */}
-      <div className="h-[15vh] flex items-center justify-between px-16 relative z-20 border-b border-white/5 bg-black/40 backdrop-blur-md shrink-0">
+      <div className="h-[15cqh] flex items-center justify-between px-16 relative z-20 border-b border-white/5 bg-black/40 backdrop-blur-md shrink-0">
 
           <div className="flex flex-col gap-3 w-[400px]">
               <div className="flex justify-between items-end">
@@ -106,7 +106,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                 <p className="font-mono tracking-widest uppercase">Loading Modules...</p>
             </div>
           ) : (
-            <div className="flex w-full max-w-[1600px] h-[70vh] gap-4" onMouseLeave={() => setHoveredRound(null)}>
+            <div className="flex w-full max-w-[1600px] h-[70cqh] gap-4" onMouseLeave={() => setHoveredRound(null)}>
                 {visibleRounds.map((round, index) => {
                     const isHovered = hoveredRound === index;
                     const isCompleted = completedRounds.includes(round.title);
@@ -149,7 +149,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                                         <div className="w-10 h-10 flex items-end justify-center relative">
                                             <h2
                                                 style={{ transformOrigin: "left bottom", transform: "rotate(-90deg) translateX(0) translateY(50%)" }}
-                                                className={`absolute left-1/2 bottom-0 w-[55vh] text-left font-bold tracking-[0.2em] uppercase transition-colors leading-tight ${getCollapsedTitleClass(displayTitle)} ${
+                                                className={`absolute left-1/2 bottom-0 w-[55cqh] text-left font-bold tracking-[0.2em] uppercase transition-colors leading-tight ${getCollapsedTitleClass(displayTitle)} ${
                                                     isCompleted ? "text-green-500/60 group-hover:text-green-400" : "text-white/40 group-hover:text-white/80"
                                                 }`}
                                             >

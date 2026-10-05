@@ -10,7 +10,7 @@ export default function RulesScreen({ onNext, t }) {
   ];
 
   return (
-    <div className="h-screen w-full bg-[#050505] relative overflow-hidden flex flex-col items-center justify-center font-['League_Spartan']">
+    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col items-center justify-center font-['League_Spartan']">
 
       {/* --- BACKGROUND AMBIENCE (Matching Welcome) --- */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />

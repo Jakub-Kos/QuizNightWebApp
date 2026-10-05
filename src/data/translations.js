@@ -74,7 +74,22 @@ export const TRANSLATIONS = {
     read_time: "Reading Time",
     cycle_time: "Total Time Per Team",
     language: "Language / Jazyk",
-    save_close: "Save Changes"
+    save_close: "Save Changes",
+    calib_open: "Display Calibration",
+    calib_title: "Display Calibration",
+    calib_corners: "All four yellow corners must be fully visible.",
+    calib_circle: "The blue circle must look round, not oval.",
+    calib_text_sample: "Readable from the back?",
+    calib_window: "Window",
+    calib_stage: "Stage",
+    calib_scale: "Content size",
+    calib_margin: "Edge margin",
+    calib_reset: "Reset",
+    calib_fullscreen: "Fullscreen",
+    calib_done: "Done",
+    calib_keys: "Keys: +/− size · [ ] margin · 0 reset · F fullscreen · Esc close. Shift+C opens this screen anytime.",
+    fs_hint_before: "Press",
+    fs_hint_after: "for fullscreen"
   },
   cs: {
     // Welcome Screen
@@ -156,7 +171,22 @@ export const TRANSLATIONS = {
     read_time: "Čas na čtení",
     cycle_time: "Čas na tým",
     language: "Jazyk / Language",
-    save_close: "Uložit Změny"
+    save_close: "Uložit Změny",
+    calib_open: "Kalibrace obrazovky",
+    calib_title: "Kalibrace obrazovky",
+    calib_corners: "Všechny čtyři žluté rohy musí být celé vidět.",
+    calib_circle: "Modrý kruh musí být kulatý, ne oválný.",
+    calib_text_sample: "Přečtete to ze zadní řady?",
+    calib_window: "Okno",
+    calib_stage: "Plátno",
+    calib_scale: "Velikost obsahu",
+    calib_margin: "Okraj",
+    calib_reset: "Obnovit",
+    calib_fullscreen: "Celá obrazovka",
+    calib_done: "Hotovo",
+    calib_keys: "Klávesy: +/− velikost · [ ] okraj · 0 obnovit · F celá obrazovka · Esc zavřít. Shift+C otevře tuto obrazovku kdykoli.",
+    fs_hint_before: "Stiskněte",
+    fs_hint_after: "pro celou obrazovku"
   },
   sk: {
     // Welcome Screen
@@ -212,6 +242,21 @@ export const TRANSLATIONS = {
     read_time: "Olvasási Idő",
     cycle_time: "Csapat Idő",
     language: "Nyelv / Language",
-    save_close: "Mentés"
+    save_close: "Mentés",
+    calib_open: "Képernyő kalibrálás",
+    calib_title: "Képernyő kalibrálás",
+    calib_corners: "Mind a négy sárga saroknak teljesen látszania kell.",
+    calib_circle: "A kék körnek kereknek kell lennie, nem oválisnak.",
+    calib_text_sample: "Olvasható a hátsó sorból?",
+    calib_window: "Ablak",
+    calib_stage: "Vászon",
+    calib_scale: "Tartalom mérete",
+    calib_margin: "Szélső margó",
+    calib_reset: "Visszaállítás",
+    calib_fullscreen: "Teljes képernyő",
+    calib_done: "Kész",
+    calib_keys: "Billentyűk: +/− méret · [ ] margó · 0 visszaállítás · F teljes képernyő · Esc bezárás. A Shift+C bármikor megnyitja ezt a képernyőt.",
+    fs_hint_before: "Nyomja meg a(z)",
+    fs_hint_after: "gombot a teljes képernyőhöz"
   }
 };

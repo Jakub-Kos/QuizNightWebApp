@@ -166,7 +166,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
 
   if (isPresenter) {
       return (
-          <div className="h-screen w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col items-center justify-center relative">
+          <div className="h-full w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col items-center justify-center relative">
               <button onClick={onBack} className="absolute top-10 left-10 flex items-center gap-3 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all font-bold">
                   <ArrowLeft size={20}/> Back to Dashboard
               </button>
@@ -194,7 +194,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
   const tickerItems = [...sortedTeams, ...sortedTeams];
 
   return (
-    <div className="h-screen w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan'] selection:bg-blue-500/30">
+    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan'] selection:bg-blue-500/30">
 
         <div className="absolute inset-0 bg-black z-0 pointer-events-none" />
         <AnimatePresence>
@@ -209,7 +209,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
 
         <div className="relative z-10 flex flex-col h-full w-full">
 
-            <div className="flex-none h-[22vh] flex flex-col items-center justify-center pt-8">
+            <div className="flex-none h-[22cqh] flex flex-col items-center justify-center pt-8">
                 <div className="flex items-center gap-4 text-blue-500 mb-2 animate-pulse">
                     <Coffee size={28} />
                     <h2 className="text-2xl font-black uppercase tracking-[0.4em]">Half-Time Break</h2>
@@ -288,7 +288,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                 </AnimatePresence>
             </div>
 
-            <div className="flex-none h-[10vh] bg-blue-950/20 border-t border-blue-500/20 flex items-center overflow-hidden backdrop-blur-md relative z-20">
+            <div className="flex-none h-[10cqh] bg-blue-950/20 border-t border-blue-500/20 flex items-center overflow-hidden backdrop-blur-md relative z-20">
                 <div className="h-full bg-blue-600 px-8 flex items-center justify-center relative z-30 shadow-[10px_0_20px_rgba(0,0,0,0.5)]">
                     <span className="font-black text-white uppercase tracking-[0.3em] text-lg whitespace-nowrap">
                         Live Standings

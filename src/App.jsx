@@ -12,6 +12,10 @@ import SettingsModal from "./components/SettingsModal";
 import RulesScreen from "./components/RulesScreen";
 import PrizesScreen from "./components/PrizesScreen";
 import PauseScreen from "./components/PauseScreen";
+import Stage from "./components/Stage";
+import { useDisplaySettings } from "./hooks/useDisplay";
+import { CalibrationPattern, CalibrationControls } from "./components/CalibrationScreen";
+import FullscreenHint from "./components/FullscreenHint";
 
 const SCENES = {
   WELCOME: "welcome",
@@ -52,6 +56,8 @@ export default function App() {
   const [activeRoundId, setActiveRoundId] = useState(null);
   const [playMode, setPlayMode] = useState("with_answers");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isCalibrating, setIsCalibrating] = useState(false);
+  const [display, setDisplay] = useDisplaySettings(isPresenter ? "presenter" : "main");
 
   const [liveLeaderboard, setLiveLeaderboard] = useState({
       teams: [],
@@ -64,7 +70,6 @@ export default function App() {
     startTime: "20:00",
     splitDelay: 3000,
     cycleDuration: 8000,
-    uiScale: 1.0,
     headerInterval: 5000,
     language: "cs"
   });
@@ -169,7 +174,8 @@ export default function App() {
 
   useEffect(() => {
     const handleGlobalKey = (e) => {
-       if (e.key.toLowerCase() === 'p' && e.shiftKey) window.open(window.location.origin + '?presenter=true', 'PresenterWindow', 'width=1200,height=800');
+       if (e.key.toLowerCase() === 'p' && e.shiftKey) window.open(window.location.origin + window.location.pathname + '?presenter=true', 'PresenterWindow', 'width=1200,height=800');
+       if (e.key.toLowerCase() === 'c' && e.shiftKey) setIsCalibrating(c => !c);
        if (e.key.toLowerCase() === 'd' && e.shiftKey) setScene(SCENES.DASHBOARD);
     };
     window.addEventListener('keydown', handleGlobalKey);
@@ -211,7 +217,10 @@ export default function App() {
   );
 
   return (
-    <div className="bg-[#050505] min-h-screen font-['League_Spartan'] overflow-hidden relative selection:bg-yellow-500/30 text-white">
+    <>
+    {/* Presenter control panels use the full window; everything else renders on the scaled stage */}
+    <Stage display={display} bypass={isPresenter && !isCalibrating && [SCENES.GAME, SCENES.LEADERBOARD, SCENES.PAUSE].includes(scene)}>
+    <div className="bg-[#050505] h-full w-full font-['League_Spartan'] overflow-hidden relative selection:bg-yellow-500/30 text-white">
       {!isPresenter && (
           <div className="absolute top-0 w-full p-6 flex justify-between z-50 pointer-events-none">
             <div className="pointer-events-auto flex gap-2">
@@ -224,10 +233,6 @@ export default function App() {
             </div>
           </div>
       )}
-
-      <AnimatePresence>
-        {isSettingsOpen && <SettingsModal config={config} onUpdate={setConfig} onClose={() => setIsSettingsOpen(false)} t={t} />}
-      </AnimatePresence>
 
       <AnimatePresence mode="wait">
         {scene === SCENES.WELCOME && <WelcomeScreen key="welcome" onStart={() => setScene(SCENES.RULES)} startTime={config.startTime} showTime={config.showTime} config={config} t={t} />}
@@ -265,6 +270,25 @@ export default function App() {
             {config.showTime && <span className="font-mono text-yellow-500/50">{t.start_show}: {config.startTime}</span>}
           </div>
       )}
+
+      {isCalibrating && <CalibrationPattern t={t} />}
     </div>
+    </Stage>
+
+    {/* Operator overlays stay outside the stage so they are never scaled */}
+    <AnimatePresence>
+      {isSettingsOpen && (
+        <SettingsModal
+          config={config}
+          onUpdate={setConfig}
+          onClose={() => setIsSettingsOpen(false)}
+          onOpenCalibration={() => { setIsSettingsOpen(false); setIsCalibrating(true); }}
+          t={t}
+        />
+      )}
+    </AnimatePresence>
+    {isCalibrating && <CalibrationControls display={display} onUpdate={setDisplay} onClose={() => setIsCalibrating(false)} t={t} />}
+    {!isPresenter && !isCalibrating && <FullscreenHint t={t} />}
+    </>
   );
 }

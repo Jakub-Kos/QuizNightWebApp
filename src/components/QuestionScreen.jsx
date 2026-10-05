@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, X, Edit3, Hash, Clock, ListOrdered } from "lucide-react";
+import { useStageSize } from "../hooks/useDisplay";
 
 export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t = {} }) {
     const [qIndex, setQIndex] = useState(-1);
     const [step, setStep] = useState(0);
     const [timer, setTimer] = useState(0);
+    const stageSize = useStageSize();
 
     const isQuestionsOnly = mode === "questions_only";
     const modeText = isQuestionsOnly ? "Q ONLY MODE" : "REVEAL MODE";
@@ -178,7 +180,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     // ==========================================
     if (isPresenter) {
         return (
-            <div className="h-screen w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col">
+            <div className="h-full w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-6">
                     <div>
@@ -307,7 +309,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
         const themeName = parts.length > 1 ? parts.slice(1).join("-").trim() : roundData.title;
 
         return (
-            <div onClick={next} className="h-screen w-full bg-[#050505] flex flex-col items-center justify-center font-['League_Spartan'] cursor-pointer relative overflow-hidden">
+            <div onClick={next} className="h-full w-full bg-[#050505] flex flex-col items-center justify-center font-['League_Spartan'] cursor-pointer relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
                 <motion.div initial={{opacity:0, scale: 0.9}} animate={{opacity:1, scale: 1}} className="text-center z-10 flex flex-col items-center max-w-6xl px-8">
                     <h2 className="text-blue-500 font-bold tracking-[0.5em] text-4xl mb-6 uppercase drop-shadow-lg">{displayTitle}</h2>
@@ -321,14 +323,14 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     }
 
     return (
-        <div className="h-screen w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan']">
+        <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan']">
             <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
 
             {/* BIG NUMBER */}
-            <div className="relative h-[25vh] w-full flex items-center justify-center z-20 pointer-events-none">
+            <div className="relative h-[25cqh] w-full flex items-center justify-center z-20 pointer-events-none">
                 <motion.div
                     initial={false}
-                    animate={showBigNum ? { scale: 1, y: "30vh" } : { scale: 0.4, y: 0 }}
+                    animate={showBigNum ? { scale: 1, y: stageSize.h * 0.3 } : { scale: 0.4, y: 0 }}
                     transition={{ duration: 0.8, type: "spring", bounce: 0.2 }}
                     className="flex flex-col items-center"
                 >
@@ -345,7 +347,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
             <div className="flex-1 flex flex-col items-center justify-start relative z-10 px-16 pt-4">
                 <AnimatePresence mode="wait">
                     {showPreMedia && (
-                        <motion.div key="pre-media" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }} className="w-full h-[65vh] flex items-center justify-center">
+                        <motion.div key="pre-media" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }} className="w-full h-[65cqh] flex items-center justify-center">
                             {question.type === "PVideo" ? (
                                 <video src={question.source} controls autoPlay className="max-h-full max-w-full rounded-2xl shadow-2xl border border-white/10" />
                             ) : (
@@ -361,15 +363,15 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                             </h2>
 
                             {question.source && !isPreMedia && (
-                                <div className="mb-8 max-h-[40vh] relative">
+                                <div className="mb-8 max-h-[40cqh] relative">
                                     {question.type.includes("Video") ? (
-                                        <video src={question.source} controls className="max-h-[40vh] rounded-2xl border border-white/20" />
+                                        <video src={question.source} controls className="max-h-[40cqh] rounded-2xl border border-white/20" />
                                     ) : question.type === "Audio" ? (
                                         <div className="bg-white/10 p-6 rounded-full border border-white/10 flex items-center justify-center w-[500px]">
                                             <audio controls src={question.source} className="w-full" />
                                         </div>
                                     ) : (
-                                        <img src={question.source} className="max-h-[40vh] rounded-2xl border border-white/20" />
+                                        <img src={question.source} className="max-h-[40cqh] rounded-2xl border border-white/20" />
                                     )}
                                 </div>
                             )}
@@ -453,7 +455,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
             </div>
 
             {/* --- FOOTER --- */}
-            <div className="h-[10vh] border-t border-white/5 bg-black/50 backdrop-blur-md flex items-center justify-between px-10 relative z-30">
+            <div className="h-[10cqh] border-t border-white/5 bg-black/50 backdrop-blur-md flex items-center justify-between px-10 relative z-30">
                 <div className="flex items-center gap-4 text-white/40 font-mono text-xs uppercase tracking-widest font-bold">
                     <span className="bg-white/10 px-3 py-1.5 rounded-md text-white">{t?.round || "Round"} {roundData.number}</span>
                     <span>Q {qIndex + 1} / {processedQuestions.length}</span>

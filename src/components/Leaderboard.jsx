@@ -166,7 +166,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
       else nextActionText = `REVEAL TEAMS WITH ${scoreGroups[activeGroupIndex]?.points} PTS`;
 
       return (
-          <div className="h-screen w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col relative">
+          <div className="h-full w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col relative">
               <div className="flex justify-between items-start border-b border-white/10 pb-6 mb-8">
                   <div>
                       <h1 className="text-3xl font-black uppercase tracking-widest text-yellow-500 mb-2">Eurovision Reveal Controls</h1>
@@ -238,7 +238,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
   const activeGroupForOverlay = isCardOverlayActive ? scoreGroups[Math.floor(revealStep / 2)] : null;
 
   return (
-    <div className="h-screen w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan'] selection:bg-blue-500/30">
+    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan'] selection:bg-blue-500/30">
         <style dangerouslySetInnerHTML={{__html: `
             @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
             @keyframes fireFlicker {
@@ -256,7 +256,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
         <div className="absolute top-0 right-0 w-[1200px] h-[1200px] bg-blue-900/10 blur-[250px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-yellow-900/5 blur-[200px] rounded-full pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col h-full w-full max-w-[1920px] mx-auto pt-[6vh] pb-[6vh] px-12">
+        <div className="relative z-10 flex flex-col h-full w-full max-w-[1920px] mx-auto pt-[6cqh] pb-[6cqh] px-12">
             <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8 shrink-0">
                 <div className="flex items-center gap-6">
                     <Trophy size={48} className="text-yellow-500" />

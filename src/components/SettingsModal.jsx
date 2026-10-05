@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { X, Save, Clock, Zap, Maximize, Globe, ChevronUp, ChevronDown } from "lucide-react";
 
-export default function SettingsModal({ onClose, config, onUpdate, t }) {
+export default function SettingsModal({ onClose, onOpenCalibration, config, onUpdate, t }) {
   const handleChange = (key, value) => {
     onUpdate({ ...config, [key]: value });
   };
@@ -104,6 +104,13 @@ export default function SettingsModal({ onClose, config, onUpdate, t }) {
                 <div className={`w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 ${config.showTime ? "translate-x-6" : "translate-x-0"}`} />
               </button>
             </div>
+
+            <button
+              onClick={onOpenCalibration}
+              className="w-full flex items-center justify-center gap-2 bg-black/20 hover:bg-white/10 p-4 rounded-xl border border-white/5 text-gray-200 font-medium transition-all"
+            >
+              <Maximize size={18} className="text-yellow-400" /> {t.calib_open}
+            </button>
 
             {/* 👇 IMPROVED INTERACTIVE CLOCK WIDGET 👇 */}
             <div className="bg-black/20 p-4 rounded-xl border border-white/5 flex flex-col items-center">

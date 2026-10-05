@@ -294,7 +294,6 @@ const RotatingHeaderItem = ({ children }) => (
 
 // --- MAIN COMPONENT ---
 export default function WelcomeScreen({ onStart, startTime, showTime, config, t }) {
-  const uiScale = config?.uiScale || 1;
   const splitDelay = config?.splitDelay || 3000;
   const cycleDuration = config?.cycleDuration || 8000;
   const headerInterval = config?.headerInterval || 5000;
@@ -399,18 +398,18 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
   return (
     <motion.div
       initial={{ y: 0 }}
-      animate={isExiting ? { y: "-100vh" } : { y: 0 }}
+      animate={isExiting ? { y: "-100%" } : { y: 0 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
-      className="h-screen w-full relative overflow-hidden flex flex-col bg-[#050505] font-['League_Spartan']"
+      className="h-full w-full relative overflow-hidden flex flex-col bg-[#050505] font-['League_Spartan']"
     >
 
       <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
       <div className={`absolute inset-0 opacity-20 bg-gradient-to-r ${activeTeam.color} blur-[150px] transition-colors duration-1000`} />
 
-      <div style={{ transform: `scale(${uiScale})` }} className="relative w-full h-full flex flex-col transition-transform duration-500 origin-center">
+      <div className="relative w-full h-full flex flex-col isolate">
 
         {/* 1. ROTATING HEADER */}
-        <div className="h-[20vh] w-full relative z-50 perspective-1000">
+        <div className="h-[20cqh] w-full relative z-50 perspective-1000">
            <AnimatePresence mode="wait">
               {(headerState === 0 || !showTime) && (
                 <RotatingHeaderItem key="title">
@@ -443,7 +442,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
         </div>
 
         {/* 2. MAIN CONTENT */}
-        <div className="h-[65vh] w-full relative flex items-center pl-32 perspective-1000">
+        <div className="h-[65cqh] w-full relative flex items-center pl-32 perspective-1000">
 
             <div className="relative w-[600px] h-[800px] z-20">
                 <AnimatePresence mode="popLayout">
@@ -621,7 +620,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
         </div>
 
         {/* 3. FOOTER */}
-        <div className="h-[15vh] w-full flex items-center justify-center z-[100] relative">
+        <div className="h-[15cqh] w-full flex items-center justify-center z-[100] relative">
             {!isExiting && (
                 <button
                     onClick={handleStart}
