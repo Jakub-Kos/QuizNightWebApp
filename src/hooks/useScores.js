@@ -4,7 +4,8 @@ import { SCORES_CHANNEL, manualLeaderboard } from "../quiz/scores";
 import { useLiveScores } from "./useLiveScores";
 
 // Scores for the leaderboard: from the linked Sheet, or entered by hand on the score entry page
-export function useScores(quiz, rounds) {
+// roundWord: the show language's word for "round", used to label manually scored rounds
+export function useScores(quiz, rounds, roundWord) {
   const sheet = useLiveScores(quiz.scoresSheetUrl);
   const usesManual = !quiz.scoresSheetUrl && !quiz.builtin;
   const [manual, setManual] = useState(quiz.manualScores || {});
@@ -19,7 +20,7 @@ export function useScores(quiz, rounds) {
   }, [quiz.id, usesManual]);
 
   return useMemo(
-    () => (usesManual ? { ...manualLeaderboard(quiz.teams, rounds, manual), lastSync: null } : sheet),
-    [usesManual, quiz.teams, rounds, manual, sheet],
+    () => (usesManual ? { ...manualLeaderboard(quiz.teams, rounds, manual, roundWord), lastSync: null } : sheet),
+    [usesManual, quiz.teams, rounds, manual, sheet, roundWord],
   );
 }

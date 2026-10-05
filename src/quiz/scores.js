@@ -12,17 +12,18 @@ export const announceScores = (quizId) => {
 // Rounds that get scores: the ones the Dashboard shows. Keyed by round number, which stays
 // stable when rounds are reordered in the questions sheet.
 export const scoredRounds = (rounds) => rounds.filter((r) => !isRoundHidden(r));
-export const roundLabel = (round) => `Kolo ${round.number}`;
+// "Kolo 3" / "Round 3": word is the show language's t.round (any capitalisation)
+export const roundLabel = (round, word = "Kolo") => `${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()} ${round.number}`;
 
 // quiz.manualScores = { [teamId]: { [roundNumber]: points } } -> the shape the leaderboard reads
 // (same as a scores Sheet: { teams: [{ name, scores: { "Kolo 1": 10 } }], rounds: ["Kolo 1", ...] })
-export function manualLeaderboard(teams, rounds, manualScores = {}) {
+export function manualLeaderboard(teams, rounds, manualScores = {}, roundWord) {
   const scored = scoredRounds(rounds);
   return {
-    rounds: scored.map(roundLabel),
+    rounds: scored.map((r) => roundLabel(r, roundWord)),
     teams: teams.filter((team) => team.name.trim() && isPresent(team)).map((team) => ({
       name: team.name.trim(),
-      scores: Object.fromEntries(scored.map((r) => [roundLabel(r), Number(manualScores[team.id]?.[r.number]) || 0])),
+      scores: Object.fromEntries(scored.map((r) => [roundLabel(r, roundWord), Number(manualScores[team.id]?.[r.number]) || 0])),
     })),
   };
 }

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, X, Edit3, Hash, Clock, ListOrdered, Maximize2, Minimize2 } from "lucide-react";
 import { useStageSize } from "../hooks/useDisplay";
 import { useQuiz } from "../quiz/context";
+import { fmt } from "../quiz/files";
 
 // preview: { qIndex, step } renders one fixed frame (quiz check thumbnails): no keys, sync or timer
 export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t = {}, preview = null }) {
@@ -18,7 +19,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     const stageSize = useStageSize();
 
     const isQuestionsOnly = mode === "questions_only";
-    const modeText = isQuestionsOnly ? "Q ONLY MODE" : "REVEAL MODE";
+    const modeText = isQuestionsOnly ? t.q_mode_questions : t.q_mode_answers;
 
     // --- 2-WAY PRESENTER SYNC ---
     // Only local changes are broadcast: the state at mount and states received from the other window are
@@ -79,10 +80,10 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
 
     const getExpectedAnswerText = (type) => {
         switch(type) {
-            case "Written": return t.type_written || "WRITTEN ANSWER";
-            case "Numeric": return t.type_numeric || "NUMERIC ANSWER";
-            case "Top5": return "TOP 5 LIST";
-            default: return type.toUpperCase();
+            case "Numeric": return t.type_numeric;
+            case "Top5": return t.type_top5;
+            // Written, and the media types, which are answered in writing too
+            default: return t.type_written;
         }
     };
 
@@ -160,7 +161,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                 {/* Header */}
                 <div className="flex flex-wrap justify-between items-center gap-4 mb-8 border-b border-white/10 pb-6">
                     <div>
-                        <h1 className="text-3xl font-black text-yellow-500 tracking-widest uppercase">Host Dashboard</h1>
+                        <h1 className="text-3xl font-black text-yellow-500 tracking-widest uppercase">{t.host_dashboard}</h1>
                         <div className="flex items-center gap-3 mt-2">
                             <span className="text-white bg-white/10 px-3 py-1 rounded text-sm font-bold">{roundData.title}</span>
                             <span className="text-blue-400 font-mono text-sm">{modeText}</span>
@@ -169,17 +170,17 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                     <div className="flex flex-wrap gap-4">
                         {hasImage && (
                             <button onClick={() => setZoom(z => !z)} className={`px-6 py-4 font-bold rounded-xl transition-all flex items-center gap-2 ${zoom ? "bg-yellow-500 text-black" : "bg-white/10 hover:bg-white/20 text-white"}`}>
-                                {zoom ? <Minimize2 size={20} /> : <Maximize2 size={20} />} {zoom ? "CLOSE IMAGE" : "ENLARGE IMAGE"}
+                                {zoom ? <Minimize2 size={20} /> : <Maximize2 size={20} />} {zoom ? t.zoom_close : t.zoom_open}
                             </button>
                         )}
                         <button onClick={prev} className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all">
-                            &lt; PREVIOUS
+                            &lt; {t.btn_prev}
                         </button>
                         <button onClick={next} className="px-12 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)]">
-                            NEXT ACTION &gt;
+                            {t.btn_next} &gt;
                         </button>
                         <button onClick={onBack} className="px-6 py-4 bg-red-900/50 hover:bg-red-800/80 text-white font-bold rounded-xl transition-all ml-8">
-                            EXIT ROUND
+                            {t.exit_round}
                         </button>
                     </div>
                 </div>
@@ -190,18 +191,18 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                     {/* Left Col: WHAT IS ON THE SCREEN NOW */}
                     <div className="bg-black/50 p-8 rounded-[2rem] border border-white/10 flex flex-col">
                       <span className="text-blue-500 font-bold tracking-widest uppercase mb-6 text-sm flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"/> LIVE ON MAIN SCREEN
+                          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"/> {t.live_on_screen}
                       </span>
 
                         {qIndex === -1 ? (
                             <div className="flex-1 flex items-center justify-center text-4xl font-black text-white/30 uppercase text-center">
-                                Round Intro Screen
+                                {t.round_intro}
                             </div>
                         ) : (
                             <div className="flex flex-col h-full">
                                 <div className="flex justify-between items-end mb-6 border-b border-white/10 pb-4">
-                                    <h2 className="text-4xl font-black text-white">Question {qIndex + 1} / {processedQuestions.length}</h2>
-                                    <span className="text-white/40 font-mono">Step {step} / {getStepsForType(question.type) - 1}</span>
+                                    <h2 className="text-4xl font-black text-white">{fmt(t.question_of, { n: qIndex + 1, total: processedQuestions.length })}</h2>
+                                    <span className="text-white/40 font-mono">{fmt(t.step_of, { n: step, total: getStepsForType(question.type) - 1 })}</span>
                                 </div>
 
                                 <p className="text-2xl text-white/90 leading-relaxed font-medium mb-8">
@@ -217,7 +218,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                             </div>
                                         )) : ["Yes", "No"].map(opt => (
                                             <div key={opt} className={`p-4 rounded-xl border font-bold ${String(question.answer).trim().toLowerCase() === opt.toLowerCase() ? 'bg-green-600/20 border-green-500 text-green-400' : 'bg-white/5 border-white/10 text-white/50'}`}>
-                                                {opt}
+                                                {opt === "Yes" ? t.answer_yes : t.answer_no}
                                             </div>
                                         ))}
                                     </div>
@@ -225,7 +226,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
 
                                 {/* Highlight the Answer securely for the Host */}
                                 <div className="mt-auto bg-green-900/30 border border-green-500/50 p-6 rounded-2xl flex flex-col gap-2">
-                                    <span className="text-green-500/80 font-bold uppercase tracking-widest text-xs">Correct Answer</span>
+                                    <span className="text-green-500/80 font-bold uppercase tracking-widest text-xs">{t.correct_answer}</span>
                                     {question.type === "Top5" ? (
                                         <div className="flex flex-col gap-2 mt-2">
                                             {question.answer.map((ans, i) => (
@@ -252,15 +253,15 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
 
                     {/* Right Col: UPCOMING INFO / NOTES */}
                     <div className="bg-white/5 p-8 rounded-[2rem] border border-white/5 flex flex-col relative overflow-hidden">
-                        <span className="text-gray-400 font-bold tracking-widest uppercase mb-6 text-sm">Action upon clicking "Next"</span>
+                        <span className="text-gray-400 font-bold tracking-widest uppercase mb-6 text-sm">{t.next_title}</span>
 
                         <div className="flex-1 flex flex-col justify-center items-center text-center px-10">
                             <ArrowRight size={80} className="text-white/5 mb-8" />
                             <h3 className="text-3xl font-bold text-white/60">
-                                {qIndex === -1 ? "Reveal Big Question 1 Number" :
-                                    step < getStepsForType(question?.type) - 1 ? "Advance animation (Show text/media/answer)" :
-                                        qIndex < processedQuestions.length - 1 ? `Proceed to Question ${qIndex + 2}` :
-                                            "Finish Round and Return to Dashboard"}
+                                {qIndex === -1 ? t.next_show_number :
+                                    step < getStepsForType(question?.type) - 1 ? t.next_step :
+                                        qIndex < processedQuestions.length - 1 ? fmt(t.next_question, { n: qIndex + 2 }) :
+                                            t.next_finish}
                             </h3>
                         </div>
                     </div>
@@ -285,7 +286,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
 
     // 1. ROUND INTRO
     if (qIndex === -1) {
-        const displayTitle = `${t?.round || "Round"} ${roundData.number}`;
+        const displayTitle = `${t.round} ${roundData.number}`;
         const parts = (roundData.title || "").split("-");
         const themeName = parts.length > 1 ? parts.slice(1).join("-").trim() : roundData.title;
 
@@ -316,7 +317,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                     className="flex flex-col items-center"
                 >
                 <span className={`font-black text-white text-5xl uppercase tracking-widest transition-colors duration-500 ${showBigNum ? "opacity-100 text-blue-500" : "opacity-50 text-gray-500"}`}>
-                   {t.question || "QUESTION"}
+                   {t.question}
                 </span>
                     <span className="font-black text-[250px] text-white leading-none drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]">
                     {question.id}
@@ -391,7 +392,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                             return (
                                                 <div key={val} className={`h-48 rounded-[3rem] border flex flex-col items-center justify-center gap-4 transition-all duration-500 ${style}`}>
                                                     {val === "Yes" ? <Check size={64}/> : <X size={64}/>}
-                                                    <span className="text-5xl font-black uppercase">{val}</span>
+                                                    <span className="text-5xl font-black uppercase">{val === "Yes" ? t.answer_yes : t.answer_no}</span>
                                                 </div>
                                             )
                                         })}
@@ -419,7 +420,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                     <div className="flex flex-col items-center">
                                         {showAnswer ? (
                                             <motion.div initial={{ rotateX: -90, opacity: 0 }} animate={{ rotateX: 0, opacity: 1 }} transition={{ type: "spring", bounce: 0.4 }} className="px-20 py-10 bg-gradient-to-br from-green-500 to-green-600 rounded-[3rem] text-black font-black text-7xl shadow-[0_0_80px_rgba(34,197,94,0.6)] uppercase tracking-tight">
-                                                {String(question.answer) || "Answer"}
+                                                {String(question.answer ?? "")}
                                             </motion.div>
                                         ) : (
                                             <div className="flex items-center gap-6 px-16 py-8 rounded-[3rem] bg-white/5 border border-white/10 text-white/50 animate-pulse shadow-inner">
@@ -449,8 +450,8 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
             {/* --- FOOTER --- */}
             <div className="h-[10cqh] border-t border-white/5 bg-black/50 backdrop-blur-md flex items-center justify-between px-10 relative z-30">
                 <div className="flex items-center gap-4 text-white/40 font-mono text-xs uppercase tracking-widest font-bold">
-                    <span className="bg-white/10 px-3 py-1.5 rounded-md text-white">{t?.round || "Round"} {roundData.number}</span>
-                    <span>Q {qIndex + 1} / {processedQuestions.length}</span>
+                    <span className="bg-white/10 px-3 py-1.5 rounded-md text-white">{t.round} {roundData.number}</span>
+                    <span>{fmt(t.question_of, { n: qIndex + 1, total: processedQuestions.length })}</span>
                     <span className="text-blue-500">{modeText}</span>
                 </div>
 

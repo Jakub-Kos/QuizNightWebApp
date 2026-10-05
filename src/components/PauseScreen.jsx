@@ -3,18 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Coffee, Play, Pause, Plus, Minus, ArrowLeft, Trophy, Medal, TrendingUp } from "lucide-react";
 import { useQuiz } from "../quiz/context";
 import TeamAvatar from "./TeamAvatar";
+import { fmt } from "../quiz/files";
 
-const getRankText = (rank) => {
-    if (rank === 1) return "1. MÍSTĚ";
-    if (rank === 2) return "2. MÍSTĚ";
-    if (rank === 3) return "3. MÍSTĚ";
-    return `${rank}. MÍSTĚ`;
-};
-
-const RankGraph = ({ history, maxRank }) => {
+const RankGraph = ({ history, maxRank, t }) => {
     if (!history || history.length < 2) return (
         <div className="mt-8 text-white/30 text-xs tracking-widest uppercase italic flex items-center gap-2">
-            <TrendingUp size={16}/> More rounds needed for trend graph
+            <TrendingUp size={16}/> {t.pause_trend_more}
         </div>
     );
 
@@ -24,7 +18,7 @@ const RankGraph = ({ history, maxRank }) => {
 
     return (
         <div className="mt-8 flex flex-col items-start relative z-10">
-            <span className="text-[20px] font-bold text-white/30 uppercase tracking-[0.3em] mb-6">Trend pořadí</span>
+            <span className="text-[20px] font-bold text-white/30 uppercase tracking-[0.3em] mb-6">{t.pause_trend}</span>
             <svg width={width + padding*2} height={height + padding*2} className="overflow-visible -ml-[20px]">
                 <polyline
                     points={history.map((r, i) => `${padding + (i / (history.length - 1)) * width},${padding + ((r - 1) / (maxRank - 1 || 1)) * height}`).join(" ")}
@@ -46,8 +40,8 @@ const RankGraph = ({ history, maxRank }) => {
                 })}
             </svg>
             <div className="flex justify-between w-[350px] mt-2 text-[20px] text-white/30 font-bold tracking-widest uppercase">
-                <span>Start</span>
-                <span>Current</span>
+                <span>{t.pause_start}</span>
+                <span>{t.pause_now}</span>
             </div>
         </div>
     )
@@ -170,11 +164,11 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
       return (
           <div className="h-full w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col items-center justify-center relative">
               <button onClick={onBack} className="absolute top-10 left-10 flex items-center gap-3 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all font-bold">
-                  <ArrowLeft size={20}/> Back to Dashboard
+                  <ArrowLeft size={20}/> {t.pause_back}
               </button>
 
               <Coffee size={80} className="text-blue-500 mb-6 opacity-50" />
-              <h1 className="text-4xl font-black uppercase tracking-widest text-blue-400 mb-12">Break Timer Controls</h1>
+              <h1 className="text-4xl font-black uppercase tracking-widest text-blue-400 mb-12">{t.pause_controls}</h1>
 
               <div className="text-[120px] font-mono font-bold leading-none mb-12 drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]">
                   {formatTime(timeLeft)}
@@ -184,7 +178,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                   <button onClick={() => adjustTime(-1)} className="p-5 bg-white/5 hover:bg-white/10 rounded-2xl transition-all"><Minus size={32}/></button>
                   <button onClick={() => setIsActive(!isActive)} className={`flex items-center gap-4 px-12 py-6 rounded-2xl font-black text-2xl tracking-widest uppercase transition-all shadow-xl ${isActive ? "bg-yellow-500 hover:bg-yellow-400 text-black shadow-yellow-500/20" : "bg-green-600 hover:bg-green-500 text-white shadow-green-500/20"}`}>
                       {isActive ? <Pause size={32} fill="currentColor"/> : <Play size={32} fill="currentColor"/>}
-                      {isActive ? "PAUSE" : "START TIMER"}
+                      {isActive ? t.timer_pause : t.timer_start}
                   </button>
                   <button onClick={() => adjustTime(1)} className="p-5 bg-white/5 hover:bg-white/10 rounded-2xl transition-all"><Plus size={32}/></button>
               </div>
@@ -214,7 +208,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
             <div className="flex-none h-[22cqh] flex flex-col items-center justify-center pt-8">
                 <div className="flex items-center gap-4 text-blue-500 mb-2 animate-pulse">
                     <Coffee size={28} />
-                    <h2 className="text-2xl font-black uppercase tracking-[0.4em]">Half-Time Break</h2>
+                    <h2 className="text-2xl font-black uppercase tracking-[0.4em]">{t.pause_title}</h2>
                     <Coffee size={28} />
                 </div>
 
@@ -223,7 +217,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                 </div>
 
                 <div className="text-white/40 font-bold tracking-[0.4em] text-xl uppercase mt-4">
-                    {timeLeft === 0 ? "ZA CHVÍLI ZAČÍNÁME!" : "DO ZAČÁTKU DRUHÉ POLOVINY"}
+                    {timeLeft === 0 ? t.pause_soon : t.pause_until}
                 </div>
             </div>
 
@@ -247,7 +241,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                                 <div className="flex items-center gap-3 mb-4">
                                     {currentTeam.rank === 1 ? <Trophy size={32} className="text-yellow-500" /> : <Medal size={32} className="text-white/30" />}
                                     <span className={`text-xl font-bold tracking-[0.3em] uppercase ${currentTeam.rank === 1 ? 'text-yellow-500' : 'text-white/40'}`}>
-                                        Aktuálně na {getRankText(currentTeam.rank)}
+                                        {fmt(t.pause_rank, { rank: currentTeam.rank })}
                                     </span>
                                 </div>
 
@@ -266,7 +260,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                                             </div>
                                         )}
 
-                                        <RankGraph history={currentTeam.rankHistory} maxRank={sortedTeams.length} />
+                                        <RankGraph history={currentTeam.rankHistory} maxRank={sortedTeams.length} t={t} />
                                     </div>
 
                                     <div className="flex flex-col items-end shrink-0 mt-auto">
@@ -274,7 +268,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                                             {currentTeam.total}
                                         </span>
                                         <span className="text-2xl text-white/30 font-bold tracking-widest font-sans mt-2">
-                                            TOTAL PTS
+                                            {t.total_pts}
                                         </span>
                                     </div>
                                 </div>
@@ -287,7 +281,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
             <div className="flex-none h-[10cqh] bg-blue-950/20 border-t border-blue-500/20 flex items-center overflow-hidden backdrop-blur-md relative z-20">
                 <div className="h-full bg-blue-600 px-8 flex items-center justify-center relative z-30 shadow-[10px_0_20px_rgba(0,0,0,0.5)]">
                     <span className="font-black text-white uppercase tracking-[0.3em] text-lg whitespace-nowrap">
-                        Live Standings
+                        {t.pause_live}
                     </span>
                     <div className="absolute right-[-14px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[15px] border-t-transparent border-l-[15px] border-l-blue-600 border-b-[15px] border-b-transparent"></div>
                 </div>
@@ -305,7 +299,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                                 <div key={`${team.name}-${i}`} className="flex items-center gap-6 px-12 border-r border-white/10 h-[50%]">
                                     <span className={`text-2xl font-black ${realTeam.rank === 1 ? 'text-yellow-500' : 'text-white/30'}`}>{realTeam.rank}.</span>
                                     <span className="text-3xl font-bold text-white uppercase tracking-wider">{realTeam.name}</span>
-                                    <span className="text-3xl font-mono font-black text-blue-400">[{realTeam.total} PTS]</span>
+                                    <span className="text-3xl font-mono font-black text-blue-400">[{realTeam.total} {t.pts}]</span>
                                 </div>
                             )
                         })}

@@ -8,11 +8,11 @@ import TeamWall from "./TeamWall";
 import { Clock, Users, Trophy, Medal, TrendingUp, Target, Crown, Play, Timer, RotateCw } from "lucide-react";
 
 // --- SUB-COMPONENT: RANK GRAPH (BAR CHART VERSION) ---
-const RankGraph = ({ history }) => {
+const RankGraph = ({ history, t }) => {
     if (!history || history.length === 0) {
         return (
             <div className="flex-1 flex items-center justify-center border border-white/5 bg-white/5 rounded-xl text-gray-500 italic text-sm">
-                No matches played yet
+                {t.no_history}
             </div>
         );
     }
@@ -129,11 +129,11 @@ const SlotMachineRank = ({ rank, delay }) => {
     );
 };
 // --- SUB-COMPONENT: RECENT FORM BADGES (Sports Style) ---
-const RecentFormBadges = ({ history }) => {
+const RecentFormBadges = ({ history, t }) => {
     if (!history || history.length === 0) {
         return (
             <div className="flex-1 flex items-center justify-center border border-white/5 bg-white/5 rounded-xl text-gray-500 italic text-sm">
-                No matches played yet
+                {t.no_history}
             </div>
         );
     }
@@ -585,7 +585,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                                     <TrendingUp size={32}/> {t.season_history}
                                  </h3>
                                  <div className="flex-1">
-                                    <RecentFormBadges history={activeTeam.rankHistory} />
+                                    <RecentFormBadges history={activeTeam.rankHistory} t={t} />
                                  </div>
                             </div>
                         </motion.div>

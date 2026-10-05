@@ -53,7 +53,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
 
           <div className="flex flex-col gap-3 w-[400px]">
               <div className="flex justify-between items-end">
-                  <h1 className="text-2xl font-black text-white/50 uppercase tracking-[0.3em]">Live Progress</h1>
+                  <h1 className="text-2xl font-black text-white/50 uppercase tracking-[0.3em]">{t.progress}</h1>
                   <span className="text-blue-400 font-mono font-bold tracking-widest text-xl">
                       {completedCount} <span className="text-white/30">/ {visibleRounds.length}</span>
                       {completedCount > 0 && (
@@ -81,7 +81,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
               >
                  <Coffee size={28} className="relative z-10" />
                  <span className="font-black text-xl uppercase tracking-[0.15em] relative z-10">
-                     HALF-TIME
+                     {t.half_time}
                  </span>
               </button>
 
@@ -91,7 +91,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
               >
                  <Trophy size={32} className="relative z-10" />
                  <span className="font-black text-2xl uppercase tracking-[0.15em] relative z-10">
-                     {t?.leaderboard_btn || "VIEW STANDINGS"}
+                     {t.leaderboard_btn}
                  </span>
                  <div className="absolute inset-0 bg-white/40 translate-x-[-150%] skew-x-12 group-hover:animate-[shimmer_1.5s_infinite]" />
               </button>
@@ -102,8 +102,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
       <div className="flex-1 flex flex-col items-center justify-center p-10 relative z-10 w-full">
           {visibleRounds.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-4">
-                <div className="w-16 h-16 border-4 border-t-blue-500 border-white/10 rounded-full animate-spin" />
-                <p className="font-mono tracking-widest uppercase">Loading Modules...</p>
+                <p className="font-mono tracking-widest uppercase">{t.ed_no_questions}</p>
             </div>
           ) : (
             <div className="flex w-full max-w-[1600px] h-[70cqh] gap-4" onMouseLeave={() => setHoveredRound(null)}>
@@ -113,7 +112,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
 
                     const parts = (round.title || "").split("-");
                     const themeName = parts.length > 1 ? parts.slice(1).join("-").trim() : round.title;
-                    const defaultName = `${t?.round || "Round"} ${index + 1}`;
+                    const defaultName = `${t.round} ${index + 1}`;
                     const displayTitle = isCompleted ? themeName : defaultName;
 
                     return (
@@ -168,11 +167,11 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                                     >
                                         <div className="flex gap-3 mb-6">
                                             <span className="px-5 py-2 bg-blue-500/10 text-blue-400 text-[11px] font-black tracking-widest uppercase rounded-full border border-blue-500/20">
-                                                {round.questions.length} Questions
+                                                {round.questions.length} {t.questions_count}
                                             </span>
                                             {isCompleted && (
                                                 <span className="px-5 py-2 bg-green-500/20 text-green-400 text-[11px] font-black tracking-widest uppercase rounded-full border border-green-500/30 flex items-center gap-2">
-                                                    <CheckCircle size={12}/> Finished
+                                                    <CheckCircle size={12}/> {t.finished}
                                                 </span>
                                             )}
                                         </div>
@@ -183,16 +182,16 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
 
                                         <div className="grid grid-cols-2 gap-4 w-full mb-6">
                                             <button onClick={() => onSelectRound(round, "questions_only")} className="py-5 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold tracking-widest text-xs flex flex-col items-center justify-center gap-2 transition-all border border-white/10 hover:border-white/20">
-                                                <Eye size={24} className="text-gray-400"/><span>Q ONLY</span>
+                                                <Eye size={24} className="text-gray-400"/><span>{t.btn_questions}</span>
                                             </button>
                                             <button onClick={() => onSelectRound(round, "with_answers")} className="py-5 bg-gradient-to-br from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 text-black rounded-2xl font-black tracking-widest text-xs flex flex-col items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-[1.02]">
-                                                <Play size={24} fill="currentColor"/><span>REVEAL</span>
+                                                <Play size={24} fill="currentColor"/><span>{t.btn_answers}</span>
                                             </button>
                                         </div>
 
                                         <button onClick={(e) => toggleCompleted(e, round.id)} className={`px-6 py-3 rounded-full border text-[10px] sm:text-xs font-bold tracking-widest flex items-center gap-2 transition-all ${isCompleted ? "bg-transparent text-white/30 border-white/10 hover:text-white/80 hover:border-white/30" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"}`}>
                                             {isCompleted ? <Circle size={16} /> : <CheckCircle size={16} />}
-                                            {isCompleted ? "MARK AS UNFINISHED" : "MARK AS FINISHED"}
+                                            {isCompleted ? t.mark_unfinished : t.mark_finished}
                                         </button>
                                     </motion.div>
                                 )}

@@ -97,7 +97,7 @@ export default function ScoresEntry({ id, t }) {
                 <tr>
                   <th className="text-left px-4 py-3 font-bold">{t.sc_team}</th>
                   {rounds.map((r) => (
-                    <th key={r.number} className="px-2 py-3 font-bold whitespace-nowrap" title={r.title}>{roundLabel(r)}</th>
+                    <th key={r.number} className="px-2 py-3 font-bold whitespace-nowrap" title={r.title}>{roundLabel(r, t.round)}</th>
                   ))}
                   <th className="px-4 py-3 font-bold text-right">{t.sc_total}</th>
                   <th className="px-4 py-3 font-bold text-right">#</th>

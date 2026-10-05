@@ -36,7 +36,7 @@ function ShowRoute({ id, isPresenter, t }) {
       {state.status === "loading" ? (
         <>
           <div className="w-16 h-16 border-4 border-t-blue-500 border-white/10 rounded-full animate-spin" />
-          <span className="tracking-[0.2em] uppercase text-sm opacity-50">Loading System...</span>
+          <span className="tracking-[0.2em] uppercase text-sm opacity-50">{t.loading}</span>
         </>
       ) : (
         <>

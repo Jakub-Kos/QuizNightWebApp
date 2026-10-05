@@ -53,7 +53,7 @@ export default function QuizShow({ bundle, isPresenter }) {
 
   const t = TRANSLATIONS[config.language] || TRANSLATIONS.en;
   const rounds = useMemo(() => parseQuestionsCsv(quiz.questionsCsv), [quiz.questionsCsv]);
-  const liveLeaderboard = useScores(quiz, rounds);
+  const liveLeaderboard = useScores(quiz, rounds, t.round);
   const teams = useMemo(() => resolveTeams(quiz.teams, resolveMedia), [quiz.teams, resolveMedia]);
   const quizContext = useMemo(() => ({ quiz, rounds, teams, resolveMedia }), [quiz, rounds, teams, resolveMedia]);
 
