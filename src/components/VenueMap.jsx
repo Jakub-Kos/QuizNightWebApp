@@ -42,7 +42,8 @@ export default function VenueMap({ arc = 180, teams, onSeat, placing = null, hig
   const [box, setBox] = useState(null);
   const half = arc / 2;
   const zBack = Math.cos(toRad(half)); // farthest point behind the moderator (negative for 270°)
-  const height = (zBack < 0 ? project(0, zBack)[1] : Y0) + 34;
+  // Room below the lowest seats for a marker and its name, which grow with markerScale
+  const height = (zBack < 0 ? project(0, zBack)[1] : Y0) + 40 * markerScale;
   const baseWidth = 2 * (WD + 40);
 
   useEffect(() => {

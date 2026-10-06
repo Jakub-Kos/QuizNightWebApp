@@ -110,9 +110,9 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                     const isHovered = hoveredRound === index;
                     const isCompleted = completedRounds.includes(round.id);
 
-                    const parts = (round.title || "").split("-");
-                    const themeName = parts.length > 1 ? parts.slice(1).join("-").trim() : round.title;
+                    // parse.js already took "Round N -" off the title, so hyphens left are part of it
                     const defaultName = `${t.round} ${index + 1}`;
+                    const themeName = round.title || defaultName;
                     const displayTitle = isCompleted ? themeName : defaultName;
 
                     return (

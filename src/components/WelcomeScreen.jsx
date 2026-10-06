@@ -129,6 +129,7 @@ const SlotMachineRank = ({ rank, delay }) => {
     );
 };
 // --- SUB-COMPONENT: RECENT FORM BADGES (Sports Style) ---
+const MAX_FORM_BADGES = 5;
 const RecentFormBadges = ({ history, t }) => {
     if (!history || history.length === 0) {
         return (
@@ -138,9 +139,13 @@ const RecentFormBadges = ({ history, t }) => {
         );
     }
 
+    // Only the latest results fit on the card (a TV cannot scroll)
+    const first = Math.max(0, history.length - MAX_FORM_BADGES);
+
     return (
-        <div className="w-full h-full flex items-center justify-center gap-4 pt-4 pb-2 px-2 overflow-x-auto">
-            {history.map((rank, i) => {
+        <div className="w-full h-full flex items-center justify-center gap-4 pt-4 pb-2 px-2 overflow-hidden">
+            {history.slice(first).map((rank, k) => {
+                const i = first + k; // volume index, for the Vol. label
 
                 // --- EMPTY SLOT (Did not play this volume) ---
                 if (rank === "?") {
@@ -162,7 +167,7 @@ const RecentFormBadges = ({ history, t }) => {
                 let badgeClass = "bg-blue-950/80 border-blue-800 text-blue-300 shadow-[0_2px_10px_rgba(30,58,138,0.2)]";
 
                 // Use our new Slot Machine component! Stagger the spin delay based on index.
-                let rankContent = <SlotMachineRank rank={rank} delay={0.2 + (i * 0.15)} />;
+                let rankContent = <SlotMachineRank rank={rank} delay={0.2 + (k * 0.15)} />;
 
                 if (rank === 1) { // GOLD
                     badgeClass = "bg-gradient-to-br from-yellow-400 to-yellow-600 border-yellow-300 text-yellow-950 shadow-[0_0_20px_rgba(234,179,8,0.5)] scale-110 z-10";
@@ -171,11 +176,11 @@ const RecentFormBadges = ({ history, t }) => {
                             <motion.div
                                 initial={{ opacity: 0, scale: 0 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 2.2 + (i * 0.15), type: "spring" }} // Crown pops in right as spin finishes
+                                transition={{ delay: 2.2 + (k * 0.15), type: "spring" }} // Crown pops in right as spin finishes
                             >
                                 <Crown size={18} className="mb-0.5" strokeWidth={3} />
                             </motion.div>
-                            <SlotMachineRank rank={rank} delay={0.2 + (i * 0.15)} />
+                            <SlotMachineRank rank={rank} delay={0.2 + (k * 0.15)} />
                         </div>
                     );
                 } else if (rank === 2) { // SILVER

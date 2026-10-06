@@ -312,8 +312,8 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     // 1. ROUND INTRO
     if (qIndex === -1) {
         const displayTitle = `${t.round} ${roundData.number}`;
-        const parts = (roundData.title || "").split("-");
-        const themeName = parts.length > 1 ? parts.slice(1).join("-").trim() : roundData.title;
+        // parse.js already took "Round N -" off the title, so hyphens left are part of it
+        const themeName = roundData.title;
 
         return (
             <div onClick={next} className="h-full w-full bg-[#050505] flex flex-col items-center justify-center font-['League_Spartan'] cursor-pointer relative overflow-hidden">

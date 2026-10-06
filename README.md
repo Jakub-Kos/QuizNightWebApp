@@ -1,78 +1,113 @@
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue?style=for-the-badge)
-![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+# Quiz Night OS
+
+**Turn your pub quiz into a TV game show.**
+
+Write the questions in a Google Sheet, drop in your pictures and teams, and run the whole night from your laptop:<br>
+the TV shows the show, a second window gives the host the answers and the controls.
+
+### [▶ Open the app](https://jakub-kos.github.io/QuizNightWebApp/)
+
+Free, nothing to install, no account. Your quizzes stay in your own browser.
+
+![React](https://img.shields.io/badge/React_19-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+
+<br>
+
+<img src="docs/screenshots/welcome.jpg" alt="Welcome screen introducing a team with its past results" width="100%">
 
 </div>
 
-# Quiz Night OS v2.0
+## How a quiz night looks
 
-Turn a pub quiz into a TV game show. Write the questions in a Google Sheet, add your pictures and teams, and run the show from your laptop: the TV shows the questions and the leaderboard, while a second window gives the host the answers and the controls.
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/team-wall.jpg" alt="Team wall"><br><b>Every team gets an introduction.</b> Teams with photos and history get big cards; teams known only by name get a living team wall.</td>
+    <td width="50%"><img src="docs/screenshots/dashboard.jpg" alt="Rounds dashboard"><br><b>The rounds at a glance.</b> Finished rounds reveal their names, the bar shows how far the night is.</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/question-abcd.jpg" alt="ABCD question with the answer revealed"><br><b>Questions, then answers.</b> Play a round with answers, or questions only with a timer and reveal them later.</td>
+    <td><img src="docs/screenshots/question-sort.jpg" alt="Sort question with pictures"><br><b>Eleven question types</b>, from ABCD and Top 5 to pictures, audio, video and putting things in order.</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/leaderboard.jpg" alt="Leaderboard during the reveal"><br><b>A real reveal.</b> The standings hold until the host reveals the round's points group by group, from the lowest score up.</td>
+    <td><img src="docs/screenshots/pause.jpg" alt="Half-time screen"><br><b>Half-time</b> with a countdown, the teams in the spotlight and the live standings ticker.</td>
+  </tr>
+</table>
 
-**Use it in the browser: https://jakub-kos.github.io/QuizNightWebApp/**. Nothing to install and no account: your quizzes are stored in your own browser (Chrome or Edge recommended). The full guide is under **Help** in the app, in English, Czech and Hungarian.
+<details>
+<summary><b>More screens:</b> rules, prizes, picture and Top 5 questions</summary>
+<br>
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/rules.jpg" alt="Rules screen"></td>
+    <td width="50%"><img src="docs/screenshots/prizes.jpg" alt="Prizes screen"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/question-image.jpg" alt="Picture question"></td>
+    <td><img src="docs/screenshots/question-top5.jpg" alt="Top 5 question with the answers revealed"></td>
+  </tr>
+</table>
+</details>
 
-## ✨ Features
+## What the host sees
 
-* **📚 Your own quizzes:** create as many quizzes as you like, or open the built-in demo. Export a quiz as one `.zip` (questions, pictures, teams, scores) to back it up or hand it to a friend, who imports it on their computer.
-* **📝 Questions from Google Sheets:** paste a Sheet link and the questions load from it; reload after every edit. A ready-made template is linked from Help → Templates.
-* **❓ Question types:** written, numeric, ABCD, yes/no, image, audio, video, picture or video first, Top 5, and put-in-order (Sort, with text or pictures).
-* **✅ Quiz check:** before the show, see every question as it will look on the TV, with a list of problems such as missing pictures, wrong answers for ABCD, or Sort letters that don't add up.
-* **🎭 Two windows, one show:** the TV window and the host window (`Shift + P`) stay in sync in the same browser, without any server.
-* **👥 Teams:** names, number of players, photos and mottos; load the names straight from the scores Sheet. A welcome screen introduces every team: big cards for teams with photos and history, or a team wall when you only know the names.
-* **📋 Attendance:** at the start, tick off who came and place each team on a seating map, so the host knows which way to face when announcing results.
-* **📊 Scores:** from a Google Sheet that fills in live, or typed into the app's own score table.
-* **🏎️ Leaderboard reveal:** rankings hold until the host reveals the round's points group by group, then everything reshuffles. Teams with the best round twice in a row are "on fire".
-* **📜 Rules, prizes, half-time:** editable rules and prizes screens, and a half-time screen with a countdown and the teams' standings.
-* **🖥️ Fits any screen:** the show is drawn on a fixed canvas scaled to the window; `Shift + C` adjusts the size and margins for TVs that cut the edges.
+Press `Shift + P` and a second window opens on the laptop. It runs the show: the TV follows every click, with no server in between.
 
-## 📸 Visual Preview
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/host-question.jpg" alt="Host window during a question"><br><b>The answer before anyone else.</b> The current question, the correct answer and what the next click will do.</td>
+    <td width="50%"><img src="docs/screenshots/host-leaderboard.jpg" alt="Host window during the leaderboard reveal"><br><b>Which way to look.</b> During the reveal the seating map shows where the announced teams sit.</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/attendance.jpg" alt="Attendance page with the seating map"><br><b>Attendance.</b> Tick off who came, fix the number of players, and place each team on the map of the room.</td>
+    <td><img src="docs/screenshots/check.jpg" alt="Quiz check page"><br><b>Check before the show.</b> Every question as the TV will show it, plus a list of what is missing or wrong.</td>
+  </tr>
+</table>
 
-### Welcome Screen
-![Welcome Screen](public/screenshots/WelcomeScreen.png)
+## Make your own quiz
 
-### Rounds Dashboard
-![Rounds Dashboard](public/screenshots/Dashboard.png)
+<table>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/library.jpg" alt="Quiz library"></td>
+    <td width="33%"><img src="docs/screenshots/editor.jpg" alt="Quiz setup page"></td>
+    <td width="33%"><img src="docs/screenshots/help.jpg" alt="Help page showing the sheet rows for a question type"></td>
+  </tr>
+</table>
 
-### Questions Screen
-![Questions Screen](public/screenshots/Questions.png)
+1. **Open the [app](https://jakub-kos.github.io/QuizNightWebApp/)** and click **New quiz**, or start from the built-in demo.
+2. **Questions:** copy the Google Sheet template (Help → Templates), fill it in, share it as *anyone with the link can view* and paste the link. Help → Question types shows the exact rows for every type and what they look like on screen.
+3. **Media:** drag in your pictures, audio and video. A whole folder works.
+4. **Scores:** paste the link of your scores Sheet, or type the points into the app during the show.
+5. **Teams:** type them in, import a CSV, or load the names from the scores Sheet.
+6. **Check**, fix what it finds, and **Start show**.
 
-### Pause Screen
-![Pause Screen](public/screenshots/PauseScreen.png)
+Export a quiz as one `.zip` to back it up or move it to the laptop you will use on the night.
 
-### Leaderboard Screen
-![Leaderboard Screen](public/screenshots/Leaderboard.png)
+## On the night
 
-## 🚀 Preparing a quiz
+1. Connect the laptop to the TV, open the quiz with **Start show**, drag the window to the TV and press `F11`.
+2. Press `Shift + P` and keep the host window on the laptop.
+3. If the TV cuts off the edges, press `Shift + C` on the TV window to shrink the picture.
 
-1. Open the app and click **New quiz**.
-2. **Questions:** copy the Google Sheet template (Help → Templates), fill it in, share it as "anyone with the link can view" and paste the link. You can also upload a `.csv` instead. Help → Question types shows, for every type, the exact rows to write and what they look like on screen.
-3. **Media:** drag your pictures, audio and video in (a whole folder works). File names must match the `Zdroj` column of the sheet.
-4. **Live scores** (optional): paste the link of the scores Sheet. Without one, type the points into the app during the show.
-5. **Teams:** add them by hand, import a CSV, or load the names from the scores Sheet.
-6. **Rules and prizes:** keep the default rules or write your own.
-7. Click **Check** and fix what it reports.
+| Key | Does |
+| --- | --- |
+| `Shift + P` | Open the host window |
+| `→` / `←` | Next / previous step |
+| `Z` | Enlarge the question's picture |
+| `Esc` | Close the picture, or leave the current screen |
+| `Shift + D` | Jump back to the rounds dashboard |
+| `Shift + C` | Adjust the picture size for the TV |
 
-## 🎮 Running the show
+The app is in **English, Czech and Hungarian**. It works best in Chrome or Edge.
 
-1. Connect the laptop to the TV or projector and open the quiz with **Start show**. Drag the window to the TV and press `F11`.
-2. Press **`Shift + P`** for the host window and keep it on the laptop screen.
-3. Run everything from the host window: it shows the answers, the next step and the timer, and the TV follows. During the quiz it also has **Attendance** and **Scores** buttons.
+## For developers
 
-## ⌨️ Shortcuts
-
-- **`Shift + P`**: open the host window
-- **`Shift + D`**: back to the rounds dashboard
-- **`Shift + C`**: adjust the picture size for the TV
-- **`→` / `←`**: next / previous step
-- **`Z`**: enlarge the question's picture
-- **`Esc`**: close the picture, or leave the current screen
-
-## 🛠️ For developers
-
-React 19 + Vite, Tailwind CSS v4, Framer Motion, Lucide icons, PapaParse and fflate. There is no backend: quizzes and media live in IndexedDB, the windows talk over BroadcastChannel, and Google Sheets are read as CSV.
+React 19 + Vite, Tailwind CSS v4, Framer Motion, Lucide icons, PapaParse and fflate. There is no backend: quizzes and media live in IndexedDB, the two windows talk over `BroadcastChannel`, and Google Sheets are read as CSV.
 
 ```bash
 git clone git@github.com:Jakub-Kos/QuizNightWebApp.git
@@ -85,6 +120,6 @@ npm run build   # production build in dist/
 
 Every push to `main` deploys to GitHub Pages.
 
-## 🤝 License
+## License
 
-MIT License. Created for the ultimate pub quiz experience.
+MIT
