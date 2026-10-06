@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a0f4a"/>
+      <stop offset="0.55" stop-color="#0d0718"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.55" r="0.5">
+      <stop offset="0" stop-color="#facc15" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#facc15" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1030"/>
+      <stop offset="1" stop-color="#07050d"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fde047"/>
+      <stop offset="1" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="282" r="230" fill="url(#glow)"/>
+
+  <!-- antennas -->
+  <g stroke="url(#gold)" stroke-width="18" stroke-linecap="round">
+    <line x1="256" y1="152" x2="196" y2="94"/>
+    <line x1="256" y1="152" x2="316" y2="94"/>
+  </g>
+  <circle cx="196" cy="94" r="15" fill="#fde047"/>
+  <circle cx="316" cy="94" r="15" fill="#fde047"/>
+
+  <!-- legs -->
+  <g stroke="url(#gold)" stroke-width="16" stroke-linecap="round">
+    <line x1="200" y1="392" x2="184" y2="420"/>
+    <line x1="312" y1="392" x2="328" y2="420"/>
+  </g>
+
+  <!-- the TV -->
+  <rect x="96" y="152" width="320" height="236" rx="44" fill="url(#screen)" stroke="url(#gold)" stroke-width="22"/>
+
+  <!-- question mark -->
+  <path d="M 214 236 A 42 42 0 1 1 278 272 C 262 282 256 290 256 306 V 312" fill="none" stroke="url(#gold)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="256" cy="346" r="16" fill="#fde047"/>
+
+  <!-- sparkles -->
+  <path d="M 392 86 L 398 104 L 416 110 L 398 116 L 392 134 L 386 116 L 368 110 L 386 104 Z" fill="#fde047"/>
+  <path d="M 122 104 L 126 116 L 138 120 L 126 124 L 122 136 L 118 124 L 106 120 L 118 116 Z" fill="#c084fc"/>
+</svg>
