@@ -156,7 +156,7 @@ export default function SettingsModal({ onClose, onOpenCalibration, onExit, conf
                           min="0" max="23"
                           value={hours.toString().padStart(2, '0')}
                           onChange={(e) => handleInput('h', e.target.value)}
-                          onBlur={(e) => saveTime(hours, minutes)} // Force re-format on blur
+                          onBlur={() => saveTime(hours, minutes)} // Force re-format on blur
                           className="w-20 bg-transparent text-center font-mono text-5xl font-bold text-white focus:outline-none focus:text-yellow-400 appearance-none"
                           style={{ MozAppearance: "textfield" }} // Hides spinner in Firefox
                        />
@@ -174,7 +174,7 @@ export default function SettingsModal({ onClose, onOpenCalibration, onExit, conf
                           min="0" max="59"
                           value={minutes.toString().padStart(2, '0')}
                           onChange={(e) => handleInput('m', e.target.value)}
-                          onBlur={(e) => saveTime(hours, minutes)} // Force re-format on blur
+                          onBlur={() => saveTime(hours, minutes)} // Force re-format on blur
                           className="w-20 bg-transparent text-center font-mono text-5xl font-bold text-white focus:outline-none focus:text-yellow-400 appearance-none"
                           style={{ MozAppearance: "textfield" }}
                        />

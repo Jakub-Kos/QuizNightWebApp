@@ -17,7 +17,9 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     const qIndex = isPreview ? preview.qIndex : stateQIndex;
     const step = isPreview ? preview.step : stateStep;
     const zoom = isPreview ? false : stateZoom;
-    const [timer, setTimer] = useState(0);
+    // Seconds on the current question: the count belongs to one question, so a new one starts at 0
+    const [timerState, setTimerState] = useState({ qIndex: -1, seconds: 0 });
+    const timer = timerState.qIndex === qIndex ? timerState.seconds : 0;
     const stageSize = useStageSize();
 
     const isQuestionsOnly = mode === "questions_only";
@@ -106,25 +108,13 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
         let interval;
         const isRunning = !isPreview && isQuestionsOnly && qIndex >= 0 && step > 0;
         if (isRunning) {
-            interval = setInterval(() => setTimer(t => t + 1), 1000);
+            interval = setInterval(() => setTimerState(prev => ({ qIndex, seconds: (prev.qIndex === qIndex ? prev.seconds : 0) + 1 })), 1000);
         }
         return () => clearInterval(interval);
     }, [step, qIndex, isQuestionsOnly, isPreview]);
 
-    useEffect(() => { setTimer(0); }, [qIndex]);
 
     // --- CONTROLS ---
-    useEffect(() => {
-        if (isPreview) return;
-        const handleKeyDown = (e) => {
-            if (e.key === "ArrowRight") next();
-            if (e.key === "ArrowLeft") prev();
-            if (e.key === "Escape") { if (zoom) setZoom(false); else onBack(); }
-            if (e.key.toLowerCase() === "z" && hasImage) setZoom(z => !z);
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [step, qIndex, zoom, hasImage, isQuestionsOnly, isPresenter, isPreview]);
 
     const next = () => {
         setZoom(false);
@@ -152,6 +142,19 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
             } else { setQIndex(-1); }
         }
     };
+
+    // Keys: subscribed again on every render, so they always call the current next/prev
+    useEffect(() => {
+        if (isPreview) return;
+        const handleKeyDown = (e) => {
+            if (e.key === "ArrowRight") next();
+            if (e.key === "ArrowLeft") prev();
+            if (e.key === "Escape") { if (zoom) setZoom(false); else onBack(); }
+            if (e.key.toLowerCase() === "z" && hasImage) setZoom(z => !z);
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    });
 
     const getFontSize = (text) => {
         if (!text) return "text-5xl";

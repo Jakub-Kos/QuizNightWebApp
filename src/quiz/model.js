@@ -60,6 +60,7 @@ export function createQuiz(fields = {}) {
     questionsSheetUrl: "",
     scoresSheetUrl: "",
     teams: [],
+    manualScores: {}, // { teamId: { roundNumber: points } }, when there is no scores Sheet
     rules: { enabled: true, items: null }, // see quiz/intro.js
     prizes: { enabled: true, first: "", second: "", third: "", extra: "" },
     ...fields,

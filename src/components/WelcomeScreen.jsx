@@ -318,7 +318,8 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
   const layout = chooseLayout(teams, config?.welcomeLayout);
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [viewState, setViewState] = useState("center");
+  // Index of the card whose details are unfolded; any other card is shown centred
+  const [detailFor, setDetailFor] = useState(null);
   const [isExiting, setIsExiting] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -364,17 +365,15 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
   useEffect(() => {
     if (isExiting || layout === "wall") return;
 
-    // Always reset to center when index changes
-    setViewState("center");
-
-    // Always unfold details after delay (even if paused)
-    const splitTimer = setTimeout(() => setViewState("detail"), splitDelay);
+    // A new card starts centred (detailFor still points at the previous one) and always unfolds its
+    // details after a delay, even if paused
+    const splitTimer = setTimeout(() => setDetailFor(activeIndex), splitDelay);
 
     let nextTimer, foldTimer;
 
     // Only auto-cycle if NOT paused
     if (!isPaused && teams.length > 1) {
-        foldTimer = setTimeout(() => setViewState("center"), cycleDuration - 600);
+        foldTimer = setTimeout(() => setDetailFor(null), cycleDuration - 600);
         nextTimer = setTimeout(() => {
             setActiveIndex((prev) => (prev + 1) % teams.length);
         }, cycleDuration);
@@ -540,7 +539,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                     </motion.div>
 
                     <AnimatePresence>
-                    {viewState === "detail" && !activeTeam.isNew && (
+                    {detailFor === activeIndex && !activeTeam.isNew && (
                         <motion.div
                             key={`details-${activeTeam.id}`}
                             initial={{ opacity: 0, x: 0, zIndex: -1 }}

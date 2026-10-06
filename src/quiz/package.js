@@ -31,6 +31,8 @@ export function referencedMedia(quiz) {
   return [...names].filter((name) => !isUrl(name));
 }
 
+const isPlainObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+
 // Turn dropped/selected files (a .zip, a folder, or loose files) into { quiz, media }
 export async function readImport(files) {
   let entries = []; // { path, blob }
@@ -60,6 +62,8 @@ export async function readImport(files) {
     teams: Array.isArray(info.teams) ? info.teams : [],
     ...(info.rules && { rules: info.rules }),
     ...(info.prizes && { prizes: info.prizes }),
+    // Keyed by team id, which the teams above keep
+    ...(isPlainObject(info.manualScores) && { manualScores: info.manualScores }),
     settings: info.settings,
     questionsCsv: csv ? await csv.blob.text() : "",
   });

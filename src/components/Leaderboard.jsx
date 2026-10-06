@@ -7,28 +7,18 @@ import VenueMap from "./VenueMap";
 import TeamAvatar from "./TeamAvatar";
 import { fmt } from "../quiz/files";
 
-export default function Leaderboard({ isPresenter, data, availableRounds, latestRoundName, lastSync, onClose, t }) {
+export default function Leaderboard({ isPresenter, data, availableRounds, lastSync, onClose, t }) {
   const tr = t;
   const { quiz, teams } = useQuiz();
   const [frozenData] = useState(() => data || []);
   const [frozenRounds] = useState(() => availableRounds || []);
 
-  const [selectedRound, setSelectedRound] = useState("");
+  // Starts on the latest round anyone has points in (the data is frozen at mount)
+  const [selectedRound, setSelectedRound] = useState(() => {
+      if (frozenRounds.length === 0 || frozenData.length === 0) return "";
+      return [...frozenRounds].reverse().find(r => frozenData.some(t => t.scores[r] > 0)) ?? frozenRounds[0];
+  });
   const [revealStep, setRevealStep] = useState(0);
-
-  useEffect(() => {
-      if (!selectedRound && frozenRounds.length > 0 && frozenData.length > 0) {
-          let latest = frozenRounds[0];
-          for (let i = frozenRounds.length - 1; i >= 0; i--) {
-              const rName = frozenRounds[i];
-              if (frozenData.some(t => t.scores[rName] > 0)) {
-                  latest = rName;
-                  break;
-              }
-          }
-          setSelectedRound(latest);
-      }
-  }, [frozenRounds, frozenData, selectedRound]);
 
   const channel = useMemo(() => new BroadcastChannel('quiz-leaderboard-sync'), []);
 
@@ -137,18 +127,13 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
 
       const leaderScore = active.length > 0 ? active[0].currentScore : 0;
 
-      let currentDisplayRank = 1;
+      // Shared rank for equal scores: a team ranks right after the last team with a higher score
+      const shownScore = (team) => (isShuffled ? team.currentScore : team.previousTotal);
+      const ranks = [];
+      active.forEach((team, idx) => ranks.push(idx > 0 && shownScore(team) >= shownScore(active[idx - 1]) ? ranks[idx - 1] : idx + 1));
 
       return active.map((team, idx) => {
-          if (idx > 0) {
-              const prevScore = isShuffled ? active[idx - 1].currentScore : active[idx - 1].previousTotal;
-              const myScore = isShuffled ? team.currentScore : team.previousTotal;
-              if (myScore < prevScore) {
-                  currentDisplayRank = idx + 1;
-              }
-          }
-
-          const displayRank = currentDisplayRank;
+          const displayRank = ranks[idx];
           const rankChange = team.previousRank - displayRank;
 
           const deltaLeaderRaw = leaderScore - team.currentScore;
@@ -158,7 +143,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, latest
 
           return { ...team, displayRank, rankChange, deltaLeader, deltaNext };
       });
-  }, [initialTeams, scoreGroups, revealStep, isShuffled]);
+  }, [initialTeams, revealStep, isShuffled, t.lb_leader]);
 
   // UI rendering remains exactly the same below...
   if (isPresenter) {
