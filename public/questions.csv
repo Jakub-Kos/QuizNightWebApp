@@ -63,9 +63,9 @@ Kolo X - TEST,1,Example Q1,ABCD,A,B,C,D,A,
 ,2,Example Q2,Yes/No,,,,,Yes,
 ,3,Example Q3,Written,Název,,,,Eiffel Tower,
 ,4,Example Q4,Numeric,Číslo,,,,8,
-,5,Kolik lidí ma klobouk,PImage,,,,,Eiffel Tower,zkouskove.jpg
+,5,Kolik lidí ma klobouk,PImage,,,,,Eiffel Tower,1944paris.jpg
 ,6,Kdo dal gól,PVideo,,,,,B,video.mp4
-,7,Co je na obrázku,Image,,,,,Eiffel Tower,zkouskove.jpg
+,7,Co je na obrázku,Image,,,,,Eiffel Tower,1944paris.jpg
 ,8,Co je to za znělku,Audio,,,,,Eiffel Tower,audio.m4a
 ,9,Co je na videu,Video,,,,,Eiffel Tower,video.mp4
 ,10,Example Q10,Written,,,,,Eiffel Tower,

@@ -1,14 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TEAMS_DATA } from "../data/teams";
+import { useQuiz } from "../quiz/context";
+import { isPresent } from "../quiz/teams";
+import { teamInitials } from "../quiz/initials";
+import TeamAvatar from "./TeamAvatar";
+import TeamWall from "./TeamWall";
 import { Clock, Users, Trophy, Medal, TrendingUp, Target, Crown, Play, Timer, RotateCw } from "lucide-react";
 
 // --- SUB-COMPONENT: RANK GRAPH (BAR CHART VERSION) ---
-const RankGraph = ({ history }) => {
+const RankGraph = ({ history, t }) => {
     if (!history || history.length === 0) {
         return (
             <div className="flex-1 flex items-center justify-center border border-white/5 bg-white/5 rounded-xl text-gray-500 italic text-sm">
-                No matches played yet
+                {t.no_history}
             </div>
         );
     }
@@ -125,18 +129,23 @@ const SlotMachineRank = ({ rank, delay }) => {
     );
 };
 // --- SUB-COMPONENT: RECENT FORM BADGES (Sports Style) ---
-const RecentFormBadges = ({ history }) => {
+const MAX_FORM_BADGES = 5;
+const RecentFormBadges = ({ history, t }) => {
     if (!history || history.length === 0) {
         return (
             <div className="flex-1 flex items-center justify-center border border-white/5 bg-white/5 rounded-xl text-gray-500 italic text-sm">
-                No matches played yet
+                {t.no_history}
             </div>
         );
     }
 
+    // Only the latest results fit on the card (a TV cannot scroll)
+    const first = Math.max(0, history.length - MAX_FORM_BADGES);
+
     return (
-        <div className="w-full h-full flex items-center justify-center gap-4 pt-4 pb-2 px-2 overflow-x-auto">
-            {history.map((rank, i) => {
+        <div className="w-full h-full flex items-center justify-center gap-4 pt-4 pb-2 px-2 overflow-hidden">
+            {history.slice(first).map((rank, k) => {
+                const i = first + k; // volume index, for the Vol. label
 
                 // --- EMPTY SLOT (Did not play this volume) ---
                 if (rank === "?") {
@@ -158,7 +167,7 @@ const RecentFormBadges = ({ history }) => {
                 let badgeClass = "bg-blue-950/80 border-blue-800 text-blue-300 shadow-[0_2px_10px_rgba(30,58,138,0.2)]";
 
                 // Use our new Slot Machine component! Stagger the spin delay based on index.
-                let rankContent = <SlotMachineRank rank={rank} delay={0.2 + (i * 0.15)} />;
+                let rankContent = <SlotMachineRank rank={rank} delay={0.2 + (k * 0.15)} />;
 
                 if (rank === 1) { // GOLD
                     badgeClass = "bg-gradient-to-br from-yellow-400 to-yellow-600 border-yellow-300 text-yellow-950 shadow-[0_0_20px_rgba(234,179,8,0.5)] scale-110 z-10";
@@ -167,11 +176,11 @@ const RecentFormBadges = ({ history }) => {
                             <motion.div
                                 initial={{ opacity: 0, scale: 0 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 2.2 + (i * 0.15), type: "spring" }} // Crown pops in right as spin finishes
+                                transition={{ delay: 2.2 + (k * 0.15), type: "spring" }} // Crown pops in right as spin finishes
                             >
                                 <Crown size={18} className="mb-0.5" strokeWidth={3} />
                             </motion.div>
-                            <SlotMachineRank rank={rank} delay={0.2 + (i * 0.15)} />
+                            <SlotMachineRank rank={rank} delay={0.2 + (k * 0.15)} />
                         </div>
                     );
                 } else if (rank === 2) { // SILVER
@@ -286,21 +295,36 @@ const RotatingHeaderItem = ({ children }) => (
     exit={{ rotateX: 90, y: -50, opacity: 0 }}
     transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
     className="absolute inset-0 flex flex-col items-center justify-center backface-hidden"
-    style={{ transformOrigin: "50% 50% -20px" }}
+    // Kept on its own layer for the whole animation, so the browser does not switch how it draws it mid-flip
+    style={{ transformOrigin: "50% 50% -20px", willChange: "transform, opacity" }}
   >
     {children}
   </motion.div>
 );
 
+const NO_TEAM = { id: 0, name: "", quote: "", color: "from-purple-600 to-indigo-900" };
+
+// Cards suit teams with photos, mottos or past results; teams known only by name get the team wall.
+// config.welcomeLayout: "auto" (default), "cards" or "wall".
+function chooseLayout(teams, setting) {
+  if (setting === "cards" || setting === "wall") return setting;
+  const rich = teams.filter((team) => team.image || team.quote || !team.isNew).length;
+  return rich < teams.length / 2 ? "wall" : "cards";
+}
+
 // --- MAIN COMPONENT ---
 export default function WelcomeScreen({ onStart, startTime, showTime, config, t }) {
-  const uiScale = config?.uiScale || 1;
+  const { quiz, teams: allTeams } = useQuiz();
+  // Teams marked absent at the attendance check are not introduced
+  const teams = useMemo(() => allTeams.filter(isPresent), [allTeams]);
   const splitDelay = config?.splitDelay || 3000;
   const cycleDuration = config?.cycleDuration || 8000;
   const headerInterval = config?.headerInterval || 5000;
+  const layout = chooseLayout(teams, config?.welcomeLayout);
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [viewState, setViewState] = useState("center");
+  // Index of the card whose details are unfolded; any other card is shown centred
+  const [detailFor, setDetailFor] = useState(null);
   const [isExiting, setIsExiting] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -344,26 +368,24 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
 
   // --- MAIN ANIMATION LOGIC ---
   useEffect(() => {
-    if (isExiting) return;
+    if (isExiting || layout === "wall") return;
 
-    // Always reset to center when index changes
-    setViewState("center");
-
-    // Always unfold details after delay (even if paused)
-    const splitTimer = setTimeout(() => setViewState("detail"), splitDelay);
+    // A new card starts centred (detailFor still points at the previous one) and always unfolds its
+    // details after a delay, even if paused
+    const splitTimer = setTimeout(() => setDetailFor(activeIndex), splitDelay);
 
     let nextTimer, foldTimer;
 
     // Only auto-cycle if NOT paused
-    if (!isPaused) {
-        foldTimer = setTimeout(() => setViewState("center"), cycleDuration - 600);
+    if (!isPaused && teams.length > 1) {
+        foldTimer = setTimeout(() => setDetailFor(null), cycleDuration - 600);
         nextTimer = setTimeout(() => {
-            setActiveIndex((prev) => (prev + 1) % TEAMS_DATA.length);
+            setActiveIndex((prev) => (prev + 1) % teams.length);
         }, cycleDuration);
     }
 
     return () => { clearTimeout(splitTimer); clearTimeout(foldTimer); clearTimeout(nextTimer); };
-  }, [activeIndex, splitDelay, cycleDuration, isExiting, isPaused]); // Added isPaused dependency
+  }, [activeIndex, splitDelay, cycleDuration, isExiting, isPaused, teams.length, layout]);
 
   // --- HANDLERS ---
   const handleStart = () => {
@@ -378,9 +400,11 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
       setIsPaused(true); // Stop auto-rotation
   };
 
-  const getIndex = (offset) => (activeIndex + offset) % TEAMS_DATA.length;
-  const activeTeam = TEAMS_DATA[activeIndex];
-  const ActiveIcon = activeTeam.icon;
+  const getIndex = (offset) => (activeIndex + offset) % teams.length;
+  // A new quiz may have no teams yet: the card stack and roster are hidden then
+  const hasTeams = teams.length > 0;
+  const activeTeam = teams[activeIndex] || NO_TEAM;
+  const hasQuote = Boolean(activeTeam.quote);
 
   // 1. Determine the team name size
   const nameSize = activeTeam.name.length > 15 ? 'text-5xl' : 'text-7xl';
@@ -399,29 +423,30 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
   return (
     <motion.div
       initial={{ y: 0 }}
-      animate={isExiting ? { y: "-100vh" } : { y: 0 }}
+      animate={isExiting ? { y: "-100%" } : { y: 0 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
-      className="h-screen w-full relative overflow-hidden flex flex-col bg-[#050505] font-['League_Spartan']"
+      className="h-full w-full relative overflow-hidden flex flex-col bg-[#050505] font-['League_Spartan']"
     >
 
       <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
-      <div className={`absolute inset-0 opacity-20 bg-gradient-to-r ${activeTeam.color} blur-[150px] transition-colors duration-1000`} />
+      <div className={`absolute inset-0 opacity-20 bg-gradient-to-r ${layout === "wall" ? "from-purple-600 to-indigo-900" : activeTeam.color} blur-[150px] transition-colors duration-1000`} />
 
-      <div style={{ transform: `scale(${uiScale})` }} className="relative w-full h-full flex flex-col transition-transform duration-500 origin-center">
+      <div className="relative w-full h-full flex flex-col isolate">
 
         {/* 1. ROTATING HEADER */}
-        <div className="h-[20vh] w-full relative z-50 perspective-1000">
+        <div className="h-[20cqh] w-full relative z-50 perspective-1000">
            <AnimatePresence mode="wait">
               {(headerState === 0 || !showTime) && (
                 <RotatingHeaderItem key="title">
-                   <h1 className="text-8xl font-black text-white uppercase tracking-[0.1em] drop-shadow-2xl">{t.title}</h1>
+                   {/* text-shadow, not a drop-shadow filter: filters inside the 3D rotation are drawn out of step and flicker */}
+                   <h1 className="text-8xl font-black text-white uppercase tracking-[0.1em]" style={{ textShadow: "0 18px 40px rgba(0,0,0,0.45)" }}>{t.title}</h1>
                 </RotatingHeaderItem>
               )}
               {headerState === 1 && showTime && (
                  <RotatingHeaderItem key="time">
                     <div className="flex flex-col items-center">
                         <span className="text-3xl text-yellow-500 font-bold tracking-[0.3em] mb-2 uppercase">{t.event_schedule}</span>
-                        <div className="flex items-center gap-4 text-white font-mono text-6xl font-bold bg-white/5 px-8 py-2 rounded-2xl border border-white/10 backdrop-blur-md">
+                        <div className="flex items-center gap-4 text-white font-mono text-6xl font-bold bg-white/[0.07] px-8 py-2 rounded-2xl border border-white/10">
                            <Clock size={48} className="text-yellow-500" />
                            <span>{startTime}</span>
                         </div>
@@ -432,7 +457,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                  <RotatingHeaderItem key="countdown">
                     <div className="flex flex-col items-center">
                         <span className="text-4xl text-green-500 font-bold tracking-[0.3em] mb-2 uppercase">{t.get_ready}</span>
-                        <div className="flex items-center gap-4 text-white font-mono text-6xl font-bold bg-white/5 px-8 py-2 rounded-2xl border border-white/10 backdrop-blur-md">
+                        <div className="flex items-center gap-4 text-white font-mono text-6xl font-bold bg-white/[0.07] px-8 py-2 rounded-2xl border border-white/10">
                            <Timer size={48} className="text-green-500" />
                            <span>{countdownText}</span>
                         </div>
@@ -443,14 +468,23 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
         </div>
 
         {/* 2. MAIN CONTENT */}
-        <div className="h-[65vh] w-full relative flex items-center pl-32 perspective-1000">
+        <div className="h-[65cqh] w-full relative flex items-center pl-32 perspective-1000">
 
+            {!hasTeams && (
+                <h1 className="w-full pr-32 text-center text-8xl font-black uppercase tracking-widest text-white/90">{quiz.title}</h1>
+            )}
+            {hasTeams && layout === "wall" && (
+                <div className="absolute inset-0">
+                    <TeamWall teams={teams} introMs={Math.max(3000, cycleDuration * 0.6)} pauseMs={config?.introPause ?? 2600} t={t} />
+                </div>
+            )}
+            {hasTeams && layout === "cards" && (<>
             <div className="relative w-[600px] h-[800px] z-20">
                 <AnimatePresence mode="popLayout">
 
                     {[2, 1].map((offset) => {
                         const stackIdx = getIndex(offset);
-                        const stackTeam = TEAMS_DATA[stackIdx];
+                        const stackTeam = teams[stackIdx];
                         return (
                             <motion.div
                                 key={`stack-${stackTeam.id}`}
@@ -485,17 +519,11 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                         transition={{ type: "spring", bounce: 0.2, duration: 0.8 }}
                     >
                         <div className={`w-full h-full rounded-[3rem] bg-gradient-to-br ${activeTeam.color} p-3 shadow-[0_0_80px_rgba(0,0,0,0.6)]`}>
-                            <div className="h-full w-full bg-black/85 backdrop-blur-md rounded-[2.5rem] p-10 flex flex-col items-center text-white relative overflow-hidden border border-white/5">
-                                <div className="absolute -bottom-32 -right-32 opacity-10 rotate-12 scale-[3] text-white">
-                                    <ActiveIcon size={250} />
+                            <div className={`h-full w-full bg-black/85 backdrop-blur-md rounded-[2.5rem] p-10 flex flex-col items-center text-white relative overflow-hidden border border-white/5 ${hasQuote ? "" : "justify-center"}`}>
+                                <div className="absolute -bottom-24 -right-16 opacity-[0.07] rotate-12 text-white font-black text-[320px] leading-none select-none">
+                                    {activeTeam.initials || teamInitials(activeTeam.name)}
                                 </div>
-                                <div className="w-75 h-75 rounded-3xl bg-white/5 mb-8 flex items-center justify-center shadow-inner border border-white/10 relative z-10 overflow-hidden group">
-                                    {activeTeam.image ? (
-                                        <img src={activeTeam.image} alt={activeTeam.name} className="w-full h-full object-cover transition-all duration-700" />
-                                    ) : (
-                                        <ActiveIcon size={140} className="text-white/80 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" />
-                                    )}
-                                </div>
+                                <TeamAvatar team={activeTeam} className="w-75 h-75 rounded-3xl mb-8 shadow-inner border border-white/10 relative z-10" textClass="text-[140px]" />
                                 <h2 className={`font-black text-center leading-none mb-6 z-10 drop-shadow-lg tracking-tight ${nameSize}`}>
                                     {activeTeam.name}
                                 </h2>
@@ -504,17 +532,19 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                                 }`}>
                                     "{activeTeam.quote}"
                                 </p>
-                                <div className="mt-auto flex gap-4 z-10">
-                                    <span className="px-6 py-3 bg-white/10 rounded-full flex items-center gap-3 text-4xl font-bold uppercase tracking-wider border border-white/10">
-                                        <Users size={48} /> {activeTeam.players} {t.players}
-                                    </span>
-                                </div>
+                                {activeTeam.players > 0 && (
+                                    <div className={`${hasQuote ? "mt-auto" : "mt-4"} flex gap-4 z-10`}>
+                                        <span className="px-6 py-3 bg-white/10 rounded-full flex items-center gap-3 text-4xl font-bold uppercase tracking-wider border border-white/10">
+                                            <Users size={48} /> {activeTeam.players} {t.players}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </motion.div>
 
                     <AnimatePresence>
-                    {viewState === "detail" && !activeTeam.isNew && (
+                    {detailFor === activeIndex && !activeTeam.isNew && (
                         <motion.div
                             key={`details-${activeTeam.id}`}
                             initial={{ opacity: 0, x: 0, zIndex: -1 }}
@@ -559,7 +589,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                                     <TrendingUp size={32}/> {t.season_history}
                                  </h3>
                                  <div className="flex-1">
-                                    <RecentFormBadges history={activeTeam.rankHistory} />
+                                    <RecentFormBadges history={activeTeam.rankHistory} t={t} />
                                  </div>
                             </div>
                         </motion.div>
@@ -570,7 +600,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
 
             <div className="absolute right-24 top-10 bottom-32 w-[550px] z-10 flex flex-col justify-start">
                <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
-                   <h3 className="text-gray-500 text-3xl uppercase tracking-widest">{t.roster} ({TEAMS_DATA.length})</h3>
+                   <h3 className="text-gray-500 text-3xl uppercase tracking-widest">{t.roster} ({teams.length})</h3>
                    {isPaused && (
                        <button onClick={() => setIsPaused(false)} className="flex items-center gap-2 text-1xl font-bold text-green-400 bg-green-400/10 px-3 py-1 rounded-full animate-pulse hover:bg-green-400/20">
                            <RotateCw size={12}/> {t.resume_autoplay}
@@ -579,10 +609,9 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                </div>
 
                <div className="grid grid-cols-4 gap-3">
-                   {TEAMS_DATA.map((team, i) => {
+                   {teams.map((team, i) => {
                        const isActive = i === activeIndex;
                        const isPast = i < activeIndex;
-                       const TIcon = team.icon;
 
                        return (
                            <motion.div
@@ -594,13 +623,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                                    ${isPast ? "opacity-30 grayscale border-transparent hover:opacity-100 hover:grayscale-0" : "opacity-70 hover:opacity-100 hover:border-white/30"}
                                `}
                            >
-                               {team.image ? (
-                                   <img src={team.image} className="w-full h-full object-cover" />
-                               ) : (
-                                   <div className="w-full h-full flex items-center justify-center text-white/50 group-hover:text-white">
-                                        <TIcon size={28} />
-                                   </div>
-                               )}
+                               <TeamAvatar team={team} className="w-full h-full" textClass="text-3xl" />
                                <div className={`absolute top-1 left-1 text-[15px] font-bold px-1.5 rounded
                                    ${isActive ? "bg-yellow-500 text-black" : "bg-black/50 text-white/50"}`}>
                                    {i + 1}
@@ -617,11 +640,12 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                    })}
                </div>
             </div>
+            </>)}
 
         </div>
 
         {/* 3. FOOTER */}
-        <div className="h-[15vh] w-full flex items-center justify-center z-[100] relative">
+        <div className="h-[15cqh] w-full flex items-center justify-center z-[100] relative">
             {!isExiting && (
                 <button
                     onClick={handleStart}

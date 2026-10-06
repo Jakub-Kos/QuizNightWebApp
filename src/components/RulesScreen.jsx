@@ -1,16 +1,23 @@
 import { motion } from "framer-motion";
-import { Shield, Check, AlertTriangle, Gavel, ArrowRight } from "lucide-react";
+import { Shield, Check, AlertTriangle, Gavel, ArrowRight, Clock, Users, Star, Info } from "lucide-react";
 
-export default function RulesScreen({ onNext, t }) {
-  const rules = [
-    { icon: <Shield size={32} className="text-blue-400" />, text: t.rule_1 },
-    { icon: <Gavel size={32} className="text-red-400" />, text: t.rule_2 },
-    { icon: <AlertTriangle size={32} className="text-yellow-400" />, text: t.rule_3 },
-    { icon: <Check size={32} className="text-green-400" />, text: t.rule_4 },
-  ];
+// Icons for the rules in order; they repeat when there are more rules
+const ICONS = [
+  [Shield, "text-blue-400"], [Gavel, "text-red-400"], [AlertTriangle, "text-yellow-400"], [Check, "text-green-400"],
+  [Clock, "text-purple-400"], [Users, "text-cyan-400"], [Star, "text-orange-400"], [Info, "text-pink-400"],
+];
+
+// rules: the quiz's rule texts (quiz/intro.js); the layout adapts to how many there are
+export default function RulesScreen({ rules: texts, onNext, t }) {
+  const rules = texts.map((text, i) => {
+    const [Icon, color] = ICONS[i % ICONS.length];
+    return { icon: <Icon size={32} className={color} />, text };
+  });
+  const columns = rules.length <= 2 ? "grid-cols-1 max-w-3xl mx-auto" : "grid-cols-2";
+  const textSize = rules.length <= 4 ? "text-2xl" : rules.length <= 6 ? "text-xl" : "text-lg";
 
   return (
-    <div className="h-screen w-full bg-[#050505] relative overflow-hidden flex flex-col items-center justify-center font-['League_Spartan']">
+    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col items-center justify-center font-['League_Spartan']">
 
       {/* --- BACKGROUND AMBIENCE (Matching Welcome) --- */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
@@ -43,7 +50,7 @@ export default function RulesScreen({ onNext, t }) {
         </div>
 
         {/* RULES GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-8">
+        <div className={`grid ${columns} gap-6 px-8`}>
             {rules.map((rule, i) => (
                 <motion.div
                     key={i}
@@ -59,7 +66,7 @@ export default function RulesScreen({ onNext, t }) {
                         <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
                             {rule.icon}
                         </div>
-                        <span className="text-2xl text-gray-200 font-bold leading-tight group-hover:text-white transition-colors">
+                        <span className={`${textSize} text-gray-200 font-bold leading-tight group-hover:text-white transition-colors`}>
                             {rule.text}
                         </span>
                     </div>

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { X, Save, Clock, Zap, Maximize, Globe, ChevronUp, ChevronDown } from "lucide-react";
+import { X, Save, Clock, Zap, Maximize, Globe, ChevronUp, ChevronDown, Library } from "lucide-react";
 
-export default function SettingsModal({ onClose, config, onUpdate, t }) {
+export default function SettingsModal({ onClose, onOpenCalibration, onExit, config, onUpdate, t }) {
   const handleChange = (key, value) => {
     onUpdate({ ...config, [key]: value });
   };
@@ -94,6 +94,36 @@ export default function SettingsModal({ onClose, config, onUpdate, t }) {
               <Clock size={14} /> {t.display_options}
             </h3>
 
+            {/* Welcome screen layout */}
+            <div className="bg-black/20 p-4 rounded-xl border border-white/5 space-y-3">
+              <span className="text-gray-200 font-medium">{t.set_layout}</span>
+              <div className="flex gap-2">
+                {["auto", "cards", "wall"].map((value) => (
+                  <button key={value} onClick={() => handleChange("welcomeLayout", value)}
+                    className={`flex-1 py-2 rounded-lg border text-sm font-bold transition-all ${(config.welcomeLayout || "auto") === value ? "bg-yellow-500 text-black border-yellow-500" : "bg-black/20 text-gray-400 border-white/5 hover:bg-white/5"}`}>
+                    {t[`set_layout_${value}`]}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500">{t.set_layout_help}</p>
+            </div>
+
+            {/* Pause between team intros on the team wall (not used by the card layout) */}
+            {config.welcomeLayout !== "cards" && (
+              <div className="bg-black/20 p-4 rounded-xl border border-white/5">
+                <div className="flex justify-between text-gray-300 text-sm mb-3">
+                  <span>{t.set_intro_pause}</span>
+                  <span className="font-mono text-green-400">{(config.introPause ?? 2600) / 1000}s</span>
+                </div>
+                <input
+                  type="range" min="1000" max="10000" step="500"
+                  value={config.introPause ?? 2600}
+                  onChange={(e) => handleChange("introPause", parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500"
+                />
+              </div>
+            )}
+
             {/* Toggle: Show Clock */}
             <div className="flex items-center justify-between bg-black/20 p-4 rounded-xl border border-white/5">
               <span className="text-gray-200 font-medium">{t.show_clock}</span>
@@ -104,6 +134,13 @@ export default function SettingsModal({ onClose, config, onUpdate, t }) {
                 <div className={`w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 ${config.showTime ? "translate-x-6" : "translate-x-0"}`} />
               </button>
             </div>
+
+            <button
+              onClick={onOpenCalibration}
+              className="w-full flex items-center justify-center gap-2 bg-black/20 hover:bg-white/10 p-4 rounded-xl border border-white/5 text-gray-200 font-medium transition-all"
+            >
+              <Maximize size={18} className="text-yellow-400" /> {t.calib_open}
+            </button>
 
             {/* 👇 IMPROVED INTERACTIVE CLOCK WIDGET 👇 */}
             <div className="bg-black/20 p-4 rounded-xl border border-white/5 flex flex-col items-center">
@@ -119,7 +156,7 @@ export default function SettingsModal({ onClose, config, onUpdate, t }) {
                           min="0" max="23"
                           value={hours.toString().padStart(2, '0')}
                           onChange={(e) => handleInput('h', e.target.value)}
-                          onBlur={(e) => saveTime(hours, minutes)} // Force re-format on blur
+                          onBlur={() => saveTime(hours, minutes)} // Force re-format on blur
                           className="w-20 bg-transparent text-center font-mono text-5xl font-bold text-white focus:outline-none focus:text-yellow-400 appearance-none"
                           style={{ MozAppearance: "textfield" }} // Hides spinner in Firefox
                        />
@@ -137,7 +174,7 @@ export default function SettingsModal({ onClose, config, onUpdate, t }) {
                           min="0" max="59"
                           value={minutes.toString().padStart(2, '0')}
                           onChange={(e) => handleInput('m', e.target.value)}
-                          onBlur={(e) => saveTime(hours, minutes)} // Force re-format on blur
+                          onBlur={() => saveTime(hours, minutes)} // Force re-format on blur
                           className="w-20 bg-transparent text-center font-mono text-5xl font-bold text-white focus:outline-none focus:text-yellow-400 appearance-none"
                           style={{ MozAppearance: "textfield" }}
                        />
@@ -199,8 +236,11 @@ export default function SettingsModal({ onClose, config, onUpdate, t }) {
         </div>
 
         {/* --- FOOTER --- */}
-        <div className="p-4 bg-black/40 text-right border-t border-gray-700">
-          <button onClick={onClose} className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl flex items-center gap-2 ml-auto hover:scale-105 transition-transform">
+        <div className="p-4 bg-black/40 border-t border-gray-700 flex items-center justify-between gap-2">
+          <button onClick={onExit} className="px-4 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl flex items-center gap-2 transition-colors">
+            <Library size={18} /> {t.settings_exit}
+          </button>
+          <button onClick={onClose} className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform">
             <Save size={18} /> {t.save_close}
           </button>
         </div>
