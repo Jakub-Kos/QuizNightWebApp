@@ -56,6 +56,7 @@ export const HELP = {
             ["`PVideo`", "The video full screen first (starts by itself), then the question.", "File in Zdroj."],
             ["`Top5`", "Five hidden answers, revealed together.", "First answer on the question row; the other four on the next rows with only a number in Q# and the answer."],
             ["`Sort`", "2–10 items shown mixed up with letters A, B, C…; the reveal puts them in order and shows the letters, e.g. `C A D B`. With pictures in Zdroj the items are picture cards.", "The items in the correct order, the first on the question row, the others on the next rows with only a number in Q#. Each row: the item in column `A`, the letter it is shown under in the answer column (A, B, C… each once, mixed up), optionally a picture in Zdroj. The answer column then reads the answer top to bottom, e.g. `B D A C`, ready for marking. Without letters the show mixes the items itself and Check tells you which letters it picked."],
+            ["`Handout`", "A picture the teams also get printed (a map, a photo collage, a crossword…) and write their answers into: shown as large as the screen allows, then replaced by the same picture with the answers filled in. One handout can be a whole round.", "The picture in Zdroj, the answer picture (its file name) in the answer column. The question text is optional. Print the question picture for every team."],
           ],
         },
         examples: {
@@ -105,6 +106,10 @@ export const HELP = {
             "text": "Put these inventions in order, oldest first",
             "items": ["Printing press", "Steam engine", "Telephone", "Aeroplane", "Internet"],
             "letters": ["C", "A", "E", "B", "D"]
+          },
+          "Handout": {
+            "text": "Where were these photos taken?",
+            "answer": "handout-answers.jpg"
           },
           "Top5": {
             "text": "Name the 5 largest countries",
@@ -226,6 +231,7 @@ export const HELP = {
             ["`PVideo`", "Nejdřív video přes celou obrazovku (spustí se samo), pak otázka.", "Soubor ve sloupci Zdroj."],
             ["`Top5`", "Pět skrytých odpovědí, odhalí se najednou.", "První odpověď na řádku otázky; zbylé čtyři na dalších řádcích jen s číslem v Q# a odpovědí."],
             ["`Sort`", "2–10 položek zamíchaných a označených písmeny A, B, C…; při odhalení se seřadí a ukáže se pořadí písmen, např. `C A D B`. S obrázky ve sloupci Zdroj jsou položky obrázkové karty.", "Položky ve správném pořadí, první na řádku otázky, další na následujících řádcích jen s číslem v Q#. Na každém řádku: položka ve sloupci `A`, písmeno, pod kterým se zobrazí, ve sloupci odpovědi (A, B, C… každé jednou, zamíchaně), případně obrázek ve Zdroji. Sloupec odpovědi pak shora dolů ukazuje odpověď, např. `B D A C`, připravenou na opravování. Bez písmen show položky zamíchá sama a Kontrola vypíše, která písmena zvolila."],
+            ["`Handout`", "Obrázek, který týmy dostanou i vytištěný (mapa, koláž fotek, křížovka…) a píšou do něj odpovědi: zobrazí se co největší a při odhalení ho nahradí stejný obrázek s vyplněnými odpověďmi. Jeden handout může být celé kolo.", "Obrázek ve sloupci Zdroj, obrázek s odpověďmi (jeho název souboru) ve sloupci odpovědi. Text otázky je nepovinný. Obrázek otázky vytiskněte pro každý tým."],
           ],
         },
         examples: {
@@ -275,6 +281,10 @@ export const HELP = {
             "text": "Seřaďte vynálezy od nejstaršího",
             "items": ["Knihtisk", "Parní stroj", "Telefon", "Letadlo", "Internet"],
             "letters": ["C", "A", "E", "B", "D"]
+          },
+          "Handout": {
+            "text": "Kde byly pořízeny tyto fotky?",
+            "answer": "handout-answers.jpg"
           },
           "Top5": {
             "text": "Vyjmenujte 5 největších zemí světa",
@@ -396,6 +406,7 @@ export const HELP = {
             ["`PVideo`", "Először a videó teljes képernyőn (magától indul), aztán a kérdés.", "Fájl a Zdroj oszlopban."],
             ["`Top5`", "Öt rejtett válasz, egyszerre fedi fel őket.", "Az első válasz a kérdés sorában; a többi négy a következő sorokban, csak egy számmal a Q#-ben és a válasszal."],
             ["`Sort`", "2–10 elem összekeverve, A, B, C… betűkkel; a felfedéskor sorba rendeződnek, és megjelenik a betűk sorrendje, pl. `C A D B`. Ha a Zdroj oszlopban képek vannak, az elemek képkártyák.", "Az elemek helyes sorrendben, az első a kérdés sorában, a többi a következő sorokban, csak egy számmal a Q#-ben. Minden sorban: az elem az `A` oszlopban, a betű, amely alatt megjelenik, a válasz oszlopban (A, B, C…, mindegyik egyszer, összekeverve), és ha kell, kép a Zdrojban. A válasz oszlop így fentről lefelé a választ mutatja, pl. `B D A C`, javításra készen. Betűk nélkül a show maga keveri össze az elemeket, és az Ellenőrzés kiírja, milyen betűket választott."],
+            ["`Handout`", "Egy kép, amelyet a csapatok kinyomtatva is megkapnak (térkép, fotókollázs, keresztrejtvény…), és abba írják a válaszokat: a lehető legnagyobban jelenik meg, a felfedéskor pedig ugyanaz a kép váltja fel, kitöltött válaszokkal. Egy handout lehet egy egész kör.", "A kép a Zdroj oszlopban, a válaszokat mutató kép (a fájlneve) a válasz oszlopban. A kérdés szövege nem kötelező. A kérdés képét nyomtasd ki minden csapatnak."],
           ],
         },
         examples: {
@@ -445,6 +456,10 @@ export const HELP = {
             "text": "Rakd sorrendbe a találmányokat, a legrégebbivel kezdve",
             "items": ["Könyvnyomtatás", "Gőzgép", "Telefon", "Repülőgép", "Internet"],
             "letters": ["C", "A", "E", "B", "D"]
+          },
+          "Handout": {
+            "text": "Hol készültek ezek a fotók?",
+            "answer": "handout-answers.jpg"
           },
           "Top5": {
             "text": "Sorold fel a világ 5 legnagyobb országát",

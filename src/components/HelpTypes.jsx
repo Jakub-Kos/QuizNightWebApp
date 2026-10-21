@@ -11,7 +11,7 @@ import QuestionScreen from "./QuestionScreen";
 import Rich from "./RichText";
 
 // Sample files shipped with the demo in public/source/
-const MEDIA = { Image: "pad_BM2.webp", PImage: "1944paris.jpg", Audio: "audio.m4a", Video: "video.mp4", PVideo: "video.mp4" };
+const MEDIA = { Image: "pad_BM2.webp", PImage: "1944paris.jpg", Audio: "audio.m4a", Video: "video.mp4", PVideo: "video.mp4", Handout: "handout.jpg" };
 const resolveMedia = (name) => (name ? `${import.meta.env.BASE_URL}source/${name}` : null);
 
 // Header of the questions sheet template (public/templates), with the column letters of Google Sheets

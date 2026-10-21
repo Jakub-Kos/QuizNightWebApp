@@ -26,6 +26,7 @@ export function referencedMedia(quiz) {
   parseQuestionsCsv(quiz.questionsCsv).forEach((r) => r.questions.forEach((q) => {
     if (q.media) names.add(q.media);
     q.items?.forEach((it) => it.media && names.add(it.media));
+    if (q.type === "Handout" && q.answer) names.add(String(q.answer).trim()); // the answer picture
   }));
   quiz.teams.forEach((t) => t.image && names.add(t.image));
   return [...names].filter((name) => !isUrl(name));

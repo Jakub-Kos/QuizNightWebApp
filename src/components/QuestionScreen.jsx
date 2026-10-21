@@ -77,6 +77,8 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     const processedQuestions = useMemo(
         () => roundData.questions.map(q => {
             const resolved = { ...q, source: resolveMedia(q.media) };
+            // Handout: the answer column holds the answer picture
+            if (q.type === "Handout") return { ...resolved, answerSource: resolveMedia(q.answer) };
             if (q.type !== "Sort") return resolved;
             // Sort: items with their pictures, mixed up the same way in every window
             const items = (q.items || []).map(it => ({ ...it, source: resolveMedia(it.media) }));
@@ -87,6 +89,10 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
 
     const question = qIndex >= 0 ? processedQuestions[qIndex] : null;
     const hasImage = Boolean(question?.source) && !question.type.includes("Video") && question.type !== "Audio";
+    // A handout's reveal swaps in the answer picture, which is then the one to enlarge
+    const isHandout = question?.type === "Handout";
+    const handoutRevealed = isHandout && !isQuestionsOnly && step === 2 && Boolean(question.answerSource);
+    const zoomSource = handoutRevealed ? question.answerSource : question?.source;
 
     const getExpectedAnswerText = (type) => {
         switch(type) {
@@ -235,6 +241,14 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                     </div>
                                 )}
 
+                                {/* Handout: the sheet the teams have in front of them */}
+                                {isHandout && question.source && (
+                                    <div className="mb-6 flex flex-col gap-2">
+                                        <span className="text-white/40 font-bold uppercase tracking-widest text-xs">{t.handout_sheet}</span>
+                                        <img src={question.source} alt="" className="max-h-[17vh] self-start rounded-xl border border-white/10" />
+                                    </div>
+                                )}
+
                                 {/* Highlight the Answer securely for the Host */}
                                 <div className="mt-auto bg-green-900/30 border border-green-500/50 p-6 rounded-2xl flex flex-col gap-2">
                                     <span className="text-green-500/80 font-bold uppercase tracking-widest text-xs">{t.correct_answer}</span>
@@ -252,6 +266,10 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                             ))}
                                             </div>
                                         </div>
+                                    ) : isHandout ? (
+                                        question.answerSource
+                                            ? <img src={question.answerSource} alt="" className="max-h-[17vh] self-start rounded-xl border border-green-500/40 mt-1" />
+                                            : <span className="text-xl font-bold text-green-400/60">–</span>
                                     ) : question.type === "Top5" ? (
                                         <div className="flex flex-col gap-2 mt-2">
                                             {question.answer.map((ans, i) => (
@@ -363,7 +381,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                         </motion.div>
                     )}
 
-                    {showQuestion && (
+                    {showQuestion && !isHandout && (
                         <motion.div key="question-content" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-[1600px] flex flex-col items-center text-center">
                             <h2 className={`${getFontSize(question.text)} font-bold text-white leading-tight mb-8 drop-shadow-xl`}>
                                 {question.text}
@@ -464,13 +482,37 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                 </AnimatePresence>
             </div>
 
+            {/* HANDOUT: the printed sheet as large as the screen allows, then the answer sheet */}
+            {isHandout && !showBigNum && (
+                <div className="absolute inset-x-0 top-0 bottom-[10cqh] z-40 bg-[#050505] flex flex-col px-[3cqw] pt-[2.5cqh] pb-[2cqh] gap-[1.5cqh]">
+                    <div className="flex items-center gap-6 min-h-[5cqh] px-[2.5cqw]">{/* clear of the back and settings buttons */}
+                        <span className="shrink-0 font-black text-4xl text-white/50 uppercase tracking-widest">{t.question} {question.id}</span>
+                        {question.text && <h2 className="flex-1 min-w-0 font-bold text-5xl text-white leading-tight truncate">{question.text}</h2>}
+                        {handoutRevealed && (
+                            <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+                                className="ml-auto shrink-0 px-8 py-3 rounded-full bg-green-600 text-white font-black text-3xl uppercase tracking-wider shadow-[0_0_40px_rgba(22,163,74,0.5)]">
+                                {t.correct_answer}
+                            </motion.span>
+                        )}
+                    </div>
+                    <div className="relative flex-1 min-h-0">
+                        <AnimatePresence initial={false}>
+                            <motion.img key={handoutRevealed ? "answer" : "sheet"} src={zoomSource} alt=""
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}
+                                onClick={isPreview ? undefined : () => setZoom(true)}
+                                className="absolute inset-0 w-full h-full object-contain cursor-zoom-in" />
+                        </AnimatePresence>
+                    </div>
+                </div>
+            )}
+
             {/* ENLARGED IMAGE */}
             <AnimatePresence>
                 {zoom && hasImage && (
                     <motion.div key="zoom" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
                         onClick={() => setZoom(false)}
                         className="absolute inset-0 z-50 bg-black/95 flex items-center justify-center p-[2cqh] cursor-zoom-out">
-                        <img src={question.source} alt="Visual" className="w-full h-full object-contain" />
+                        <img src={zoomSource} alt="Visual" className="w-full h-full object-contain" />
                     </motion.div>
                 )}
             </AnimatePresence>

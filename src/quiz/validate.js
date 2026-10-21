@@ -4,8 +4,8 @@ import { MAX_SORT_ITEMS, sheetLetters, sortLayout } from "./sort";
 
 // Types QuestionScreen renders. Image/Video (and any other type) show their media inline with a written answer;
 // PImage/PVideo show the media full screen first.
-const KNOWN_TYPES = ["Written", "Numeric", "ABCD", "Yes/No", "Top5", "Sort", "PImage", "PVideo", "Audio", "Image", "Video"];
-const MEDIA_REQUIRED = ["PImage", "PVideo", "Audio", "Image", "Video"];
+const KNOWN_TYPES = ["Written", "Numeric", "ABCD", "Yes/No", "Top5", "Sort", "Handout", "PImage", "PVideo", "Audio", "Image", "Video"];
+const MEDIA_REQUIRED = ["PImage", "PVideo", "Audio", "Image", "Video", "Handout"];
 
 const IMAGE_EXT = ["jpg", "jpeg", "png", "gif", "webp", "avif", "svg", "bmp"];
 const AUDIO_EXT = ["mp3", "wav", "ogg", "m4a", "aac", "flac"];
@@ -58,12 +58,18 @@ export function validateQuiz(quiz, rounds, hasMedia) {
 
       if (!KNOWN_TYPES.includes(type)) issue("warning", "type_unknown", { type });
 
-      if (blank(q.text) && !["PImage", "PVideo"].includes(type)) issue("warning", "no_text");
+      if (blank(q.text) && !["PImage", "PVideo", "Handout"].includes(type)) issue("warning", "no_text");
       if (String(q.text || "").length > 250) issue("warning", "long_text", { length: String(q.text).length });
 
       if (type === "Top5") {
         const answers = q.answer.filter((a) => !blank(a));
         if (answers.length !== 5) issue("warning", "top5_count", { count: answers.length });
+      } else if (type === "Handout") {
+        // The answer column holds the answer picture
+        const answer = String(q.answer ?? "").trim();
+        if (!answer) issue("warning", "handout_no_answer");
+        else if (!isUrl(answer) && !hasMedia(answer)) issue("error", "media_missing", { file: answer });
+        else if (!["image", "other"].includes(mediaKind(answer))) issue("warning", "media_kind", { file: answer, type });
       } else if (type === "Sort") {
         const items = q.items || [];
         if (items.length < 2) issue("error", "sort_count_low", { count: items.length });
