@@ -57,6 +57,14 @@ function groupRounds(rows) {
   return rounds;
 }
 
+// The type cell as the show knows it: "Top10", "Top 3"… are all the Top5 type (a top list of any
+// length); the number written in them (not in "Top5" itself) is kept as question.declared for the check
+const TOP_LIST = /^top\s*(\d+)$/i;
+export const normalizeType = (cell) => {
+  const type = String(cell ?? "").trim() || "Written";
+  return TOP_LIST.test(type) ? "Top5" : type;
+};
+
 // Rows of one round -> its questions (Top5 and Sort take the rows that follow them)
 export function buildQuestions(rows) {
   const qs = [];
@@ -64,7 +72,7 @@ export function buildQuestions(rows) {
 
   while (i < rows.length) {
     const row = rows[i];
-    const type = row[3] ? String(row[3]).trim() : "Written";
+    const type = normalizeType(row[3]);
     const media = row[9] ? String(row[9]).trim() : null;
 
     if (type === "Sort") {
@@ -101,7 +109,10 @@ export function buildQuestions(rows) {
         answers.push(nextRow[8]);
         j++;
       }
-      qs.push({ id: row[1], text: row[2], type: "Top5", options: {}, answer: answers, media });
+      // "Top5" is the type's own name (any length); "Top10", "Top 3"… also say how long the list is
+      const cell = String(row[3] ?? "").trim();
+      const declared = cell === "Top5" ? null : Number(cell.match(TOP_LIST)?.[1]) || null;
+      qs.push({ id: row[1], text: row[2], type: "Top5", options: {}, answer: answers, media, declared });
       i += j;
     } else {
       qs.push({

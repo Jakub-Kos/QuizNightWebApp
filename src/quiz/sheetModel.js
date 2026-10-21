@@ -1,4 +1,4 @@
-import { buildQuestions, isRoundMarker, isQuestionRow, splitMarker } from "./parse";
+import { buildQuestions, isRoundMarker, isQuestionRow, splitMarker, normalizeType } from "./parse";
 import { sortLayout, sheetLetters } from "./sort";
 
 // The questions tab as rows, for the question editor. Columns A–J are the questions.csv columns
@@ -37,7 +37,7 @@ export function readSheet(rows) {
     if (!current || !isQuestionRow(row)) return;
 
     const last = current.questions.at(-1);
-    const lastType = last && (cell(last.rows[0], 3) || "Written");
+    const lastType = last && normalizeType(cell(last.rows[0], 3));
     if (last && (lastType === "Top5" || lastType === "Sort") && !cell(row, 2) && !cell(row, 3)) {
       last.end = index;
       last.rows.push(row);
@@ -97,7 +97,9 @@ export function rowsFor(draft, number) {
 
   if (draft.type === "Top5") {
     const answers = draft.answers.map((a) => a.trim()).filter(Boolean);
-    return (answers.length ? answers : [""]).map((answer, i) => row(i, i ? "" : draft.text, i ? "" : "Top5", none, answer, i ? "" : draft.media.trim()));
+    // "Top5" for five answers, else "Top10" and so on, so the Sheet says how long the list is
+    const type = answers.length === 5 || !answers.length ? "Top5" : `Top${answers.length}`;
+    return (answers.length ? answers : [""]).map((answer, i) => row(i, i ? "" : draft.text, i ? "" : type, none, answer, i ? "" : draft.media.trim()));
   }
   if (draft.type === "Sort") {
     let items = draft.items.filter((it) => it.text.trim() || it.media.trim());
