@@ -1,6 +1,6 @@
 import { Component, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { MotionConfig } from "framer-motion";
-import { ArrowLeft, Plus, Pencil, Trash2, Save, Loader2, RefreshCw, FileSpreadsheet, AlertTriangle, CheckCircle2, X, Lock } from "lucide-react";
+import { ArrowLeft, Plus, Pencil, Trash2, Save, Loader2, RefreshCw, FileSpreadsheet, AlertTriangle, CheckCircle2, X, Lock, ChevronUp, ChevronDown, History } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { HELP } from "../data/help";
 import { QuizContext } from "../quiz/context";
@@ -8,10 +8,10 @@ import { listMedia, updateQuiz } from "../quiz/storage";
 import { rowsToCsv } from "../quiz/sheets";
 import { driveErrorText, sheetUrl, ensureMediaFolder, uploadMedia } from "../quiz/drive";
 import { mediaKey } from "../quiz/model";
-import { loadQuestionSheet, canEditSheet, commitEdit, ConflictError } from "../quiz/sheetEdit";
+import { loadQuestionSheet, canEditSheet, commitEdit, ConflictError, readPresence, writePresence, presenceKey } from "../quiz/sheetEdit";
 import {
-  draftFrom, emptyDraft, previewQuestion, planSave, planAdd, planDelete, planRename, planAddRound,
-  findBlock, findRound, stampNow, parseStamp,
+  draftFrom, emptyDraft, previewQuestion, planSave, planAdd, planDelete, planRename, planAddRound, planMove,
+  findBlock, findRound, sameRows, stampNow, parseStamp,
 } from "../quiz/sheetModel";
 import { validateQuiz, previewStep } from "../quiz/validate";
 import { fmt } from "../quiz/files";
@@ -89,10 +89,12 @@ function EditorView({ bundle, lang, t }) {
   const [theirs, setTheirs] = useState(null); // newer version of the open question, saved by someone else
   const [renaming, setRenaming] = useState(null); // { marker, title }
   const [view, setView] = useState("question");
+  const [others, setOthers] = useState([]); // other people in this editor, from readPresence
+  const myKey = google.user?.email ? presenceKey(google.user.email) : null;
 
   // The poll compares against the latest selection without restarting
   const live = useRef({});
-  useEffect(() => { live.current = { selection, dirty, busy }; }, [selection, dirty, busy]);
+  useEffect(() => { live.current = { selection, dirty, busy, myKey }; }, [selection, dirty, busy, myKey]);
   const lastCsv = useRef(quiz.questionsCsv);
 
   const errorText = useCallback((err) => driveErrorText(err, t, google.user?.email), [t, google.user]);
@@ -109,21 +111,30 @@ function EditorView({ bundle, lang, t }) {
     }
   }, [quiz.id]);
 
+  // Follow the open question to where it is in a newer copy (moved, renumbered); when it is not there
+  // any more, someone else saved it
+  const refind = useCallback((fresh) => {
+    const { selection: sel } = live.current;
+    if (sel?.kind !== "edit") return;
+    const found = findBlock(fresh.sheet, sel.rows, sel);
+    if (found) {
+      const rows = fresh.sheet.rounds[found.ri].questions[found.qi].rows;
+      setSelection((s) => (s === sel ? { ...sel, ...found, rows } : s));
+    } else {
+      setTheirs(fresh.sheet.rounds[sel.ri]?.questions[sel.qi] ?? null);
+    }
+  }, []);
+
   const load = useCallback(async () => {
     try {
       const fresh = await loadQuestionSheet(quiz);
       adopt(fresh);
-      // Someone else saved the question that is open here
-      const { selection: sel } = live.current;
-      if (sel?.kind === "edit") {
-        const found = findBlock(fresh.sheet, sel.rows, sel);
-        if (found) setSelection((s) => (s === sel ? { ...sel, ...found } : s));
-        else setTheirs(fresh.sheet.rounds[sel.ri]?.questions[sel.qi] ?? null);
-      }
+      refind(fresh);
+      readPresence(quiz.drive.spreadsheetId).then((list) => setOthers(list.filter((p) => p.key !== live.current.myKey))).catch(() => {});
     } catch (err) {
       setLoadError(errorText(err));
     }
-  }, [quiz, adopt, errorText]);
+  }, [quiz, adopt, refind, errorText]);
 
   useEffect(() => {
     if (!google.signedIn) return;
@@ -178,6 +189,35 @@ function EditorView({ bundle, lang, t }) {
   }, [lang]);
 
   const rounds = useMemo(() => data?.sheet.rounds ?? [], [data]);
+
+  // Where this person is, for the others: "round:Q#", "round:+" when adding, "+" for a new round
+  const questionKey = (ri, qi) => `${rounds[ri]?.number}:${rounds[ri]?.questions[qi]?.question.id}`;
+  const here = selection?.kind === "edit" ? questionKey(selection.ri, selection.qi)
+    : selection?.kind === "add" ? `${rounds[selection.ri]?.number}:+` : selection?.kind === "round" ? "+" : "";
+  const myName = google.user?.name || google.user?.email || "";
+  useEffect(() => {
+    if (!google.signedIn || !myKey || !canEdit) return;
+    const beat = () => writePresence(quiz.drive.spreadsheetId, myKey, { question: here, typing: dirty, name: myName }).catch(() => {});
+    beat();
+    const timer = setInterval(beat, 20000);
+    return () => clearInterval(timer);
+  }, [google.signedIn, myKey, canEdit, here, dirty, myName, quiz.drive.spreadsheetId]);
+  // Leaving the page (or the tab) removes the entry at once instead of letting it expire
+  useEffect(() => {
+    if (!myKey) return;
+    const leave = () => writePresence(quiz.drive.spreadsheetId, myKey, null, { keepalive: true }).catch(() => {});
+    window.addEventListener("pagehide", leave);
+    return () => { window.removeEventListener("pagehide", leave); leave(); };
+  }, [myKey, quiz.drive.spreadsheetId]);
+  const othersAt = (key) => others.filter((p) => p.question === key);
+  const firstName = (p) => p.name.split(" ")[0] || p.name;
+  // The latest changes made in the app (K/L), newest first
+  const [recentOpen, setRecentOpen] = useState(true);
+  const recent = useMemo(() => rounds
+    .flatMap((round, ri) => round.questions.map((block, qi) => ({ block, ri, qi, round, at: parseStamp(block.changed) })))
+    .filter((r) => r.at)
+    .sort((a, b) => b.at - a.at)
+    .slice(0, 6), [rounds]);
 
   const confirmDiscard = () => !dirty || window.confirm(t.qe_discard);
   const choose = (sel, nextDraft) => {
@@ -266,6 +306,27 @@ function EditorView({ bundle, lang, t }) {
     setBusy(null);
   };
 
+  // Up or down within the round; both questions must still be as shown here
+  const move = async (ri, qi, dir) => {
+    const mine = rounds[ri].questions[qi];
+    const other = rounds[ri].questions[qi + dir];
+    setBusy("move");
+    try {
+      const fresh = await commitEdit(quiz, (sheet) => {
+        const found = findBlock(sheet, mine.rows, { ri, qi });
+        const neighbour = found && sheet.rounds[found.ri].questions[found.qi + dir];
+        if (!neighbour || !sameRows(other.rows, neighbour.rows)) throw new ConflictError();
+        return planMove(sheet, found.ri, found.qi, dir, meta());
+      });
+      adopt(fresh);
+      refind(fresh);
+    } catch (err) {
+      if (err instanceof ConflictError && err.data) adopt(err.data);
+      setNotice({ ok: false, text: err instanceof ConflictError ? t.qe_conflict_round : errorText(err) });
+    }
+    setBusy(null);
+  };
+
   const rename = async () => {
     const { marker, title } = renaming;
     setBusy("rename");
@@ -276,6 +337,9 @@ function EditorView({ bundle, lang, t }) {
         return planRename(sheet, ri, title, meta());
       });
       adopt(fresh);
+      // A new question being written for this round goes into it under its new name
+      const renamed = fresh.sheet.rounds.find((r) => r.markerRow === rounds.find((x) => x.marker === marker)?.markerRow);
+      if (renamed) setSelection((s) => (s?.kind === "add" && s.marker === marker ? { ...s, marker: renamed.marker } : s));
       setRenaming(null);
     } catch (err) {
       if (err instanceof ConflictError && err.data) adopt(err.data);
@@ -346,6 +410,12 @@ function EditorView({ bundle, lang, t }) {
             <a href={sheetUrl(quiz.drive.spreadsheetId)} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-gray-400 hover:text-white">
               <FileSpreadsheet size={16} /> {quiz.drive.spreadsheetName}
             </a>
+            {others.length > 0 && (
+              <span className="flex items-center gap-1.5 text-gray-300" title={others.map((p) => p.name).join(", ")}>
+                <span className="w-2 h-2 rounded-full bg-green-400" />
+                {fmt(t.qe_here, { names: others.map(firstName).join(", ") })}
+              </span>
+            )}
             {loadedAt && (
               <button onClick={load} className="flex items-center gap-1.5 text-gray-500 hover:text-white" title={t.qe_reload}>
                 <RefreshCw size={14} /> {fmt(t.qe_loaded, { time: loadedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })}
@@ -368,6 +438,23 @@ function EditorView({ bundle, lang, t }) {
         {data && (
           <div className="grid lg:grid-cols-[minmax(280px,380px)_1fr] gap-6 items-start">
             <nav className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto pr-1">
+              {recent.length > 0 && (
+                <details className="rounded-2xl bg-white/[0.04] border border-white/10 overflow-hidden group/recent" open={recentOpen} onToggle={(e) => setRecentOpen(e.currentTarget.open)}>
+                  <summary className="flex items-center gap-2 px-4 py-3 cursor-pointer select-none font-bold text-sm">
+                    <History size={16} className="text-gray-500" /> {t.qe_recent}
+                  </summary>
+                  <ul className="border-t border-white/5">
+                    {recent.map(({ block, ri, qi, round }) => (
+                      <li key={`${block.start}-${block.changed}`}>
+                        <button onClick={() => openQuestion(ri, qi)} className="w-full text-left px-4 py-2 hover:bg-white/5">
+                          <span className="block text-sm truncate"><span className="text-gray-500">{round.number}.{block.question.id}</span> {label(block)}</span>
+                          <span className="block text-xs text-gray-500 truncate">{block.author || t.qe_someone} · {ago(block.changed, lang)}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
               {rounds.map((round, ri) => (
                 <section key={`${round.marker}-${ri}`} className="rounded-2xl bg-white/[0.04] border border-white/10 overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5">
@@ -395,12 +482,17 @@ function EditorView({ bundle, lang, t }) {
                     {round.questions.map((block, qi) => {
                       const active = selection?.kind === "edit" && selection.ri === ri && selection.qi === qi;
                       return (
-                        <li key={block.start}>
+                        <li key={block.start} className="relative group">
                           <button onClick={() => openQuestion(ri, qi)}
                             className={`w-full text-left px-4 py-2.5 flex gap-3 border-l-2 ${active ? "bg-yellow-500/10 border-yellow-500" : "border-transparent hover:bg-white/5"}`}>
                             <span className="w-6 shrink-0 text-right font-mono text-sm text-gray-500">{block.question.id}</span>
                             <span className="min-w-0 flex-1">
-                              <span className="block truncate text-sm">{label(block)}</span>
+                              <span className="flex items-center gap-2 text-sm">
+                                <span className="truncate">{label(block)}</span>
+                                {othersAt(questionKey(ri, qi)).map((p) => (
+                                  <span key={p.key} title={p.name} className={`shrink-0 px-1.5 py-px rounded text-[10px] font-bold ${p.typing ? "bg-green-500 text-black" : "bg-green-500/20 text-green-300"}`}>{firstName(p)}</span>
+                                ))}
+                              </span>
                               <span className="block text-xs text-gray-500 truncate">
                                 {block.question.type}
                                 {block.author && ` · ${block.author}`}
@@ -408,6 +500,14 @@ function EditorView({ bundle, lang, t }) {
                               </span>
                             </span>
                           </button>
+                          {canEdit && round.questions.length > 1 && (
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2 hidden group-hover:flex flex-col bg-[#151515] rounded-lg border border-white/10">
+                              <button onClick={() => move(ri, qi, -1)} disabled={qi === 0 || Boolean(busy)} aria-label={t.qe_move_up} title={t.qe_move_up}
+                                className="p-0.5 text-gray-400 hover:text-white disabled:opacity-20"><ChevronUp size={16} /></button>
+                              <button onClick={() => move(ri, qi, 1)} disabled={qi === round.questions.length - 1 || Boolean(busy)} aria-label={t.qe_move_down} title={t.qe_move_down}
+                                className="p-0.5 text-gray-400 hover:text-white disabled:opacity-20"><ChevronDown size={16} /></button>
+                            </div>
+                          )}
                         </li>
                       );
                     })}
@@ -444,6 +544,13 @@ function EditorView({ bundle, lang, t }) {
                     })()}
                     <button onClick={close} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/10" aria-label={t.qe_cancel}><X size={18} /></button>
                   </div>
+
+                  {selection.kind === "edit" && othersAt(here).length > 0 && !theirs && (
+                    <p className="flex items-start gap-2 rounded-xl bg-green-500/10 border border-green-500/25 p-3 text-sm text-green-200">
+                      <span className="w-2 h-2 mt-1.5 rounded-full bg-green-400 shrink-0" />
+                      {fmt(othersAt(here).some((p) => p.typing) ? t.qe_editing_now : t.qe_open_now, { names: othersAt(here).map((p) => p.name).join(", ") })}
+                    </p>
+                  )}
 
                   {theirs && (
                     <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/30 p-4 space-y-2 text-sm">

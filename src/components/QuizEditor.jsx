@@ -13,8 +13,9 @@ import TeamsSection from "./TeamsSection";
 import IntroSection from "./IntroSection";
 import { saveTeamImage } from "../quiz/teams";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
-import { readDriveQuiz, syncDriveMedia, mergeDrive, driveErrorText, folderUrl, sheetUrl as driveSheetUrl } from "../quiz/drive";
+import { readDriveQuiz, syncDriveMedia, mergeDrive, driveErrorText, folderUrl, sheetUrl as driveSheetUrl, ensureMediaFolder, uploadMedia, isMediaFolderName } from "../quiz/drive";
 import { GoogleAccountBar, DriveProgress, BetaBadge } from "./DriveParts";
+import DrivePeople from "./DrivePeople";
 
 export default function QuizEditor({ id, t }) {
   const [quiz, setQuiz] = useState(undefined); // undefined = loading, null = not found
@@ -25,6 +26,7 @@ export default function QuizEditor({ id, t }) {
   const [scoresStatus, setScoresStatus] = useState(null);
   const [busy, setBusy] = useState(null);
   const [driveStatus, setDriveStatus] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState(null);
   const [driveProgress, setDriveProgress] = useState(null);
   const google = useGoogleAccount();
   const csvInput = useRef(null);
@@ -133,7 +135,43 @@ export default function QuizEditor({ id, t }) {
       : { ok: false, text: t.ed_no_rounds });
   };
 
+  // Drive quizzes: dropped files go into the media folder on Drive (a dropped folder keeps its
+  // subfolders; a dropped Zdroje folder itself is not repeated), one after another
+  const uploadToDrive = async (files) => {
+    setBusy("drive-upload");
+    setUploadStatus(null);
+    const progress = { done: 0, total: files.length, bytes: 0, totalBytes: files.reduce((n, f) => n + f.size, 0) };
+    setDriveProgress({ ...progress });
+    let replace = null; // asked once for the whole drop
+    try {
+      let folder = quiz.drive.mediaFolderId ? { id: quiz.drive.mediaFolderId } : null;
+      if (!folder) {
+        folder = await ensureMediaFolder(quiz.drive);
+        update({ drive: { ...quiz.drive, mediaFolderId: folder.id, mediaFolderName: folder.name } });
+      }
+      for (const file of files) {
+        const parts = String(file.relativePath || file.webkitRelativePath || file.name).split("/").filter(Boolean);
+        if (parts.length > 1 && isMediaFolderName(parts[0])) parts.shift();
+        const before = progress.bytes;
+        await uploadMedia(id, folder.id, parts.join("/"), file, {
+          onProgress: (share) => { progress.bytes = before + share * file.size; setDriveProgress({ ...progress }); },
+          confirmReplace: () => (replace ??= window.confirm(t.ed_drive_replace)),
+        });
+        progress.done++;
+        progress.bytes = before + file.size;
+        setDriveProgress({ ...progress });
+      }
+      setUploadStatus({ ok: true, text: fmt(t.ed_drive_uploaded, { count: files.length }) });
+    } catch (err) {
+      setUploadStatus({ ok: false, text: driveErrorText(err, t, google.user?.email) });
+    }
+    await reloadMedia();
+    setDriveProgress(null);
+    setBusy(null);
+  };
+
   const addMedia = async (files) => {
+    if (quiz.drive && google.signedIn) return uploadToDrive(files.filter((f) => isMediaFile(f.name)));
     setBusy("media");
     const accepted = files.filter((f) => isMediaFile(f.name)).map((f) => ({ name: f.name, blob: f }));
     // Replace files that differ only in letter case, so lookups stay unambiguous
@@ -229,6 +267,7 @@ export default function QuizEditor({ id, t }) {
                 ) : <span className="text-yellow-300/90">{t.gd_no_media_folder}</span>}
               </li>
             </ul>
+            <DrivePeople fileId={quiz.drive.folderId || quiz.drive.spreadsheetId} account={google} t={t} />
             <div className="flex flex-wrap items-center gap-3">
               <a href={quizHash(quiz.id, "questions")} className={`${btnCls} bg-yellow-500 hover:bg-yellow-400 text-black font-bold`}>
                 <ListChecks size={16} /> {t.qe_open}
@@ -301,9 +340,12 @@ export default function QuizEditor({ id, t }) {
 
           {busy === "media" ? (
             <div className="flex items-center justify-center gap-2 p-6 text-gray-300"><Loader2 className="animate-spin" /> {t.lib_importing}</div>
+          ) : busy === "drive-upload" && driveProgress ? (
+            <div className="p-4 rounded-xl bg-black/30"><DriveProgress progress={driveProgress} t={{ ...t, gd_downloading: t.ed_drive_uploading }} /></div>
           ) : (
-            <FileDrop compact onFiles={addMedia} accept="image/*,audio/*,video/*" label={t.ed_media_drop} t={t} />
+            <FileDrop compact onFiles={addMedia} accept="image/*,audio/*,video/*" label={quiz.drive && google.signedIn ? t.ed_media_drop_drive : t.ed_media_drop} t={t} />
           )}
+          {quiz.drive && <Status status={uploadStatus} />}
 
           {media.length > 0 && (
             <>
