@@ -125,13 +125,13 @@ async function onToken(response) {
 }
 
 // Call from a click handler; resolves with the session. Signing in again after the token expired skips
-// the account chooser when Google still knows the account.
-export function signIn() {
-  if (!tokenClient) return loadGoogle().then(() => signIn());
+// the account chooser when Google still knows the account; chooseAccount always shows it.
+export function signIn({ chooseAccount = false } = {}) {
+  if (!tokenClient) return loadGoogle().then(() => signIn({ chooseAccount }));
   if (pending) pending.reject(new GoogleAuthError("superseded"));
   return new Promise((resolve, reject) => {
     pending = { resolve, reject };
-    const hint = memorySession?.user?.email;
+    const hint = chooseAccount ? null : memorySession?.user?.email;
     tokenClient.requestAccessToken({ prompt: hint ? "" : "select_account", ...(hint && { login_hint: hint }) });
   });
 }
