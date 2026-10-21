@@ -14,7 +14,8 @@ const fieldCls = "bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-s
 // scoresSheetUrl: the quiz's live scores Sheet, whose team names can be loaded as teams; fromSheet: the
 // scores tab of a Drive quiz, whose rows are the teams: renaming or removing one here changes its row,
 // and a new team is a draft until its name is confirmed (Enter or leaving the field), then gets a row
-export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMedia, scoresSheetUrl, fromSheet, onUploadImage, t }) {
+// sectionProps: warning, status and busy for the section frame (see Section)
+export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMedia, scoresSheetUrl, fromSheet, onUploadImage, sectionProps, t }) {
   const [status, setStatus] = useState(null);
   const [loadingScores, setLoadingScores] = useState(false);
   const teamsCsv = useRef(null);
@@ -87,7 +88,9 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
 
   return (
     <Section
-      title={t.tm_title}
+      id="teams"
+      {...sectionProps}
+      title={<>{t.tm_title}{teams.length > 0 && <span className="px-2 py-0.5 rounded-full bg-white/10 text-sm text-gray-300 tracking-normal">{teams.length}</span>}</>}
       help={t.tm_help}
       helpId="teams"
       actions={(
@@ -118,6 +121,7 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
           const duplicate = duplicates.has(team.name.trim().toLowerCase());
           return (
             <li key={team.id} className="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-black/30 border border-white/5">
+              <span className="w-6 shrink-0 text-right font-mono text-sm text-gray-500">{i + 1}</span>
               <button onClick={() => { photoFor.current = team; photoInput.current.click(); }} title={t.tm_photo}
                 className={`group relative w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-gradient-to-br ${color} flex items-center justify-center`}>
                 {image ? <img src={image} alt="" className="w-full h-full object-cover" /> : <Icon size={24} className="text-white/80" />}

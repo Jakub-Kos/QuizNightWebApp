@@ -129,14 +129,14 @@ export async function readDriveQuiz(link) {
   }
 }
 
-// Media files below a folder, with paths relative to it
+// Media files below a folder, with paths relative to it; subfolders are listed at the same time
 async function listMediaTree(folderId, prefix = "") {
-  const files = [];
-  for (const f of await listChildren(folderId)) {
-    if (f.mimeType === FOLDER) files.push(...await listMediaTree(f.id, `${prefix}${f.name}/`));
-    else if (isMediaFile(f.name)) files.push({ id: f.id, path: `${prefix}${f.name}`, modified: f.modifiedTime, size: Number(f.size) || 0 });
-  }
-  return files;
+  const children = await listChildren(folderId);
+  const nested = await Promise.all(children.filter((f) => f.mimeType === FOLDER).map((f) => listMediaTree(f.id, `${prefix}${f.name}/`)));
+  const files = children
+    .filter((f) => f.mimeType !== FOLDER && isMediaFile(f.name))
+    .map((f) => ({ id: f.id, path: `${prefix}${f.name}`, modified: f.modifiedTime, size: Number(f.size) || 0 }));
+  return [...files, ...nested.flat()];
 }
 
 // Download, counting bytes as they arrive (a video can be 100 MB)

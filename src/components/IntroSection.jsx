@@ -19,7 +19,8 @@ function Toggle({ on, onChange, label }) {
 
 // Rules and prizes screens of the show (quiz/intro.js). While the quiz has no own rules, the default
 // rules in the show language are shown here, and editing any of them saves them as the quiz's own.
-export default function IntroSection({ quiz, onChange, t }) {
+// sectionProps: warning, status and busy for the section frame (see Section)
+export default function IntroSection({ quiz, onChange, sectionProps, t }) {
   const rules = { enabled: true, items: null, ...quiz.rules };
   const prizes = { enabled: true, first: "", second: "", third: "", extra: "", ...quiz.prizes };
   const showT = TRANSLATIONS[quiz.settings?.language] || TRANSLATIONS.en;
@@ -37,7 +38,7 @@ export default function IntroSection({ quiz, onChange, t }) {
   ];
 
   return (
-    <Section title={t.ed_intro} help={t.ed_intro_help}>
+    <Section id="intro" {...sectionProps} title={t.ed_intro} help={t.ed_intro_help}>
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="space-y-3 rounded-xl bg-black/30 border border-white/5 p-4">
           <Toggle on={rules.enabled} onChange={(enabled) => setRules({ enabled })} label={t.ed_rules_show} />
