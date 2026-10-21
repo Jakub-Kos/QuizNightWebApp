@@ -14,7 +14,7 @@ import IntroSection from "./IntroSection";
 import { saveTeamImage } from "../quiz/teams";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
 import { readDriveQuiz, syncDriveMedia, mergeDrive, driveErrorText, folderUrl, sheetUrl as driveSheetUrl } from "../quiz/drive";
-import { GoogleAccountBar, DriveProgress, ExperimentalBadge } from "./DriveParts";
+import { GoogleAccountBar, DriveProgress, BetaBadge } from "./DriveParts";
 
 export default function QuizEditor({ id, t }) {
   const [quiz, setQuiz] = useState(undefined); // undefined = loading, null = not found
@@ -208,7 +208,7 @@ export default function QuizEditor({ id, t }) {
           className="w-full bg-transparent font-['League_Spartan'] text-4xl font-black tracking-wide border-b border-white/10 pb-3 focus:outline-none focus:border-yellow-500/60" />
 
         {quiz.drive && (
-          <Section title={<>{t.gd_title} <ExperimentalBadge t={t} /></>} help={t.gd_section_help}>
+          <Section title={<>{t.gd_title} <BetaBadge t={t} /></>} help={t.gd_section_help}>
             <GoogleAccountBar account={google} t={t} onError={(text) => setDriveStatus(text && { ok: false, text })} />
             <ul className="space-y-2 text-sm">
               {quiz.drive.folderId && (

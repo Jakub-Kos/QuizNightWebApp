@@ -11,4 +11,4 @@ export function googleCopyUrl(url) {
 // OAuth client ID ("Web application") from Google Cloud Console, for opening quizzes straight from
 // Google Drive. Without it the Drive features are hidden. Not a secret: Google only accepts it from the
 // JavaScript origins listed in the console.
-export const GOOGLE_CLIENT_ID = "";
+export const GOOGLE_CLIENT_ID = "321755554883-pegnabl76bbm71d58akvtaqhq2hm2ik0.apps.googleusercontent.com";

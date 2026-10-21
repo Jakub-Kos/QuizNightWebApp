@@ -9,8 +9,10 @@ import { useState, useEffect } from "react";
 //   #/quiz/<id>/scores       manual score entry
 //   #/quiz/<id>/attendance   attendance check and seating map
 //   #/help, #/help/<section> help page
+//   #/drive                  library with Google Drive open (the private beta invitation link)
 function parse(hash) {
   const parts = hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
+  if (parts[0] === "drive") return { name: "drive" };
   if (parts[0] === "help") return { name: "help", section: parts[1] || null };
   if (parts[0] === "quiz" && parts[1]) {
     const view = ["presenter", "edit", "check", "scores", "attendance"].includes(parts[2]) ? parts[2] : "show";

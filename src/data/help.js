@@ -145,6 +145,21 @@ export const HELP = {
         ],
       },
       {
+        // Shown only in browsers invited to the beta (see hasDriveInvite)
+        id: "drive", title: "Google Drive (private beta)", invite: true,
+        intro: "For invited Google accounts only. If you were not invited, use the normal way above: a Sheet shared by link and media dropped into the setup page.",
+        ordered: true,
+        items: [
+          "Keep each quiz in one Drive folder: the Sheet (a scores tab and a questions tab, recognised by their columns) and a media folder named `Zdroje` (or `source`).",
+          "In Zdroj, write the path inside the media folder, e.g. `kolo3/kocka.jpg`. Subfolders are fine; use each file name only once.",
+          "Share the folder in Drive with everyone working on the quiz. The app opens only folders shared with the signed-in account.",
+          "In the library click Google Drive, sign in and paste the folder link (or the Sheet link). The media is downloaded the first time.",
+          "After changing the Sheet or the media folder, press Sync from Drive on the setup page. Only new or changed files are downloaded.",
+          "Sync once more before the show, while online. The questions reload when the show starts; the media plays from this browser.",
+        ],
+        note: "Google ends the sign-in after about an hour. Questions and media keep working; if the live scores stop, press Live scores paused in the presenter window and sign in again. The first sign-in shows Google's “app not verified” notice, which is expected during the beta.",
+      },
+      {
         id: "teams", title: "Teams",
         items: [
           "If the quiz has a live scores Sheet, Load names from live scores adds every team from it. Add teams by hand, or import a CSV with a `Název týmu` (or `Team name`) column and optional `Počet hráčů` / `Players` and `Motto` / `Quote` columns. A Google Form registration export works as it is.",
@@ -320,6 +335,20 @@ export const HELP = {
         ],
       },
       {
+        id: "drive", title: "Google Disk (uzavřená beta)", invite: true,
+        intro: "Jen pro pozvané Google účty. Pokud pozvánku nemáte, použijte běžný postup výše: tabulku sdílenou odkazem a média nahraná na stránce nastavení.",
+        ordered: true,
+        items: [
+          "Každý kvíz mějte v jedné složce na Disku: tabulku (list s body a list s otázkami, aplikace je pozná podle sloupců) a složku s médii pojmenovanou `Zdroje` (nebo `source`).",
+          "Do sloupce Zdroj pište cestu uvnitř složky s médii, např. `kolo3/kocka.jpg`. Podsložky jsou v pořádku, jen každý název souboru použijte jednou.",
+          "Složku na Disku nasdílejte všem, kdo na kvízu pracují. Aplikace otevře jen složky sdílené s přihlášeným účtem.",
+          "V knihovně klikněte na Google Disk, přihlaste se a vložte odkaz na složku (nebo na tabulku). Média se poprvé stáhnou samy.",
+          "Po změně tabulky nebo složky s médii dejte na stránce nastavení Synchronizovat z Disku. Stahují se jen nové nebo změněné soubory.",
+          "Před show synchronizujte ještě jednou, dokud jste online. Otázky se načtou znovu při spuštění show, média hrají z tohoto prohlížeče.",
+        ],
+        note: "Google přihlášení ukončí zhruba po hodině. Otázky a média fungují dál; když se přestanou načítat body, klikněte v okně moderátora na Body se nenačítají a přihlaste se znovu. Při prvním přihlášení Google upozorní, že aplikace není ověřená, což je během bety v pořádku.",
+      },
+      {
         id: "teams", title: "Týmy",
         items: [
           "Pokud má kvíz tabulku se živým skóre, tlačítko Načíst názvy ze živého skóre z ní přidá všechny týmy. Týmy přidejte ručně, nebo importujte CSV se sloupcem `Název týmu` (nebo `Team name`) a nepovinnými sloupci `Počet hráčů` a `Motto`. Export registrací z Google Formuláře funguje rovnou.",
@@ -493,6 +522,20 @@ export const HELP = {
           "A kérdések minden show indításkor újratöltődnek, így az elírások az utolsó pillanatig javíthatók (utána töltsd újra a show-t).",
           "Ugyanaz a fájl tartalmazhat egy második lapot a pontokkal (lásd Pontok) — annak a lapnak a linkjét illeszd a pontszám mezőbe.",
         ],
+      },
+      {
+        id: "drive", title: "Google Drive (zárt béta)", invite: true,
+        intro: "Csak meghívott Google-fiókoknak. Ha nem kaptál meghívást, használd a fenti szokásos módot: linkkel megosztott táblázat és a beállítások oldalra feltöltött média.",
+        ordered: true,
+        items: [
+          "Minden kvíz legyen egy Drive-mappában: a táblázat (egy pontlap és egy kérdéslap, az oszlopaikról ismeri fel őket) és egy `Zdroje` (vagy `source`) nevű médiamappa.",
+          "A Zdroj oszlopba a médiamappán belüli útvonalat írd, pl. `kolo3/kocka.jpg`. Az almappák rendben vannak, csak minden fájlnevet egyszer használj.",
+          "Oszd meg a mappát a Drive-on mindenkivel, aki a kvízen dolgozik. Az alkalmazás csak a bejelentkezett fiókkal megosztott mappákat nyitja meg.",
+          "A könyvtárban kattints a Google Drive-ra, jelentkezz be, és illeszd be a mappa (vagy a táblázat) linkjét. A média először magától letöltődik.",
+          "A táblázat vagy a médiamappa módosítása után nyomd meg a beállítások oldalon a Szinkronizálás a Drive-ról gombot. Csak az új vagy módosult fájlok töltődnek le.",
+          "A show előtt szinkronizálj még egyszer, amíg van internet. A kérdések a show indításakor újra betöltődnek, a média ebből a böngészőből megy.",
+        ],
+        note: "A Google nagyjából egy óra után lezárja a bejelentkezést. A kérdések és a média tovább működnek; ha a pontok megállnak, a műsorvezetői ablakban kattints A pontok szünetelnek gombra, és jelentkezz be újra. Az első bejelentkezéskor a Google jelzi, hogy az alkalmazás nincs ellenőrizve; ez a béta alatt várható.",
       },
       {
         id: "teams", title: "Csapatok",

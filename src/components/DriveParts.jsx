@@ -56,9 +56,9 @@ export function DriveProgress({ progress, t }) {
   );
 }
 
-// The Drive features are still being tried out
-export const ExperimentalBadge = ({ t }) => (
-  <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-300 font-sans">
-    {t.gd_experimental}
+// The Drive features are a private beta for invited accounts
+export const BetaBadge = ({ t }) => (
+  <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-300 font-sans">
+    {t.gd_beta}
   </span>
 );

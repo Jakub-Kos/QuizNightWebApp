@@ -23,7 +23,7 @@ export default function App() {
   if (route.name === "help") return <HelpPage section={route.section} lang={lang} t={t} />;
   if (route.name === "attendance") return <Attendance key={route.id} id={route.id} t={t} />;
   if (route.name === "scores") return <ScoresEntry key={route.id} id={route.id} t={t} />;
-  return <Library t={t} lang={lang} onLanguage={setLang} />;
+  return <Library key={route.name} t={t} lang={lang} onLanguage={setLang} openDrive={route.name === "drive"} />;
 }
 
 function ShowRoute({ id, isPresenter, t }) {

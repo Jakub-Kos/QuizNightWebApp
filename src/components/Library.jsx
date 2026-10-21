@@ -8,7 +8,8 @@ import { quizHash, navigate } from "../hooks/useHashRoute";
 import FileDrop from "./FileDrop";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
 import { readDriveQuiz, mergeDrive, sameDriveQuiz, driveErrorText } from "../quiz/drive";
-import { GoogleAccountBar, ExperimentalBadge } from "./DriveParts";
+import { GoogleAccountBar, BetaBadge } from "./DriveParts";
+import { hasDriveInvite, acceptDriveInvite } from "../quiz/google";
 import { Status, inputCls, btnCls } from "./EditorParts";
 
 const LANGUAGES = [["cs", "Čeština"], ["sk", "Slovenčina"], ["en", "English"]];
@@ -18,14 +19,18 @@ function summarize(quiz) {
   return { rounds: rounds.length, questions: rounds.reduce((n, r) => n + r.questions.length, 0) };
 }
 
-export default function Library({ t, lang, onLanguage }) {
+export default function Library({ t, lang, onLanguage, openDrive = false }) {
   const [quizzes, setQuizzes] = useState(null);
   const [demo, setDemo] = useState(null);
   const [busy, setBusy] = useState(null); // id of the card (or "import") with an action running
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [error, setError] = useState(null);
-  const [driveOpen, setDriveOpen] = useState(false);
   const google = useGoogleAccount();
+  const [driveInvited] = useState(() => {
+    if (openDrive && google.enabled) acceptDriveInvite();
+    return hasDriveInvite();
+  });
+  const [driveOpen, setDriveOpen] = useState(openDrive && driveInvited);
 
   const refresh = useCallback(async () => {
     const list = await listQuizzes();
@@ -112,10 +117,10 @@ export default function Library({ t, lang, onLanguage }) {
               className="flex-1 flex flex-col items-center justify-center gap-3 p-8 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-lg transition-colors">
               <Plus size={36} /> {t.lib_new}
             </button>
-            {google.enabled && (
+            {driveInvited && (
               <button onClick={() => setDriveOpen((v) => !v)}
                 className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm text-gray-300 ${driveOpen ? "bg-white/10" : "bg-white/5 hover:bg-white/10"}`}>
-                <HardDrive size={16} /> {t.gd_open} <ExperimentalBadge t={t} />
+                <HardDrive size={16} /> {t.gd_open} <BetaBadge t={t} />
               </button>
             )}
             <button onClick={() => demo && handleExport(demo)} disabled={!demo || busy === DEMO_ID}
@@ -236,10 +241,10 @@ function DriveOpen({ account, quizzes, lang, t }) {
     <section className="rounded-2xl bg-white/[0.04] border border-white/10 p-6 space-y-4">
       <div>
         <h2 className="flex items-center gap-2 font-['League_Spartan'] text-xl font-bold uppercase tracking-widest">
-          <HardDrive size={20} /> {t.gd_open} <ExperimentalBadge t={t} />
+          <HardDrive size={20} /> {t.gd_open} <BetaBadge t={t} />
         </h2>
         <p className="text-sm text-gray-400 mt-1">{t.gd_open_help}</p>
-        <p className="text-xs text-yellow-300/80 mt-2">{t.gd_experimental_note}</p>
+        <p className="text-xs text-gray-500 mt-2">{t.gd_beta_note}</p>
       </div>
       <GoogleAccountBar account={account} t={t} onError={setError} />
       {account.signedIn && (

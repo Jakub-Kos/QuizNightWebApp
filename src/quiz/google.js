@@ -11,6 +11,17 @@ const STORAGE_KEY = "quiznight.google";
 
 export const googleEnabled = Boolean(GOOGLE_CLIENT_ID);
 
+// The Drive features are a private beta for invited accounts: they stay hidden until this browser has
+// opened the invitation link (#/drive) or signed in once, so other visitors only see the normal way
+const INVITE_KEY = "quiznight.driveInvite";
+export function hasDriveInvite() {
+  if (!googleEnabled) return false;
+  try { return localStorage.getItem(INVITE_KEY) === "1" || Boolean(readSession()?.user); } catch { return false; }
+}
+export function acceptDriveInvite() {
+  try { localStorage.setItem(INVITE_KEY, "1"); } catch { /* storage blocked: shown for this visit only */ }
+}
+
 export class GoogleAuthError extends Error {}
 export class GoogleApiError extends Error {
   constructor(status, message) {
