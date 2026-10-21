@@ -15,8 +15,9 @@ export const TYPES = ["Written", "Numeric", "ABCD", "Yes/No", "Image", "PImage",
 const cell = (row, i) => String(row?.[i] ?? "").trim();
 const pad = (row) => Array.from({ length: COLUMNS }, (_, i) => String(row?.[i] ?? ""));
 
-// Rows compared the way the Sheet API returns them (trailing empty cells are left out)
-const sameRow = (a, b) => pad(a).every((v, i) => v.trim() === cell(b, i));
+// Rows compared the way the Sheet API returns them (trailing empty cells are left out). The round marker
+// and Q# are left out: renumbering or a moved marker does not change the question itself.
+const sameRow = (a, b) => pad(a).every((v, i) => i < 2 || v.trim() === cell(b, i));
 export const sameRows = (a, b) => a.length === b.length && a.every((row, i) => sameRow(row, b[i]));
 
 // rows -> { rows, headerRow, rounds: [{ marker, markerRow, word, number, title, questions: [block] }] }
@@ -219,7 +220,7 @@ export function planAddRound(sheet, title, draft, meta) {
   return finish(sheet, -1, { start, deleteCount: 0, insert: rows }, meta);
 }
 
-// The same question in a newer copy of the Sheet: same rows, nearest to where it was
+// The same question in a newer copy of the Sheet: same contents, nearest to where it was
 export function findBlock(sheet, rows, near = { ri: -1, qi: -1 }) {
   let best = null;
   sheet.rounds.forEach((round, ri) => round.questions.forEach((block, qi) => {
@@ -231,3 +232,16 @@ export function findBlock(sheet, rows, near = { ri: -1, qi: -1 }) {
 }
 
 export const findRound = (sheet, marker) => sheet.rounds.findIndex((r) => r.marker === marker);
+
+// Swap a question with its neighbour in the round (dir -1 up, +1 down). Both are rewritten in one
+// replacement; the round marker stays on the first row, and the round is renumbered as usual.
+export function planMove(sheet, ri, qi, dir, meta) {
+  const round = sheet.rounds[ri];
+  const [first, second] = dir < 0 ? [round.questions[qi - 1], round.questions[qi]] : [round.questions[qi], round.questions[qi + 1]];
+  const between = sheet.rows.slice(first.end + 1, second.start); // skipped (empty) rows stay between them
+  const rows = [...second.rows, ...between, ...first.rows].map(pad);
+  const marker = String(first.rows[0][0] ?? "");
+  rows.forEach((row) => { if (row[0] === marker) row[0] = ""; });
+  rows[0][0] = marker;
+  return finish(sheet, ri, { start: first.start, deleteCount: second.end - first.start + 1, insert: rows }, { ...meta, headers: null });
+}

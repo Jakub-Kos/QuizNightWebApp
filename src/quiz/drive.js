@@ -15,10 +15,12 @@ const SHEETS_API = "https://sheets.googleapis.com/v4/spreadsheets";
 const FOLDER = "application/vnd.google-apps.folder";
 const SPREADSHEET = "application/vnd.google-apps.spreadsheet";
 const MEDIA_FOLDER = /^(zdroje?|sources?|media)$/i;
+export const isMediaFolderName = (name) => MEDIA_FOLDER.test(String(name).trim());
 
 // code: "link" (not a Drive link), "access" (not found or not shared with you), "no_sheet", "auth"
 // (signed out or expired), "readonly" (cannot edit the Sheet), "upload_denied" (cannot add files),
-// "no_folder" (opened from a Sheet whose folder is not shared), "api" (anything else; message from Google)
+// "no_folder" (opened from a Sheet whose folder is not shared), "bad_email" (no such Google account),
+// "template" (the template Sheet could not be copied), "api" (anything else; message from Google)
 export class DriveError extends Error {
   constructor(code, message = code) {
     super(message);
@@ -234,6 +236,71 @@ export async function uploadMedia(quizId, mediaFolderId, path, file, { onProgres
   }
 }
 
+// A new quiz on Drive: a folder named after it (in parentLink's folder, or My Drive), a copy of the
+// template Sheet and an empty Zdroje folder. Returns the folder id.
+export async function createDriveQuiz({ title, parentLink, templateUrl }) {
+  let folder = null;
+  try {
+    const parentId = parentLink?.trim() ? parseDriveLink(parentLink) : "root";
+    if (!parentId) throw new DriveError("link");
+    const templateId = String(templateUrl || "").match(/\/d\/([\w-]{10,})/)?.[1];
+    if (!templateId) throw new DriveError("template");
+    folder = await createFolder(parentId, title.trim());
+    try {
+      await googleJson(`${DRIVE_API}/files/${templateId}/copy?supportsAllDrives=true&fields=id`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: title.trim(), parents: [folder.id] }),
+      });
+    } catch (err) {
+      throw err instanceof GoogleAuthError ? err : new DriveError("template", err.message);
+    }
+    await createFolder(folder.id, "Zdroje");
+    return folder.id;
+  } catch (err) {
+    // Do not leave a half-made folder behind
+    if (folder) googleFetch(`${DRIVE_API}/files/${folder.id}?supportsAllDrives=true`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trashed: true }) }).catch(() => {});
+    throw err instanceof GoogleApiError && err.status === 403 ? new DriveError("upload_denied") : toDriveError(err);
+  }
+}
+
+// Who can open the quiz folder (or the Sheet, when there is no folder), and whether this user may change it
+export async function listPeople(fileId) {
+  try {
+    const [list, file] = await Promise.all([
+      googleJson(`${DRIVE_API}/files/${fileId}/permissions?supportsAllDrives=true&fields=permissions(id,type,role,emailAddress,displayName,photoLink,domain,deleted)`),
+      googleJson(`${DRIVE_API}/files/${fileId}?supportsAllDrives=true&fields=capabilities(canShare)`),
+    ]);
+    const order = { owner: 0, organizer: 1, fileOrganizer: 2, writer: 3, commenter: 4, reader: 5 };
+    const people = list.permissions.filter((p) => !p.deleted).sort((a, b) => (order[a.role] ?? 9) - (order[b.role] ?? 9) || String(a.displayName || a.emailAddress).localeCompare(String(b.displayName || b.emailAddress)));
+    return { people, canShare: Boolean(file.capabilities?.canShare) };
+  } catch (err) {
+    throw toDriveError(err);
+  }
+}
+
+// Share with a Google account; Google emails them the link with the message
+export async function invitePerson(fileId, email, role, message) {
+  try {
+    const params = new URLSearchParams({ supportsAllDrives: "true", sendNotificationEmail: "true", ...(message && { emailMessage: message }) });
+    return await googleJson(`${DRIVE_API}/files/${fileId}/permissions?${params}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "user", role, emailAddress: email.trim() }),
+    });
+  } catch (err) {
+    throw err instanceof GoogleApiError && err.status === 400 ? new DriveError("bad_email") : toDriveError(err);
+  }
+}
+
+export async function removePerson(fileId, permissionId) {
+  try {
+    await googleFetch(`${DRIVE_API}/files/${fileId}/permissions/${permissionId}?supportsAllDrives=true`, { method: "DELETE" });
+  } catch (err) {
+    throw toDriveError(err);
+  }
+}
+
 // Bring the quiz's stored media in line with the Drive folder: download new and changed files, drop
 // files that left Drive. Files added by hand (team photos) stay, unless Drive now has a file of that name.
 // onProgress({ done, total, bytes, totalBytes }). Returns { downloaded, kept, removed, duplicates }.
@@ -306,5 +373,7 @@ export function driveErrorText(err, t, email) {
   if (err?.code === "readonly") return t.gd_err_readonly;
   if (err?.code === "upload_denied") return t.gd_err_upload;
   if (err?.code === "no_folder") return t.gd_err_no_folder;
+  if (err?.code === "bad_email") return t.gd_err_bad_email;
+  if (err?.code === "template") return t.gd_err_template;
   return fmt(t.gd_err_api, { message: err?.message || String(err) });
 }

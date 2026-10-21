@@ -7,7 +7,8 @@ import { readImport, saveImport, exportZip, duplicateQuiz, downloadBlob, safeFil
 import { quizHash, navigate } from "../hooks/useHashRoute";
 import FileDrop from "./FileDrop";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
-import { readDriveQuiz, mergeDrive, sameDriveQuiz, driveErrorText } from "../quiz/drive";
+import { readDriveQuiz, mergeDrive, sameDriveQuiz, driveErrorText, createDriveQuiz, folderUrl } from "../quiz/drive";
+import { GOOGLE_SHEET_TEMPLATE } from "../config";
 import { GoogleAccountBar, BetaBadge } from "./DriveParts";
 import { hasDriveInvite, acceptDriveInvite } from "../quiz/google";
 import { Status, inputCls, btnCls } from "./EditorParts";
@@ -212,15 +213,18 @@ export default function Library({ t, lang, onLanguage, openDrive = false }) {
 // Paste a Drive folder or Sheet link: the quiz is created in the library (or updated when it is already
 // there) and opened in the setup page, which downloads the media
 function DriveOpen({ account, quizzes, lang, t }) {
+  const [mode, setMode] = useState("open"); // "open" an existing folder, or "create" a new one
   const [link, setLink] = useState("");
+  const [title, setTitle] = useState("");
+  const [parent, setParent] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
-  const open = async () => {
+  const open = async (folderLink = link) => {
     setBusy(true);
     setError(null);
     try {
-      const fields = await readDriveQuiz(link);
+      const fields = await readDriveQuiz(folderLink);
       const existing = quizzes.find((q) => sameDriveQuiz(q.drive, fields.drive));
       if (existing) {
         await updateQuiz(existing.id, (q) => ({ ...q, ...mergeDrive(q, fields) }));
@@ -237,6 +241,18 @@ function DriveOpen({ account, quizzes, lang, t }) {
     }
   };
 
+  const create = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const folderId = await createDriveQuiz({ title, parentLink: parent, templateUrl: GOOGLE_SHEET_TEMPLATE });
+      await open(folderUrl(folderId));
+    } catch (err) {
+      setError(driveErrorText(err, t, account.user?.email));
+      setBusy(false);
+    }
+  };
+
   return (
     <section className="rounded-2xl bg-white/[0.04] border border-white/10 p-6 space-y-4">
       <div>
@@ -247,7 +263,30 @@ function DriveOpen({ account, quizzes, lang, t }) {
         <p className="text-xs text-gray-500 mt-2">{t.gd_beta_note}</p>
       </div>
       <GoogleAccountBar account={account} t={t} onError={setError} />
-      {account.signedIn && (
+      {account.signedIn && GOOGLE_SHEET_TEMPLATE && (
+        <div className="flex gap-1 bg-white/5 rounded-xl p-1 w-fit text-sm">
+          {[["open", t.gd_mode_open], ["create", t.gd_mode_create]].map(([key, label]) => (
+            <button key={key} onClick={() => { setMode(key); setError(null); }}
+              className={`px-3 py-1.5 rounded-lg ${mode === key ? "bg-yellow-500 text-black font-bold" : "text-gray-400 hover:text-white"}`}>{label}</button>
+          ))}
+        </div>
+      )}
+      {account.signedIn && mode === "create" && (
+        <form onSubmit={(e) => { e.preventDefault(); create(); }} className="space-y-2">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t.gd_new_title} className={inputCls} autoFocus required />
+            <button type="submit" disabled={!title.trim() || busy} className={`${btnCls} bg-yellow-500 hover:bg-yellow-400 text-black font-bold`}>
+              {busy ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />} {t.gd_create}
+            </button>
+          </div>
+          <div className="relative">
+            <Link2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+            <input value={parent} onChange={(e) => setParent(e.target.value)} placeholder={t.gd_new_parent} className={`${inputCls} pl-10`} />
+          </div>
+          <p className="text-xs text-gray-500">{t.gd_create_help}</p>
+        </form>
+      )}
+      {account.signedIn && mode === "open" && (
         <form onSubmit={(e) => { e.preventDefault(); open(); }} className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <Link2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />

@@ -85,3 +85,55 @@ export async function commitEdit(quiz, makePlan) {
   }
   return loadQuestionSheet(quiz);
 }
+
+// Who else has the editor open, kept in the Sheet file's appProperties (not in the Sheet, so no cells or
+// version history): one entry per person, "seconds|question|1 when typing|name", refreshed while open.
+// Entries older than PRESENCE_TTL count as gone; ones much older are cleared by the next writer.
+const PRESENCE_TTL = 60;
+const PRESENCE_PREFIX = "qn_editing_";
+
+export function presenceKey(email) {
+  let h = 2166136261;
+  for (const ch of String(email)) h = Math.imul(h ^ ch.codePointAt(0), 16777619);
+  return `${PRESENCE_PREFIX}${(h >>> 0).toString(36)}`;
+}
+
+// [{ key, question, typing, name, at }] of entries still fresh
+export async function readPresence(spreadsheetId) {
+  const file = await googleJson(`${DRIVE_API}/files/${spreadsheetId}?fields=appProperties&supportsAllDrives=true`);
+  const now = Date.now() / 1000;
+  return Object.entries(file.appProperties || {})
+    .filter(([key]) => key.startsWith(PRESENCE_PREFIX))
+    .map(([key, value]) => {
+      const [at, question, typing, ...name] = String(value).split("|");
+      return { key, at: Number(at), question, typing: typing === "1", name: name.join("|") };
+    })
+    .filter((p) => now - p.at < PRESENCE_TTL);
+}
+
+// entry: { question, typing, name }, or null when leaving
+export async function writePresence(spreadsheetId, key, entry, { keepalive = false } = {}) {
+  const props = {};
+  if (entry) {
+    const value = `${Math.round(Date.now() / 1000)}|${entry.question}|${entry.typing ? 1 : 0}|${entry.name}`;
+    props[key] = value.slice(0, 124 - key.length - 1); // Drive allows 124 bytes for key and value together
+  } else {
+    props[key] = null;
+  }
+  // Clear entries nobody refreshed for ten minutes
+  if (entry) {
+    try {
+      const file = await googleJson(`${DRIVE_API}/files/${spreadsheetId}?fields=appProperties&supportsAllDrives=true`);
+      const now = Date.now() / 1000;
+      Object.entries(file.appProperties || {}).forEach(([k, v]) => {
+        if (k.startsWith(PRESENCE_PREFIX) && k !== key && now - Number(String(v).split("|")[0]) > 600) props[k] = null;
+      });
+    } catch { /* clearing is optional */ }
+  }
+  await googleJson(`${DRIVE_API}/files/${spreadsheetId}?fields=id&supportsAllDrives=true`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ appProperties: props }),
+    keepalive,
+  });
+}
