@@ -63,6 +63,7 @@ export function createQuiz(fields = {}) {
     manualScores: {}, // { teamId: { roundNumber: points } }, when there is no scores Sheet
     rules: { enabled: true, items: null }, // see quiz/intro.js
     prizes: { enabled: true, first: "", second: "", third: "", extra: "" },
+    drive: null, // a quiz opened from Google Drive, see quiz/drive.js; plus syncedAt and syncedBy
     ...fields,
     settings: { ...DEFAULT_SETTINGS, ...fields.settings },
   };

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { ArrowLeft, Download, Copy, Info } from "lucide-react";
 import { HELP } from "../data/help";
 import { GOOGLE_SHEET_TEMPLATE, googleCopyUrl } from "../config";
+import { hasDriveInvite } from "../quiz/google";
 import Rich from "./RichText";
 import HelpTypes from "./HelpTypes";
 
@@ -14,6 +15,8 @@ const TEMPLATES = [
 // section: id of the section to scroll to (#/help/<section>)
 export default function HelpPage({ section, lang, t }) {
   const help = HELP[lang] || HELP.en;
+  // The private beta section is left out for visitors who were not invited
+  const sections = help.sections.filter((s) => !s.invite || hasDriveInvite());
 
   useEffect(() => {
     const target = section && document.getElementById(`help-${section}`);
@@ -28,7 +31,7 @@ export default function HelpPage({ section, lang, t }) {
           <a href="#/" className="flex items-center gap-2 text-gray-400 hover:text-white mb-6">
             <ArrowLeft size={18} /> {t.settings_exit}
           </a>
-          {help.sections.map((s) => (
+          {sections.map((s) => (
             <a key={s.id} href={`#/help/${s.id}`}
               className={`block px-3 py-2 rounded-lg ${section === s.id ? "bg-white/10 text-white" : "text-gray-400 hover:text-white hover:bg-white/5"}`}>
               {s.title}
@@ -59,7 +62,7 @@ export default function HelpPage({ section, lang, t }) {
             </div>
           </header>
 
-          {help.sections.map((s) => (
+          {sections.map((s) => (
             <section key={s.id} id={`help-${s.id}`} className="scroll-mt-6 space-y-4">
               <h2 className="font-['League_Spartan'] text-2xl font-bold uppercase tracking-widest">{s.title}</h2>
               {s.intro && <p className="text-gray-300"><Rich text={s.intro} /></p>}

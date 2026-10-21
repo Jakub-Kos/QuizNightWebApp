@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle } from "lucide-react";
+import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle, HardDrive, FolderOpen, FileSpreadsheet } from "lucide-react";
 import { getQuiz, updateQuiz, listMedia, putMedia, deleteMedia } from "../quiz/storage";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
 import { fetchSheetCsv, sheetErrorText } from "../quiz/sheets";
@@ -12,6 +12,9 @@ import { Section, Status, inputCls, btnCls } from "./EditorParts";
 import TeamsSection from "./TeamsSection";
 import IntroSection from "./IntroSection";
 import { saveTeamImage } from "../quiz/teams";
+import { useGoogleAccount } from "../hooks/useGoogleAccount";
+import { readDriveQuiz, syncDriveMedia, mergeDrive, driveErrorText, folderUrl, sheetUrl as driveSheetUrl } from "../quiz/drive";
+import { GoogleAccountBar, DriveProgress, BetaBadge } from "./DriveParts";
 
 export default function QuizEditor({ id, t }) {
   const [quiz, setQuiz] = useState(undefined); // undefined = loading, null = not found
@@ -21,6 +24,9 @@ export default function QuizEditor({ id, t }) {
   const [questionsStatus, setQuestionsStatus] = useState(null);
   const [scoresStatus, setScoresStatus] = useState(null);
   const [busy, setBusy] = useState(null);
+  const [driveStatus, setDriveStatus] = useState(null);
+  const [driveProgress, setDriveProgress] = useState(null);
+  const google = useGoogleAccount();
   const csvInput = useRef(null);
   const dirty = useRef(false);
 
@@ -48,8 +54,8 @@ export default function QuizEditor({ id, t }) {
   useEffect(() => {
     if (!dirty.current) return;
     // Only the fields edited here; settings and scores are saved by other windows
-    const { title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes } = quiz;
-    const timer = setTimeout(() => updateQuiz(quiz.id, (q) => ({ ...q, title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes })).then(() => {
+    const { title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes, drive } = quiz;
+    const timer = setTimeout(() => updateQuiz(quiz.id, (q) => ({ ...q, title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes, drive })).then(() => {
       dirty.current = false;
       setSaveState("saved");
     }), 400);
@@ -84,6 +90,35 @@ export default function QuizEditor({ id, t }) {
     }
     setBusy(null);
   };
+
+  // Questions, tabs and the media folder again from Drive, then the media files that changed
+  const syncDrive = async () => {
+    setBusy("drive");
+    setDriveStatus(null);
+    try {
+      const fields = await readDriveQuiz(quiz.drive.folderId || quiz.drive.spreadsheetId);
+      const result = await syncDriveMedia(quiz.id, fields.drive.mediaFolderId, setDriveProgress);
+      update(mergeDrive(quiz, fields, { syncedAt: Date.now(), syncedBy: google.user?.name || "" }));
+      await reloadMedia();
+      const text = [
+        fmt(t.gd_result, result),
+        result.duplicates.length ? fmt(t.gd_duplicates, { names: result.duplicates.join(", ") }) : "",
+      ].filter(Boolean).join(" ");
+      setDriveStatus({ ok: !result.duplicates.length, text });
+    } catch (err) {
+      setDriveStatus({ ok: false, text: driveErrorText(err, t, google.user?.email) });
+    }
+    setDriveProgress(null);
+    setBusy(null);
+  };
+
+  // A quiz just opened from Drive has no media yet
+  const autoSynced = useRef(false);
+  useEffect(() => {
+    if (!quiz?.drive || quiz.drive.syncedAt || !google.signedIn || autoSynced.current) return;
+    const timer = setTimeout(() => { autoSynced.current = true; syncDrive(); });
+    return () => clearTimeout(timer);
+  }, [quiz, google.signedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const uploadCsv = async (e) => {
     const file = e.target.files[0];
@@ -172,7 +207,47 @@ export default function QuizEditor({ id, t }) {
         <input value={quiz.title} onChange={(e) => update({ title: e.target.value })} placeholder={t.ed_untitled}
           className="w-full bg-transparent font-['League_Spartan'] text-4xl font-black tracking-wide border-b border-white/10 pb-3 focus:outline-none focus:border-yellow-500/60" />
 
-        <Section title={t.ed_questions} help={t.ed_questions_help} helpId="questions">
+        {quiz.drive && (
+          <Section title={<>{t.gd_title} <BetaBadge t={t} /></>} help={t.gd_section_help}>
+            <GoogleAccountBar account={google} t={t} onError={(text) => setDriveStatus(text && { ok: false, text })} />
+            <ul className="space-y-2 text-sm">
+              {quiz.drive.folderId && (
+                <li className="flex items-center gap-2"><HardDrive size={16} className="text-gray-500 shrink-0" />
+                  <a href={folderUrl(quiz.drive.folderId)} target="_blank" rel="noreferrer" className="hover:text-yellow-400 truncate">{quiz.drive.folderName}</a>
+                </li>
+              )}
+              <li className="flex items-center gap-2"><FileSpreadsheet size={16} className="text-gray-500 shrink-0" />
+                <a href={driveSheetUrl(quiz.drive.spreadsheetId)} target="_blank" rel="noreferrer" className="hover:text-yellow-400 truncate">{quiz.drive.spreadsheetName}</a>
+                <span className="text-gray-500 truncate">
+                  · {fmt(t.gd_questions_tab, { tab: quiz.drive.questionsTab })}
+                  {quiz.drive.scoresTab && ` · ${fmt(t.gd_scores_tab, { tab: quiz.drive.scoresTab })}`}
+                </span>
+              </li>
+              <li className="flex items-center gap-2"><FolderOpen size={16} className="text-gray-500 shrink-0" />
+                {quiz.drive.mediaFolderId ? (
+                  <a href={folderUrl(quiz.drive.mediaFolderId)} target="_blank" rel="noreferrer" className="hover:text-yellow-400 truncate">{quiz.drive.mediaFolderName}</a>
+                ) : <span className="text-yellow-300/90">{t.gd_no_media_folder}</span>}
+              </li>
+            </ul>
+            <div className="flex flex-wrap items-center gap-3">
+              <button onClick={syncDrive} disabled={!google.signedIn || busy === "drive"} className={`${btnCls} bg-yellow-500 hover:bg-yellow-400 text-black font-bold`}>
+                {busy === "drive" ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+                {busy === "drive" ? t.gd_syncing : t.gd_sync}
+              </button>
+              <span className="text-xs text-gray-500">
+                {quiz.drive.syncedAt
+                  ? fmt(t.gd_synced, { time: new Date(quiz.drive.syncedAt).toLocaleString(), name: quiz.drive.syncedBy || "?" })
+                  : t.gd_never}
+              </span>
+            </div>
+            {driveProgress && <DriveProgress progress={driveProgress} t={t} />}
+            <Status status={driveStatus} />
+            <p className="text-xs text-gray-500">{t.gd_offline_note}</p>
+          </Section>
+        )}
+
+        <Section title={t.ed_questions} help={quiz.drive ? t.gd_questions_note : t.ed_questions_help} helpId="questions">
+          {!quiz.drive && (<>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <Link2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -189,6 +264,7 @@ export default function QuizEditor({ id, t }) {
           </div>
           {quiz.questionsSheetUrl && <p className="text-xs text-gray-500">{t.ed_sheet_auto}</p>}
           <Status status={questionsStatus} />
+          </>)}
 
           {rounds.length > 0 ? (
             <ul className="divide-y divide-white/5 rounded-xl bg-black/30">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Settings, ArrowLeft, Calculator, ClipboardCheck } from "lucide-react";
+import { Settings, ArrowLeft, Calculator, ClipboardCheck, LogIn } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -8,6 +8,7 @@ import { resolveTeams } from "../quiz/model";
 import { rulesFor, prizesFor } from "../quiz/intro";
 import { updateQuiz } from "../quiz/storage";
 import { useScores } from "../hooks/useScores";
+import { signIn } from "../quiz/google";
 import { quizHash, navigate } from "../hooks/useHashRoute";
 
 import WelcomeScreen from "./WelcomeScreen";
@@ -189,6 +190,12 @@ export default function QuizShow({ bundle, isPresenter }) {
           className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold shadow-xl backdrop-blur">
           <ClipboardCheck size={18} /> {t.att_title}
         </button>
+        {liveLeaderboard.authNeeded && (
+          <button onClick={() => signIn().catch(() => {})} title={t.lb_signin_needed}
+            className="flex items-center gap-2 px-4 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold shadow-xl">
+            <LogIn size={18} /> {t.lb_signin}
+          </button>
+        )}
         {!quiz.scoresSheetUrl && (
           <button
             onClick={() => window.open(window.location.origin + window.location.pathname + quizHash(quiz.id, 'scores'), 'ScoresWindow', 'width=1100,height=750')}

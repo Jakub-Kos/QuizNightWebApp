@@ -1,11 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle } from "lucide-react";
-import { listQuizzes, saveQuiz, deleteQuiz, requestPersistence } from "../quiz/storage";
+import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2 } from "lucide-react";
+import { listQuizzes, saveQuiz, updateQuiz, deleteQuiz, requestPersistence } from "../quiz/storage";
 import { createQuiz, loadQuizBundle, DEMO_ID } from "../quiz/model";
 import { parseQuestionsCsv } from "../quiz/parse";
 import { readImport, saveImport, exportZip, duplicateQuiz, downloadBlob, safeFileName } from "../quiz/package";
 import { quizHash, navigate } from "../hooks/useHashRoute";
 import FileDrop from "./FileDrop";
+import { useGoogleAccount } from "../hooks/useGoogleAccount";
+import { readDriveQuiz, mergeDrive, sameDriveQuiz, driveErrorText } from "../quiz/drive";
+import { GoogleAccountBar, BetaBadge } from "./DriveParts";
+import { hasDriveInvite, acceptDriveInvite } from "../quiz/google";
+import { Status, inputCls, btnCls } from "./EditorParts";
 
 const LANGUAGES = [["cs", "Čeština"], ["sk", "Slovenčina"], ["en", "English"]];
 
@@ -14,12 +19,18 @@ function summarize(quiz) {
   return { rounds: rounds.length, questions: rounds.reduce((n, r) => n + r.questions.length, 0) };
 }
 
-export default function Library({ t, lang, onLanguage }) {
+export default function Library({ t, lang, onLanguage, openDrive = false }) {
   const [quizzes, setQuizzes] = useState(null);
   const [demo, setDemo] = useState(null);
   const [busy, setBusy] = useState(null); // id of the card (or "import") with an action running
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [error, setError] = useState(null);
+  const google = useGoogleAccount();
+  const [driveInvited] = useState(() => {
+    if (openDrive && google.enabled) acceptDriveInvite();
+    return hasDriveInvite();
+  });
+  const [driveOpen, setDriveOpen] = useState(openDrive && driveInvited);
 
   const refresh = useCallback(async () => {
     const list = await listQuizzes();
@@ -106,6 +117,12 @@ export default function Library({ t, lang, onLanguage }) {
               className="flex-1 flex flex-col items-center justify-center gap-3 p-8 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-lg transition-colors">
               <Plus size={36} /> {t.lib_new}
             </button>
+            {driveInvited && (
+              <button onClick={() => setDriveOpen((v) => !v)}
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm text-gray-300 ${driveOpen ? "bg-white/10" : "bg-white/5 hover:bg-white/10"}`}>
+                <HardDrive size={16} /> {t.gd_open} <BetaBadge t={t} />
+              </button>
+            )}
             <button onClick={() => demo && handleExport(demo)} disabled={!demo || busy === DEMO_ID}
               className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-sm">
               <FileDown size={16} /> {t.lib_template}
@@ -119,6 +136,8 @@ export default function Library({ t, lang, onLanguage }) {
             <FileDrop onFiles={handleImport} accept=".zip,.csv,.json,image/*,audio/*,video/*" label={t.lib_import_hint} t={t} />
           )}
         </section>
+
+        {driveOpen && <DriveOpen account={google} quizzes={quizzes || []} lang={lang} t={t} />}
 
         <section className="space-y-4">
           <h2 className="font-['League_Spartan'] text-2xl font-bold uppercase tracking-widest text-gray-400">{t.lib_title}</h2>
@@ -139,6 +158,11 @@ export default function Library({ t, lang, onLanguage }) {
                         <p className="text-xs text-gray-500 mt-1">{t.lib_updated} {new Date(quiz.updatedAt).toLocaleString()}</p>
                       )}
                     </div>
+                    {quiz.drive && (
+                      <span className="shrink-0 flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-green-500/15 text-green-300">
+                        <HardDrive size={12} /> {t.gd_badge}
+                      </span>
+                    )}
                     {quiz.builtin && <span className="shrink-0 text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-500/20 text-blue-300">{t.lib_demo_badge}</span>}
                     {isBusy && <Loader2 className="animate-spin shrink-0 text-gray-400" size={20} />}
                   </div>
@@ -182,5 +206,59 @@ export default function Library({ t, lang, onLanguage }) {
         </section>
       </div>
     </div>
+  );
+}
+
+// Paste a Drive folder or Sheet link: the quiz is created in the library (or updated when it is already
+// there) and opened in the setup page, which downloads the media
+function DriveOpen({ account, quizzes, lang, t }) {
+  const [link, setLink] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+
+  const open = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const fields = await readDriveQuiz(link);
+      const existing = quizzes.find((q) => sameDriveQuiz(q.drive, fields.drive));
+      if (existing) {
+        await updateQuiz(existing.id, (q) => ({ ...q, ...mergeDrive(q, fields) }));
+        navigate(quizHash(existing.id, "edit"));
+      } else {
+        const quiz = createQuiz({ title: fields.drive.folderName, ...fields, settings: { language: lang } });
+        await saveQuiz(quiz);
+        requestPersistence();
+        navigate(quizHash(quiz.id, "edit"));
+      }
+    } catch (err) {
+      setError(driveErrorText(err, t, account.user?.email));
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="rounded-2xl bg-white/[0.04] border border-white/10 p-6 space-y-4">
+      <div>
+        <h2 className="flex items-center gap-2 font-['League_Spartan'] text-xl font-bold uppercase tracking-widest">
+          <HardDrive size={20} /> {t.gd_open} <BetaBadge t={t} />
+        </h2>
+        <p className="text-sm text-gray-400 mt-1">{t.gd_open_help}</p>
+        <p className="text-xs text-gray-500 mt-2">{t.gd_beta_note}</p>
+      </div>
+      <GoogleAccountBar account={account} t={t} onError={setError} />
+      {account.signedIn && (
+        <form onSubmit={(e) => { e.preventDefault(); open(); }} className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <Link2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+            <input value={link} onChange={(e) => setLink(e.target.value)} placeholder={t.gd_link} className={`${inputCls} pl-10`} autoFocus />
+          </div>
+          <button type="submit" disabled={!link.trim() || busy} className={`${btnCls} bg-yellow-500 hover:bg-yellow-400 text-black font-bold`}>
+            {busy ? <Loader2 size={16} className="animate-spin" /> : <HardDrive size={16} />} {t.gd_connect}
+          </button>
+        </form>
+      )}
+      {error && <Status status={{ ok: false, text: error }} />}
+    </section>
   );
 }

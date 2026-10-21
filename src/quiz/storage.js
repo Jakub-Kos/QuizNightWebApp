@@ -1,5 +1,6 @@
 // IndexedDB persistence: localStorage is too small for images and media.
-// "quizzes": quiz records (keyPath id). "media": { key: `${quizId}/${name}`, quizId, name, blob }.
+// "quizzes": quiz records (keyPath id). "media": { key: `${quizId}/${name}`, quizId, name, blob }, plus
+// driveId and driveModified for files synced from Google Drive (name is then the path in the media folder).
 const DB_NAME = "quiznight";
 const DB_VERSION = 1;
 
@@ -76,10 +77,10 @@ export const deleteQuiz = (id) =>
 export const listMedia = (quizId) =>
   tx(["media"], "readonly", (t) => promisify(t.objectStore("media").index("quizId").getAll(quizId)));
 
-// files: [{ name, blob }]
+// files: [{ name, blob, ...extra fields }]
 export const putMedia = (quizId, files) =>
   tx(["media"], "readwrite", (t) => {
-    files.forEach(({ name, blob }) => t.objectStore("media").put({ key: `${quizId}/${name}`, quizId, name, blob }));
+    files.forEach(({ name, blob, ...extra }) => t.objectStore("media").put({ ...extra, key: `${quizId}/${name}`, quizId, name, blob }));
   });
 
 export const deleteMedia = (quizId, name) =>
