@@ -203,17 +203,20 @@ export function planAdd(sheet, ri, draft, meta) {
   return finish(sheet, ri, { start, deleteCount: free, insert: rows }, meta);
 }
 
+// Deleting keeps the round's rows: the questions below move up, and the freed rows at the end of the
+// round's questions are left prepared (nothing but their Q#), ready for the next question. Columns A
+// (round marker) and B (Q#) stay where they are; only the question cells move.
 export function planDelete(sheet, ri, qi, meta) {
   const round = sheet.rounds[ri];
   const block = round.questions[qi];
-  const count = block.end - block.start + 1;
-  if (block.start !== round.markerRow) return finish(sheet, ri, { start: block.start, deleteCount: count, insert: [] }, meta);
-  // The question carries the round marker: hand it to the next question, or keep it alone in its row
-  const following = round.questions[qi + 1];
-  if (following) {
-    return finish(sheet, ri, { start: block.start, deleteCount: count, insert: [], fixups: [{ row: following.start - count, col: 0, value: round.marker }] }, meta);
-  }
-  return finish(sheet, ri, { start: block.start, deleteCount: count, insert: [pad([round.marker])] }, meta);
+  const lastRow = round.questions.at(-1).end;
+  const range = sheet.rows.slice(block.start, lastRow + 1).map(pad);
+  const content = [
+    ...sheet.rows.slice(block.end + 1, lastRow + 1).map(pad),
+    ...Array.from({ length: block.end - block.start + 1 }, () => pad([])),
+  ];
+  const rows = range.map((row, i) => [row[0], row[1], ...content[i].slice(2)]);
+  return finish(sheet, ri, { start: block.start, deleteCount: rows.length, insert: rows }, meta);
 }
 
 export function planRename(sheet, ri, title, meta) {
