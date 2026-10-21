@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2 } from "lucide-react";
 import { listQuizzes, saveQuiz, updateQuiz, deleteQuiz, requestPersistence } from "../quiz/storage";
 import { createQuiz, loadQuizBundle, DEMO_ID } from "../quiz/model";
@@ -20,7 +20,7 @@ function summarize(quiz) {
   return { rounds: rounds.length, questions: rounds.reduce((n, r) => n + r.questions.length, 0) };
 }
 
-export default function Library({ t, lang, onLanguage, openDrive = false }) {
+export default function Library({ t, lang, onLanguage, openDrive = false, driveFolder = null }) {
   const [quizzes, setQuizzes] = useState(null);
   const [demo, setDemo] = useState(null);
   const [busy, setBusy] = useState(null); // id of the card (or "import") with an action running
@@ -138,7 +138,7 @@ export default function Library({ t, lang, onLanguage, openDrive = false }) {
           )}
         </section>
 
-        {driveOpen && <DriveOpen account={google} quizzes={quizzes || []} lang={lang} t={t} />}
+        {driveOpen && <DriveOpen account={google} quizzes={quizzes} lang={lang} folder={driveFolder} t={t} />}
 
         <section className="space-y-4">
           <h2 className="font-['League_Spartan'] text-2xl font-bold uppercase tracking-widest text-gray-400">{t.lib_title}</h2>
@@ -212,9 +212,11 @@ export default function Library({ t, lang, onLanguage, openDrive = false }) {
 
 // Paste a Drive folder or Sheet link: the quiz is created in the library (or updated when it is already
 // there) and opened in the setup page, which downloads the media
-function DriveOpen({ account, quizzes, lang, t }) {
+// folder: a quiz folder id from a shared link (#/drive/<id>), opened as soon as possible
+function DriveOpen({ account, quizzes: loaded, lang, folder, t }) {
+  const quizzes = loaded || [];
   const [mode, setMode] = useState("open"); // "open" an existing folder, or "create" a new one
-  const [link, setLink] = useState("");
+  const [link, setLink] = useState(folder ? folderUrl(folder) : "");
   const [title, setTitle] = useState("");
   const [parent, setParent] = useState("");
   const [busy, setBusy] = useState(false);
@@ -240,6 +242,20 @@ function DriveOpen({ account, quizzes, lang, t }) {
       setBusy(false);
     }
   };
+
+  // A shared link: this browser's copy when there is one (its setup page syncs), else open it once signed in
+  const autoOpened = useRef(false);
+  useEffect(() => {
+    if (!folder || !loaded || autoOpened.current) return;
+    const existing = loaded.find((q) => q.drive?.folderId === folder);
+    if (!existing && !account.signedIn) return;
+    const timer = setTimeout(() => {
+      autoOpened.current = true;
+      if (existing) navigate(quizHash(existing.id, "edit"));
+      else open(folderUrl(folder));
+    });
+    return () => clearTimeout(timer);
+  }, [folder, loaded, account.signedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const create = async () => {
     setBusy(true);

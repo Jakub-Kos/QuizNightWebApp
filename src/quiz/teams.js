@@ -1,5 +1,7 @@
 import Papa from "papaparse";
-import { putMedia, deleteMedia } from "./storage";
+import { putMedia, deleteMedia, getQuiz, updateQuiz } from "./storage";
+import { currentToken } from "./google";
+import { ensureMediaFolder, uploadMedia } from "./drive";
 import { mediaKey } from "./model";
 import { fmt } from "./files";
 
@@ -97,8 +99,18 @@ export function importHistoryCsv(text, existing) {
 // Team photos are stored as media named after the team id, so renaming a team keeps its photo
 export const teamImageName = (team, file) => `team-${team.id}.${file.name.split(".").pop().toLowerCase()}`;
 
+// Drive quizzes keep team photos in the media folder, as teams/<team name>.<ext>, so everyone sees them
+const slug = (name) => String(name).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "team";
+
 // Stores a team photo and returns its media name; a new photo replaces the team's previous one
 export async function saveTeamImage(quizId, team, file) {
+  const quiz = await getQuiz(quizId);
+  if (quiz?.drive?.folderId && currentToken()) {
+    const folder = await ensureMediaFolder(quiz.drive);
+    if (!quiz.drive.mediaFolderId) await updateQuiz(quizId, (q) => ({ ...q, drive: { ...q.drive, mediaFolderId: folder.id, mediaFolderName: folder.name } }), "drive");
+    const path = `teams/${slug(team.name || team.id)}.${file.name.split(".").pop().toLowerCase()}`;
+    return uploadMedia(quizId, folder.id, path, file, { confirmReplace: () => true });
+  }
   const name = teamImageName(team, file);
   if (team.image && team.image.startsWith("team-") && mediaKey(team.image) !== mediaKey(name)) await deleteMedia(quizId, team.image);
   await putMedia(quizId, [{ name, blob: file }]);

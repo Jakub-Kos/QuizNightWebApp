@@ -6,7 +6,7 @@ import Papa from "papaparse";
 // Word that starts a round marker, and that marks a round column in a scores sheet
 export const ROUND_WORD = /^(kolo|round)\b/i;
 const ROUND_COLUMN = /kolo|round/i;
-const TEAM_COLUMN = /název týmu|team name/i;
+export const TEAM_COLUMN = /název týmu|team name/i;
 export function parseQuestionsCsv(text) {
   const rows = Papa.parse(text || "", { header: false, skipEmptyLines: false }).data;
   return groupRounds(rows).map((round) => ({ ...round, questions: buildQuestions(round.rows) }));
