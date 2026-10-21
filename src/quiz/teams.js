@@ -117,6 +117,11 @@ export async function saveTeamImage(quizId, team, file) {
   return name;
 }
 
+// The quiz team for a row of the live scores: by the id from the scores tab (Drive quizzes, so a team
+// renamed in the Sheet during the show keeps its photo and colour), else by case-insensitive name
+export const teamForScores = (teams, row) =>
+  (row.id && teams.find((team) => team.id === row.id)) || teams.find((team) => sameName(team.name, row.name));
+
 // Attendance: team.present is true (arrived), false (absent) or unset (not checked yet).
 // Teams that were not checked count as present, so quizzes without attendance work as before.
 export const isPresent = (team) => team.present !== false;

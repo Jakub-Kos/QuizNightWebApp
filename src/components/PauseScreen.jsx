@@ -4,6 +4,7 @@ import { Coffee, Play, Pause, Plus, Minus, ArrowLeft, Trophy, Medal, TrendingUp 
 import { useQuiz } from "../quiz/context";
 import TeamAvatar from "./TeamAvatar";
 import { fmt } from "../quiz/files";
+import { teamForScores } from "../quiz/teams";
 
 const RankGraph = ({ history, maxRank, t }) => {
     if (!history || history.length < 2) return (
@@ -59,7 +60,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
       const safeRounds = availableRounds || [];
       const activeRounds = safeRounds.filter(r => leaderboardData.some(t => t.scores[r] > 0));
 
-      let cumulativeScores = leaderboardData.map(t => ({ name: t.name, score: 0 }));
+      let cumulativeScores = leaderboardData.map(t => ({ id: t.id, name: t.name, score: 0 }));
       const historyByTeam = {};
       leaderboardData.forEach(t => historyByTeam[t.name] = []);
 
@@ -96,7 +97,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
               finalRank = index + 1;
           }
 
-          const teamMeta = teams.find(meta => meta.name.toLowerCase() === t.name.toLowerCase()) || {};
+          const teamMeta = teamForScores(teams, t) || {};
           return {
               name: t.name,
               total: t.score,

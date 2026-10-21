@@ -12,7 +12,8 @@ const fieldCls = "bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-s
 
 // teams: stored team records; mediaUrl(name) -> thumbnail URL; onUploadImage(team, file) -> stored file name;
 // scoresSheetUrl: the quiz's live scores Sheet, whose team names can be loaded as teams; fromSheet: the
-// scores tab of a Drive quiz, whose names are the teams (a new team is a draft until its name is confirmed)
+// scores tab of a Drive quiz, whose rows are the teams: renaming or removing one here changes its row,
+// and a new team is a draft until its name is confirmed (Enter or leaving the field), then gets a row
 export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMedia, scoresSheetUrl, fromSheet, onUploadImage, t }) {
   const [status, setStatus] = useState(null);
   const [loadingScores, setLoadingScores] = useState(false);
@@ -22,10 +23,12 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
   const photoFor = useRef(null);
 
   const updateTeam = (id, fields) => onChange(teams.map((team) => (team.id === id ? { ...team, ...fields } : team)));
-  const removeTeam = (id) => onChange(teams.filter((team) => team.id !== id));
+  const removeTeam = (team) => {
+    if (fromSheet && !team.draft && !window.confirm(fmt(t.tm_remove_confirm, { name: team.name, tab: fromSheet }))) return;
+    onChange(teams.filter((other) => other.id !== team.id));
+  };
   const addTeam = () => onChange([...teams, newTeam({ color: TEAM_COLORS[teams.length % TEAM_COLORS.length], ...(fromSheet && { draft: true }) })]);
   const confirmName = (team) => { if (fromSheet && team.draft && team.name.trim()) updateTeam(team.id, { draft: undefined }); };
-  const fixedName = (team) => fromSheet && !team.draft;
   const cycleColor = (team, i) => {
     const current = TEAM_COLORS.indexOf(team.color || TEAM_COLORS[i % TEAM_COLORS.length]);
     updateTeam(team.id, { color: TEAM_COLORS[(current + 1) % TEAM_COLORS.length] });
@@ -123,11 +126,8 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
               <div className="flex-1 min-w-[200px] space-y-2">
                 <div className="flex gap-2">
                   <input value={team.name} onChange={(e) => updateTeam(team.id, { name: e.target.value })} placeholder={t.tm_name}
-                    readOnly={fixedName(team)} title={fixedName(team) ? fmt(t.tm_name_in_sheet, { tab: fromSheet }) : ""} autoFocus={Boolean(team.draft)}
-                    onBlur={() => confirmName(team)} onKeyDown={(e) => e.key === "Enter" && confirmName(team)}
-                    className={fixedName(team)
-                      ? "flex-1 min-w-0 bg-transparent px-1 py-2 text-sm font-bold text-white focus:outline-none cursor-default"
-                      : `${fieldCls} flex-1 font-bold ${duplicate || !team.name.trim() ? "border-red-500/60" : ""}`} />
+                    autoFocus={Boolean(team.draft)} onBlur={() => confirmName(team)} onKeyDown={(e) => e.key === "Enter" && confirmName(team)}
+                    className={`${fieldCls} flex-1 font-bold ${duplicate || !team.name.trim() ? "border-red-500/60" : ""}`} />
                   <label className="flex items-center gap-1 text-xs text-gray-400" title={t.tm_players}>
                     <Users size={14} />
                     <input type="number" min="0" value={team.players || ""} onChange={(e) => updateTeam(team.id, { players: parseInt(e.target.value) || 0 })}
@@ -146,11 +146,9 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
                 )}
               </div>
               <button onClick={() => cycleColor(team, i)} title={t.tm_color} className={`w-8 h-8 rounded-full bg-gradient-to-br ${color} ring-2 ring-white/10 hover:ring-white/50`} />
-              {!fixedName(team) && (
-                <button onClick={() => removeTeam(team.id)} title={t.lib_delete} className="p-2 rounded-lg text-gray-500 hover:text-red-300 hover:bg-red-500/20">
-                  <Trash2 size={16} />
-                </button>
-              )}
+              <button onClick={() => removeTeam(team)} title={t.lib_delete} className="p-2 rounded-lg text-gray-500 hover:text-red-300 hover:bg-red-500/20">
+                <Trash2 size={16} />
+              </button>
             </li>
           );
         })}

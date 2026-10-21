@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Minus as MinusIcon, Trophy, Crown, CheckCircle, HelpCircle, Shuffle, Database, Flame } from "lucide-react";
 import { useQuiz } from "../quiz/context";
-import { isPresent, directionText } from "../quiz/teams";
+import { isPresent, directionText, teamForScores } from "../quiz/teams";
 import VenueMap from "./VenueMap";
 import TeamAvatar from "./TeamAvatar";
 import { fmt } from "../quiz/files";
@@ -48,7 +48,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
       const prevRoundName = roundIndex > 0 ? frozenRounds[roundIndex - 1] : null;
 
       const enriched = frozenData.map(team => {
-          const teamMeta = teams.find(t => t.name.toLowerCase() === team.name.toLowerCase()) || {};
+          const teamMeta = teamForScores(teams, team) || {};
 
           const total = includedRounds.reduce((sum, r) => sum + (team.scores[r] || 0), 0);
           const previousTotal = previousRounds.reduce((sum, r) => sum + (team.scores[r] || 0), 0);
@@ -150,14 +150,13 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
       const activeGroupIndex = Math.floor((revealStep) / 2);
 
       // Where to look: the group being revealed now, or the leader(s) once all groups are applied
-      const sameName = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
-      const metaFor = (name) => teams.find(meta => sameName(meta.name, name));
+      const metaFor = (row) => teamForScores(teams, row);
       const seated = teams.filter(team => team.seat && isPresent(team));
       const topTotal = Math.max(0, ...initialTeams.map(team => team.total));
-      const focusNames = revealStep >= maxStep - 1
-          ? initialTeams.filter(team => team.total === topTotal).map(team => team.name)
-          : (scoreGroups[activeGroupIndex]?.teams || []).map(team => team.name);
-      const focusIds = new Set(focusNames.map(name => metaFor(name)?.id).filter(Boolean));
+      const focusRows = revealStep >= maxStep - 1
+          ? initialTeams.filter(team => team.total === topTotal)
+          : (scoreGroups[activeGroupIndex]?.teams || []);
+      const focusIds = new Set(focusRows.map(row => metaFor(row)?.id).filter(Boolean));
       const isCardStep = revealStep % 2 === 1 && revealStep < maxStep;
 
       let nextActionText = tr.lb_start;
@@ -215,10 +214,10 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                           <VenueMap arc={quiz.settings?.venueArc || 180} teams={seated} highlight={focusIds} youLabel={tr.att_you} fill markerScale={1.8} className="flex-1 min-h-0" />
                       </div>
                       <ul className="w-72 shrink-0 space-y-2 self-center overflow-y-auto max-h-full">
-                          {focusNames.map(name => (
-                              <li key={name} className="flex justify-between items-baseline gap-3">
-                                  <span className="text-lg font-black truncate">{name}</span>
-                                  <span className="text-lg font-bold text-yellow-300 whitespace-nowrap">{directionText(metaFor(name)?.seat, tr) || "—"}</span>
+                          {focusRows.map(row => (
+                              <li key={row.id || row.name} className="flex justify-between items-baseline gap-3">
+                                  <span className="text-lg font-black truncate">{row.name}</span>
+                                  <span className="text-lg font-bold text-yellow-300 whitespace-nowrap">{directionText(metaFor(row)?.seat, tr) || "—"}</span>
                               </li>
                           ))}
                       </ul>
@@ -236,7 +235,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                               {group.teams.map(t => (
                                   <div key={t.name} className="flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded text-sm font-bold border border-white/5">
                                       {t.name}
-                                      {metaFor(t.name)?.seat && <span className="ml-1 text-xs font-normal text-yellow-300/80">{directionText(metaFor(t.name).seat, tr)}</span>}
+                                      {metaFor(t)?.seat && <span className="ml-1 text-xs font-normal text-yellow-300/80">{directionText(metaFor(t).seat, tr)}</span>}
                                       {t.isHighestRound && <Crown size={14} className="text-yellow-500 ml-1" />}
                                       {t.isOnFire && <Flame size={14} className="text-orange-500" fill="currentColor" />}
                                   </div>
