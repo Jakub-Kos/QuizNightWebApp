@@ -32,7 +32,7 @@ export default function Attendance({ id, t }) {
       if (source === "drive" && saved.id === id && !dirty.current) setQuiz(saved);
     });
   }, [id, reload]);
-  // Team names of a Drive quiz come from its scores tab; a team added here is a draft until named
+  // Teams of a Drive quiz are the rows of its scores tab; a team added here is a draft until named
   const fromSheet = Boolean(quiz?.drive?.scoresTab);
   const confirmName = (team) => { if (team.draft && team.name.trim()) updateTeam(team.id, { draft: undefined }); };
 
@@ -130,9 +130,8 @@ export default function Attendance({ id, t }) {
                 <div className="flex-1 min-w-[180px] space-y-2">
                   <div className="flex gap-2">
                     <input value={team.name} onChange={(e) => updateTeam(team.id, { name: e.target.value })} placeholder={t.tm_name}
-                      readOnly={fromSheet && !team.draft} autoFocus={Boolean(team.draft)}
-                      onBlur={() => confirmName(team)} onKeyDown={(e) => e.key === "Enter" && confirmName(team)}
-                      className={fromSheet && !team.draft ? "flex-1 min-w-0 bg-transparent px-1 py-2 text-sm font-bold text-white focus:outline-none cursor-default" : `${fieldCls} flex-1 min-w-0 font-bold`} />
+                      autoFocus={Boolean(team.draft)} onBlur={() => confirmName(team)} onKeyDown={(e) => e.key === "Enter" && confirmName(team)}
+                      className={`${fieldCls} flex-1 min-w-0 font-bold`} />
                     <label className="flex items-center gap-1 text-xs text-gray-400" title={t.tm_players}>
                       <Users size={14} />
                       <input type="number" min="0" value={team.players || ""} onChange={(e) => updateTeam(team.id, { players: parseInt(e.target.value) || 0 })} className={`${fieldCls} w-16`} />

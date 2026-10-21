@@ -7,6 +7,8 @@ import Papa from "papaparse";
 export const ROUND_WORD = /^(kolo|round)\b/i;
 const ROUND_COLUMN = /kolo|round/i;
 export const TEAM_COLUMN = /název týmu|team name/i;
+// Hidden column the app adds to the scores tab of a Drive quiz: a team's id, which survives renames
+export const TEAM_ID_HEADER = "quiznight-id";
 export function parseQuestionsCsv(text) {
   const rows = Papa.parse(text || "", { header: false, skipEmptyLines: false }).data;
   return groupRounds(rows).map((round) => ({ ...round, questions: buildQuestions(round.rows) }));
@@ -131,6 +133,7 @@ export function parseScoresCsv(text) {
 
   const headers = rows[headerIdx];
   const teamNameIdx = headers.findIndex((h) => TEAM_COLUMN.test(h));
+  const teamIdIdx = headers.indexOf(TEAM_ID_HEADER);
   const roundColumns = headers
     .map((name, index) => ({ name, index }))
     .filter((h) => ROUND_COLUMN.test(h.name));
@@ -143,7 +146,7 @@ export function parseScoresCsv(text) {
     roundColumns.forEach((rc) => {
       scores[rc.name] = parseFloat((row[rc.index] || "0").replace(",", ".")) || 0;
     });
-    teams.push({ name, scores });
+    teams.push({ name, scores, ...(teamIdIdx >= 0 && row[teamIdIdx] && { id: row[teamIdIdx] }) });
   }
 
   return { teams, rounds: roundColumns.map((rc) => rc.name) };

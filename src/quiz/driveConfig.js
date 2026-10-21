@@ -1,25 +1,30 @@
 import { googleJson, googleFetch, currentToken, GoogleApiError } from "./google";
 import { getQuiz, updateQuiz, onQuizSaved } from "./storage";
-import { fetchSheetCsv, sheetTabs, tabRange } from "./sheets";
-import { parseScoresCsv, TEAM_COLUMN } from "./parse";
+import { sheetTabs, tabRange } from "./sheets";
+import { TEAM_COLUMN, TEAM_ID_HEADER } from "./parse";
 
 // The setup of a Drive quiz lives in its folder, so everyone who opens it sees the same quiz:
-//   quiznight.json   title, show settings, rules, prizes, and per-team details keyed by team name
-//   the scores tab   the team names themselves (the leaderboard of the night), never copied elsewhere
-// A team added in the app is a draft (team.draft) until its name is confirmed; it stays local until then.
+//   quiznight.json   title, show settings, rules, prizes, and the teams' details keyed by team id
+//   the scores tab   the teams themselves: one row each, with the team id in a hidden column
+// Ids never come from names, so a rename (in the Sheet or here) keeps a team's details, and no team
+// name can collide with anything. A team whose row is deleted (or whose name is cleared) is archived
+// ({ removed: true }) with its details; typing its name into a row again reconnects it. Removing a team
+// here only clears its name and id cells, so its row and points stay in the Sheet. A team added in the app is a draft
+// (team.draft) until its name is confirmed.
 // The browser's quiz record stays the working copy (the show runs offline). Syncing merges three ways:
-// what changed here since the last sync (drive.configBase) wins over what is in the file, everything
-// else comes from the file, so two people changing different things never undo each other.
+// what changed here since the last sync (drive.configBase) wins over the file, the rest comes from it.
 
 const DRIVE_API = "https://www.googleapis.com/drive/v3";
 const UPLOAD_API = "https://www.googleapis.com/upload/drive/v3/files";
 const SHEETS_API = "https://sheets.googleapis.com/v4/spreadsheets";
 export const CONFIG_NAME = "quiznight.json";
+const VERSION = 2;
 
 const isObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
 const stable = (v) => JSON.stringify(v, (_, x) => (isObject(x) ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, x[k]])) : x));
 const same = (a, b) => stable(a) === stable(b);
-const lower = (name) => String(name).trim().toLowerCase();
+const lower = (name) => String(name ?? "").trim().toLowerCase();
+export const newTeamId = () => `t${Math.random().toString(36).slice(2, 10)}`;
 
 // Objects merge key by key; anything else is taken whole from the side that changed (here wins a tie)
 export function merge3(base, local, remote) {
@@ -44,33 +49,112 @@ function overlay(local, remote) {
   return out;
 }
 
-export function configFromQuiz(quiz) {
+// The first version kept details by team name; give them placeholder ids, which the scores tab's
+// rows then reconnect to by name
+function upgrade(config) {
+  if (!config || config.version === VERSION) return config;
   const teams = {};
-  for (const { id, name, ...details } of quiz.teams) { // eslint-disable-line no-unused-vars
-    if (String(name || "").trim() && !details.draft) teams[String(name).trim()] = details;
-  }
-  return { version: 1, title: quiz.title, settings: quiz.settings, rules: quiz.rules, prizes: quiz.prizes, teams };
+  Object.entries(config.teams || {}).forEach(([name, details]) => { teams[`name:${lower(name)}`] = { ...details, name }; });
+  return { ...config, version: VERSION, teams };
 }
 
-// names: the scores tab's teams in order, or null when there is no scores tab (the file's teams then).
-// unsaved: names that could not be written to the tab; those teams stay here as drafts.
-export function applyConfig(quiz, config, names, unsaved = []) {
-  const keep = new Set(unsaved.map(lower));
-  const details = new Map(Object.entries(config.teams || {}).map(([name, d]) => [lower(name), d]));
-  const known = new Map(quiz.teams.map((team) => [lower(team.name), team]));
-  let nextId = Math.max(0, ...quiz.teams.map((team) => Number(team.id) || 0)) + 1;
-  const list = names ?? Object.keys(config.teams || {});
+export function configFromQuiz(quiz) {
+  const teams = {};
+  Object.entries(quiz.teamArchive || {}).forEach(([id, entry]) => { teams[id] = { ...entry, removed: true }; });
+  quiz.teams.forEach(({ id, ...team }) => {
+    if (!team.draft && String(team.name || "").trim()) teams[id] = { ...team, name: String(team.name).trim() };
+  });
+  return { version: VERSION, title: quiz.title, settings: quiz.settings, rules: quiz.rules, prizes: quiz.prizes, teams };
+}
+
+// The quiz record for a config; order: the ids shown, in order (the rest of the teams is archived)
+export function applyConfig(quiz, config, order) {
+  const teams = config.teams || {};
+  const shown = (order ?? Object.keys(teams).filter((id) => !teams[id].removed)).filter((id) => teams[id]);
+  const visible = new Set(shown);
+  const strip = ({ removed, ...entry }) => entry; // eslint-disable-line no-unused-vars
   return {
     ...quiz,
     title: config.title ?? quiz.title,
     settings: { ...quiz.settings, ...config.settings },
     rules: config.rules ?? quiz.rules,
     prizes: config.prizes ?? quiz.prizes,
-    teams: [
-      ...list.map((name) => ({ ...(details.get(lower(name)) || {}), id: known.get(lower(name))?.id ?? nextId++, name })),
-      ...quiz.teams.filter((team) => team.draft || keep.has(lower(team.name))).map((team) => ({ ...team, draft: true })),
-    ],
+    teams: [...shown.map((id) => ({ ...strip(teams[id]), id })), ...quiz.teams.filter((team) => team.draft)],
+    teamArchive: Object.fromEntries(Object.entries(teams).filter(([id]) => !visible.has(id)).map(([id, entry]) => [id, strip(entry)])),
   };
+}
+
+// What to do with the scores tab and the team entries. rows: [{ row, name, id }] with a name, from
+// the tab; entries: the merged config's teams; base and local: the teams at the last sync and here.
+// Here wins over the Sheet: a team renamed here since the last sync is renamed in the Sheet, one removed
+// here has its name and id cleared, one added here is appended. Everything else follows the Sheet. With
+// canWrite false (a viewer) nothing is written and the Sheet is followed as it is.
+// Returns { entries, order, ops: { ids: [{ row, id }], names: [{ row, name }], clears: [row], appends: [{ name, id }] } }.
+export function reconcile({ rows, entries, base, local, canWrite }) {
+  entries = Object.fromEntries(Object.entries(entries).map(([id, e]) => [id, { ...e }]));
+  const ops = { ids: [], names: [], clears: [], appends: [] };
+  const active = (set, id) => Boolean(set?.[id]) && !set[id].removed;
+  const deletedHere = new Set(base ? Object.keys(base).filter((id) => active(base, id) && !local[id]) : []);
+  const renamedHere = new Map(base ? Object.keys(local).filter((id) => active(local, id) && active(base, id) && local[id].name !== base[id].name).map((id) => [id, local[id].name]) : []);
+  const addedHere = base ? Object.keys(local).filter((id) => active(local, id) && !base[id]) : [];
+
+  // Every row gets an id: its own, or (a new row, or a copy of another row) the entry of the same
+  // name that no row has, so a team typed back in gets its details again, or a new one
+  const rowIds = new Set(rows.map((r) => r.id).filter(Boolean));
+  const used = new Set();
+  const free = (name) => {
+    const matches = Object.keys(entries).filter((id) => !used.has(id) && !rowIds.has(id) && !addedHere.includes(id) && lower(entries[id].name) === lower(name));
+    return matches.find((id) => entries[id].removed) ?? matches[0];
+  };
+  const order = [];
+  for (const r of rows) {
+    let id = r.id && !used.has(r.id) ? r.id : null;
+    if (!id) {
+      id = free(r.name) ?? (canWrite ? newTeamId() : `name:${lower(r.name)}`);
+      // Placeholder ids (old files, viewers) are made from names: never write one into the Sheet
+      if (canWrite && id.startsWith("name:")) {
+        const real = newTeamId();
+        if (entries[id]) entries[real] = entries[id];
+        delete entries[id];
+        id = real;
+      }
+      if (canWrite) ops.ids.push({ row: r.row, id });
+    }
+    used.add(id);
+    if (canWrite && deletedHere.has(id)) {
+      ops.clears.push(r.row);
+      entries[id] = { ...(entries[id] || base[id]), removed: true };
+      continue;
+    }
+    const entry = entries[id] || {};
+    const name = canWrite && renamedHere.has(id) ? renamedHere.get(id) : r.name;
+    if (name !== r.name) ops.names.push({ row: r.row, name });
+    entries[id] = { ...entry, name };
+    delete entries[id].removed;
+    order.push(id);
+  }
+
+  // Teams added here: appended, reconnecting to an archived team of the same name
+  if (canWrite) {
+    for (const id of addedHere) {
+      if (used.has(id)) continue; // already in the Sheet (written by an earlier sync)
+      const name = local[id].name;
+      const archived = Object.keys(entries).find((other) => other !== id && !used.has(other) && entries[other].removed && lower(entries[other].name) === lower(name));
+      const target = archived ?? id;
+      if (archived) {
+        const { removed, ...details } = entries[archived]; // eslint-disable-line no-unused-vars
+        entries[archived] = { ...local[id], ...details, name };
+        delete entries[id];
+      }
+      ops.appends.push({ name, id: target });
+      used.add(target);
+      order.push(target);
+    }
+  }
+
+  // Not in the Sheet any more: archived with their details
+  for (const id of Object.keys(entries)) if (!used.has(id)) entries[id] = { ...entries[id], removed: true };
+  return { entries, order, ops };
 }
 
 async function findConfigFile(drive) {
@@ -113,33 +197,71 @@ async function writeConfig(folderId, fileId, config) {
 }
 
 const column = (i) => (i < 26 ? String.fromCharCode(65 + i) : String.fromCharCode(64 + Math.floor(i / 26)) + String.fromCharCode(65 + (i % 26)));
+const post = (url, body) => googleJson(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 
-// Teams added in the app go into the scores tab: into the first empty name cells below the header
-// (the template prepares rows with formulas), then as new rows
-async function addTeamsToSheet(quiz, names) {
+// The scores tab: its team rows [{ row, name, id }] and empty name rows below the header, or null
+// when it has no team name column
+async function readScoresTab(quiz) {
   const spreadsheetId = quiz.drive.spreadsheetId;
   const gid = (String(quiz.scoresSheetUrl).match(/[#&?]gid=(\d+)/) || [])[1];
   const tabs = await sheetTabs(spreadsheetId);
   const tab = tabs.find((t) => String(t.sheetId) === gid) ?? tabs[0];
-  const name = tabRange(tab.title);
-  const rows = (await googleJson(`${SHEETS_API}/${spreadsheetId}/values/${encodeURIComponent(name)}`)).values || [];
-  const header = rows.findIndex((row) => row.some((c) => TEAM_COLUMN.test(String(c))));
-  if (header < 0) return;
-  const col = rows[header].findIndex((c) => TEAM_COLUMN.test(String(c)));
-
-  const cells = [];
-  const extra = [];
-  let r = header + 1;
-  for (const team of names) {
-    while (r < rows.length && String(rows[r]?.[col] ?? "").trim()) r++;
-    if (r < rows.length) cells.push({ range: `${name}!${column(col)}${r + 1}`, values: [[team]] });
-    else extra.push(Object.assign(Array(col + 1).fill(""), { [col]: team }));
-    r++;
+  const values = (await googleJson(`${SHEETS_API}/${spreadsheetId}/values/${encodeURIComponent(tabRange(tab.title))}`)).values || [];
+  const header = values.findIndex((row) => row.some((c) => TEAM_COLUMN.test(String(c))));
+  if (header < 0) return null;
+  const nameCol = values[header].findIndex((c) => TEAM_COLUMN.test(String(c)));
+  const idCol = values[header].indexOf(TEAM_ID_HEADER);
+  const cell = (r, c) => String(values[r]?.[c] ?? "").trim();
+  const rows = [];
+  const empty = [];
+  for (let r = header + 1; r < values.length; r++) {
+    if (cell(r, nameCol)) rows.push({ row: r, name: cell(r, nameCol), id: idCol >= 0 ? cell(r, idCol) || null : null });
+    else empty.push(r);
   }
-  const post = (url, body) => googleJson(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  if (cells.length) await post(`${SHEETS_API}/${spreadsheetId}/values:batchUpdate`, { valueInputOption: "RAW", data: cells });
-  if (extra.length) await post(`${SHEETS_API}/${spreadsheetId}/values/${encodeURIComponent(`${name}!A${header + 1}`)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`, { values: extra });
+  return { spreadsheetId, tab, header, nameCol, idCol, width: Math.max(0, ...values.map((v) => v.length)), end: values.length, rows, empty };
 }
+
+// Ids, renames, cleared names and new teams as cell values. New teams go into the first empty name
+// cells below the header (the template prepares rows with formulas), then into rows inserted right
+// below the table. The id column is added, hidden, right of the table's last column the first time.
+export async function writeScoresTab(sheet, ops) {
+  const { spreadsheetId, tab, header, nameCol } = sheet;
+  const name = tabRange(tab.title);
+  let idCol = sheet.idCol;
+  const cells = [];
+  const structure = [];
+  if (idCol < 0) {
+    idCol = sheet.width;
+    cells.push({ range: `${name}!${column(idCol)}${header + 1}`, values: [[TEAM_ID_HEADER]] });
+    structure.push({ updateDimensionProperties: { range: { sheetId: tab.sheetId, dimension: "COLUMNS", startIndex: idCol, endIndex: idCol + 1 }, properties: { hiddenByUser: true }, fields: "hiddenByUser" } });
+  }
+  const set = (row, col, value) => cells.push({ range: `${name}!${column(col)}${row + 1}`, values: [[value]] });
+  ops.ids.forEach(({ row, id }) => set(row, idCol, id));
+  ops.names.forEach(({ row, name: value }) => set(row, nameCol, value));
+  ops.clears.forEach((row) => { set(row, nameCol, ""); set(row, idCol, ""); });
+  const empty = [...sheet.empty];
+  let next = sheet.end; // first row below the table
+  const inserted = ops.appends.length - empty.length;
+  if (inserted > 0) {
+    structure.push({ insertDimension: { range: { sheetId: tab.sheetId, dimension: "ROWS", startIndex: next, endIndex: next + inserted }, inheritFromBefore: next > header + 1 } });
+  }
+  ops.appends.forEach(({ name: value, id }) => {
+    const row = empty.length ? empty.shift() : next++;
+    set(row, nameCol, value);
+    set(row, idCol, id);
+  });
+  // Columns and rows first, so the values land in them
+  if (structure.length) await post(`${SHEETS_API}/${spreadsheetId}:batchUpdate`, { requests: structure });
+  if (cells.length) await post(`${SHEETS_API}/${spreadsheetId}/values:batchUpdate`, { valueInputOption: "RAW", data: cells });
+}
+
+const canEdit = async (fileId) => {
+  try {
+    return Boolean((await googleJson(`${DRIVE_API}/files/${fileId}?fields=capabilities(canEdit)&supportsAllDrives=true`)).capabilities?.canEdit);
+  } catch {
+    return false;
+  }
+};
 
 async function runSync(quizId) {
   const quiz = await getQuiz(quizId);
@@ -147,32 +269,36 @@ async function runSync(quizId) {
   if (!drive?.folderId || !currentToken()) return null;
 
   const fileId = await findConfigFile(drive);
-  const remote = fileId ? await readConfig(fileId) : null;
+  const remote = upgrade(fileId ? await readConfig(fileId) : null);
   const local = configFromQuiz(quiz);
-  const merged = !remote ? local : drive.configBase ? merge3(drive.configBase, local, remote) : overlay(local, remote);
+  const base = drive.configBase?.version === VERSION ? drive.configBase : null;
+  // A first sync here takes the folder's teams as they are (old local teams are not pushed)
+  let merged = !remote ? local : base ? merge3(base, local, remote) : { ...overlay(local, remote), teams: remote.teams || {} };
 
-  // Team names from the scores tab. Names added here since the last sync (not there, not seen there
-  // before) are written into it; a first sync only adopts the tab, so old local teams are not pushed.
-  let names = null;
-  let unsaved = [];
-  if (quiz.scoresSheetUrl) {
-    const scores = parseScoresCsv(await fetchSheetCsv(quiz.scoresSheetUrl));
-    if (scores) {
-      names = scores.teams.map((team) => team.name);
-      const seen = new Set([...(drive.knownTeams || []), ...names].map(lower));
-      const added = drive.knownTeams
-        ? quiz.teams.filter((team) => !team.draft).map((team) => String(team.name || "").trim()).filter((n) => n && !seen.has(lower(n)))
-        : [];
-      if (added.length) {
-        try {
-          await addTeamsToSheet(quiz, added);
-          names = [...names, ...added];
-        } catch (err) {
-          // A viewer, or offline: the teams stay here as drafts rather than disappearing
-          console.warn("Could not add teams to the scores tab", err);
-          unsaved = added;
-        }
+  let order = null;
+  const sheet = quiz.scoresSheetUrl ? await readScoresTab(quiz) : null;
+  if (sheet) {
+    const writable = await canEdit(drive.spreadsheetId);
+    const result = reconcile({ rows: sheet.rows, entries: merged.teams || {}, base: base?.teams ?? null, local: local.teams, canWrite: writable });
+    const { ids, names, clears, appends } = result.ops;
+    let written = true;
+    if (ids.length || names.length || clears.length || appends.length) {
+      try {
+        await writeScoresTab(sheet, result.ops);
+      } catch (err) {
+        console.warn("Could not update the scores tab", err);
+        written = false;
       }
+    }
+    if (written) {
+      merged = { ...merged, teams: result.entries };
+      order = result.order;
+    } else {
+      // The Sheet did not take the changes (no edit access, offline): follow it as it is, so teams
+      // renamed or deleted here come back rather than drifting apart from the Sheet
+      const asIs = reconcile({ rows: sheet.rows, entries: merged.teams || {}, base: null, local: {}, canWrite: false });
+      merged = { ...merged, teams: asIs.entries };
+      order = asIs.order;
     }
   }
 
@@ -186,8 +312,8 @@ async function runSync(quizId) {
   }
 
   return updateQuiz(quizId, (q) => {
-    const next = applyConfig(q, merged, names, unsaved);
-    return { ...next, drive: { ...q.drive, configFileId: savedId, configBase: configFromQuiz(next), knownTeams: names ?? q.drive.knownTeams ?? null } };
+    const next = applyConfig(q, merged, order);
+    return { ...next, drive: { ...q.drive, configFileId: savedId, configBase: configFromQuiz(next) } };
   }, "drive");
 }
 
