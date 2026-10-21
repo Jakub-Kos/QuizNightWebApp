@@ -62,8 +62,10 @@ export function validateQuiz(quiz, rounds, hasMedia) {
       if (String(q.text || "").length > 250) issue("warning", "long_text", { length: String(q.text).length });
 
       if (type === "Top5") {
+        // Any length from 3 to 15 fits the screen (one, two or three columns)
         const answers = q.answer.filter((a) => !blank(a));
-        if (answers.length !== 5) issue("warning", "top5_count", { count: answers.length });
+        if (answers.length < 3 || answers.length > 15) issue("warning", "top5_count", { count: answers.length });
+        else if (q.declared && q.declared !== answers.length) issue("warning", "top5_declared", { declared: q.declared, count: answers.length });
       } else if (type === "Handout") {
         // The answer column holds the answer picture
         const answer = String(q.answer ?? "").trim();

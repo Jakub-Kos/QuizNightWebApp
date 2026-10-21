@@ -137,7 +137,7 @@ export default function QuestionForm({ draft, onChange, mediaNames, hasMedia, up
                 className="p-2 rounded-lg text-gray-500 hover:text-red-300 hover:bg-red-500/20 disabled:opacity-30" aria-label={t.qe_remove}><X size={16} /></button>
             </div>
           ))}
-          <button type="button" onClick={() => set({ answers: [...draft.answers, ""] })} disabled={draft.answers.length >= 10} className={smallBtn}>
+          <button type="button" onClick={() => set({ answers: [...draft.answers, ""] })} disabled={draft.answers.length >= 15} className={smallBtn}>
             <Plus size={14} /> {t.qe_add_answer}
           </button>
         </div>

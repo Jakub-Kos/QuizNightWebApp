@@ -7,6 +7,14 @@ import { fmt } from "../quiz/files";
 import { sortLayout } from "../quiz/sort";
 import SortItems from "./SortItems";
 
+// A top list of more than five answers is split into two columns, of more than ten into three, filled
+// down each column so the ranks read 1–5 | 6–10 | 11–15
+const topColumns = (count) => (count <= 5 ? 1 : count <= 10 ? 2 : 3);
+const topGrid = (count) => {
+  const columns = topColumns(count);
+  return { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${Math.ceil(count / columns)}, auto)`, gridAutoFlow: "column" };
+};
+
 // preview: { qIndex, step } renders one fixed frame (quiz check thumbnails): no keys, sync or timer
 export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t = {}, preview = null }) {
     const [stateQIndex, setQIndex] = useState(-1);
@@ -97,7 +105,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     const getExpectedAnswerText = (type) => {
         switch(type) {
             case "Numeric": return t.type_numeric;
-            case "Top5": return t.type_top5;
+            case "Top5": return fmt(t.type_top5, { n: question?.answer?.length || 5 });
             // Written, and the media types, which are answered in writing too
             default: return t.type_written;
         }
@@ -271,11 +279,11 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                             ? <img src={question.answerSource} alt="" className="max-h-[17vh] self-start rounded-xl border border-green-500/40 mt-1" />
                                             : <span className="text-xl font-bold text-green-400/60">–</span>
                                     ) : question.type === "Top5" ? (
-                                        <div className="flex flex-col gap-2 mt-2">
+                                        <div className="grid gap-x-8 gap-y-2 mt-2" style={topGrid(question.answer.length)}>
                                             {question.answer.map((ans, i) => (
-                                                <div key={i} className="flex gap-3 items-center">
+                                                <div key={i} className="flex gap-3 items-center min-w-0">
                                                     <span className="text-green-500/50 font-bold font-mono text-sm">#{i+1}</span>
-                                                    <span className="text-2xl font-black text-green-400">{ans}</span>
+                                                    <span className={`${question.answer.length > 5 ? "text-xl" : "text-2xl"} font-black text-green-400 truncate`}>{ans}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -446,20 +454,29 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                 {question.type === "Sort" && <SortItems layout={question.sort} revealed={showAnswer} t={t} />}
 
                                 {/* Top5 Layout */}
-                                {question.type === "Top5" && (
-                                    <div className="flex flex-col gap-4 w-full max-w-4xl">
-                                        {question.answer.map((ans, idx) => (
-                                            <div key={idx} className={`px-8 py-5 rounded-2xl border flex items-center gap-6 transition-all duration-700 ${showAnswer ? 'bg-gradient-to-r from-blue-900/60 to-blue-800/40 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-white/5 border-white/10'}`}>
-                                                <div className="w-16 h-16 rounded-xl bg-black/50 border border-white/10 flex items-center justify-center font-black text-2xl text-white/50 shrink-0 shadow-inner">
-                                                    #{idx + 1}
+                                {question.type === "Top5" && (() => {
+                                    // A column never has more than five rows, so two columns keep the full size; three
+                                    // columns are narrower and get slightly smaller text
+                                    const count = question.answer.length;
+                                    const columns = topColumns(count);
+                                    const size = columns < 3
+                                        ? { row: "px-8 py-5 gap-6", rank: "w-16 h-16 text-2xl", text: "text-5xl" }
+                                        : { row: "px-6 py-4 gap-4", rank: "w-14 h-14 text-xl", text: "text-4xl" };
+                                    return (
+                                        <div className={`grid gap-x-6 ${columns === 1 ? "gap-y-4 max-w-4xl" : "gap-y-3 max-w-[92cqw]"} w-full`} style={topGrid(count)}>
+                                            {question.answer.map((ans, idx) => (
+                                                <div key={idx} className={`${size.row} min-w-0 rounded-2xl border flex items-center transition-all duration-700 ${showAnswer ? 'bg-gradient-to-r from-blue-900/60 to-blue-800/40 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-white/5 border-white/10'}`}>
+                                                    <div className={`${size.rank} rounded-xl bg-black/50 border border-white/10 flex items-center justify-center font-black text-white/50 shrink-0 shadow-inner`}>
+                                                        #{idx + 1}
+                                                    </div>
+                                                    <span className={`${size.text} min-w-0 font-bold text-left tracking-tight leading-tight transition-all duration-1000 ${showAnswer ? 'text-white' : 'text-transparent bg-white/10 rounded-lg select-none blur-sm truncate'}`}>
+                                                        {showAnswer ? ans : "???????????????"}
+                                                    </span>
                                                 </div>
-                                                <span className={`font-bold text-5xl text-left tracking-tight transition-all duration-1000 ${showAnswer ? 'text-white' : 'text-transparent bg-white/10 rounded-lg select-none blur-sm'}`}>
-                                                {showAnswer ? ans : "???????????????"}
-                                            </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                                            ))}
+                                        </div>
+                                    );
+                                })()}
 
                                 {/* Written / Numeric Answers Layout */}
                                 {!showOptions && (
