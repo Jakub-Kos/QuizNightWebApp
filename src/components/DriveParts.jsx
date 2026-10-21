@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogIn, LogOut, Loader2 } from "lucide-react";
+import { LogIn, LogOut, Loader2, RefreshCw, CheckCircle2, AlertTriangle } from "lucide-react";
 import { driveErrorText } from "../quiz/drive";
 import { fmt, formatBytes } from "../quiz/files";
 import { btnCls } from "./EditorParts";
@@ -62,3 +62,27 @@ export const BetaBadge = ({ t }) => (
     {t.gd_beta}
   </span>
 );
+
+// Whether a section's changes are saved: in this browser, and for Drive quizzes also in the folder
+// (sync from useDriveSync), with a button that loads the latest version from Drive
+export function SaveStatus({ saving, drive, sync, onRefresh, t }) {
+  const time = (ms) => new Date(ms).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  let state;
+  if (!drive) state = saving ? [Loader2, t.ed_saving, "text-gray-400", true] : [CheckCircle2, t.ed_saved, "text-gray-500"];
+  else if (saving || sync.phase === "pending" || sync.phase === "syncing") state = [Loader2, t.ed_saving_drive, "text-yellow-300", true];
+  else if (sync.phase === "error") state = [AlertTriangle, t.ed_save_drive_failed, "text-red-300"];
+  else if (sync.at) state = [CheckCircle2, fmt(t.ed_saved_drive, { time: time(sync.at) }), "text-green-300/80"];
+  else state = [CheckCircle2, t.ed_saved, "text-gray-500"];
+  const [Icon, text, color, spin] = state;
+  return (
+    <span className="flex items-center gap-2 text-xs font-sans normal-case tracking-normal">
+      <span className={`flex items-center gap-1.5 ${color}`}><Icon size={14} className={spin ? "animate-spin" : ""} /> {text}</span>
+      {drive && onRefresh && (
+        <button type="button" onClick={onRefresh} disabled={sync.phase === "syncing"} title={t.ed_refresh_drive} aria-label={t.ed_refresh_drive}
+          className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-40">
+          <RefreshCw size={14} className={sync.phase === "syncing" ? "animate-spin" : ""} />
+        </button>
+      )}
+    </span>
+  );
+}

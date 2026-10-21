@@ -255,12 +255,17 @@ export async function writeScoresTab(sheet, ops) {
   if (cells.length) await post(`${SHEETS_API}/${spreadsheetId}/values:batchUpdate`, { valueInputOption: "RAW", data: cells });
 }
 
+// Edit access rarely changes during a session; asked again after a few minutes
+const editAccess = new Map(); // fileId -> { at, value }
 const canEdit = async (fileId) => {
+  const cached = editAccess.get(fileId);
+  if (cached && Date.now() - cached.at < 5 * 60_000) return cached.value;
+  let value = false;
   try {
-    return Boolean((await googleJson(`${DRIVE_API}/files/${fileId}?fields=capabilities(canEdit)&supportsAllDrives=true`)).capabilities?.canEdit);
-  } catch {
-    return false;
-  }
+    value = Boolean((await googleJson(`${DRIVE_API}/files/${fileId}?fields=capabilities(canEdit)&supportsAllDrives=true`)).capabilities?.canEdit);
+  } catch { /* treated as a viewer */ }
+  editAccess.set(fileId, { at: Date.now(), value });
+  return value;
 };
 
 async function runSync(quizId) {
@@ -268,17 +273,20 @@ async function runSync(quizId) {
   const drive = quiz?.drive;
   if (!drive?.folderId || !currentToken()) return null;
 
-  const fileId = await findConfigFile(drive);
-  const remote = upgrade(fileId ? await readConfig(fileId) : null);
+  // The file, the scores tab and edit access do not depend on each other: fetched at the same time
+  const [{ fileId, stored }, sheet, writable] = await Promise.all([
+    findConfigFile(drive).then(async (id) => ({ fileId: id, stored: id ? await readConfig(id) : null })),
+    quiz.scoresSheetUrl ? readScoresTab(quiz) : null,
+    quiz.scoresSheetUrl ? canEdit(drive.spreadsheetId) : false,
+  ]);
+  const remote = upgrade(stored);
   const local = configFromQuiz(quiz);
   const base = drive.configBase?.version === VERSION ? drive.configBase : null;
   // A first sync here takes the folder's teams as they are (old local teams are not pushed)
   let merged = !remote ? local : base ? merge3(base, local, remote) : { ...overlay(local, remote), teams: remote.teams || {} };
 
   let order = null;
-  const sheet = quiz.scoresSheetUrl ? await readScoresTab(quiz) : null;
   if (sheet) {
-    const writable = await canEdit(drive.spreadsheetId);
     const result = reconcile({ rows: sheet.rows, entries: merged.teams || {}, base: base?.teams ?? null, local: local.teams, canWrite: writable });
     const { ids, names, clears, appends } = result.ops;
     let written = true;
@@ -317,10 +325,35 @@ async function runSync(quizId) {
   }, "drive");
 }
 
+// Where each quiz's sync is, for the setup page: { phase: "idle" | "pending" (a change waits to be
+// written) | "syncing" | "done" | "error", at (last success, ms), error }
+const syncStates = new Map();
+const stateListeners = new Set();
+function setSyncState(quizId, patch) {
+  const next = { ...(syncStates.get(quizId) || { phase: "idle" }), ...patch };
+  syncStates.set(quizId, next);
+  stateListeners.forEach((fn) => fn(quizId, next));
+}
+export const getSyncState = (quizId) => syncStates.get(quizId) || { phase: "idle" };
+export function onSyncState(fn) {
+  stateListeners.add(fn);
+  return () => stateListeners.delete(fn);
+}
+
 // One sync at a time per quiz; resolves with the updated quiz record (null when not signed in)
 const running = new Map();
 export function syncDriveConfig(quizId) {
-  const next = (running.get(quizId) || Promise.resolve()).catch(() => {}).then(() => runSync(quizId));
+  const next = (running.get(quizId) || Promise.resolve()).catch(() => {}).then(async () => {
+    setSyncState(quizId, { phase: "syncing", error: null });
+    try {
+      const result = await runSync(quizId);
+      setSyncState(quizId, result ? { phase: "done", at: Date.now() } : { phase: "idle" });
+      return result;
+    } catch (err) {
+      setSyncState(quizId, { phase: "error", error: err });
+      throw err;
+    }
+  });
   running.set(quizId, next);
   return next;
 }
@@ -331,5 +364,6 @@ onQuizSaved((quiz, source) => {
   if (source === "drive" || !quiz?.drive?.folderId || !currentToken()) return;
   if (quiz.drive.configBase && same(configFromQuiz(quiz), quiz.drive.configBase)) return;
   clearTimeout(timers.get(quiz.id));
+  setSyncState(quiz.id, { phase: "pending" });
   timers.set(quiz.id, setTimeout(() => syncDriveConfig(quiz.id).catch((err) => console.error("Drive sync failed", err)), 1500));
 });

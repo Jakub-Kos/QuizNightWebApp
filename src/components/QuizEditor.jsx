@@ -15,7 +15,9 @@ import IntroSection from "./IntroSection";
 import { saveTeamImage } from "../quiz/teams";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
 import { readDriveQuiz, syncDriveMedia, mergeDrive, driveErrorText, folderUrl, sheetUrl as driveSheetUrl, ensureMediaFolder, uploadMedia, isMediaFolderName } from "../quiz/drive";
-import { GoogleAccountBar, DriveProgress, BetaBadge } from "./DriveParts";
+import { GoogleAccountBar, DriveProgress, BetaBadge, SaveStatus } from "./DriveParts";
+import { useDriveSync } from "../hooks/useDriveSync";
+import { teamForScores } from "../quiz/teams";
 import DrivePeople from "./DrivePeople";
 
 export default function QuizEditor({ id, t }) {
@@ -30,6 +32,8 @@ export default function QuizEditor({ id, t }) {
   const [uploadStatus, setUploadStatus] = useState(null);
   const [driveProgress, setDriveProgress] = useState(null);
   const google = useGoogleAccount();
+  const sync = useDriveSync(id);
+  const [scoresPreview, setScoresPreview] = useState(null); // parseScoresCsv result of the last test
   const csvInput = useRef(null);
   const dirty = useRef(false);
 
@@ -105,11 +109,10 @@ export default function QuizEditor({ id, t }) {
     setBusy("drive");
     setDriveStatus(null);
     try {
-      // Questions and tabs, then the setup and teams, then the media
+      // Questions and tabs first (the rest needs them), then the setup and the media side by side
       const fields = await readDriveQuiz(quiz.drive.folderId || quiz.drive.spreadsheetId);
       await updateQuiz(id, (q) => ({ ...q, ...mergeDrive(q, fields) }), "drive");
-      await syncDriveConfig(id);
-      const result = await syncDriveMedia(id, fields.drive.mediaFolderId, setDriveProgress);
+      const [, result] = await Promise.all([syncDriveConfig(id), syncDriveMedia(id, fields.drive.mediaFolderId, setDriveProgress)]);
       await updateQuiz(id, (q) => ({ ...q, drive: { ...q.drive, syncedAt: Date.now(), syncedBy: google.user?.name || "" } }), "drive");
       await reloadMedia();
       const text = [
@@ -209,9 +212,9 @@ export default function QuizEditor({ id, t }) {
     setBusy("scores");
     try {
       const parsed = parseScoresCsv(await fetchSheetCsv(quiz.scoresSheetUrl));
-      // The leaderboard matches Sheet rows to teams by name; unmatched rows get no photo or color
-      const known = new Set(quiz.teams.map((team) => team.name.trim().toLowerCase()));
-      const unmatched = parsed ? parsed.teams.map((row) => row.name).filter((name) => !known.has(name.trim().toLowerCase())) : [];
+      setScoresPreview(parsed);
+      // The leaderboard matches Sheet rows to teams (by id, else by name); unmatched rows get no photo or color
+      const unmatched = parsed ? parsed.teams.filter((row) => !teamForScores(quiz.teams, row)).map((row) => row.name) : [];
       setScoresStatus(!parsed
         ? { ok: false, text: t.ed_err_format }
         : unmatched.length && quiz.teams.length
@@ -222,6 +225,14 @@ export default function QuizEditor({ id, t }) {
     }
     setBusy(null);
   };
+
+  // A Drive quiz shows its current scores straight away
+  const scoresLoaded = useRef(false);
+  useEffect(() => {
+    if (!quiz?.drive?.scoresTab || !google.signedIn || scoresLoaded.current) return;
+    const timer = setTimeout(() => { scoresLoaded.current = true; testScores(); });
+    return () => clearTimeout(timer);
+  }, [quiz, google.signedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (quiz === undefined) return <div className="min-h-screen bg-[#050505]" />;
   if (quiz === null) {
@@ -234,6 +245,25 @@ export default function QuizEditor({ id, t }) {
   }
 
   const totalSize = media.reduce((n, m) => n + m.blob.size, 0);
+
+  // What still needs doing, per section (outlined in yellow)
+  const prizes = { enabled: true, ...quiz.prizes };
+  const warnings = {
+    drive: quiz.drive && !google.signedIn ? t.ed_warn_signin : null,
+    questions: rounds.length === 0 ? t.ed_warn_questions : null,
+    media: missing.length ? fmt(t.ed_warn_media, { count: missing.length }) : null,
+    scores: !quiz.scoresSheetUrl ? t.ed_warn_scores : null,
+    teams: !quiz.teams.some((team) => team.name.trim()) ? t.ed_warn_teams : null,
+    intro: prizes.enabled && !["first", "second", "third", "extra"].some((k) => String(prizes[k] || "").trim()) ? t.ed_warn_prizes : null,
+  };
+  // Teams, rules and prizes: saved here, and for a Drive quiz in its folder
+  const saving = saveState === "saving";
+  const setupSection = (key) => ({
+    warning: warnings[key],
+    busy: Boolean(quiz.drive) && (saving || sync.phase === "pending" || sync.phase === "syncing"),
+    status: <SaveStatus saving={saving} drive={Boolean(quiz.drive)} sync={sync} t={t}
+      onRefresh={quiz.drive && google.signedIn ? () => syncDriveConfig(id).catch(() => {}) : null} />,
+  });
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans">
@@ -256,7 +286,7 @@ export default function QuizEditor({ id, t }) {
           className="w-full bg-transparent font-['League_Spartan'] text-4xl font-black tracking-wide border-b border-white/10 pb-3 focus:outline-none focus:border-yellow-500/60" />
 
         {quiz.drive && (
-          <Section title={<>{t.gd_title} <BetaBadge t={t} /></>} help={t.gd_section_help}>
+          <Section id="drive" warning={warnings.drive} busy={busy === "drive"} title={<>{t.gd_title} <BetaBadge t={t} /></>} help={t.gd_section_help}>
             <GoogleAccountBar account={google} t={t} onError={(text) => setDriveStatus(text && { ok: false, text })} />
             <ul className="space-y-2 text-sm">
               {quiz.drive.folderId && (
@@ -299,7 +329,7 @@ export default function QuizEditor({ id, t }) {
           </Section>
         )}
 
-        <Section title={t.ed_questions} help={quiz.drive ? t.gd_questions_note : t.ed_questions_help} helpId="questions">
+        <Section id="questions" warning={warnings.questions} title={t.ed_questions} help={quiz.drive ? t.gd_questions_note : t.ed_questions_help} helpId="questions">
           {!quiz.drive && (<>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
@@ -336,7 +366,7 @@ export default function QuizEditor({ id, t }) {
           )}
         </Section>
 
-        <Section title={t.ed_media} help={t.ed_media_help} helpId="media">
+        <Section id="media" warning={warnings.media} title={t.ed_media} help={t.ed_media_help} helpId="media">
           {missing.length > 0 && (
             <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 space-y-2">
               <p className="flex items-center gap-2 text-red-200 font-bold text-sm"><AlertTriangle size={16} /> {t.ed_missing} ({missing.length})</p>
@@ -389,7 +419,7 @@ export default function QuizEditor({ id, t }) {
           )}
         </Section>
 
-        <Section title={t.ed_scores} help={quiz.drive?.scoresTab ? null : t.ed_scores_help} helpId="scores">
+        <Section id="scores" warning={warnings.scores} title={t.ed_scores} help={quiz.drive?.scoresTab ? null : t.ed_scores_help} helpId="scores">
           {quiz.drive?.scoresTab ? (
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <p className="flex-1 text-sm text-gray-300">{fmt(t.ed_scores_drive, { tab: quiz.drive.scoresTab })}</p>
@@ -410,6 +440,7 @@ export default function QuizEditor({ id, t }) {
           </div>
           </>)}
           <Status status={scoresStatus} />
+          {scoresPreview && <ScoresPreview scores={scoresPreview} teams={quiz.teams} t={t} />}
           {!quiz.scoresSheetUrl && (
             <a href={quizHash(quiz.id, "scores")} className={`${btnCls} w-fit`}>
               <Calculator size={16} /> {t.sc_open}
@@ -426,10 +457,11 @@ export default function QuizEditor({ id, t }) {
           scoresSheetUrl={quiz.scoresSheetUrl}
           fromSheet={quiz.drive?.scoresTab || null}
           onUploadImage={uploadTeamImage}
+          sectionProps={setupSection("teams")}
           t={t}
         />
 
-        <IntroSection quiz={quiz} onChange={update} t={t} />
+        <IntroSection quiz={quiz} onChange={update} sectionProps={setupSection("intro")} t={t} />
       </div>
     </div>
   );
@@ -451,6 +483,47 @@ function ShareLink({ folderId, t }) {
         <button onClick={copy} className={btnCls}>{copied ? <Check size={16} /> : <Copy size={16} />} {copied ? t.gd_copied : t.gd_copy_link}</button>
       </div>
       <p className="text-xs text-gray-500">{t.gd_share_help}</p>
+    </div>
+  );
+}
+
+// The scores the last test read, compactly: one row per team, best first, points per round and the
+// total. Rows that match no team (by id or name) are marked, as the show gives them no photo or colour.
+function ScoresPreview({ scores, teams, t }) {
+  if (!scores.teams.length) return <p className="text-sm text-gray-500">{t.tm_from_scores_none}</p>;
+  const total = (row) => scores.rounds.reduce((n, r) => n + (row.scores[r] || 0), 0);
+  const rows = [...scores.teams].sort((a, b) => total(b) - total(a));
+  const short = (round) => round.match(/\d+/)?.[0] ?? round;
+  const points = (n) => (n ? String(Math.round(n * 100) / 100).replace(".", ",") : "–");
+  return (
+    <div className="rounded-xl bg-black/30 border border-white/5 overflow-hidden">
+      <div className="max-h-72 overflow-auto">
+        <table className="w-full text-sm">
+          <thead className="sticky top-0 bg-[#111] text-gray-500 text-xs">
+            <tr>
+              <th className="px-3 py-2 text-left font-normal">#</th>
+              <th className="px-3 py-2 text-left font-normal w-full">{t.tm_title}</th>
+              {scores.rounds.map((r) => <th key={r} title={r} className="px-2 py-2 text-right font-normal whitespace-nowrap">{short(r)}</th>)}
+              <th className="px-3 py-2 text-right font-bold text-gray-300">{t.ed_scores_total}</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5">
+            {rows.map((row, i) => {
+              const matched = teamForScores(teams, row);
+              return (
+                <tr key={row.id || `${row.name}-${i}`}>
+                  <td className="px-3 py-1.5 text-gray-500 font-mono">{i + 1}</td>
+                  <td className="px-3 py-1.5 truncate max-w-0">
+                    <span className={matched ? "" : "text-yellow-300"} title={matched ? "" : t.ed_scores_unmatched_one}>{row.name}</span>
+                  </td>
+                  {scores.rounds.map((r) => <td key={r} className="px-2 py-1.5 text-right text-gray-400 font-mono">{points(row.scores[r])}</td>)}
+                  <td className="px-3 py-1.5 text-right font-bold font-mono">{points(total(row))}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+/* A running bar for work of unknown length (saving to Drive) */
+@keyframes progress-indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+.progress-indeterminate { animation: progress-indeterminate 1.1s ease-in-out infinite; }
