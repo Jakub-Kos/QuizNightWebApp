@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2 } from "lucide-react";
+import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2, MailOpen, LogIn, RefreshCw } from "lucide-react";
 import { listQuizzes, saveQuiz, updateQuiz, deleteQuiz, requestPersistence } from "../quiz/storage";
 import { createQuiz, loadQuizBundle, DEMO_ID } from "../quiz/model";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -12,6 +12,7 @@ import { GOOGLE_SHEET_TEMPLATE } from "../config";
 import { GoogleAccountBar, BetaBadge } from "./DriveParts";
 import { hasDriveInvite, acceptDriveInvite } from "../quiz/google";
 import { Status, inputCls, btnCls } from "./EditorParts";
+import { fmt } from "../quiz/files";
 
 const LANGUAGES = [["cs", "Čeština"], ["sk", "Slovenčina"], ["en", "English"]];
 
@@ -31,7 +32,8 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
     if (openDrive && google.enabled) acceptDriveInvite();
     return hasDriveInvite();
   });
-  const [driveOpen, setDriveOpen] = useState(openDrive && driveInvited);
+  // A shared quiz link shows the invitation instead of the panel
+  const [driveOpen, setDriveOpen] = useState(openDrive && driveInvited && !driveFolder);
 
   const refresh = useCallback(async () => {
     const list = await listQuizzes();
@@ -138,7 +140,8 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
           )}
         </section>
 
-        {driveOpen && <DriveOpen account={google} quizzes={quizzes} lang={lang} folder={driveFolder} t={t} />}
+        {driveOpen && <DriveOpen account={google} quizzes={quizzes} lang={lang} t={t} />}
+        {driveFolder && google.enabled && <InviteScreen folder={driveFolder} account={google} quizzes={quizzes} lang={lang} t={t} />}
 
         <section className="space-y-4">
           <h2 className="font-['League_Spartan'] text-2xl font-bold uppercase tracking-widest text-gray-400">{t.lib_title}</h2>
@@ -212,11 +215,113 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
 
 // Paste a Drive folder or Sheet link: the quiz is created in the library (or updated when it is already
 // there) and opened in the setup page, which downloads the media
-// folder: a quiz folder id from a shared link (#/drive/<id>), opened as soon as possible
-function DriveOpen({ account, quizzes: loaded, lang, folder, t }) {
+// Add a Drive quiz to the library (or update the copy already there) and open its setup page
+async function openDriveQuiz(link, quizzes, lang) {
+  const fields = await readDriveQuiz(link);
+  const existing = quizzes.find((q) => sameDriveQuiz(q.drive, fields.drive));
+  if (existing) {
+    await updateQuiz(existing.id, (q) => ({ ...q, ...mergeDrive(q, fields) }));
+    navigate(quizHash(existing.id, "edit"));
+    return;
+  }
+  const quiz = createQuiz({ title: fields.drive.folderName, ...fields, settings: { language: lang } });
+  await saveQuiz(quiz);
+  requestPersistence();
+  navigate(quizHash(quiz.id, "edit"));
+}
+
+// The page a shared quiz link (#/drive/<folder id>) opens: an invitation over everything that asks to
+// sign in with Google, then opens the quiz by itself. A browser that already has the quiz goes straight to it.
+function InviteScreen({ folder, account, quizzes, lang, t }) {
+  const [phase, setPhase] = useState("signin"); // "signin" | "opening" | "error"
+  const [error, setError] = useState(null);
+  const [signingIn, setSigningIn] = useState(false);
+  const started = useRef(false);
+
+  const open = async () => {
+    started.current = true;
+    setPhase("opening");
+    setError(null);
+    try {
+      await openDriveQuiz(folderUrl(folder), quizzes || [], lang);
+    } catch (err) {
+      setError(driveErrorText(err, t, account.user?.email));
+      setPhase("error");
+    }
+  };
+
+  useEffect(() => {
+    if (!quizzes || started.current) return;
+    const existing = quizzes.find((q) => q.drive?.folderId === folder);
+    if (!existing && !account.signedIn) return;
+    const timer = setTimeout(() => {
+      started.current = true;
+      if (existing) navigate(quizHash(existing.id, "edit"));
+      else open();
+    });
+    return () => clearTimeout(timer);
+  }, [quizzes, account.signedIn, folder]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const signInWith = async (chooseAccount) => {
+    setSigningIn(true);
+    setError(null);
+    try {
+      await account.signIn({ chooseAccount });
+      if (phase === "error") open(); // after picking another account; the first sign-in opens by itself
+    } catch (err) {
+      const text = driveErrorText(err, t, account.user?.email);
+      if (text) { setError(text); setPhase("error"); }
+    }
+    setSigningIn(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 font-sans">
+      <div className="w-full max-w-md rounded-3xl bg-[#0f0f0f] border border-white/10 shadow-2xl p-8 space-y-6 text-center">
+        <div className="mx-auto w-16 h-16 rounded-2xl bg-yellow-500/15 text-yellow-400 flex items-center justify-center"><MailOpen size={32} /></div>
+        <div className="space-y-2">
+          <h2 className="font-['League_Spartan'] text-3xl font-black uppercase tracking-wide">{t.inv_title}</h2>
+          <p className="text-gray-300">{phase === "opening" ? t.inv_opening_text : t.inv_text}</p>
+        </div>
+
+        {phase === "opening" && (
+          <div className="flex items-center justify-center gap-3 text-gray-300"><Loader2 className="animate-spin" /> {t.inv_opening}</div>
+        )}
+
+        {phase === "signin" && (
+          <button onClick={() => signInWith(false)} disabled={signingIn}
+            className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white hover:bg-gray-200 text-black text-lg font-bold disabled:opacity-60">
+            {signingIn ? <Loader2 className="animate-spin" /> : <LogIn size={22} />} {t.gd_sign_in}
+          </button>
+        )}
+
+        {phase === "error" && (
+          <div className="space-y-4 text-left">
+            <Status status={{ ok: false, text: error }} />
+            {account.user && <p className="text-sm text-gray-400">{fmt(t.inv_signed_as, { email: account.user.email })}</p>}
+            <div className="flex flex-col gap-2">
+              <button onClick={() => signInWith(true)} disabled={signingIn}
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-gray-200 text-black font-bold disabled:opacity-60">
+                {signingIn ? <Loader2 size={18} className="animate-spin" /> : <LogIn size={18} />} {t.inv_other_account}
+              </button>
+              {account.signedIn && <button onClick={open} className={btnCls}><RefreshCw size={16} /> {t.inv_retry}</button>}
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-3 pt-2 border-t border-white/5">
+          <p className="text-xs text-gray-500">{t.inv_note}</p>
+          <a href="#/" className="inline-block text-sm text-gray-400 hover:text-white">{t.inv_close}</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DriveOpen({ account, quizzes: loaded, lang, t }) {
   const quizzes = loaded || [];
   const [mode, setMode] = useState("open"); // "open" an existing folder, or "create" a new one
-  const [link, setLink] = useState(folder ? folderUrl(folder) : "");
+  const [link, setLink] = useState("");
   const [title, setTitle] = useState("");
   const [parent, setParent] = useState("");
   const [busy, setBusy] = useState(false);
@@ -226,36 +331,12 @@ function DriveOpen({ account, quizzes: loaded, lang, folder, t }) {
     setBusy(true);
     setError(null);
     try {
-      const fields = await readDriveQuiz(folderLink);
-      const existing = quizzes.find((q) => sameDriveQuiz(q.drive, fields.drive));
-      if (existing) {
-        await updateQuiz(existing.id, (q) => ({ ...q, ...mergeDrive(q, fields) }));
-        navigate(quizHash(existing.id, "edit"));
-      } else {
-        const quiz = createQuiz({ title: fields.drive.folderName, ...fields, settings: { language: lang } });
-        await saveQuiz(quiz);
-        requestPersistence();
-        navigate(quizHash(quiz.id, "edit"));
-      }
+      await openDriveQuiz(folderLink, quizzes, lang);
     } catch (err) {
       setError(driveErrorText(err, t, account.user?.email));
       setBusy(false);
     }
   };
-
-  // A shared link: this browser's copy when there is one (its setup page syncs), else open it once signed in
-  const autoOpened = useRef(false);
-  useEffect(() => {
-    if (!folder || !loaded || autoOpened.current) return;
-    const existing = loaded.find((q) => q.drive?.folderId === folder);
-    if (!existing && !account.signedIn) return;
-    const timer = setTimeout(() => {
-      autoOpened.current = true;
-      if (existing) navigate(quizHash(existing.id, "edit"));
-      else open(folderUrl(folder));
-    });
-    return () => clearTimeout(timer);
-  }, [folder, loaded, account.signedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const create = async () => {
     setBusy(true);
