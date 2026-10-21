@@ -6,7 +6,8 @@ import { HELP } from "../data/help";
 import { QuizContext } from "../quiz/context";
 import { listMedia, updateQuiz } from "../quiz/storage";
 import { rowsToCsv } from "../quiz/sheets";
-import { driveErrorText, sheetUrl } from "../quiz/drive";
+import { driveErrorText, sheetUrl, ensureMediaFolder, uploadMedia } from "../quiz/drive";
+import { mediaKey } from "../quiz/model";
 import { loadQuestionSheet, canEditSheet, commitEdit, ConflictError } from "../quiz/sheetEdit";
 import {
   draftFrom, emptyDraft, previewQuestion, planSave, planAdd, planDelete, planRename, planAddRound,
@@ -75,6 +76,8 @@ function EditorView({ bundle, lang, t }) {
   const [loadError, setLoadError] = useState(null);
   const [canEdit, setCanEdit] = useState(true);
   const [mediaNames, setMediaNames] = useState([]);
+  const [uploaded, setUploaded] = useState(() => new Map()); // mediaKey -> object URL of files uploaded here
+  const mediaFolder = useRef(quiz.drive.mediaFolderId ? { id: quiz.drive.mediaFolderId, name: quiz.drive.mediaFolderName } : null);
 
   // selection: { kind: "edit", ri, qi, rows } | { kind: "add", ri, marker } | { kind: "round" }
   const [selection, setSelection] = useState(null);
@@ -134,6 +137,39 @@ function EditorView({ bundle, lang, t }) {
   useEffect(() => {
     listMedia(quiz.id).then((list) => setMediaNames(list.map((m) => m.name).sort()));
   }, [quiz.id]);
+  const uploadedRef = useRef(uploaded);
+  useEffect(() => { uploadedRef.current = uploaded; }, [uploaded]);
+  useEffect(() => () => uploadedRef.current.forEach((url) => URL.revokeObjectURL(url)), []);
+
+  // Files uploaded on this page count as present, and the preview shows them, without reloading
+  const hasMediaLive = useCallback((name) => uploaded.has(mediaKey(name)) || hasMedia(name), [uploaded, hasMedia]);
+  const resolveLive = useCallback((name) => (name && uploaded.get(mediaKey(name))) || resolveMedia(name), [uploaded, resolveMedia]);
+
+  // Into the media folder (created as Zdroje when the quiz has none); see MediaInput
+  const upload = async (file, folder, onProgress) => {
+    try {
+      if (!mediaFolder.current) {
+        mediaFolder.current = await ensureMediaFolder(quiz.drive);
+        const { id: mediaFolderId, name: mediaFolderName } = mediaFolder.current;
+        updateQuiz(quiz.id, (q) => ({ ...q, drive: { ...q.drive, mediaFolderId, mediaFolderName } }));
+      }
+      const path = await uploadMedia(quiz.id, mediaFolder.current.id, folder ? `${folder}/${file.name}` : file.name, file, {
+        onProgress,
+        confirmReplace: (p) => window.confirm(fmt(t.qe_upload_replace, { file: p })),
+      });
+      if (!path) return null;
+      setUploaded((m) => {
+        const next = new Map(m);
+        if (next.has(mediaKey(path))) URL.revokeObjectURL(next.get(mediaKey(path)));
+        next.set(mediaKey(path), URL.createObjectURL(file));
+        return next;
+      });
+      setMediaNames((names) => [...new Set([...names, path])].sort());
+      return { path };
+    } catch (err) {
+      return { error: errorText(err) };
+    }
+  };
 
   // What each type looks like, from the help page's type table
   const typeHelp = useMemo(() => {
@@ -286,9 +322,13 @@ function EditorView({ bundle, lang, t }) {
     return { id: "editor", number: selectedRound?.number ?? "", title: selection?.kind === "round" ? roundTitle : selectedRound?.title ?? "", questions: [{ ...question, id: number ?? question.id }] };
   }, [draft, selection, rounds, selectedRound, roundTitle]);
   const issues = useMemo(() => (previewRound
-    ? validateQuiz({ teams: [], scoresSheetUrl: "-" }, [previewRound], hasMedia).filter((i) => i.qIndex === 0 && i.code !== "duplicate_number")
-    : []), [previewRound, hasMedia]);
-  const context = useMemo(() => ({ quiz, rounds: previewRound ? [previewRound] : [], teams: [], resolveMedia }), [quiz, previewRound, resolveMedia]);
+    ? validateQuiz({ teams: [], scoresSheetUrl: "-" }, [previewRound], hasMediaLive).filter((i) => i.qIndex === 0 && i.code !== "duplicate_number")
+    : []), [previewRound, hasMediaLive]);
+  const context = useMemo(() => ({ quiz, rounds: previewRound ? [previewRound] : [], teams: [], resolveMedia: resolveLive }), [quiz, previewRound, resolveLive]);
+
+  // PImage and PVideo show their media alone first
+  const hasMediaStep = draft?.type === "PImage" || draft?.type === "PVideo";
+  const shownView = view === "media" && !hasMediaStep ? "question" : view;
 
   const answerText = (q) => (q.type === "Sort" ? q.items.map((it) => it.letter).join(" ") : [q.answer].flat().filter(Boolean).join(", "));
   const label = (block) => block.question.text?.trim() || block.question.media || block.question.items?.map((it) => it.text).filter(Boolean).join(", ") || "—";
@@ -432,16 +472,16 @@ function EditorView({ bundle, lang, t }) {
                           <input value={roundTitle} onChange={(e) => { setRoundTitle(e.target.value); setDirty(true); }} className={inputCls} autoFocus />
                         </label>
                       )}
-                      <QuestionForm draft={draft} onChange={change} mediaNames={mediaNames} hasMedia={hasMedia} typeHelp={typeHelp} disabled={!canEdit || Boolean(busy)} t={t} />
+                      <QuestionForm draft={draft} onChange={change} mediaNames={mediaNames} hasMedia={hasMediaLive} upload={canEdit ? upload : null} typeHelp={typeHelp} disabled={!canEdit || Boolean(busy)} t={t} />
                     </div>
 
                     <div className="space-y-3 min-w-0 2xl:sticky 2xl:top-24">
                       <div className="flex items-center gap-3">
                         <span className="text-xs font-bold uppercase tracking-wider text-gray-400 mr-auto">{t.qe_preview}</span>
                         <div className="flex gap-1 bg-white/5 rounded-xl p-1 text-sm">
-                          {["question", "answer"].map((v) => (
-                            <button key={v} onClick={() => setView(v)} className={`px-3 py-1 rounded-lg ${view === v ? "bg-yellow-500 text-black font-bold" : "text-gray-400 hover:text-white"}`}>
-                              {v === "question" ? t.chk_view_question : t.chk_view_answer}
+                          {(hasMediaStep ? ["media", "question", "answer"] : ["question", "answer"]).map((v) => (
+                            <button key={v} onClick={() => setView(v)} className={`px-3 py-1 rounded-lg ${shownView === v ? "bg-yellow-500 text-black font-bold" : "text-gray-400 hover:text-white"}`}>
+                              {v === "media" ? t.qe_view_media : v === "question" ? t.chk_view_question : t.chk_view_answer}
                             </button>
                           ))}
                         </div>
@@ -451,8 +491,8 @@ function EditorView({ bundle, lang, t }) {
                           <StageFrame display={display} className="rounded-xl ring-1 ring-white/15 pointer-events-none">
                             <PreviewBoundary resetKey={JSON.stringify(draft)}>
                               {previewRound && (
-                                <QuestionScreen key={`${draft.type}-${view}`} roundData={previewRound} mode="with_answers" onBack={() => {}} isPresenter={false} t={showT}
-                                  preview={{ qIndex: 0, step: previewStep(draft.type, view) }} />
+                                <QuestionScreen key={`${draft.type}-${shownView}`} roundData={previewRound} mode="with_answers" onBack={() => {}} isPresenter={false} t={showT}
+                                  preview={{ qIndex: 0, step: shownView === "media" ? 1 : previewStep(draft.type, shownView) }} />
                               )}
                             </PreviewBoundary>
                           </StageFrame>
