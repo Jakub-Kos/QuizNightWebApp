@@ -4,12 +4,34 @@ import Papa from "papaparse";
 // 0 round marker ("Kolo N - Title" or "Round N - Title"), 1 Q#, 2 text, 3 type, 4-7 options A-D, 8 answer, 9 media file
 
 // Word that starts a round marker, and that marks a round column in a scores sheet
-const ROUND_WORD = /^(kolo|round)\b/i;
+export const ROUND_WORD = /^(kolo|round)\b/i;
 const ROUND_COLUMN = /kolo|round/i;
 const TEAM_COLUMN = /název týmu|team name/i;
 export function parseQuestionsCsv(text) {
   const rows = Papa.parse(text || "", { header: false, skipEmptyLines: false }).data;
   return groupRounds(rows).map((round) => ({ ...round, questions: buildQuestions(round.rows) }));
+}
+
+// "Kolo 3 - Title" in column 0; the header row ("Kolo,Q#,..." / "Round,Q#,...") also starts with the word,
+// its Q# cell tells it apart
+export const isRoundMarker = (col0, col1) => ROUND_WORD.test(col0) && col1.toLowerCase() !== "q#";
+
+// "Kolo 3 - Title" -> { word: "Kolo", number: "3", title: "Title" }
+export function splitMarker(marker) {
+  const parts = marker.split("-");
+  return {
+    word: marker.match(ROUND_WORD)?.[0] ?? "",
+    number: parts[0].replace(ROUND_WORD, "").trim(),
+    title: parts.slice(1).join("-").trim(),
+  };
+}
+
+// A numeric Q# keeps the header row ("Q#") out; rows without text, media or answer are skipped
+// (an answer alone is a further Top5 or Sort row)
+export function isQuestionRow(row) {
+  const col1 = row[1] ? String(row[1]).trim() : "";
+  if (!col1 || isNaN(col1)) return false;
+  return [2, 9, 8].some((i) => row[i] && String(row[i]).trim() !== "");
 }
 
 function groupRounds(rows) {
@@ -20,33 +42,21 @@ function groupRounds(rows) {
     const col0 = row[0] ? String(row[0]).trim() : "";
     const col1 = row[1] ? String(row[1]).trim() : "";
 
-    // The header row ("Kolo,Q#,..." / "Round,Q#,...") also starts with the word; its Q# cell tells it apart
-    if (ROUND_WORD.test(col0) && col1.toLowerCase() !== "q#") {
+    if (isRoundMarker(col0, col1)) {
       if (current) rounds.push(current);
-      const parts = col0.split("-");
-      current = {
-        id: `round-${rounds.length + 1}`,
-        number: parts[0].replace(ROUND_WORD, "").trim(),
-        title: parts.slice(1).join("-").trim(),
-        rows: [],
-      };
+      const { number, title } = splitMarker(col0);
+      current = { id: `round-${rounds.length + 1}`, number, title, rows: [] };
     }
 
-    // A numeric Q# keeps the header row ("Q#") out
-    if (current && col1 && !isNaN(col1)) {
-      const hasText = row[2] && String(row[2]).trim() !== "";
-      const hasMedia = row[9] && String(row[9]).trim() !== "";
-      const hasAnswer = row[8] && String(row[8]).trim() !== "";
-      // hasAnswer lets the secondary Top5 rows through
-      if (hasText || hasMedia || hasAnswer) current.rows.push(row);
-    }
+    if (current && isQuestionRow(row)) current.rows.push(row);
   });
 
   if (current) rounds.push(current);
   return rounds;
 }
 
-function buildQuestions(rows) {
+// Rows of one round -> its questions (Top5 and Sort take the rows that follow them)
+export function buildQuestions(rows) {
   const qs = [];
   let i = 0;
 

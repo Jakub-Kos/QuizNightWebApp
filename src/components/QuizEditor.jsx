@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle, HardDrive, FolderOpen, FileSpreadsheet } from "lucide-react";
+import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle, HardDrive, FolderOpen, FileSpreadsheet, ListChecks } from "lucide-react";
 import { getQuiz, updateQuiz, listMedia, putMedia, deleteMedia } from "../quiz/storage";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
 import { fetchSheetCsv, sheetErrorText } from "../quiz/sheets";
@@ -230,7 +230,10 @@ export default function QuizEditor({ id, t }) {
               </li>
             </ul>
             <div className="flex flex-wrap items-center gap-3">
-              <button onClick={syncDrive} disabled={!google.signedIn || busy === "drive"} className={`${btnCls} bg-yellow-500 hover:bg-yellow-400 text-black font-bold`}>
+              <a href={quizHash(quiz.id, "questions")} className={`${btnCls} bg-yellow-500 hover:bg-yellow-400 text-black font-bold`}>
+                <ListChecks size={16} /> {t.qe_open}
+              </a>
+              <button onClick={syncDrive} disabled={!google.signedIn || busy === "drive"} className={btnCls}>
                 {busy === "drive" ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
                 {busy === "drive" ? t.gd_syncing : t.gd_sync}
               </button>
