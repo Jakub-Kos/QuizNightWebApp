@@ -10,8 +10,6 @@ export const COLUMNS = 12;
 export const AUTHOR_COL = 10;
 export const CHANGED_COL = 11;
 
-export const TYPES = ["Written", "Numeric", "ABCD", "Yes/No", "Image", "PImage", "Video", "PVideo", "Audio", "Top5", "Sort", "Handout"];
-
 const cell = (row, i) => String(row?.[i] ?? "").trim();
 const pad = (row) => Array.from({ length: COLUMNS }, (_, i) => String(row?.[i] ?? ""));
 

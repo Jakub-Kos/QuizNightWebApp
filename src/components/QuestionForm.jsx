@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Plus, X, Shuffle, AlertTriangle, Upload, Loader2 } from "lucide-react";
-import { TYPES, withLetters } from "../quiz/sheetModel";
+import { withLetters } from "../quiz/sheetModel";
+import QuestionTypePicker from "./QuestionTypePicker";
 import { MAX_SORT_ITEMS } from "../quiz/sort";
 import { isUrl } from "../quiz/model";
 import { inputCls } from "./EditorParts";
@@ -68,8 +69,9 @@ function MediaInput({ value, onChange, hasMedia, placeholder, accept, upload, t 
 
 const acceptFor = (type) => (type === "Audio" ? "audio/*" : type.includes("Video") ? "video/*" : "image/*");
 
-// The fields of one question, depending on its type. typeHelp: { [type]: "what it looks like" }
-export default function QuestionForm({ draft, onChange, mediaNames, hasMedia, upload, typeHelp, disabled, t }) {
+// The fields of one question, depending on its type. view / onView: the preview step shown next to
+// the form, which the type picker's "how it plays" steps switch; isNew: a question being added
+export default function QuestionForm({ draft, onChange, mediaNames, hasMedia, upload, view, onView, isNew, disabled, t }) {
   const { type } = draft;
   // Updates apply to the latest draft: an upload can finish after other fields changed
   const update = (fn) => onChange((d) => ({ ...d, ...fn(d) }));
@@ -86,15 +88,7 @@ export default function QuestionForm({ draft, onChange, mediaNames, hasMedia, up
 
       <div>
         <Label>{t.qe_type}</Label>
-        <div className="flex flex-wrap gap-1.5">
-          {TYPES.map((name) => (
-            <button key={name} type="button" onClick={() => set({ type: name })}
-              className={`px-3 py-1.5 rounded-lg text-sm ${type === name ? "bg-yellow-500 text-black font-bold" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}>
-              {name}
-            </button>
-          ))}
-        </div>
-        {typeHelp[type] && <p className="text-xs text-gray-500 mt-2">{typeHelp[type]}</p>}
+        <QuestionTypePicker type={type} onChange={(next) => set({ type: next })} view={view} onView={onView} open={isNew} t={t} />
       </div>
 
       <label className="block">
