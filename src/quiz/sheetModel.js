@@ -179,14 +179,28 @@ export function planSave(sheet, ri, qi, draft, meta) {
   return finish(sheet, ri, { start: block.start, deleteCount: block.end - block.start + 1, insert: rows }, meta);
 }
 
+// A row the template prepared for a question: nothing in it but a Q# (and the round marker on a round's
+// first row)
+const isPrepared = (row, isMarkerRow) =>
+  [2, 3, 4, 5, 6, 7, 8, 9, AUTHOR_COL, CHANGED_COL].every((i) => !cell(row, i)) && (isMarkerRow || !cell(row, 0));
+
+// A new question goes into the first prepared rows after the round's last question (the round's own
+// first row when it is still empty); rows are inserted only when the round has no prepared rows left
 export function planAdd(sheet, ri, draft, meta) {
   const round = sheet.rounds[ri];
   const last = round.questions.at(-1);
   const rows = stamped(rowsFor(draft, last ? Number(cell(sheet.rows[last.end], 1)) + 1 : 1), meta.author, meta.changed);
-  if (last) return finish(sheet, ri, { start: last.end + 1, deleteCount: 0, insert: rows }, meta);
-  // An empty round: the first question goes into the marker row
-  rows[0][0] = round.marker;
-  return finish(sheet, ri, { start: round.markerRow, deleteCount: 1, insert: rows }, meta);
+  const after = last ? last.end + 1 : round.markerRow;
+  const end = sheet.rounds[ri + 1]?.markerRow ?? sheet.rows.length;
+  const prepared = (r) => r < end && isPrepared(sheet.rows[r], r === round.markerRow);
+
+  let start = after;
+  while (start < end && !prepared(start)) start++;
+  if (start >= end) start = after;
+  let free = 0;
+  while (free < rows.length && prepared(start + free)) free++;
+  if (start === round.markerRow) rows[0][0] = round.marker;
+  return finish(sheet, ri, { start, deleteCount: free, insert: rows }, meta);
 }
 
 export function planDelete(sheet, ri, qi, meta) {
