@@ -2,7 +2,6 @@ import { Component, useState, useEffect, useMemo, useCallback, useRef } from "re
 import { MotionConfig } from "framer-motion";
 import { ArrowLeft, Plus, Pencil, Trash2, Save, Loader2, RefreshCw, FileSpreadsheet, AlertTriangle, CheckCircle2, X, Lock, ChevronUp, ChevronDown, History } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
-import { HELP } from "../data/help";
 import { QuizContext } from "../quiz/context";
 import { listMedia, updateQuiz } from "../quiz/storage";
 import { rowsToCsv } from "../quiz/sheets";
@@ -181,12 +180,6 @@ function EditorView({ bundle, lang, t }) {
       return { error: errorText(err) };
     }
   };
-
-  // What each type looks like, from the help page's type table
-  const typeHelp = useMemo(() => {
-    const table = (HELP[lang] || HELP.en).sections.find((s) => s.id === "types")?.table;
-    return Object.fromEntries((table?.rows || []).map(([type, onScreen]) => [type.replace(/`/g, ""), onScreen.replace(/`/g, "")]));
-  }, [lang]);
 
   const rounds = useMemo(() => data?.sheet.rounds ?? [], [data]);
 
@@ -579,7 +572,7 @@ function EditorView({ bundle, lang, t }) {
                           <input value={roundTitle} onChange={(e) => { setRoundTitle(e.target.value); setDirty(true); }} className={inputCls} autoFocus />
                         </label>
                       )}
-                      <QuestionForm draft={draft} onChange={change} mediaNames={mediaNames} hasMedia={hasMediaLive} upload={canEdit ? upload : null} typeHelp={typeHelp} disabled={!canEdit || Boolean(busy)} t={t} />
+                      <QuestionForm key={`${selection.kind}-${selection.ri ?? ""}-${selection.qi ?? ""}`} draft={draft} onChange={change} mediaNames={mediaNames} hasMedia={hasMediaLive} upload={canEdit ? upload : null} view={shownView} onView={setView} isNew={selection.kind !== "edit"} disabled={!canEdit || Boolean(busy)} t={t} />
                     </div>
 
                     <div className="space-y-3 min-w-0 2xl:sticky 2xl:top-24">
