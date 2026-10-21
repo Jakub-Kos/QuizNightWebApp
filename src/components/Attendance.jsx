@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Check, X, Users, MapPin, Camera, Plus, CircleHelp } from "lucide-react";
-import { getQuiz, updateQuiz } from "../quiz/storage";
+import { getQuiz, updateQuiz, onQuizSaved } from "../quiz/storage";
+import { syncDriveConfig } from "../quiz/driveConfig";
 import { TEAM_COLORS, TEAM_ICONS } from "../quiz/model";
 import { newTeam, saveTeamImage, isPresent, directionText } from "../quiz/teams";
 import { fmt } from "../quiz/files";
@@ -24,6 +25,17 @@ export default function Attendance({ id, t }) {
 
   useEffect(() => { getQuiz(id).then((q) => setQuiz(q ?? null)); }, [id]);
 
+  // A Drive quiz: start from the teams on Drive, and take in later syncs unless there are unsaved edits
+  useEffect(() => {
+    syncDriveConfig(id).then(() => reload()).catch(() => {});
+    return onQuizSaved((saved, source) => {
+      if (source === "drive" && saved.id === id && !dirty.current) setQuiz(saved);
+    });
+  }, [id, reload]);
+  // Team names of a Drive quiz come from its scores tab; a team added here is a draft until named
+  const fromSheet = Boolean(quiz?.drive?.scoresTab);
+  const confirmName = (team) => { if (team.draft && team.name.trim()) updateTeam(team.id, { draft: undefined }); };
+
   // Only teams and the field of view are written, so the setup page and score entry keep their changes
   useEffect(() => {
     if (!dirty.current) return;
@@ -44,7 +56,7 @@ export default function Attendance({ id, t }) {
   // A team that has a seat is in the room
   const setSeat = (teamId, seat) => { updateTeam(teamId, { seat, present: true }); setPlacing(null); };
   const addTeam = () => {
-    const team = newTeam({ present: true, color: TEAM_COLORS[quiz.teams.length % TEAM_COLORS.length] });
+    const team = newTeam({ present: true, color: TEAM_COLORS[quiz.teams.length % TEAM_COLORS.length], ...(fromSheet && { draft: true }) });
     change((q) => ({ ...q, teams: [...q.teams, team] }));
   };
 
@@ -117,7 +129,10 @@ export default function Attendance({ id, t }) {
                 </button>
                 <div className="flex-1 min-w-[180px] space-y-2">
                   <div className="flex gap-2">
-                    <input value={team.name} onChange={(e) => updateTeam(team.id, { name: e.target.value })} placeholder={t.tm_name} className={`${fieldCls} flex-1 min-w-0 font-bold`} />
+                    <input value={team.name} onChange={(e) => updateTeam(team.id, { name: e.target.value })} placeholder={t.tm_name}
+                      readOnly={fromSheet && !team.draft} autoFocus={Boolean(team.draft)}
+                      onBlur={() => confirmName(team)} onKeyDown={(e) => e.key === "Enter" && confirmName(team)}
+                      className={fromSheet && !team.draft ? "flex-1 min-w-0 bg-transparent px-1 py-2 text-sm font-bold text-white focus:outline-none cursor-default" : `${fieldCls} flex-1 min-w-0 font-bold`} />
                     <label className="flex items-center gap-1 text-xs text-gray-400" title={t.tm_players}>
                       <Users size={14} />
                       <input type="number" min="0" value={team.players || ""} onChange={(e) => updateTeam(team.id, { players: parseInt(e.target.value) || 0 })} className={`${fieldCls} w-16`} />

@@ -2,6 +2,7 @@ import { Brain, Rocket, Zap, Crown, Flame, Shield, Beer, Glasses, Gavel, Microsc
 import { DEMO_TEAMS } from "./demoTeams";
 import { getQuiz, listMedia } from "./storage";
 import { fetchSheetCsv } from "./sheets";
+import { syncDriveConfig } from "./driveConfig";
 import { uniqueInitials } from "./initials";
 
 // Teams store the icon by name so they can live in IndexedDB and zip files
@@ -100,8 +101,13 @@ export async function loadQuizBundle(id) {
     };
   }
 
-  const quiz = await getQuiz(id);
+  let quiz = await getQuiz(id);
   if (!quiz) return null;
+
+  // A Drive quiz: setup and teams as they are in its folder now (offline: the last synced copy)
+  if (quiz.drive?.folderId) {
+    try { quiz = (await syncDriveConfig(id)) ?? quiz; } catch { /* keep the local copy */ }
+  }
 
   // Pull the latest questions from a linked Sheet; fall back to the cached copy when offline
   if (quiz.questionsSheetUrl) {

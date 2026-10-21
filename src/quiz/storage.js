@@ -52,20 +52,35 @@ export const listQuizzes = () =>
 export const getQuiz = (id) =>
   tx(["quizzes"], "readonly", (t) => promisify(t.objectStore("quizzes").get(id)));
 
-export const saveQuiz = (quiz) =>
-  tx(["quizzes"], "readwrite", (t) => promisify(t.objectStore("quizzes").put({ ...quiz, updatedAt: Date.now() })));
+// fn(quiz, source) after every save in this window; source is what the caller passed (e.g. "drive"
+// for changes pulled from Google Drive), so a listener can tell its own writes apart
+const saveListeners = new Set();
+export function onQuizSaved(fn) {
+  saveListeners.add(fn);
+  return () => saveListeners.delete(fn);
+}
+const notify = (quiz, source) => saveListeners.forEach((fn) => fn(quiz, source));
+
+export const saveQuiz = async (quiz, source) => {
+  const next = { ...quiz, updatedAt: Date.now() };
+  await tx(["quizzes"], "readwrite", (t) => promisify(t.objectStore("quizzes").put(next)));
+  notify(next, source);
+};
 
 // Read-modify-write in one transaction, so windows editing different fields of the same quiz
 // (show settings, setup page, score entry) do not overwrite each other's changes
-export const updateQuiz = (id, change) =>
-  tx(["quizzes"], "readwrite", async (t) => {
+export const updateQuiz = async (id, change, source) => {
+  const next = await tx(["quizzes"], "readwrite", async (t) => {
     const store = t.objectStore("quizzes");
     const quiz = await promisify(store.get(id));
     if (!quiz) return null;
-    const next = { ...change(quiz), updatedAt: Date.now() };
-    store.put(next);
-    return next;
+    const changed = { ...change(quiz), updatedAt: Date.now() };
+    store.put(changed);
+    return changed;
   });
+  if (next) notify(next, source);
+  return next;
+};
 
 export const deleteQuiz = (id) =>
   tx(["quizzes", "media"], "readwrite", async (t) => {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle, HardDrive, FolderOpen, FileSpreadsheet, ListChecks } from "lucide-react";
-import { getQuiz, updateQuiz, listMedia, putMedia, deleteMedia } from "../quiz/storage";
+import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle, HardDrive, FolderOpen, FileSpreadsheet, ListChecks, Copy, Check } from "lucide-react";
+import { getQuiz, updateQuiz, listMedia, putMedia, deleteMedia, onQuizSaved } from "../quiz/storage";
+import { syncDriveConfig } from "../quiz/driveConfig";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
 import { fetchSheetCsv, sheetErrorText } from "../quiz/sheets";
 import { referencedMedia, isMediaFile } from "../quiz/package";
@@ -39,6 +40,12 @@ export default function QuizEditor({ id, t }) {
     });
   }, [id]);
 
+  // What a Drive sync brought in (setup and teams from the folder) replaces the copy shown here,
+  // unless there are edits of our own still waiting to be saved
+  useEffect(() => onQuizSaved((saved, source) => {
+    if (source === "drive" && saved.id === id && !dirty.current) setQuiz(saved);
+  }), [id]);
+
   // Object URLs for thumbnails; the ref lets them be revoked on reload and unmount
   const mediaUrls = useRef([]);
   const fetchMedia = async () => {
@@ -55,9 +62,9 @@ export default function QuizEditor({ id, t }) {
   // Autosave every change shortly after it happens
   useEffect(() => {
     if (!dirty.current) return;
-    // Only the fields edited here; settings and scores are saved by other windows
-    const { title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes, drive } = quiz;
-    const timer = setTimeout(() => updateQuiz(quiz.id, (q) => ({ ...q, title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes, drive })).then(() => {
+    // Only the fields edited here; settings and scores are saved by other windows, the Drive link by syncs
+    const { title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes } = quiz;
+    const timer = setTimeout(() => updateQuiz(quiz.id, (q) => ({ ...q, title, questionsCsv, questionsSheetUrl, scoresSheetUrl, teams, rules, prizes })).then(() => {
       dirty.current = false;
       setSaveState("saved");
     }), 400);
@@ -98,9 +105,12 @@ export default function QuizEditor({ id, t }) {
     setBusy("drive");
     setDriveStatus(null);
     try {
+      // Questions and tabs, then the setup and teams, then the media
       const fields = await readDriveQuiz(quiz.drive.folderId || quiz.drive.spreadsheetId);
-      const result = await syncDriveMedia(quiz.id, fields.drive.mediaFolderId, setDriveProgress);
-      update(mergeDrive(quiz, fields, { syncedAt: Date.now(), syncedBy: google.user?.name || "" }));
+      await updateQuiz(id, (q) => ({ ...q, ...mergeDrive(q, fields) }), "drive");
+      await syncDriveConfig(id);
+      const result = await syncDriveMedia(id, fields.drive.mediaFolderId, setDriveProgress);
+      await updateQuiz(id, (q) => ({ ...q, drive: { ...q.drive, syncedAt: Date.now(), syncedBy: google.user?.name || "" } }), "drive");
       await reloadMedia();
       const text = [
         fmt(t.gd_result, result),
@@ -114,10 +124,10 @@ export default function QuizEditor({ id, t }) {
     setBusy(null);
   };
 
-  // A quiz just opened from Drive has no media yet
+  // Every visit starts from what is on Drive now (only changed media is downloaded)
   const autoSynced = useRef(false);
   useEffect(() => {
-    if (!quiz?.drive || quiz.drive.syncedAt || !google.signedIn || autoSynced.current) return;
+    if (!quiz?.drive || !google.signedIn || autoSynced.current) return;
     const timer = setTimeout(() => { autoSynced.current = true; syncDrive(); });
     return () => clearTimeout(timer);
   }, [quiz, google.signedIn]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -147,7 +157,7 @@ export default function QuizEditor({ id, t }) {
       let folder = quiz.drive.mediaFolderId ? { id: quiz.drive.mediaFolderId } : null;
       if (!folder) {
         folder = await ensureMediaFolder(quiz.drive);
-        update({ drive: { ...quiz.drive, mediaFolderId: folder.id, mediaFolderName: folder.name } });
+        await updateQuiz(id, (q) => ({ ...q, drive: { ...q.drive, mediaFolderId: folder.id, mediaFolderName: folder.name } }), "drive");
       }
       for (const file of files) {
         const parts = String(file.relativePath || file.webkitRelativePath || file.name).split("/").filter(Boolean);
@@ -267,6 +277,7 @@ export default function QuizEditor({ id, t }) {
                 ) : <span className="text-yellow-300/90">{t.gd_no_media_folder}</span>}
               </li>
             </ul>
+            {quiz.drive.folderId && <ShareLink folderId={quiz.drive.folderId} t={t} />}
             <DrivePeople fileId={quiz.drive.folderId || quiz.drive.spreadsheetId} account={google} t={t} />
             <div className="flex flex-wrap items-center gap-3">
               <a href={quizHash(quiz.id, "questions")} className={`${btnCls} bg-yellow-500 hover:bg-yellow-400 text-black font-bold`}>
@@ -378,7 +389,15 @@ export default function QuizEditor({ id, t }) {
           )}
         </Section>
 
-        <Section title={t.ed_scores} help={t.ed_scores_help} helpId="scores">
+        <Section title={t.ed_scores} help={quiz.drive?.scoresTab ? null : t.ed_scores_help} helpId="scores">
+          {quiz.drive?.scoresTab ? (
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <p className="flex-1 text-sm text-gray-300">{fmt(t.ed_scores_drive, { tab: quiz.drive.scoresTab })}</p>
+              <button onClick={testScores} disabled={busy === "scores"} className={btnCls}>
+                {busy === "scores" ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />} {t.ed_test}
+              </button>
+            </div>
+          ) : (<>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <Link2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -389,6 +408,7 @@ export default function QuizEditor({ id, t }) {
               {busy === "scores" ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />} {t.ed_test}
             </button>
           </div>
+          </>)}
           <Status status={scoresStatus} />
           {!quiz.scoresSheetUrl && (
             <a href={quizHash(quiz.id, "scores")} className={`${btnCls} w-fit`}>
@@ -404,12 +424,33 @@ export default function QuizEditor({ id, t }) {
           mediaUrl={(name) => mediaUrlByKey.get(mediaKey(name))}
           hasMedia={(name) => mediaKeys.has(mediaKey(name))}
           scoresSheetUrl={quiz.scoresSheetUrl}
+          fromSheet={quiz.drive?.scoresTab || null}
           onUploadImage={uploadTeamImage}
           t={t}
         />
 
         <IntroSection quiz={quiz} onChange={update} t={t} />
       </div>
+    </div>
+  );
+}
+
+// The link that opens this quiz for anyone the folder is shared with
+function ShareLink({ folderId, t }) {
+  const [copied, setCopied] = useState(false);
+  const link = `${window.location.origin}${window.location.pathname}#/drive/${folderId}`;
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(link); } catch { /* the field can still be selected */ }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className="space-y-1.5">
+      <div className="flex gap-2">
+        <input readOnly value={link} onFocus={(e) => e.target.select()} className={`${inputCls} py-2.5 text-sm text-gray-300`} />
+        <button onClick={copy} className={btnCls}>{copied ? <Check size={16} /> : <Copy size={16} />} {copied ? t.gd_copied : t.gd_copy_link}</button>
+      </div>
+      <p className="text-xs text-gray-500">{t.gd_share_help}</p>
     </div>
   );
 }

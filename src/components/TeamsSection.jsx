@@ -11,8 +11,9 @@ import { Section, Status, btnCls } from "./EditorParts";
 const fieldCls = "bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-yellow-500/60";
 
 // teams: stored team records; mediaUrl(name) -> thumbnail URL; onUploadImage(team, file) -> stored file name;
-// scoresSheetUrl: the quiz's live scores Sheet, whose team names can be loaded as teams
-export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMedia, scoresSheetUrl, onUploadImage, t }) {
+// scoresSheetUrl: the quiz's live scores Sheet, whose team names can be loaded as teams; fromSheet: the
+// scores tab of a Drive quiz, whose names are the teams (a new team is a draft until its name is confirmed)
+export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMedia, scoresSheetUrl, fromSheet, onUploadImage, t }) {
   const [status, setStatus] = useState(null);
   const [loadingScores, setLoadingScores] = useState(false);
   const teamsCsv = useRef(null);
@@ -22,7 +23,9 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
 
   const updateTeam = (id, fields) => onChange(teams.map((team) => (team.id === id ? { ...team, ...fields } : team)));
   const removeTeam = (id) => onChange(teams.filter((team) => team.id !== id));
-  const addTeam = () => onChange([...teams, newTeam({ color: TEAM_COLORS[teams.length % TEAM_COLORS.length] })]);
+  const addTeam = () => onChange([...teams, newTeam({ color: TEAM_COLORS[teams.length % TEAM_COLORS.length], ...(fromSheet && { draft: true }) })]);
+  const confirmName = (team) => { if (fromSheet && team.draft && team.name.trim()) updateTeam(team.id, { draft: undefined }); };
+  const fixedName = (team) => fromSheet && !team.draft;
   const cycleColor = (team, i) => {
     const current = TEAM_COLORS.indexOf(team.color || TEAM_COLORS[i % TEAM_COLORS.length]);
     updateTeam(team.id, { color: TEAM_COLORS[(current + 1) % TEAM_COLORS.length] });
@@ -86,9 +89,11 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
       helpId="teams"
       actions={(
         <>
-          <button onClick={loadFromScores} disabled={!scoresSheetUrl || loadingScores} title={scoresSheetUrl ? "" : t.tm_from_scores_need} className={btnCls}>
-            {loadingScores ? <Loader2 size={16} className="animate-spin" /> : <Sheet size={16} />} {t.tm_from_scores}
-          </button>
+          {!fromSheet && (
+            <button onClick={loadFromScores} disabled={!scoresSheetUrl || loadingScores} title={scoresSheetUrl ? "" : t.tm_from_scores_need} className={btnCls}>
+              {loadingScores ? <Loader2 size={16} className="animate-spin" /> : <Sheet size={16} />} {t.tm_from_scores}
+            </button>
+          )}
           <button onClick={() => teamsCsv.current.click()} className={btnCls}><Users size={16} /> {t.tm_import}</button>
           <button onClick={() => historyCsv.current.click()} disabled={teams.length === 0} className={btnCls}><History size={16} /> {t.tm_import_history}</button>
         </>
@@ -98,6 +103,7 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
       <input ref={historyCsv} type="file" accept=".csv,text/csv" hidden onChange={onHistoryCsv} />
       <input ref={photoInput} type="file" accept="image/*" hidden onChange={onPhoto} />
       <Status status={status} />
+      {fromSheet && <p className="flex items-start gap-2 text-sm text-gray-400"><Sheet size={16} className="shrink-0 mt-0.5" /> {fmt(t.tm_from_sheet, { tab: fromSheet })}</p>}
 
       {teams.length === 0 && <p className="text-sm text-gray-500">{t.tm_empty}</p>}
 
@@ -117,7 +123,11 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
               <div className="flex-1 min-w-[200px] space-y-2">
                 <div className="flex gap-2">
                   <input value={team.name} onChange={(e) => updateTeam(team.id, { name: e.target.value })} placeholder={t.tm_name}
-                    className={`${fieldCls} flex-1 font-bold ${duplicate || !team.name.trim() ? "border-red-500/60" : ""}`} />
+                    readOnly={fixedName(team)} title={fixedName(team) ? fmt(t.tm_name_in_sheet, { tab: fromSheet }) : ""} autoFocus={Boolean(team.draft)}
+                    onBlur={() => confirmName(team)} onKeyDown={(e) => e.key === "Enter" && confirmName(team)}
+                    className={fixedName(team)
+                      ? "flex-1 min-w-0 bg-transparent px-1 py-2 text-sm font-bold text-white focus:outline-none cursor-default"
+                      : `${fieldCls} flex-1 font-bold ${duplicate || !team.name.trim() ? "border-red-500/60" : ""}`} />
                   <label className="flex items-center gap-1 text-xs text-gray-400" title={t.tm_players}>
                     <Users size={14} />
                     <input type="number" min="0" value={team.players || ""} onChange={(e) => updateTeam(team.id, { players: parseInt(e.target.value) || 0 })}
@@ -136,9 +146,11 @@ export default function TeamsSection({ quizId, teams, onChange, mediaUrl, hasMed
                 )}
               </div>
               <button onClick={() => cycleColor(team, i)} title={t.tm_color} className={`w-8 h-8 rounded-full bg-gradient-to-br ${color} ring-2 ring-white/10 hover:ring-white/50`} />
-              <button onClick={() => removeTeam(team.id)} title={t.lib_delete} className="p-2 rounded-lg text-gray-500 hover:text-red-300 hover:bg-red-500/20">
-                <Trash2 size={16} />
-              </button>
+              {!fixedName(team) && (
+                <button onClick={() => removeTeam(team.id)} title={t.lib_delete} className="p-2 rounded-lg text-gray-500 hover:text-red-300 hover:bg-red-500/20">
+                  <Trash2 size={16} />
+                </button>
+              )}
             </li>
           );
         })}
