@@ -25,7 +25,7 @@ export class DriveError extends Error {
   }
 }
 
-const toDriveError = (err) => {
+export const toDriveError = (err) => {
   if (err instanceof DriveError) return err;
   if (err instanceof GoogleAuthError) return new DriveError("auth");
   if (err instanceof GoogleApiError && (err.status === 404 || err.status === 403)) return new DriveError("access");
@@ -221,5 +221,6 @@ export function driveErrorText(err, t, email) {
   if (err?.code === "access") return fmt(t.gd_err_access, { email: email || "?" });
   if (err?.code === "no_sheet") return t.gd_err_no_sheet;
   if (err?.code === "auth") return t.gd_err_auth;
+  if (err?.code === "readonly") return t.gd_err_readonly;
   return fmt(t.gd_err_api, { message: err?.message || String(err) });
 }
