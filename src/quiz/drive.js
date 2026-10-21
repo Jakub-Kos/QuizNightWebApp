@@ -17,7 +17,8 @@ const SPREADSHEET = "application/vnd.google-apps.spreadsheet";
 const MEDIA_FOLDER = /^(zdroje?|sources?|media)$/i;
 
 // code: "link" (not a Drive link), "access" (not found or not shared with you), "no_sheet", "auth"
-// (signed out or expired), "api" (anything else; message from Google)
+// (signed out or expired), "readonly" (cannot edit the Sheet), "upload_denied" (cannot add files),
+// "no_folder" (opened from a Sheet whose folder is not shared), "api" (anything else; message from Google)
 export class DriveError extends Error {
   constructor(code, message = code) {
     super(message);
@@ -152,6 +153,87 @@ async function download(file, onBytes) {
   return new Blob(chunks, { type });
 }
 
+const UPLOAD_API = "https://www.googleapis.com/upload/drive/v3/files";
+const quoted = (name) => `'${String(name).replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
+
+async function findChild(parentId, name, isFolder) {
+  const params = new URLSearchParams({
+    q: `${quoted(parentId)} in parents and name = ${quoted(name)} and trashed = false and mimeType ${isFolder ? "=" : "!="} '${FOLDER}'`,
+    fields: "files(id,name)",
+    supportsAllDrives: "true",
+    includeItemsFromAllDrives: "true",
+  });
+  return (await googleJson(`${DRIVE_API}/files?${params}`)).files[0] ?? null;
+}
+
+const createFolder = (parentId, name) => googleJson(`${DRIVE_API}/files?supportsAllDrives=true&fields=id,name`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name, mimeType: FOLDER, parents: [parentId] }),
+});
+
+// The quiz's media folder, created as "Zdroje" next to the Sheet when there is none: { id, name }
+export async function ensureMediaFolder(drive) {
+  try {
+    if (drive.mediaFolderId) return { id: drive.mediaFolderId, name: drive.mediaFolderName };
+    if (!drive.folderId) throw new DriveError("no_folder");
+    return (await findChild(drive.folderId, "Zdroje", true)) ?? (await createFolder(drive.folderId, "Zdroje"));
+  } catch (err) {
+    throw uploadError(err);
+  }
+}
+
+const uploadError = (err) => (err instanceof GoogleApiError && err.status === 403 ? new DriveError("upload_denied") : toDriveError(err));
+
+// The file body in one request; XMLHttpRequest because fetch cannot report upload progress
+function sendFile(sessionUrl, file, type, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", sessionUrl);
+    xhr.setRequestHeader("Content-Type", type);
+    xhr.upload.onprogress = (e) => onProgress?.(e.loaded / (e.total || file.size || 1));
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve(JSON.parse(xhr.responseText));
+      else reject(new GoogleApiError(xhr.status, `HTTP ${xhr.status}`));
+    };
+    xhr.onerror = () => reject(new GoogleApiError(0, "network"));
+    xhr.send(file);
+  });
+}
+
+// Upload a file to `path` in the media folder (e.g. "kolo3/cat.jpg"), creating subfolders on the way,
+// and keep a copy in the browser like a synced file. A file already at that path is replaced only when
+// confirmReplace(path) says so; returns the path, or null when not replaced. onProgress(0..1).
+export async function uploadMedia(quizId, mediaFolderId, path, file, { onProgress, confirmReplace } = {}) {
+  try {
+    const clean = path.split("/").map((s) => s.trim()).filter(Boolean).join("/");
+    const segments = clean.split("/");
+    const name = segments.pop();
+    let parentId = mediaFolderId;
+    for (const segment of segments) parentId = ((await findChild(parentId, segment, true)) ?? (await createFolder(parentId, segment))).id;
+
+    const existing = await findChild(parentId, name, false);
+    if (existing && !(await confirmReplace?.(clean))) return null;
+
+    // A resumable session takes files of any size; replacing keeps the file id (and its sharing)
+    const type = file.type || "application/octet-stream";
+    const query = "uploadType=resumable&supportsAllDrives=true&fields=id,modifiedTime";
+    const init = await googleFetch(existing ? `${UPLOAD_API}/${existing.id}?${query}` : `${UPLOAD_API}?${query}`, {
+      method: existing ? "PATCH" : "POST",
+      headers: { "Content-Type": "application/json; charset=UTF-8", "X-Upload-Content-Type": type, "X-Upload-Content-Length": String(file.size) },
+      body: JSON.stringify(existing ? {} : { name, parents: [parentId] }),
+    });
+    const session = init.headers.get("Location");
+    if (!session) throw new DriveError("api", "no upload session");
+    const uploaded = await sendFile(session, file, type, onProgress);
+
+    await putMedia(quizId, [{ name: clean, blob: file, driveId: uploaded.id, driveModified: uploaded.modifiedTime }]);
+    return clean;
+  } catch (err) {
+    throw uploadError(err);
+  }
+}
+
 // Bring the quiz's stored media in line with the Drive folder: download new and changed files, drop
 // files that left Drive. Files added by hand (team photos) stay, unless Drive now has a file of that name.
 // onProgress({ done, total, bytes, totalBytes }). Returns { downloaded, kept, removed, duplicates }.
@@ -222,5 +304,7 @@ export function driveErrorText(err, t, email) {
   if (err?.code === "no_sheet") return t.gd_err_no_sheet;
   if (err?.code === "auth") return t.gd_err_auth;
   if (err?.code === "readonly") return t.gd_err_readonly;
+  if (err?.code === "upload_denied") return t.gd_err_upload;
+  if (err?.code === "no_folder") return t.gd_err_no_folder;
   return fmt(t.gd_err_api, { message: err?.message || String(err) });
 }

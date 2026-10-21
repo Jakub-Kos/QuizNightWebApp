@@ -1,8 +1,10 @@
-import { Plus, X, Shuffle, AlertTriangle } from "lucide-react";
+import { useRef, useState } from "react";
+import { Plus, X, Shuffle, AlertTriangle, Upload, Loader2 } from "lucide-react";
 import { TYPES, withLetters } from "../quiz/sheetModel";
 import { MAX_SORT_ITEMS } from "../quiz/sort";
 import { isUrl } from "../quiz/model";
 import { inputCls } from "./EditorParts";
+import { fmt } from "../quiz/files";
 
 const smallBtn = "flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-xs disabled:opacity-40";
 const MEDIA_TYPES = ["PImage", "PVideo", "Audio", "Image", "Video"];
@@ -14,24 +16,67 @@ const Label = ({ children, hint }) => (
   </span>
 );
 
-// Zdroj path with suggestions from the synced media, and a note when the file is not there
-function MediaInput({ value, onChange, hasMedia, placeholder, t }) {
+// Zdroj path with suggestions from the synced media, and a note when the file is not there. A file
+// picked or dropped here is uploaded to the media folder: into the subfolder already typed ("kolo3/"),
+// otherwise its top level. upload(file, folder, onProgress) resolves to { path } or { error }, or null.
+function MediaInput({ value, onChange, hasMedia, placeholder, accept, upload, t }) {
+  const picker = useRef(null);
+  const [progress, setProgress] = useState(null); // { name, share } while uploading
+  const [error, setError] = useState(null);
+  const [over, setOver] = useState(false);
   const missing = value.trim() && !isUrl(value) && !hasMedia(value.trim());
+
+  const send = async (file) => {
+    if (!file || !upload) return;
+    const typed = value.trim();
+    const folder = typed.includes("/") ? typed.slice(0, typed.lastIndexOf("/")) : "";
+    setError(null);
+    setProgress({ name: file.name, share: 0 });
+    const result = await upload(file, folder, (share) => setProgress({ name: file.name, share }));
+    setProgress(null);
+    if (result?.path) onChange(result.path);
+    if (result?.error) setError(result.error);
+  };
+
   return (
     <div className="space-y-1">
-      <input value={value} onChange={(e) => onChange(e.target.value)} list="qe-media" placeholder={placeholder || t.qe_media_hint} className={inputCls} />
-      {missing && <p className="flex items-start gap-1.5 text-xs text-yellow-300/90"><AlertTriangle size={14} className="shrink-0 mt-px" /> {t.qe_media_missing}</p>}
+      <div className={`relative rounded-xl ${over ? "ring-2 ring-yellow-500" : ""}`}
+        onDragOver={(e) => { if (upload) { e.preventDefault(); setOver(true); } }}
+        onDragLeave={() => setOver(false)}
+        onDrop={(e) => { e.preventDefault(); setOver(false); send(e.dataTransfer.files[0]); }}>
+        <input value={value} onChange={(e) => onChange(e.target.value)} list="qe-media" placeholder={placeholder || t.qe_media_hint}
+          className={`${inputCls} ${upload ? "pr-12" : ""}`} />
+        {upload && (
+          <button type="button" onClick={() => picker.current.click()} disabled={Boolean(progress)} title={t.qe_upload}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10">
+            {progress ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+          </button>
+        )}
+        <input ref={picker} type="file" accept={accept} hidden onChange={(e) => { const file = e.target.files[0]; e.target.value = ""; send(file); }} />
+      </div>
+      {progress && (
+        <div className="space-y-1">
+          <div className="h-1.5 rounded-full bg-white/10 overflow-hidden"><div className="h-full bg-yellow-500 transition-[width]" style={{ width: `${Math.round(progress.share * 100)}%` }} /></div>
+          <p className="text-xs text-gray-400 truncate">{fmt(t.qe_uploading, { file: progress.name, percent: Math.round(progress.share * 100) })}</p>
+        </div>
+      )}
+      {error && <p className="flex items-start gap-1.5 text-xs text-red-300"><AlertTriangle size={14} className="shrink-0 mt-px" /> {error}</p>}
+      {missing && !progress && <p className="flex items-start gap-1.5 text-xs text-yellow-300/90"><AlertTriangle size={14} className="shrink-0 mt-px" /> {upload ? t.qe_media_missing_upload : t.qe_media_missing}</p>}
     </div>
   );
 }
 
-// The fields of one question, depending on its type. typeHelp: { [type]: "what it looks like" }
-export default function QuestionForm({ draft, onChange, mediaNames, hasMedia, typeHelp, disabled, t }) {
-  const { type } = draft;
-  const set = (fields) => onChange({ ...draft, ...fields });
+const acceptFor = (type) => (type === "Audio" ? "audio/*" : type.includes("Video") ? "video/*" : "image/*");
 
-  const setAnswerAt = (i, value) => set({ answers: draft.answers.map((a, j) => (j === i ? value : a)) });
-  const setItem = (i, fields) => set({ items: draft.items.map((it, j) => (j === i ? { ...it, ...fields } : it)) });
+// The fields of one question, depending on its type. typeHelp: { [type]: "what it looks like" }
+export default function QuestionForm({ draft, onChange, mediaNames, hasMedia, upload, typeHelp, disabled, t }) {
+  const { type } = draft;
+  // Updates apply to the latest draft: an upload can finish after other fields changed
+  const update = (fn) => onChange((d) => ({ ...d, ...fn(d) }));
+  const set = (fields) => update(() => fields);
+
+  const setAnswerAt = (i, value) => update((d) => ({ answers: d.answers.map((a, j) => (j === i ? value : a)) }));
+  const setItem = (i, fields) => update((d) => ({ items: d.items.map((it, j) => (j === i ? { ...it, ...fields } : it)) }));
   // Adding or removing an item changes how many letters there are, so they are mixed again
   const resizeItems = (items) => set({ items: withLetters(items) });
 
@@ -113,7 +158,7 @@ export default function QuestionForm({ draft, onChange, mediaNames, hasMedia, ty
               <span className="w-10 h-[50px] shrink-0 flex items-center justify-center rounded-lg bg-white/10 font-black text-yellow-400" title={t.qe_letter}>{item.letter}</span>
               <div className="flex-1 min-w-0 grid sm:grid-cols-[3fr_2fr] gap-2">
                 <input value={item.text} onChange={(e) => setItem(i, { text: e.target.value })} placeholder={t.qe_item} className={inputCls} />
-                <MediaInput value={item.media} onChange={(media) => setItem(i, { media })} hasMedia={hasMedia} placeholder={t.qe_item_media} t={t} />
+                <MediaInput value={item.media} onChange={(media) => setItem(i, { media })} hasMedia={hasMedia} placeholder={t.qe_item_media} accept="image/*" upload={upload} t={t} />
               </div>
               <button type="button" onClick={() => resizeItems(draft.items.filter((_, j) => j !== i))} disabled={draft.items.length <= 2}
                 className="mt-1.5 p-2 rounded-lg text-gray-500 hover:text-red-300 hover:bg-red-500/20 disabled:opacity-30" aria-label={t.qe_remove}><X size={16} /></button>
@@ -133,8 +178,8 @@ export default function QuestionForm({ draft, onChange, mediaNames, hasMedia, ty
 
       {type === "Handout" && (
         <>
-          <div><Label>{t.qe_handout_picture}</Label><MediaInput value={draft.media} onChange={(media) => set({ media })} hasMedia={hasMedia} t={t} /></div>
-          <div><Label>{t.qe_handout_answer}</Label><MediaInput value={draft.answer} onChange={(answer) => set({ answer })} hasMedia={hasMedia} t={t} /></div>
+          <div><Label>{t.qe_handout_picture}</Label><MediaInput value={draft.media} onChange={(media) => set({ media })} hasMedia={hasMedia} accept="image/*" upload={upload} t={t} /></div>
+          <div><Label>{t.qe_handout_answer}</Label><MediaInput value={draft.answer} onChange={(answer) => set({ answer })} hasMedia={hasMedia} accept="image/*" upload={upload} t={t} /></div>
         </>
       )}
 
@@ -148,7 +193,7 @@ export default function QuestionForm({ draft, onChange, mediaNames, hasMedia, ty
       {!["Sort", "Handout"].includes(type) && (
         <div>
           <Label hint={MEDIA_TYPES.includes(type) ? null : t.qe_optional}>{t.qe_media}</Label>
-          <MediaInput value={draft.media} onChange={(media) => set({ media })} hasMedia={hasMedia} t={t} />
+          <MediaInput value={draft.media} onChange={(media) => set({ media })} hasMedia={hasMedia} accept={acceptFor(type)} upload={upload} t={t} />
         </div>
       )}
     </fieldset>
