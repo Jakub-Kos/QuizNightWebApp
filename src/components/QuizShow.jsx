@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Settings, ArrowLeft, Calculator, ClipboardCheck, LogIn } from "lucide-react";
+import { Settings, ArrowLeft, Calculator, ClipboardCheck, LogIn, RefreshCw } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -8,8 +8,10 @@ import { resolveTeams } from "../quiz/model";
 import { rulesFor, prizesFor } from "../quiz/intro";
 import { updateQuiz } from "../quiz/storage";
 import { useScores } from "../hooks/useScores";
+import { useSignInEnding } from "../hooks/useLiveScores";
 import { signIn } from "../quiz/google";
 import { quizHash, navigate } from "../hooks/useHashRoute";
+import { fmt } from "../quiz/files";
 
 import WelcomeScreen from "./WelcomeScreen";
 import Dashboard from "./Dashboard";
@@ -55,6 +57,8 @@ export default function QuizShow({ bundle, isPresenter }) {
   const t = TRANSLATIONS[config.language] || TRANSLATIONS.en;
   const rounds = useMemo(() => parseQuestionsCsv(quiz.questionsCsv), [quiz.questionsCsv]);
   const liveLeaderboard = useScores(quiz, rounds, t.round);
+  const signInEndsIn = useSignInEnding(isPresenter && liveLeaderboard.usesGoogle);
+  const renewSignIn = () => signIn().catch(() => {});
   const teams = useMemo(() => resolveTeams(quiz.teams, resolveMedia), [quiz.teams, resolveMedia]);
   const quizContext = useMemo(() => ({ quiz, rounds, teams, resolveMedia }), [quiz, rounds, teams, resolveMedia]);
 
@@ -141,6 +145,9 @@ export default function QuizShow({ bundle, isPresenter }) {
               data={liveLeaderboard.teams}
               availableRounds={liveLeaderboard.rounds}
               lastSync={liveLeaderboard.lastSync}
+              onReload={liveLeaderboard.reload}
+              authNeeded={liveLeaderboard.authNeeded}
+              onSignIn={renewSignIn}
               isPresenter={isPresenter}
               onClose={() => setScene(SCENES.DASHBOARD)}
               t={t}
@@ -191,9 +198,15 @@ export default function QuizShow({ bundle, isPresenter }) {
           <ClipboardCheck size={18} /> {t.att_title}
         </button>
         {liveLeaderboard.authNeeded && (
-          <button onClick={() => signIn().catch(() => {})} title={t.lb_signin_needed}
+          <button onClick={renewSignIn} title={t.lb_signin_needed}
             className="flex items-center gap-2 px-4 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold shadow-xl">
             <LogIn size={18} /> {t.lb_signin}
+          </button>
+        )}
+        {!liveLeaderboard.authNeeded && signInEndsIn && (
+          <button onClick={renewSignIn}
+            className="flex items-center gap-2 px-4 py-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/50 text-amber-200 font-bold shadow-xl backdrop-blur">
+            <RefreshCw size={18} /> {fmt(t.lb_signin_ending, { n: signInEndsIn })}
           </button>
         )}
         {!quiz.scoresSheetUrl && (
