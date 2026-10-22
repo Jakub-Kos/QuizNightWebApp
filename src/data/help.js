@@ -161,7 +161,7 @@ export const HELP = {
           "After changing the Sheet directly or the media folder, press Sync from Drive on the setup page. Only new or changed files are downloaded.",
           "Sync once more before the show, while online. The questions reload when the show starts; the media plays from this browser.",
         ],
-        note: "Google ends the sign-in after about an hour. Questions and media keep working; if the live scores stop, press Live scores paused in the presenter window and sign in again. The first sign-in shows Google's “app not verified” notice, which is expected during the beta.",
+        note: "Google ends the sign-in after about an hour. Questions and media keep working. Ten minutes before, the presenter window offers to renew it (do it in a break); if the live scores stop anyway, press Live scores paused in the presenter window, or the sign-in button on an empty leaderboard, and sign in again. The first sign-in shows Google's “app not verified” notice, which is expected during the beta.",
       },
       {
         id: "teams", title: "Teams",
@@ -178,7 +178,8 @@ export const HELP = {
         items: [
           "Option 1, Google Sheet: a tab with a `Team Name` (or `Název týmu`) column and one column per round named `Round 1`, `Round 2`, … (or `Kolo 1`, …). Points like `7,5` or `7.5` both work. It is reloaded every 10 seconds; any column whose name contains “round” or “kolo” counts as a round, other columns (like a total) are ignored.",
           "Option 2, score table: leave the Sheet link empty and type the points into the score table (Scores button in the presenter window). Enter jumps to the next team.",
-          "The leaderboard takes the latest round with points and reveals the new standings step by step.",
+          "The leaderboard takes the latest round with points and reveals the new standings step by step: each step adds one group's points, and the teams keep their places until the last step re-sorts the table. Step with `→` / `←` in either window; both always show the same thing.",
+          "The points are read when the leaderboard opens and keep updating until the first step. Points typed in later (during the reveal) need Reload scores in the presenter window, which starts the reveal again. The presenter window also warns when a round is not scored for every team.",
         ],
       },
       {
@@ -354,7 +355,7 @@ export const HELP = {
           "Po změně přímo v tabulce nebo ve složce s médii dejte na stránce nastavení Synchronizovat z Disku. Stahují se jen nové nebo změněné soubory.",
           "Před show synchronizujte ještě jednou, dokud jste online. Otázky se načtou znovu při spuštění show, média hrají z tohoto prohlížeče.",
         ],
-        note: "Google přihlášení ukončí zhruba po hodině. Otázky a média fungují dál; když se přestanou načítat body, klikněte v okně moderátora na Body se nenačítají a přihlaste se znovu. Při prvním přihlášení Google upozorní, že aplikace není ověřená, což je během bety v pořádku.",
+        note: "Google přihlášení ukončí zhruba po hodině. Otázky a média fungují dál. Deset minut předem nabídne okno moderátora přihlášení obnovit (udělejte to o přestávce); když se body přesto přestanou načítat, klikněte v okně moderátora na Body se nenačítají, nebo na tlačítko přihlášení na prázdném žebříčku, a přihlaste se znovu. Při prvním přihlášení Google upozorní, že aplikace není ověřená, což je během bety v pořádku.",
       },
       {
         id: "teams", title: "Týmy",
@@ -371,7 +372,8 @@ export const HELP = {
         items: [
           "Možnost 1, Google Tabulka: list se sloupcem `Název týmu` (nebo `Team Name`) a jedním sloupcem pro každé kolo pojmenovaným `Kolo 1`, `Kolo 2`, … (nebo `Round 1`, …). Body jako `7,5` i `7.5` fungují. Načítá se každých 10 sekund; každý sloupec s „kolo“ nebo „round“ v názvu se počítá jako kolo, ostatní sloupce (třeba součet) se ignorují.",
           "Možnost 2, tabulka bodů: odkaz na tabulku nechte prázdný a body zapisujte do tabulky bodů (tlačítko Body v okně moderátora). Enter skočí na další tým.",
-          "Žebříček vezme poslední kolo s body a nové pořadí odhaluje postupně.",
+          "Žebříček vezme poslední kolo s body a nové pořadí odhaluje postupně: každý krok přičte body jedné skupině a týmy zůstávají na svých místech, dokud je poslední krok nepřeskupí. Krokuje se `→` / `←` v kterémkoli okně; obě ukazují vždy totéž.",
+          "Body se načtou při otevření žebříčku a obnovují se až do prvního kroku. Body zapsané později (během odhalování) načtěte tlačítkem Znovu načíst body v okně moderátora, odhalování pak začne znovu. Okno moderátora také upozorní, když kolo nemá body u všech týmů.",
         ],
       },
       {
@@ -547,7 +549,7 @@ export const HELP = {
           "A táblázat közvetlen vagy a médiamappa módosítása után nyomd meg a beállítások oldalon a Szinkronizálás a Drive-ról gombot. Csak az új vagy módosult fájlok töltődnek le.",
           "A show előtt szinkronizálj még egyszer, amíg van internet. A kérdések a show indításakor újra betöltődnek, a média ebből a böngészőből megy.",
         ],
-        note: "A Google nagyjából egy óra után lezárja a bejelentkezést. A kérdések és a média tovább működnek; ha a pontok megállnak, a műsorvezetői ablakban kattints A pontok szünetelnek gombra, és jelentkezz be újra. Az első bejelentkezéskor a Google jelzi, hogy az alkalmazás nincs ellenőrizve; ez a béta alatt várható.",
+        note: "A Google nagyjából egy óra után lezárja a bejelentkezést. A kérdések és a média tovább működnek. Tíz perccel előtte a műsorvezetői ablak felajánlja a megújítást (tedd meg a szünetben); ha a pontok mégis megállnak, kattints a műsorvezetői ablakban A pontok szünetelnek gombra, vagy az üres ranglista bejelentkezés gombjára, és jelentkezz be újra. Az első bejelentkezéskor a Google jelzi, hogy az alkalmazás nincs ellenőrizve; ez a béta alatt várható.",
       },
       {
         id: "teams", title: "Csapatok",
@@ -564,7 +566,8 @@ export const HELP = {
         items: [
           "1. lehetőség, Google Táblázat: egy lap `Team Name` (vagy `Název týmu`) oszloppal és körönként egy `Round 1`, `Round 2`, … (vagy `Kolo 1`, …) nevű oszloppal. A `7,5` és a `7.5` is működik. 10 másodpercenként frissül; minden oszlop, amelynek nevében „round” vagy „kolo” szerepel, körnek számít, a többi oszlop (például az összeg) nem számít.",
           "2. lehetőség, pont táblázat: hagyd üresen a táblázat linkjét, és írd a pontokat a pont táblázatba (Pontok gomb a műsorvezetői ablakban). Az Enter a következő csapatra ugrik.",
-          "A ranglista a legutolsó pontozott kört veszi, és az új sorrendet lépésenként fedi fel.",
+          "A ranglista a legutolsó pontozott kört veszi, és az új sorrendet lépésenként fedi fel: minden lépés egy csoport pontjait adja hozzá, a csapatok pedig a helyükön maradnak, amíg az utolsó lépés át nem rendezi a táblát. Léptetni `→` / `←` gombbal lehet bármelyik ablakban; a kettő mindig ugyanazt mutatja.",
+          "A pontok a ranglista megnyitásakor töltődnek be, és az első lépésig frissülnek. A később (felfedés közben) beírt pontokhoz nyomd meg a Pontok újratöltése gombot a műsorvezetői ablakban, ekkor a felfedés újrakezdődik. A műsorvezetői ablak azt is jelzi, ha egy fordulóban nem minden csapat kapott pontot.",
         ],
       },
       {

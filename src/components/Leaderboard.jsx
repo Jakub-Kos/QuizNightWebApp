@@ -1,43 +1,107 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Minus as MinusIcon, Trophy, Crown, CheckCircle, HelpCircle, Shuffle, Database, Flame } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Minus as MinusIcon, Trophy, Crown, CheckCircle, HelpCircle, Shuffle, Database, Flame, RefreshCw, AlertTriangle, Info, Loader2, LogIn } from "lucide-react";
 import { useQuiz } from "../quiz/context";
 import { isPresent, directionText, teamForScores } from "../quiz/teams";
 import VenueMap from "./VenueMap";
 import TeamAvatar from "./TeamAvatar";
 import { fmt } from "../quiz/files";
 
-export default function Leaderboard({ isPresenter, data, availableRounds, lastSync, onClose, t }) {
+// The scores the reveal works on, without the poll time, so equal scores compare equal
+const toSnapshot = (scores) => ({ teams: scores?.teams || [], rounds: scores?.rounds || [] });
+const sameScores = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+// The latest round anyone has points in
+const defaultRound = (snap) => [...snap.rounds].reverse().find(r => snap.teams.some(t => t.scores[r] > 0)) ?? snap.rounds[0] ?? "";
+
+export default function Leaderboard({ isPresenter, data, availableRounds, lastSync, onReload, authNeeded, onSignIn, onClose, t }) {
   const tr = t;
   const { quiz, teams } = useQuiz();
-  const [frozenData] = useState(() => data || []);
-  const [frozenRounds] = useState(() => availableRounds || []);
+  const role = isPresenter ? 'presenter' : 'main';
+  const live = useMemo(() => toSnapshot({ teams: data, rounds: availableRounds }), [data, availableRounds]);
 
-  // Starts on the latest round anyone has points in (the data is frozen at mount)
-  const [selectedRound, setSelectedRound] = useState(() => {
-      if (frozenRounds.length === 0 || frozenData.length === 0) return "";
-      return [...frozenRounds].reverse().find(r => frozenData.some(t => t.scores[r] > 0)) ?? frozenRounds[0];
-  });
+  // The reveal works on a snapshot of the scores, shared by both windows so they show the same groups.
+  // Until the reveal starts it follows the live scores; later only Reload scores changes it.
+  const [snapshot, setSnapshot] = useState(live);
+  const [selectedRound, setSelectedRound] = useState(() => defaultRound(live));
   const [revealStep, setRevealStep] = useState(0);
+  const [roundChosen, setRoundChosen] = useState(false); // picked in the presenter window, so new scores keep it
+  // Main window: whether the presenter window is open (it then shows the controls)
+  const [presenterOpen, setPresenterOpen] = useState(false);
+  const [reloading, setReloading] = useState(false);
+  const [reloadFailed, setReloadFailed] = useState(false);
 
+  const adopt = (next) => {
+      setSnapshot(next);
+      if (!roundChosen || !next.rounds.includes(selectedRound)) setSelectedRound(defaultRound(next));
+  };
+
+  // Before the reveal starts, new scores are taken in by one window (the presenter when it is open),
+  // which shares them with the other
+  const [seenLive, setSeenLive] = useState(live);
+  if (live !== seenLive) {
+      setSeenLive(live);
+      if ((isPresenter || !presenterOpen) && revealStep === 0 && !sameScores(live, snapshot)) adopt(live);
+  }
+
+  const reload = async () => {
+      setReloading(true);
+      const fresh = onReload ? await onReload().catch(() => null) : null;
+      setReloadFailed(!fresh);
+      adopt(fresh ? toSnapshot(fresh) : live);
+      setRevealStep(0);
+      setReloading(false);
+  };
+
+  // --- 2-WAY SYNC (see QuestionScreen) ---
+  // Only local changes are broadcast; lastSyncedRef holds the state at mount or last received, so a
+  // window joining mid-reveal adopts the other's state instead of resetting it.
   const channel = useMemo(() => new BroadcastChannel('quiz-leaderboard-sync'), []);
+  const syncKey = JSON.stringify([snapshot, revealStep, selectedRound]);
+  const lastSyncedRef = useRef(syncKey);
+  // The current state for replies to the other window (declared before the effects that read it)
+  const stateRef = useRef({ snapshot, revealStep, selectedRound });
+  useEffect(() => { stateRef.current = { snapshot, revealStep, selectedRound }; }, [snapshot, revealStep, selectedRound]);
 
   useEffect(() => {
-    if (isPresenter) channel.postMessage({ type: 'SYNC_REVEAL', revealStep, selectedRound });
-  }, [revealStep, selectedRound, isPresenter, channel]);
+    channel.postMessage({ type: 'LB_REQUEST', sender: role });
+    // Closing the presenter window hands the controls back to the main window
+    const leave = () => channel.postMessage({ type: 'LB_LEAVE', sender: role });
+    if (isPresenter) window.addEventListener('pagehide', leave);
+    return () => window.removeEventListener('pagehide', leave);
+  }, [channel, role, isPresenter]);
 
   useEffect(() => {
-    if (!isPresenter) {
-      const handleSync = (e) => {
-          if (e.data.type === 'SYNC_REVEAL') {
-              setRevealStep(e.data.revealStep);
-              setSelectedRound(e.data.selectedRound);
-          }
-      };
-      channel.addEventListener('message', handleSync);
-      return () => channel.removeEventListener('message', handleSync);
-    }
-  }, [isPresenter, channel]);
+    if (syncKey === lastSyncedRef.current) return;
+    lastSyncedRef.current = syncKey;
+    channel.postMessage({ type: 'LB_UPDATE', sender: role, payload: stateRef.current });
+  }, [syncKey, role, channel]);
+
+  useEffect(() => {
+    const apply = (payload) => {
+        lastSyncedRef.current = JSON.stringify([payload.snapshot, payload.revealStep, payload.selectedRound]);
+        setSnapshot(payload.snapshot);
+        setRevealStep(payload.revealStep);
+        setSelectedRound(payload.selectedRound);
+    };
+    const handleSync = (e) => {
+        const { type, payload, sender } = e.data || {};
+        if (!sender || sender === role) return;
+        if (sender === 'presenter') setPresenterOpen(type !== 'LB_LEAVE');
+        if (type === 'LB_UPDATE') apply(payload);
+        else if (type === 'LB_REQUEST') channel.postMessage({ type: 'LB_STATE', sender: role, payload: stateRef.current });
+        else if (type === 'LB_STATE') {
+            // A reply to this window's request. The presenter keeps its own scores unless the main
+            // window is already revealing; the main window always takes the presenter's.
+            if (!isPresenter || payload.revealStep > 0) apply(payload);
+            else channel.postMessage({ type: 'LB_UPDATE', sender: role, payload: stateRef.current });
+        }
+    };
+    channel.addEventListener('message', handleSync);
+    return () => channel.removeEventListener('message', handleSync);
+  }, [channel, role, isPresenter]);
+
+  const frozenData = snapshot.teams;
+  const frozenRounds = snapshot.rounds;
 
   const { initialTeams, scoreGroups } = useMemo(() => {
       if (!selectedRound || !frozenRounds.includes(selectedRound)) return { initialTeams: [], scoreGroups: [] };
@@ -103,15 +167,14 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (isPresenter || (!isPresenter && window.name !== 'PresenterWindow')) {
-          if (e.key === "ArrowRight") setRevealStep(prev => Math.min(prev + 1, maxStep));
-          if (e.key === "ArrowLeft") setRevealStep(prev => Math.max(prev - 1, 0));
-          if (e.key === "Escape") onClose();
-      }
+      // Either window can step; the change is shared with the other
+      if (e.key === "ArrowRight") setRevealStep(prev => Math.min(prev + 1, maxStep));
+      if (e.key === "ArrowLeft") setRevealStep(prev => Math.max(prev - 1, 0));
+      if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [revealStep, maxStep, isPresenter, onClose]);
+  }, [maxStep, onClose]);
 
   // ==========================================
   // CALCULATE CURRENT TABLE STATE
@@ -165,12 +228,20 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
       else if (isCardStep) nextActionText = fmt(tr.lb_apply, { points: scoreGroups[activeGroupIndex].points });
       else nextActionText = fmt(tr.lb_reveal_group, { points: scoreGroups[activeGroupIndex]?.points });
 
+      const hasScores = frozenData.length > 0;
+      const scoredCount = frozenData.filter(team => (team.scores[selectedRound] || 0) > 0).length;
+      // New points arrived after the reveal started; they are only taken in by Reload scores
+      const scoresChanged = revealStep > 0 && live.teams.length > 0 && !sameScores(live, snapshot);
+
       return (
           <div className="h-full w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col relative">
               <div className="flex justify-between items-start border-b border-white/10 pb-6 mb-8">
                   <div>
                       <h1 className="text-3xl font-black uppercase tracking-widest text-yellow-500 mb-2">{tr.lb_controls}</h1>
-                      <div className="text-white/40 font-mono mb-4">{tr.lb_step}: <span className="text-white">{revealStep} / {maxStep}</span></div>
+                      <div className="text-white/40 font-mono mb-4">
+                          {tr.lb_step}: <span className="text-white">{revealStep} / {maxStep}</span>
+                          {hasScores && revealStep < maxStep && <span className="ml-3 font-sans">{fmt(tr.lb_steps_left, { n: maxStep - revealStep })}</span>}
+                      </div>
 
                       <div className="flex items-center gap-4 bg-blue-900/20 border border-blue-500/30 px-4 py-3 rounded-xl w-fit">
                           <Database size={24} className="text-blue-500"/>
@@ -178,7 +249,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                               <span className="text-blue-400 font-bold uppercase text-[10px] tracking-widest">{tr.lb_select_round}</span>
                               <select
                                   value={selectedRound}
-                                  onChange={(e) => { setSelectedRound(e.target.value); setRevealStep(0); }}
+                                  onChange={(e) => { setRoundChosen(true); setSelectedRound(e.target.value); setRevealStep(0); }}
                                   className="bg-transparent text-white font-black text-lg outline-none cursor-pointer"
                               >
                                   {frozenRounds.map(r => <option key={r} value={r} className="bg-gray-900">{r}</option>)}
@@ -191,10 +262,48 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                           </div>
                       </div>
                   </div>
-                  <button onClick={onClose} className="px-6 py-3 bg-red-900/50 hover:bg-red-800/80 rounded-xl transition-all font-bold">{tr.lb_exit}</button>
+                  <div className="flex gap-3">
+                      <button onClick={reload} disabled={reloading} title={tr.lb_reload_note}
+                          className="flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 disabled:opacity-50 rounded-xl transition-all font-bold">
+                          {reloading ? <Loader2 size={18} className="animate-spin" /> : <RefreshCw size={18} />} {tr.lb_reload}
+                      </button>
+                      <button onClick={onClose} className="px-6 py-3 bg-red-900/50 hover:bg-red-800/80 rounded-xl transition-all font-bold">{tr.lb_exit}</button>
+                  </div>
               </div>
 
-              <div className="flex gap-6 mb-8">
+              {authNeeded && (
+                  <div className="flex flex-wrap items-center gap-4 mb-6 -mt-2 p-4 rounded-xl bg-amber-500/10 border border-amber-500/40">
+                      <p className="flex-1 min-w-[280px] flex items-start gap-2 text-amber-200"><AlertTriangle size={18} className="shrink-0 mt-0.5" /> {tr.lb_signin_needed}</p>
+                      <button onClick={onSignIn} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold">
+                          <LogIn size={18} /> {tr.lb_signin}
+                      </button>
+                  </div>
+              )}
+
+              {(reloadFailed || scoresChanged || (hasScores && scoredCount < frozenData.length)) && (
+                  <div className="space-y-2 mb-6 -mt-2">
+                      {reloadFailed && (
+                          <p className="flex items-start gap-2 text-red-300"><AlertTriangle size={18} className="shrink-0 mt-0.5" /> {tr.lb_reload_failed}</p>
+                      )}
+                      {scoresChanged && (
+                          <p className="flex items-start gap-2 text-amber-300"><AlertTriangle size={18} className="shrink-0 mt-0.5" /> {tr.lb_scores_changed}</p>
+                      )}
+                      {hasScores && scoredCount < frozenData.length && (
+                          <p className="flex items-start gap-2 text-yellow-300">
+                              <AlertTriangle size={18} className="shrink-0 mt-0.5" /> {fmt(tr.lb_scored_count, { n: scoredCount, total: frozenData.length, round: selectedRound })}
+                          </p>
+                      )}
+                  </div>
+              )}
+
+              {!hasScores ? (
+                  <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center bg-white/5 rounded-2xl border border-white/10 p-10">
+                      <Trophy size={48} className="text-white/20" />
+                      <h2 className="text-2xl font-black">{tr.lb_empty_title}</h2>
+                      <p className="text-white/60 max-w-xl">{authNeeded ? tr.lb_signin_needed : quiz.scoresSheetUrl ? tr.lb_empty_sheet : tr.lb_empty_manual}</p>
+                  </div>
+              ) : (<>
+              <div className="flex gap-6 mb-3">
                   <button onClick={() => setRevealStep(p => Math.max(p - 1, 0))} disabled={revealStep === 0} className="px-8 py-6 bg-white/5 hover:bg-white/10 disabled:opacity-20 rounded-2xl font-bold flex flex-col items-center justify-center transition-all border border-white/10">
                       <ArrowLeft size={32} className="mb-2"/> {tr.lb_prev_step}
                   </button>
@@ -204,6 +313,9 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                       {nextActionText}
                   </button>
               </div>
+              <p className="flex items-start gap-2 text-sm text-white/40 mb-8">
+                  <Info size={16} className="shrink-0 mt-0.5" /> {isShuffled ? tr.lb_done_note : tr.lb_order_note}
+              </p>
 
               <div className="flex-1 min-h-0 flex flex-col gap-6">
               {/* Where to look: the wide seating map across the full width, above the reveal order */}
@@ -251,6 +363,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
               </div>
 
               </div>
+              </>)}
           </div>
       )
   }
@@ -301,6 +414,17 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
             </div>
 
             <div className="flex-1 w-full overflow-hidden relative">
+                {frozenData.length === 0 && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 text-center">
+                        <Trophy size={96} className="text-white/10" />
+                        <h2 className="text-5xl font-black uppercase tracking-[0.2em] text-white/60">{t.lb_empty_title}</h2>
+                        {authNeeded && (
+                            <button onClick={onSignIn} className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black text-2xl font-bold font-sans">
+                                <LogIn size={28} /> {t.lb_signin}
+                            </button>
+                        )}
+                    </div>
+                )}
                 <div className="grid grid-cols-2 grid-flow-row gap-x-16 gap-y-5 w-full content-start">
 
                     {activeTeamsList.map((team) => {
@@ -387,6 +511,16 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                     })}
                 </div>
             </div>
+
+            {/* Run from this window (no presenter window): how to step, until the reveal starts */}
+            <AnimatePresence>
+                {!presenterOpen && revealStep === 0 && frozenData.length > 0 && (
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="absolute bottom-[3.5cqh] inset-x-0 text-center text-white/40 font-sans text-xl tracking-wide">
+                        {t.lb_keys_hint}
+                    </motion.p>
+                )}
+            </AnimatePresence>
 
             <AnimatePresence>
                 {isCardOverlayActive && activeGroupForOverlay && (

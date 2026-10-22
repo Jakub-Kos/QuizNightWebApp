@@ -1,12 +1,13 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { getQuiz } from "../quiz/storage";
 import { SCORES_CHANNEL, manualLeaderboard } from "../quiz/scores";
 import { useLiveScores } from "./useLiveScores";
 
 // Scores for the leaderboard: from the linked Sheet, or entered by hand on the score entry page
-// roundWord: the show language's word for "round", used to label manually scored rounds
+// roundWord: the show language's word for "round", used to label manually scored rounds.
+// reload() reads the scores at once and resolves with them (null when they could not be read).
 export function useScores(quiz, rounds, roundWord) {
-  const sheet = useLiveScores(quiz.scoresSheetUrl);
+  const sheet = useLiveScores(quiz.scoresSheetUrl, { privateSheet: Boolean(quiz.drive) });
   const usesManual = !quiz.scoresSheetUrl && !quiz.builtin;
   const [manual, setManual] = useState(quiz.manualScores || {});
 
@@ -19,8 +20,17 @@ export function useScores(quiz, rounds, roundWord) {
     return () => { channel.close(); clearInterval(interval); };
   }, [quiz.id, usesManual]);
 
+  const reloadManual = useCallback(async () => {
+    const q = await getQuiz(quiz.id).catch(() => null);
+    if (!q) return null;
+    setManual(q.manualScores || {});
+    return manualLeaderboard(quiz.teams, rounds, q.manualScores || {}, roundWord);
+  }, [quiz.id, quiz.teams, rounds, roundWord]);
+
   return useMemo(
-    () => (usesManual ? { ...manualLeaderboard(quiz.teams, rounds, manual, roundWord), lastSync: null } : sheet),
-    [usesManual, quiz.teams, rounds, manual, sheet, roundWord],
+    () => (usesManual
+      ? { ...manualLeaderboard(quiz.teams, rounds, manual, roundWord), lastSync: null, reload: reloadManual }
+      : sheet),
+    [usesManual, quiz.teams, rounds, manual, sheet, roundWord, reloadManual],
   );
 }
