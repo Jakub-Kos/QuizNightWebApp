@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { ArrowLeft, Download, Copy, Info, Compass } from "lucide-react";
+import { ArrowLeft, Download, Copy, Info, Compass, Network } from "lucide-react";
 import { DEMO_ID } from "../quiz/model";
+import { quizHash } from "../hooks/useHashRoute";
 import { startTour } from "../quiz/tour";
 import { HELP } from "../data/help";
 import { GOOGLE_SHEET_TEMPLATE, googleCopyUrl } from "../config";
@@ -43,12 +44,8 @@ export default function HelpPage({ section, lang, t }) {
 
         <main className="space-y-12 min-w-0">
           <header className="space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <h1 className="font-['League_Spartan'] text-4xl font-black uppercase tracking-widest text-yellow-400">{help.title}</h1>
-              <button onClick={() => startTour(DEMO_ID)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm">
-                <Compass size={16} /> {t.tr_start}
-              </button>
-            </div>
+            <h1 className="font-['League_Spartan'] text-4xl font-black uppercase tracking-widest text-yellow-400">{help.title}</h1>
+            <QuickStart quick={help.quickstart} t={t} />
             <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5 space-y-3">
               <h2 className="font-bold">{help.templates.title}</h2>
               <div className="flex flex-wrap gap-2">
@@ -114,5 +111,36 @@ export default function HelpPage({ section, lang, t }) {
         </main>
       </div>
     </div>
+  );
+}
+
+// The night in five steps, with the guided tour and the demo's map for those who would rather see it
+function QuickStart({ quick, t }) {
+  return (
+    <section className="rounded-2xl bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/30 p-5 space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="space-y-1 max-w-xl">
+          <h2 className="font-bold text-lg">{quick.title}</h2>
+          <p className="text-sm text-gray-300">{quick.intro}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => startTour(DEMO_ID)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm">
+            <Compass size={16} /> {t.tr_start}
+          </button>
+          <a href={quizHash(DEMO_ID, "map")} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm">
+            <Network size={16} /> {quick.map}
+          </a>
+        </div>
+      </div>
+      <ol className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        {quick.steps.map(([title, text], i) => (
+          <li key={title} className="rounded-xl bg-black/30 border border-white/10 p-4 space-y-2">
+            <span className="w-7 h-7 rounded-full bg-yellow-500 text-black font-bold text-sm flex items-center justify-center">{i + 1}</span>
+            <h3 className="font-bold text-sm">{title}</h3>
+            <p className="text-sm text-gray-400"><Rich text={text} /></p>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
