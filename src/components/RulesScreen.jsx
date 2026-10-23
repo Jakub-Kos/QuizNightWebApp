@@ -82,6 +82,7 @@ export default function RulesScreen({ rules: texts, onNext, t }) {
             className="mt-16 flex justify-center"
         >
             <button
+                data-tour="next"
                 onClick={onNext}
                 className="group relative px-12 py-5 bg-white text-black font-black text-xl uppercase tracking-widest rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
             >

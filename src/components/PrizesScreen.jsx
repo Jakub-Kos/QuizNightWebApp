@@ -129,6 +129,7 @@ export default function PrizesScreen({ prizes: texts, onNext, t }) {
         className="mt-8 relative z-10"
       >
          <button
+            data-tour="next"
             onClick={onNext}
             className="px-12 py-4 bg-white/10 hover:bg-yellow-500 text-white hover:text-black border border-white/20 hover:border-yellow-500 font-bold text-lg uppercase tracking-[0.2em] rounded-xl transition-all hover:scale-105 backdrop-blur-md"
         >
