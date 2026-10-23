@@ -8,6 +8,7 @@ import QuizEditor from "./components/QuizEditor";
 import QuizCheck from "./components/QuizCheck";
 import QuizMap from "./components/QuizMap";
 import QuestionsEditor from "./components/QuestionsEditor";
+import ThemeEditor from "./components/ThemeEditor";
 import ScoresEntry from "./components/ScoresEntry";
 import Attendance from "./components/Attendance";
 import HelpPage from "./components/HelpPage";
@@ -22,6 +23,7 @@ export default function App() {
   }
   if (route.name === "edit") return <QuizEditor key={route.id} id={route.id} t={t} />;
   if (route.name === "questions") return <QuestionsEditor key={route.id} id={route.id} lang={lang} t={t} />;
+  if (route.name === "theme") return <ThemeEditor key={`${route.id}-${route.fresh}`} id={route.id} fresh={route.fresh} t={t} />;
   if (route.name === "check") return <QuizCheck key={route.id} id={route.id} t={t} />;
   if (route.name === "map") return <QuizMap key={route.id} id={route.id} t={t} />;
   if (route.name === "help") return <HelpPage section={route.section} lang={lang} t={t} />;

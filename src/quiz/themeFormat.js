@@ -159,3 +159,30 @@ export function renameThemeFiles(theme, rename) {
     .filter(([, f]) => f.family || f.file));
   return { ...theme, fonts, background: { ...theme.background, image: (theme.background.image && rename(theme.background.image)) || null } };
 }
+
+// Readability on a TV seen from across a room: WCAG contrast of the text the scenes put on the theme's
+// colours. Returns codes for the editor: "text_ground" (white text on the background), "text_panel"
+// (white text on cards), "accent_text" (black text on highlight buttons), "primary_text" (white text on
+// main-colour buttons), "image" (a very visible background picture).
+const CLASSIC = { primary: "#3b82f6", accent: "#eab308", groundTop: "#111111", ground: "#050505", groundBottom: "#000000", panel: "#0a0a0a" };
+const luminance = (color) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16) / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+export const contrast = (a, b) => {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+const shade = (color, amount) => `#${[1, 3, 5].map((i) => Math.round(parseInt(color.slice(i, i + 2), 16) * (1 - amount)).toString(16).padStart(2, "0")).join("")}`;
+
+export function readabilityIssues(theme) {
+  const c = { ...CLASSIC, ...theme?.colors };
+  const issues = [];
+  if ([c.groundTop, c.ground, c.groundBottom].some((g) => contrast("#ffffff", g) < 7)) issues.push("text_ground");
+  if (contrast("#ffffff", c.panel) < 7) issues.push("text_panel");
+  if (contrast("#000000", c.accent) < 4.5) issues.push("accent_text");
+  if (contrast("#ffffff", shade(c.primary, 0.16)) < 3) issues.push("primary_text");
+  if (theme?.background?.image && theme.background.imageOpacity > 0.6 && theme.background.imageBlur < 4) issues.push("image");
+  return issues;
+}
