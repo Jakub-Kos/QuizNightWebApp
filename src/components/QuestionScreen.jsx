@@ -6,6 +6,7 @@ import { useQuiz } from "../quiz/context";
 import { fmt } from "../quiz/files";
 import { sortLayout } from "../quiz/sort";
 import SortItems from "./SortItems";
+import { SceneBackdrop } from "./Theme";
 
 // A top list of more than five answers is split into two columns, of more than ten into three, filled
 // down each column so the ranks read 1–5 | 6–10 | 11–15
@@ -199,14 +200,14 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     // ==========================================
     if (isPresenter) {
         return (
-            <div className="h-full w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col">
+            <div className="h-full w-full bg-panel text-white p-10 font-sans flex flex-col">
                 {/* Header */}
                 <div className="flex flex-wrap justify-between items-center gap-4 mb-8 border-b border-white/10 pb-6">
                     <div>
                         <h1 className="text-3xl font-black text-yellow-500 tracking-widest uppercase">{t.host_dashboard}</h1>
                         <div className="flex items-center gap-3 mt-2">
                             <span className="text-white bg-white/10 px-3 py-1 rounded text-sm font-bold">{roundData.title}</span>
-                            <span className="text-blue-400 font-mono text-sm">{modeText}</span>
+                            <span className="text-primary-400 font-mono text-sm">{modeText}</span>
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-4">
@@ -218,7 +219,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                         <button onClick={prev} className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all">
                             &lt; {t.btn_prev}
                         </button>
-                        <button onClick={next} className="px-12 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+                        <button onClick={next} className="px-12 py-4 bg-primary-600 hover:bg-primary-500 text-white font-black rounded-xl transition-all shadow-[0_0_20px_rgb(var(--glow-primary)/0.4)]">
                             {t.btn_next} &gt;
                         </button>
                         <button onClick={onBack} className="px-6 py-4 bg-red-900/50 hover:bg-red-800/80 text-white font-bold rounded-xl transition-all ml-8">
@@ -232,8 +233,8 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
 
                     {/* Left Col: WHAT IS ON THE SCREEN NOW */}
                     <div className="bg-black/50 p-8 rounded-[2rem] border border-white/10 flex flex-col">
-                      <span className="text-blue-500 font-bold tracking-widest uppercase mb-6 text-sm flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"/> {t.live_on_screen}
+                      <span className="text-primary-500 font-bold tracking-widest uppercase mb-6 text-sm flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"/> {t.live_on_screen}
                       </span>
 
                         {qIndex === -1 ? (
@@ -364,12 +365,12 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
         const themeName = roundData.title;
 
         return (
-            <div onClick={next} className="h-full w-full bg-[#050505] flex flex-col items-center justify-center font-['League_Spartan'] cursor-pointer relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
+            <div onClick={next} className="h-full w-full bg-ground flex flex-col items-center justify-center font-show cursor-pointer relative overflow-hidden">
+                <SceneBackdrop />
                 <motion.div initial={{opacity:0, scale: 0.9}} animate={{opacity:1, scale: 1}} className="text-center z-10 flex flex-col items-center max-w-6xl px-8">
-                    <h2 className="text-blue-500 font-bold tracking-[0.5em] text-4xl mb-6 uppercase drop-shadow-lg">{displayTitle}</h2>
-                    <div className="h-2 w-40 bg-blue-500 mx-auto mb-12 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.8)]" />
-                    <h1 className="text-[120px] font-black text-white uppercase tracking-tight drop-shadow-2xl leading-none text-center">
+                    <h2 className="text-primary-500 font-bold tracking-[0.5em] text-4xl mb-6 uppercase drop-shadow-lg">{displayTitle}</h2>
+                    <div className="h-2 w-40 bg-primary-500 mx-auto mb-12 rounded-full shadow-[0_0_20px_rgb(var(--glow-primary)/0.8)]" />
+                    <h1 className="font-title text-[120px] font-black text-white uppercase tracking-tight drop-shadow-2xl leading-none text-center">
                         {themeName}
                     </h1>
                 </motion.div>
@@ -378,8 +379,8 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     }
 
     return (
-        <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan']">
-            <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
+        <div className="h-full w-full bg-ground relative overflow-hidden flex flex-col font-show">
+            <SceneBackdrop quiet />
 
             {/* BIG NUMBER */}
             <div className="relative h-[25cqh] w-full flex items-center justify-center z-20 pointer-events-none">
@@ -389,10 +390,10 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                     transition={{ duration: 0.8, type: "spring", bounce: 0.2 }}
                     className="flex flex-col items-center"
                 >
-                <span className={`font-black text-white text-5xl uppercase tracking-widest transition-colors duration-500 ${showBigNum ? "opacity-100 text-blue-500" : "opacity-50 text-gray-500"}`}>
+                <span className={`font-black text-white text-5xl uppercase tracking-widest transition-colors duration-500 ${showBigNum ? "opacity-100 text-primary-500" : "opacity-50 text-gray-500"}`}>
                    {t.question}
                 </span>
-                    <span className="font-black text-[250px] text-white leading-none drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]">
+                    <span className="font-title font-black text-[250px] text-white leading-none drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]">
                     {question.id}
                 </span>
                 </motion.div>
@@ -489,14 +490,14 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                                             {question.answer.map((ans, idx) => {
                                                 const { main, detail } = splitAnswer(ans);
                                                 return (
-                                                    <div key={idx} className={`${size.row} min-w-0 rounded-2xl border flex items-center transition-all duration-700 ${showAnswer ? 'bg-gradient-to-r from-blue-900/60 to-blue-800/40 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-white/5 border-white/10'}`}>
+                                                    <div key={idx} className={`${size.row} min-w-0 rounded-2xl border flex items-center transition-all duration-700 ${showAnswer ? 'bg-gradient-to-r from-primary-900/60 to-primary-800/40 border-primary-500 shadow-[0_0_20px_rgb(var(--glow-primary)/0.4)]' : 'bg-white/5 border-white/10'}`}>
                                                         <div className={`${size.rank} rounded-xl bg-black/50 border border-white/10 flex items-center justify-center font-black text-white/50 shrink-0 shadow-inner`}>
                                                             #{idx + 1}
                                                         </div>
                                                         {showAnswer ? (
                                                             <span className="min-w-0 flex flex-col text-left leading-tight">
                                                                 <span className={`${size.text} font-bold tracking-tight text-white [text-wrap:balance]`}>{main}</span>
-                                                                {detail && <span className={`${size.detail} font-semibold text-blue-200/70 mt-1 [text-wrap:balance]`}>{detail}</span>}
+                                                                {detail && <span className={`${size.detail} font-semibold text-primary-200/70 mt-1 [text-wrap:balance]`}>{detail}</span>}
                                                             </span>
                                                         ) : (
                                                             <span className={`${size.text} min-w-0 font-bold leading-tight text-transparent bg-white/10 rounded-lg select-none blur-sm truncate`}>???????????????</span>
@@ -531,7 +532,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
 
             {/* HANDOUT: the printed sheet as large as the screen allows, then the answer sheet */}
             {isHandout && !showBigNum && (
-                <div className="absolute inset-x-0 top-0 bottom-[10cqh] z-40 bg-[#050505] flex flex-col px-[3cqw] pt-[2.5cqh] pb-[2cqh] gap-[1.5cqh]">
+                <div className="absolute inset-x-0 top-0 bottom-[10cqh] z-40 bg-ground flex flex-col px-[3cqw] pt-[2.5cqh] pb-[2cqh] gap-[1.5cqh]">
                     <div className="flex items-center gap-6 min-h-[5cqh] px-[2.5cqw]">{/* clear of the back and settings buttons */}
                         <span className="shrink-0 font-black text-4xl text-white/50 uppercase tracking-widest">{t.question} {question.id}</span>
                         {question.text && <h2 className="flex-1 min-w-0 font-bold text-5xl text-white leading-tight truncate">{question.text}</h2>}
@@ -569,19 +570,19 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                 <div className="flex items-center gap-4 text-white/40 font-mono text-xs uppercase tracking-widest font-bold">
                     <span className="bg-white/10 px-3 py-1.5 rounded-md text-white">{t.round} {roundData.number}</span>
                     <span>{fmt(t.question_of, { n: qIndex + 1, total: processedQuestions.length })}</span>
-                    <span className="text-blue-500">{modeText}</span>
+                    <span className="text-primary-500">{modeText}</span>
                 </div>
 
                 {isQuestionsOnly && (
                     <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 text-white font-mono text-3xl font-bold bg-white/5 px-8 py-2.5 rounded-full border border-white/10 shadow-lg transition-colors">
-                        <Clock size={24} className={timer > 0 ? "text-yellow-500 animate-pulse" : "text-gray-500"} />
+                        <Clock size={24} className={timer > 0 ? "text-accent-500 animate-pulse" : "text-gray-500"} />
                         <span>{Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</span>
                     </div>
                 )}
 
                 <div className="flex items-center gap-3 text-white/30 text-xs uppercase font-bold tracking-wider">
                     <button onClick={prev} className="p-4 bg-white/5 rounded-full hover:bg-white/10 hover:text-white transition-all hover:scale-110"><ArrowLeft size={20}/></button>
-                    <button onClick={next} className="p-4 bg-white/10 border border-white/20 rounded-full hover:bg-blue-500 hover:border-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all hover:scale-110 text-white"><ArrowRight size={20}/></button>
+                    <button onClick={next} className="p-4 bg-white/10 border border-white/20 rounded-full hover:bg-primary-500 hover:border-primary-500 hover:shadow-[0_0_15px_rgb(var(--glow-primary)/0.5)] transition-all hover:scale-110 text-white"><ArrowRight size={20}/></button>
                 </div>
             </div>
         </div>

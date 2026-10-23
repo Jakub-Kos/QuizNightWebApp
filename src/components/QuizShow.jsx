@@ -26,6 +26,7 @@ import { useDisplaySettings } from "../hooks/useDisplay";
 import { CalibrationPattern, CalibrationControls } from "./CalibrationScreen";
 import FullscreenHint from "./FullscreenHint";
 import TourGuide from "./TourGuide";
+import { ThemeScope, ThemeDecorations } from "./Theme";
 
 const SCENES = {
   WELCOME: "welcome",
@@ -117,7 +118,7 @@ export default function QuizShow({ bundle, isPresenter }) {
     <QuizContext.Provider value={quizContext}>
     {/* Presenter control panels use the full window; everything else renders on the scaled stage */}
     <Stage display={display} bypass={isPresenter && !isCalibrating && [SCENES.GAME, SCENES.LEADERBOARD, SCENES.PAUSE].includes(scene)}>
-    <div className="bg-[#050505] h-full w-full font-['League_Spartan'] overflow-hidden relative selection:bg-yellow-500/30 text-white">
+    <ThemeScope themeId={config.theme} className="bg-ground h-full w-full font-show overflow-hidden relative selection:bg-accent-500/30 text-white">
       {!isPresenter && (
           <div className="absolute top-0 w-full p-6 flex justify-between z-50 pointer-events-none">
             <div className="pointer-events-auto flex gap-2">
@@ -164,15 +165,18 @@ export default function QuizShow({ bundle, isPresenter }) {
         )}
       </AnimatePresence>
 
+      {/* The theme's snow, bats…: the audience's window only, nearly hidden over questions and scores */}
+      {!isPresenter && <ThemeDecorations quiet={scene === SCENES.GAME || scene === SCENES.LEADERBOARD} />}
+
       {!isPresenter && (
           <div className="absolute bottom-0 w-full h-10 bg-black/50 border-t border-white/5 flex items-center justify-between px-6 text-gray-500 text-xs z-40 pointer-events-none backdrop-blur-sm">
             <span className="tracking-widest">Quiz Night OS v2.0</span>
-            {config.showTime && <span className="font-mono text-yellow-500/50">{t.start_show}: {config.startTime}</span>}
+            {config.showTime && <span className="font-mono text-accent-500/50">{t.start_show}: {config.startTime}</span>}
           </div>
       )}
 
       {isCalibrating && <CalibrationPattern t={t} />}
-    </div>
+    </ThemeScope>
     </Stage>
 
     {/* Operator overlays stay outside the stage so they are never scaled */}

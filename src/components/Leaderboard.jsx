@@ -6,6 +6,7 @@ import { isPresent, directionText, teamForScores } from "../quiz/teams";
 import VenueMap from "./VenueMap";
 import TeamAvatar from "./TeamAvatar";
 import { fmt } from "../quiz/files";
+import { SceneBackdrop } from "./Theme";
 
 // The scores the reveal works on, without the poll time, so equal scores compare equal
 const toSnapshot = (scores) => ({ teams: scores?.teams || [], rounds: scores?.rounds || [] });
@@ -240,7 +241,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
       const scoresChanged = revealStep > 0 && live.teams.length > 0 && !sameScores(live, snapshot);
 
       return (
-          <div className="h-full w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col relative">
+          <div className="h-full w-full bg-panel text-white p-10 font-sans flex flex-col relative">
               <div className="flex justify-between items-start border-b border-white/10 pb-6 mb-8">
                   <div>
                       <h1 className="text-3xl font-black uppercase tracking-widest text-yellow-500 mb-2">{tr.lb_controls}</h1>
@@ -249,10 +250,10 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                           {hasScores && revealStep < maxStep && <span className="ml-3 font-sans">{fmt(tr.lb_steps_left, { n: maxStep - revealStep })}</span>}
                       </div>
 
-                      <div className="flex items-center gap-4 bg-blue-900/20 border border-blue-500/30 px-4 py-3 rounded-xl w-fit">
-                          <Database size={24} className="text-blue-500"/>
+                      <div className="flex items-center gap-4 bg-primary-900/20 border border-primary-500/30 px-4 py-3 rounded-xl w-fit">
+                          <Database size={24} className="text-primary-500"/>
                           <div className="flex flex-col">
-                              <span className="text-blue-400 font-bold uppercase text-[10px] tracking-widest">{tr.lb_select_round}</span>
+                              <span className="text-primary-400 font-bold uppercase text-[10px] tracking-widest">{tr.lb_select_round}</span>
                               <select
                                   value={selectedRound}
                                   onChange={(e) => { setRoundChosen(true); setSelectedRound(e.target.value); setRevealStep(0); }}
@@ -263,7 +264,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                           </div>
                           <div className="h-8 w-px bg-white/10 mx-2" />
                           <div className="flex flex-col">
-                              <span className="text-blue-400 font-bold uppercase text-[10px] tracking-widest">{tr.lb_last_sync}</span>
+                              <span className="text-primary-400 font-bold uppercase text-[10px] tracking-widest">{tr.lb_last_sync}</span>
                               <span className="font-mono text-sm text-white/80">{lastSync || "—"}</span>
                           </div>
                       </div>
@@ -314,7 +315,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                       <ArrowLeft size={32} className="mb-2"/> {tr.lb_prev_step}
                   </button>
 
-                  <button onClick={() => setRevealStep(p => Math.min(p + 1, maxStep))} disabled={revealStep === maxStep} className={`flex-1 flex flex-col items-center justify-center py-6 rounded-2xl font-black text-2xl tracking-widest uppercase transition-all shadow-xl ${revealStep === maxStep ? "bg-white/5 text-white/20" : revealStep === maxStep - 1 ? "bg-green-600 hover:bg-green-500 text-white shadow-[0_0_40px_rgba(74,222,128,0.4)]" : "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_30px_rgba(59,130,246,0.3)]"}`}>
+                  <button onClick={() => setRevealStep(p => Math.min(p + 1, maxStep))} disabled={revealStep === maxStep} className={`flex-1 flex flex-col items-center justify-center py-6 rounded-2xl font-black text-2xl tracking-widest uppercase transition-all shadow-xl ${revealStep === maxStep ? "bg-white/5 text-white/20" : revealStep === maxStep - 1 ? "bg-green-600 hover:bg-green-500 text-white shadow-[0_0_40px_rgba(74,222,128,0.4)]" : "bg-primary-600 hover:bg-primary-500 text-white shadow-[0_0_30px_rgb(var(--glow-primary)/0.3)]"}`}>
                       {revealStep === maxStep - 1 && <Shuffle size={28} className="mb-2" />}
                       {nextActionText}
                   </button>
@@ -344,9 +345,9 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
               <div className="flex-1 min-h-0 bg-white/5 rounded-2xl border border-white/10 overflow-y-auto p-6 custom-scrollbar">
                   <h3 className="text-sm font-bold text-white/30 uppercase tracking-widest mb-6">{tr.lb_order}</h3>
                   {scoreGroups.map((group, gIdx) => (
-                      <div key={gIdx} className={`mb-6 p-4 rounded-xl border ${revealStep >= (gIdx * 2) + 2 ? 'bg-blue-900/30 border-blue-500/30' : 'bg-black/40 border-white/10'}`}>
-                          <h4 className="text-lg font-black text-blue-400 mb-3 flex items-center gap-2">
-                              {revealStep >= (gIdx * 2) + 2 && <CheckCircle size={18} className="text-blue-500"/>}
+                      <div key={gIdx} className={`mb-6 p-4 rounded-xl border ${revealStep >= (gIdx * 2) + 2 ? 'bg-primary-900/30 border-primary-500/30' : 'bg-black/40 border-white/10'}`}>
+                          <h4 className="text-lg font-black text-primary-400 mb-3 flex items-center gap-2">
+                              {revealStep >= (gIdx * 2) + 2 && <CheckCircle size={18} className="text-primary-500"/>}
                               {fmt(tr.lb_group, { points: group.points })}
                           </h4>
                           <div className="flex flex-wrap gap-3">
@@ -378,7 +379,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
   const activeGroupForOverlay = isCardOverlayActive ? scoreGroups[Math.floor(revealStep / 2)] : null;
 
   return (
-    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan'] selection:bg-blue-500/30">
+    <div className="h-full w-full bg-ground relative overflow-hidden flex flex-col font-show selection:bg-primary-500/30">
         <style dangerouslySetInnerHTML={{__html: `
             @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
             @keyframes fireFlicker {
@@ -392,17 +393,17 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
             }
         `}} />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-[#000] z-0 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-[1200px] h-[1200px] bg-blue-900/10 blur-[250px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-yellow-900/5 blur-[200px] rounded-full pointer-events-none" />
+        <SceneBackdrop quiet />
+        <div className="absolute top-0 right-0 w-[1200px] h-[1200px] bg-primary-900/10 blur-[250px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-accent-900/5 blur-[200px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 flex flex-col h-full w-full max-w-[1920px] mx-auto pt-[6cqh] pb-[6cqh] px-12">
             <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8 shrink-0">
                 <div className="flex items-center gap-6">
                     <Trophy size={48} className="text-yellow-500" />
                     <div>
-                        <h1 className="text-5xl font-black uppercase tracking-[0.2em] text-white leading-none">{t.lb_title}</h1>
-                        <h2 className="text-blue-400 font-bold tracking-[0.4em] text-sm uppercase mt-2">
+                        <h1 className="font-title text-5xl font-black uppercase tracking-[0.2em] text-white leading-none">{t.lb_title}</h1>
+                        <h2 className="text-primary-400 font-bold tracking-[0.4em] text-sm uppercase mt-2">
                             {isShuffled ? t.lb_final : fmt(t.lb_round_reveal, { round: selectedRound })}
                         </h2>
                     </div>
@@ -412,7 +413,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                     <span className="text-white/40 font-bold tracking-widest uppercase text-xs mb-2">{t.lb_progress}</span>
                     <div className="flex gap-1.5">
                         {scoreGroups.map((_, i) => (
-                            <div key={i} className={`w-6 h-3 rounded-full transition-colors duration-500 ${revealStep >= (i * 2) + 2 ? 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-white/10'}`} />
+                            <div key={i} className={`w-6 h-3 rounded-full transition-colors duration-500 ${revealStep >= (i * 2) + 2 ? 'bg-primary-500 shadow-[0_0_10px_rgb(var(--glow-primary)/0.5)]' : 'bg-white/10'}`} />
                         ))}
                         <div className={`w-8 h-3 rounded-full ml-2 transition-colors duration-500 ${isShuffled ? 'bg-green-500 shadow-[0_0_15px_rgba(74,222,128,0.8)]' : 'bg-white/10'}`} />
                     </div>
@@ -446,7 +447,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                                     isWinner
                                         ? "bg-black/80 border border-yellow-500/80 shadow-[0_0_30px_rgba(234,179,8,0.2)]"
                                         : team.isRevealed
-                                            ? "bg-blue-950/20 border border-blue-500/20"
+                                            ? "bg-primary-950/20 border border-primary-500/20"
                                             : "bg-black/40 border border-white/10"
                                 }`}
                             >
@@ -492,8 +493,8 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                                     )}
                                 </div>
 
-                                <div className={`w-[100px] flex items-center justify-end px-4 border-l border-white/5 shrink-0 relative z-20 ${team.isRevealed && !isShuffled ? "bg-blue-900/20" : "bg-white/[0.02]"}`}>
-                                    <span className={`font-mono font-black text-3xl transition-colors duration-500 ${isWinner ? "text-yellow-500" : team.isRevealed ? "text-blue-400" : "text-white/40"}`}>
+                                <div className={`w-[100px] flex items-center justify-end px-4 border-l border-white/5 shrink-0 relative z-20 ${team.isRevealed && !isShuffled ? "bg-primary-900/20" : "bg-white/[0.02]"}`}>
+                                    <span className={`font-mono font-black text-3xl transition-colors duration-500 ${isWinner ? "text-yellow-500" : team.isRevealed ? "text-primary-400" : "text-white/40"}`}>
                                         {team.currentScore}
                                     </span>
                                 </div>
@@ -536,7 +537,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                     >
                         <motion.h2
                             initial={{ scale: 0.8, y: 30 }} animate={{ scale: 1, y: 0 }} transition={{ type: "spring", bounce: 0.4 }}
-                            className="text-7xl font-black uppercase tracking-[0.2em] text-blue-400 drop-shadow-[0_0_40px_rgba(59,130,246,0.5)] mb-16"
+                            className="font-title text-7xl font-black uppercase tracking-[0.2em] text-primary-400 drop-shadow-[0_0_40px_rgb(var(--glow-primary)/0.5)] mb-16"
                         >
                             {fmt(t.lb_teams_with, { points: activeGroupForOverlay.points })}
                         </motion.h2>

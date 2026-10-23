@@ -1,5 +1,96 @@
 @import "tailwindcss";
 
+/* Named colours of the show's scenes; a theme (quiz/themes.js) overrides them on its ThemeScope.
+   The defaults are Tailwind's blue and yellow and the original near-black background. */
+@theme {
+  --color-primary-50: oklch(97% 0.014 254.604);
+  --color-primary-100: oklch(93.2% 0.032 255.585);
+  --color-primary-200: oklch(88.2% 0.059 254.128);
+  --color-primary-300: oklch(80.9% 0.105 251.813);
+  --color-primary-400: oklch(70.7% 0.165 254.624);
+  --color-primary-500: oklch(62.3% 0.214 259.815);
+  --color-primary-600: oklch(54.6% 0.245 262.881);
+  --color-primary-700: oklch(48.8% 0.243 264.376);
+  --color-primary-800: oklch(42.4% 0.199 265.638);
+  --color-primary-900: oklch(37.9% 0.146 265.522);
+  --color-primary-950: oklch(28.2% 0.091 267.935);
+  --color-accent-50: oklch(98.7% 0.026 102.212);
+  --color-accent-100: oklch(97.3% 0.071 103.193);
+  --color-accent-200: oklch(94.5% 0.129 101.54);
+  --color-accent-300: oklch(90.5% 0.182 98.111);
+  --color-accent-400: oklch(85.2% 0.199 91.936);
+  --color-accent-500: oklch(79.5% 0.184 86.047);
+  --color-accent-600: oklch(68.1% 0.162 75.834);
+  --color-accent-700: oklch(55.4% 0.135 66.442);
+  --color-accent-800: oklch(47.6% 0.114 61.907);
+  --color-accent-900: oklch(42.1% 0.095 57.708);
+  --color-accent-950: oklch(28.6% 0.066 53.813);
+  --color-ground: #050505;
+  --color-ground-top: #111;
+  --color-ground-bottom: #000;
+  --color-panel: #0a0a0a;
+}
+
+:root {
+  /* Glows, as rgb(var(--glow-…) / alpha) */
+  --glow-primary: 59 130 246;
+  --glow-primary-deep: 30 58 138;
+  --glow-accent: 234 179 8;
+}
+
+/* The show's font, and the theme's title font for headings (the show's font by default) */
+.font-show { font-family: var(--theme-font, "League Spartan"); font-variant-numeric: lining-nums; }
+.font-title { font-family: var(--theme-title-font, inherit); }
+
+/* Theme decorations (ThemeDecorations, SceneBackdrop) */
+@media (prefers-reduced-motion: reduce) {
+  .theme-anim { animation: none !important; }
+}
+@keyframes theme-fall {
+  from { transform: translate3d(0, -10cqh, 0); }
+  to { transform: translate3d(var(--drift, 0), 110cqh, 0); }
+}
+@keyframes theme-sway {
+  0%, 100% { margin-left: 0; }
+  50% { margin-left: var(--sway, 2cqw); }
+}
+@keyframes theme-fly {
+  0% { transform: translate3d(-15cqw, 0, 0) scale(var(--scale, 1)); }
+  25% { transform: translate3d(20cqw, -6cqh, 0) scale(var(--scale, 1)); }
+  50% { transform: translate3d(55cqw, 4cqh, 0) scale(var(--scale, 1)); }
+  75% { transform: translate3d(85cqw, -5cqh, 0) scale(var(--scale, 1)); }
+  100% { transform: translate3d(120cqw, 2cqh, 0) scale(var(--scale, 1)); }
+}
+@keyframes theme-flap {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.35); }
+}
+@keyframes theme-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes theme-flicker {
+  0%, 100% { opacity: 1; }
+  20% { opacity: 0.8; }
+  23% { opacity: 0.55; }
+  26% { opacity: 0.9; }
+  60% { opacity: 0.75; }
+  63% { opacity: 1; }
+}
+@keyframes theme-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(14px); }
+}
+@keyframes theme-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  15% { opacity: 0.9; }
+  100% { transform: translate3d(var(--drift, 0), -60cqh, 0); opacity: 0; }
+}
+@keyframes theme-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
 /* A running bar for work of unknown length (saving to Drive) */
 @keyframes progress-indeterminate {
   from { transform: translateX(-100%); }

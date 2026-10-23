@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { getStageLayout, useViewport, StageSizeContext } from "../hooks/useDisplay";
+import { QuizContext } from "../quiz/context";
+import { ThemeScope } from "./Theme";
 
 // Scenes are laid out on a virtual canvas that is scaled to fit the window.
 // The canvas is a size container, so scenes use cqh/cqw (percent of the canvas) where they would use vh/vw.
@@ -32,8 +34,10 @@ export default function Stage({ display, bypass = false, children }) {
 }
 
 // The same virtual canvas scaled into a box of any width (quiz check thumbnails and the large preview).
-// Uses the TV window's content size so previews match what the audience sees.
-export function StageFrame({ display, className = "", children }) {
+// Uses the TV window's content size so previews match what the audience sees, in the quiz's theme
+// (themeId shows another one).
+export function StageFrame({ display, className = "", themeId, children }) {
+  const quiz = useContext(QuizContext)?.quiz;
   const ref = useRef(null);
   const [width, setWidth] = useState(0);
   const { w, h } = getStageLayout({ w: 1, h: 1 }, display);
@@ -49,7 +53,7 @@ export function StageFrame({ display, className = "", children }) {
       {width > 0 && (
         <StageSizeContext.Provider value={{ w, h }}>
           <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, transform: `scale(${width / w})`, transformOrigin: "top left", containerType: "size" }}>
-            {children}
+            <ThemeScope themeId={themeId ?? quiz?.settings?.theme} className="contents">{children}</ThemeScope>
           </div>
         </StageSizeContext.Provider>
       )}

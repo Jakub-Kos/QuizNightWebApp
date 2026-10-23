@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { X, Save, Clock, Zap, Maximize, Globe, ChevronUp, ChevronDown, Library } from "lucide-react";
+import { THEMES, DEFAULT_THEME_ID } from "../quiz/themes";
 
 export default function SettingsModal({ onClose, onOpenCalibration, onExit, config, onUpdate, t }) {
   const handleChange = (key, value) => {
@@ -93,6 +94,19 @@ export default function SettingsModal({ onClose, onOpenCalibration, onExit, conf
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
               <Clock size={14} /> {t.display_options}
             </h3>
+
+            {/* The show's look (quiz/themes.js) */}
+            <div className="bg-black/20 p-4 rounded-xl border border-white/5 space-y-3">
+              <span className="text-gray-200 font-medium">{t.set_theme}</span>
+              <div className="flex gap-2">
+                {THEMES.map((theme) => (
+                  <button key={theme.id} onClick={() => handleChange("theme", theme.id)}
+                    className={`flex-1 py-2 rounded-lg border text-sm font-bold transition-all ${(config.theme || DEFAULT_THEME_ID) === theme.id ? "bg-yellow-500 text-black border-yellow-500" : "bg-black/20 text-gray-400 border-white/5 hover:bg-white/5"}`}>
+                    {theme.name[config.language] || theme.name.en}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* Welcome screen layout */}
             <div className="bg-black/20 p-4 rounded-xl border border-white/5 space-y-3">

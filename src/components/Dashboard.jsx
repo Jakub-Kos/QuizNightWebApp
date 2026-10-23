@@ -4,6 +4,7 @@ import { Play, Eye, Trophy, CheckCircle, Circle, Coffee, RotateCcw } from "lucid
 import { isRoundHidden } from "../quiz/parse";
 import { useQuiz } from "../quiz/context";
 import { useCompletedRounds } from "../hooks/useCompletedRounds";
+import { SceneBackdrop } from "./Theme";
 
 export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, onOpenPause, t }) { // ADDED onOpenPause
   const [hoveredRound, setHoveredRound] = useState(null);
@@ -42,11 +43,11 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
   };
 
   return (
-    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan'] selection:bg-yellow-500/30">
+    <div className="h-full w-full bg-ground relative overflow-hidden flex flex-col font-show selection:bg-accent-500/30">
 
-      <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0 pointer-events-none" />
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-900/10 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-yellow-600/5 blur-[120px] rounded-full pointer-events-none" />
+      <SceneBackdrop quiet />
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-900/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent-600/5 blur-[120px] rounded-full pointer-events-none" />
 
       {/* --- HEADER --- */}
       <div className="h-[15cqh] flex items-center justify-between px-16 relative z-20 border-b border-white/5 bg-black/40 backdrop-blur-md shrink-0">
@@ -54,7 +55,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
           <div className="flex flex-col gap-3 w-[400px]">
               <div className="flex justify-between items-end">
                   <h1 className="text-2xl font-black text-white/50 uppercase tracking-[0.3em]">{t.progress}</h1>
-                  <span className="text-blue-400 font-mono font-bold tracking-widest text-xl">
+                  <span className="text-primary-400 font-mono font-bold tracking-widest text-xl">
                       {completedCount} <span className="text-white/30">/ {visibleRounds.length}</span>
                       {completedCount > 0 && (
                           <button onClick={() => setCompletedRounds([])} title={t.calib_reset} className="ml-3 align-middle text-white/30 hover:text-white transition-colors">
@@ -65,7 +66,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
               </div>
               <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/10">
                   <motion.div
-                      className="h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.6)] rounded-full"
+                      className="h-full bg-gradient-to-r from-primary-600 to-primary-400 shadow-[0_0_15px_rgb(var(--glow-primary)/0.6)] rounded-full"
                       initial={{ width: 0 }}
                       animate={{ width: `${progress * 100}%` }}
                       transition={{ duration: 0.8, type: "spring" }}
@@ -78,7 +79,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
               <button
                  data-tour="pause"
                  onClick={onOpenPause}
-                 className="group relative flex items-center gap-3 px-8 py-5 bg-gradient-to-br from-blue-900/50 to-blue-800/30 hover:from-blue-600 hover:to-blue-500 text-white rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] border border-blue-500/20"
+                 className="group relative flex items-center gap-3 px-8 py-5 bg-gradient-to-br from-primary-900/50 to-primary-800/30 hover:from-primary-600 hover:to-primary-500 text-white rounded-full transition-all duration-300 shadow-[0_0_20px_rgb(var(--glow-primary)/0.1)] hover:shadow-[0_0_40px_rgb(var(--glow-primary)/0.4)] border border-primary-500/20"
               >
                  <Coffee size={28} className="relative z-10" />
                  <span className="font-black text-xl uppercase tracking-[0.15em] relative z-10">
@@ -89,7 +90,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
               <button
                  data-tour="leaderboard"
                  onClick={onOpenLeaderboard}
-                 className="group relative flex items-center gap-4 px-10 py-5 bg-gradient-to-br from-yellow-600 to-yellow-400 hover:from-yellow-400 hover:to-yellow-300 text-black rounded-full transition-all duration-300 hover:scale-[1.03] shadow-[0_0_30px_rgba(234,179,8,0.2)] hover:shadow-[0_0_50px_rgba(234,179,8,0.5)] overflow-hidden"
+                 className="group relative flex items-center gap-4 px-10 py-5 bg-gradient-to-br from-accent-600 to-accent-400 hover:from-accent-400 hover:to-accent-300 text-black rounded-full transition-all duration-300 hover:scale-[1.03] shadow-[0_0_30px_rgb(var(--glow-accent)/0.2)] hover:shadow-[0_0_50px_rgb(var(--glow-accent)/0.5)] overflow-hidden"
               >
                  <Trophy size={32} className="relative z-10" />
                  <span className="font-black text-2xl uppercase tracking-[0.15em] relative z-10">
@@ -125,19 +126,19 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                             animate={{ flex: isHovered ? 4 : 1, opacity: hoveredRound !== null && !isHovered ? 0.4 : 1 }}
                             transition={{ type: "spring", bounce: 0.2, duration: 0.7 }}
                             className={`relative rounded-[2.5rem] overflow-hidden border cursor-pointer group flex flex-col items-center justify-end shadow-2xl transition-colors duration-500 ${
-                                isCompleted ? "border-green-500/30 bg-[#051005]" : "border-white/10 bg-[#0a0a0a]"
+                                isCompleted ? "border-green-500/30 bg-[#051005]" : "border-white/10 bg-panel"
                             }`}
                         >
                             <div className={`absolute inset-0 transition-all duration-700 ease-in-out pointer-events-none ${
                                 isHovered
-                                    ? isCompleted ? 'bg-gradient-to-b from-green-900/30 to-black opacity-100' : 'bg-gradient-to-b from-blue-900/30 to-black opacity-100'
+                                    ? isCompleted ? 'bg-gradient-to-b from-green-900/30 to-black opacity-100' : 'bg-gradient-to-b from-primary-900/30 to-black opacity-100'
                                     : 'bg-black/80 opacity-50'
                             }`} />
 
                             <motion.div
                                 animate={{ top: isHovered ? "5%" : "10%", left: "50%", x: "-50%", scale: isHovered ? 1.5 : 1, opacity: isHovered ? 0.05 : 0.15 }}
                                 transition={{ duration: 0.5 }}
-                                className={`absolute text-[150px] font-black pointer-events-none leading-none origin-top ${isCompleted ? "text-green-500" : "text-white"}`}
+                                className={`font-title absolute text-[150px] font-black pointer-events-none leading-none origin-top ${isCompleted ? "text-green-500" : "text-white"}`}
                             >
                                 {index + 1}
                             </motion.div>
@@ -151,7 +152,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                                         <div className="w-10 h-10 flex items-end justify-center relative">
                                             <h2
                                                 style={{ transformOrigin: "left bottom", transform: "rotate(-90deg) translateX(0) translateY(50%)" }}
-                                                className={`absolute left-1/2 bottom-0 w-[55cqh] text-left font-bold tracking-[0.2em] uppercase transition-colors leading-tight ${getCollapsedTitleClass(displayTitle)} ${
+                                                className={`font-title absolute left-1/2 bottom-0 w-[55cqh] text-left font-bold tracking-[0.2em] uppercase transition-colors leading-tight ${getCollapsedTitleClass(displayTitle)} ${
                                                     isCompleted ? "text-green-500/60 group-hover:text-green-400" : "text-white/40 group-hover:text-white/80"
                                                 }`}
                                             >
@@ -169,7 +170,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                                         className="relative z-10 flex flex-col items-center text-center w-full max-w-[450px] mb-8 px-6"
                                     >
                                         <div className="flex gap-3 mb-6">
-                                            <span className="px-5 py-2 bg-blue-500/10 text-blue-400 text-[11px] font-black tracking-widest uppercase rounded-full border border-blue-500/20">
+                                            <span className="px-5 py-2 bg-primary-500/10 text-primary-400 text-[11px] font-black tracking-widest uppercase rounded-full border border-primary-500/20">
                                                 {round.questions.length} {t.questions_count}
                                             </span>
                                             {isCompleted && (
@@ -179,7 +180,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                                             )}
                                         </div>
 
-                                        <h2 className={`${getExpandedTitleClass(displayTitle)} font-black uppercase tracking-tight mb-8 drop-shadow-xl leading-tight ${isCompleted ? "text-white" : "text-white"}`}>
+                                        <h2 className={`font-title ${getExpandedTitleClass(displayTitle)} font-black uppercase tracking-tight mb-8 drop-shadow-xl leading-tight ${isCompleted ? "text-white" : "text-white"}`}>
                                             {displayTitle}
                                         </h2>
 
@@ -187,7 +188,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                                             <button data-tour={index === 0 ? "questions" : undefined} onClick={() => onSelectRound(round, "questions_only")} className="py-5 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold tracking-widest text-xs flex flex-col items-center justify-center gap-2 transition-all border border-white/10 hover:border-white/20">
                                                 <Eye size={24} className="text-gray-400"/><span>{t.btn_questions}</span>
                                             </button>
-                                            <button data-tour={index === 0 ? "answers" : undefined} onClick={() => onSelectRound(round, "with_answers")} className="py-5 bg-gradient-to-br from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 text-black rounded-2xl font-black tracking-widest text-xs flex flex-col items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-[1.02]">
+                                            <button data-tour={index === 0 ? "answers" : undefined} onClick={() => onSelectRound(round, "with_answers")} className="py-5 bg-gradient-to-br from-accent-400 to-accent-600 hover:from-accent-300 hover:to-accent-500 text-black rounded-2xl font-black tracking-widest text-xs flex flex-col items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgb(var(--glow-accent)/0.4)] hover:scale-[1.02]">
                                                 <Play size={24} fill="currentColor"/><span>{t.btn_answers}</span>
                                             </button>
                                         </div>
