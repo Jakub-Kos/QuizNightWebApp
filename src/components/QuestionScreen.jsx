@@ -31,7 +31,8 @@ function splitAnswer(answer) {
   return match ? { main: keepTogether(match[1]), detail: keepTogether(match[2]) } : { main: keepTogether(text), detail: null };
 }
 
-// preview: { qIndex, step } renders one fixed frame (quiz check thumbnails): no keys, sync or timer
+// preview: { qIndex, step } renders one fixed frame (quiz check thumbnails, help, map): no keys, sync,
+// timer or playing media
 export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t = {}, preview = null }) {
     const [stateQIndex, setQIndex] = useState(-1);
     const [stateStep, setStep] = useState(0);
@@ -403,7 +404,7 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                     {showPreMedia && (
                         <motion.div key="pre-media" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }} className="w-full h-[65cqh] flex items-center justify-center">
                             {question.type === "PVideo" ? (
-                                <video src={question.source} controls autoPlay className="max-h-full max-w-full rounded-2xl shadow-2xl border border-white/10" />
+                                <video src={question.source} controls autoPlay={!isPreview} muted={isPreview} preload={isPreview ? "metadata" : "auto"} className="max-h-full max-w-full rounded-2xl shadow-2xl border border-white/10" />
                             ) : (
                                 <img src={question.source} alt="Visual" onClick={isPreview ? undefined : () => setZoom(true)} className="max-h-full max-w-full rounded-2xl shadow-2xl border border-white/10 cursor-zoom-in" />
                             )}
@@ -419,10 +420,10 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
                             {question.source && !isPreMedia && (
                                 <div className="mb-8 max-h-[40cqh] relative">
                                     {question.type.includes("Video") ? (
-                                        <video src={question.source} controls className="max-h-[40cqh] rounded-2xl border border-white/20" />
+                                        <video src={question.source} controls muted={isPreview} preload={isPreview ? "metadata" : "auto"} className="max-h-[40cqh] rounded-2xl border border-white/20" />
                                     ) : question.type === "Audio" ? (
                                         <div className="bg-white/10 p-6 rounded-full border border-white/10 flex items-center justify-center w-[500px]">
-                                            <audio controls src={question.source} className="w-full" />
+                                            <audio controls src={question.source} preload={isPreview ? "none" : "auto"} className="w-full" />
                                         </div>
                                     ) : (
                                         <img src={question.source} onClick={isPreview ? undefined : () => setZoom(true)} className="max-h-[40cqh] rounded-2xl border border-white/20 cursor-zoom-in" />

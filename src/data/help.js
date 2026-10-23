@@ -3,6 +3,18 @@
 export const HELP = {
   en: {
     title: "How to make a quiz",
+    quickstart: {
+      title: "Quick start",
+      intro: "A quiz night in five steps. New here? The guided tour clicks through the demo with you.",
+      map: "See every screen of the demo",
+      steps: [
+        ["Write the questions", "In a copy of the Google Sheets template, one row per question. Or load the example round on a new quiz's setup page."],
+        ["Fill in the setup page", "Ready for the show at the top lists what is still missing: media, teams, scores, rules and prizes."],
+        ["Check it", "Check shows every question as it will look on the TV. Map shows every screen and how you get from one to the next."],
+        ["Start the show", "Start show opens the TV window (drag it to the TV, press F11) and the presenter window for your laptop."],
+        ["Run the night", "Every round twice: Questions while the teams write, then Answers. After that, the leaderboard reveal."],
+      ],
+    },
     templates: {
       title: "Templates",
       questions: "Questions template (CSV)",
@@ -199,6 +211,18 @@ export const HELP = {
 
   cs: {
     title: "Jak připravit kvíz",
+    quickstart: {
+      title: "Rychlý start",
+      intro: "Kvízový večer v pěti krocích. Jste tu poprvé? Prohlídka s nápovědou s vámi projde ukázkový kvíz.",
+      map: "Všechny obrazovky ukázky",
+      steps: [
+        ["Napište otázky", "V kopii šablony Google Tabulek, jeden řádek na otázku. Nebo na stránce nového kvízu načtěte ukázkové kolo."],
+        ["Vyplňte stránku kvízu", "Připraveno na show nahoře ukazuje, co ještě chybí: média, týmy, body, pravidla a ceny."],
+        ["Zkontrolujte ho", "Kontrola ukáže každou otázku tak, jak bude vypadat na televizi. Mapa ukáže všechny obrazovky a jak se mezi nimi přechází."],
+        ["Spusťte show", "Spustit show otevře okno pro televizi (přetáhněte ho na televizi, F11) a okno moderátora pro notebook."],
+        ["Veďte večer", "Každé kolo dvakrát: Otázky, zatímco týmy píšou, pak Odpovědi. Potom odhalení pořadí."],
+      ],
+    },
     templates: {
       title: "Šablony",
       questions: "Šablona otázek (CSV)",
@@ -394,6 +418,18 @@ export const HELP = {
 
   sk: {
     title: "Hogyan készíts kvízt",
+    quickstart: {
+      title: "Gyors kezdés",
+      intro: "Egy kvízest öt lépésben. Először jársz itt? A vezetett bemutató végigvisz veled a mintakvízen.",
+      map: "A minta összes képernyője",
+      steps: [
+        ["Írd meg a kérdéseket", "A Google Táblázatok sablon másolatában, soronként egy kérdés. Vagy töltsd be a példafordulót egy új kvíz beállításainál."],
+        ["Töltsd ki a beállításokat", "A Kész a showra lista fent megmutatja, mi hiányzik még: média, csapatok, pontok, szabályok és díjak."],
+        ["Ellenőrizd", "Az Ellenőrzés minden kérdést úgy mutat, ahogy a tévén fog kinézni. A Térkép minden képernyőt megmutat, és hogy hogyan jutsz egyikről a másikra."],
+        ["Indítsd a showt", "A Show indítása megnyitja a tévé ablakát (húzd a tévére, F11) és a műsorvezetői ablakot a laptopodra."],
+        ["Vezesd az estet", "Minden forduló kétszer: Kérdések, amíg a csapatok írnak, aztán Válaszok. Utána a ranglista felfedése."],
+      ],
+    },
     templates: {
       title: "Sablonok",
       questions: "Kérdés sablon (CSV)",
