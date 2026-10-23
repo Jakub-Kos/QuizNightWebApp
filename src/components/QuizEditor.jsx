@@ -5,9 +5,10 @@ import { syncDriveConfig } from "../quiz/driveConfig";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
 import { fetchSheetCsv, sheetErrorText } from "../quiz/sheets";
 import { referencedMedia, isMediaFile } from "../quiz/package";
-import { mediaKey } from "../quiz/model";
+import { mediaKey, isUrl } from "../quiz/model";
+import { validateQuiz } from "../quiz/validate";
 import { formatBytes, fmt } from "../quiz/files";
-import { quizHash } from "../hooks/useHashRoute";
+import { quizHash, navigate } from "../hooks/useHashRoute";
 import FileDrop from "./FileDrop";
 import { Section, Status, inputCls, btnCls } from "./EditorParts";
 import TeamsSection from "./TeamsSection";
@@ -19,6 +20,9 @@ import { GoogleAccountBar, DriveProgress, BetaBadge, SaveStatus } from "./DriveP
 import { useDriveSync } from "../hooks/useDriveSync";
 import { teamForScores } from "../quiz/teams";
 import DrivePeople from "./DrivePeople";
+import ReadyChecklist from "./ReadyChecklist";
+import ShowLauncher from "./ShowLauncher";
+import { openSection } from "./sectionEvents";
 
 export default function QuizEditor({ id, t }) {
   const [quiz, setQuiz] = useState(undefined); // undefined = loading, null = not found
@@ -36,11 +40,16 @@ export default function QuizEditor({ id, t }) {
   const [scoresPreview, setScoresPreview] = useState(null); // parseScoresCsv result of the last test
   const csvInput = useRef(null);
   const dirty = useRef(false);
+  const [launcher, setLauncher] = useState(false);
+  // Scores come from a Google Sheet, or are typed into the score table during the quiz
+  const [scoresMode, setScoresMode] = useState("manual");
+  const lastScoresUrl = useRef("");
 
   useEffect(() => {
     getQuiz(id).then((q) => {
       setQuiz(q ?? null);
       setSheetUrl(q?.questionsSheetUrl || "");
+      setScoresMode(q?.scoresSheetUrl ? "sheet" : "manual");
     });
   }, [id]);
 
@@ -88,6 +97,8 @@ export default function QuizEditor({ id, t }) {
   const missing = referenced.filter((name) => !mediaKeys.has(mediaKey(name)));
   const usedKeys = new Set(referenced.map(mediaKey));
   const mediaUrlByKey = useMemo(() => new Map(media.map((m) => [mediaKey(m.name), m.url])), [media]);
+  // The same issues the Check page lists, for the checklist
+  const issues = useMemo(() => (quiz ? validateQuiz(quiz, rounds, (name) => isUrl(name) || mediaKeys.has(mediaKey(name))) : []), [quiz, rounds, mediaKeys]);
 
   const loadSheet = async () => {
     setBusy("sheet");
@@ -208,6 +219,18 @@ export default function QuizEditor({ id, t }) {
     await reloadMedia();
   };
 
+  const chooseScores = (mode) => {
+    setScoresMode(mode);
+    setScoresStatus(null);
+    setScoresPreview(null);
+    // Typing points in drops the link (the show would read the Sheet otherwise); it comes back on switching back
+    if (mode === "manual" && quiz.scoresSheetUrl) {
+      lastScoresUrl.current = quiz.scoresSheetUrl;
+      update({ scoresSheetUrl: "" });
+    }
+    if (mode === "sheet" && !quiz.scoresSheetUrl && lastScoresUrl.current) update({ scoresSheetUrl: lastScoresUrl.current });
+  };
+
   const testScores = async () => {
     setBusy("scores");
     try {
@@ -252,10 +275,28 @@ export default function QuizEditor({ id, t }) {
     drive: quiz.drive && !google.signedIn ? t.ed_warn_signin : null,
     questions: rounds.length === 0 ? t.ed_warn_questions : null,
     media: missing.length ? fmt(t.ed_warn_media, { count: missing.length }) : null,
-    scores: !quiz.scoresSheetUrl ? t.ed_warn_scores : null,
+    scores: scoresMode === "sheet" && !quiz.scoresSheetUrl ? t.ed_warn_scores : null,
     teams: !quiz.teams.some((team) => team.name.trim()) ? t.ed_warn_teams : null,
     intro: prizes.enabled && !["first", "second", "third", "extra"].some((k) => String(prizes[k] || "").trim()) ? t.ed_warn_prizes : null,
   };
+  // Ready for the show: each step opens its section (the check its own page)
+  const errors = issues.filter((i) => i.level === "error").length;
+  const toLook = issues.filter((i) => i.level === "warning").length;
+  const namedTeams = quiz.teams.filter((team) => team.name.trim()).length;
+  const step = (key, label, todo, status, onClick = () => openSection(key)) => ({ key, label, state: todo ? "todo" : "done", status, onClick });
+  const steps = [
+    quiz.drive && step("drive", t.rd_google, !google.signedIn, google.signedIn ? t.rd_google_ok : t.rd_google_todo),
+    step("questions", t.ed_questions, warnings.questions, rounds.length ? fmt(t.rd_questions_ok, { rounds: rounds.length, questions: questionCount }) : t.ed_warn_questions),
+    step("media", t.ed_media, warnings.media, missing.length ? fmt(t.rd_media_todo, { count: missing.length })
+      : referenced.length ? fmt(t.rd_media_ok, { count: referenced.length }) : t.rd_media_none),
+    step("teams", t.tm_title, warnings.teams, namedTeams ? fmt(t.rd_teams_ok, { count: namedTeams }) : t.ed_warn_teams),
+    step("scores", t.ed_scores, warnings.scores, warnings.scores ? t.rd_scores_todo : quiz.scoresSheetUrl ? t.rd_scores_sheet : t.rd_scores_manual),
+    step("intro", t.ed_intro, warnings.intro, warnings.intro ? t.rd_intro_todo : t.rd_intro_ok),
+    // Warnings (like a hidden TEST round) can be intended, so only errors keep the check from being done
+    { key: "check", label: t.chk_open, state: errors ? "error" : "done", onClick: () => navigate(quizHash(quiz.id, "check")),
+      status: errors ? fmt(t.rd_check_err, { count: errors }) : toLook ? fmt(t.rd_check_warn, { count: toLook }) : t.rd_check_ok },
+  ].filter(Boolean);
+
   // Teams, rules and prizes: saved here, and for a Drive quiz in its folder
   const saving = saveState === "saving";
   const setupSection = (key) => ({
@@ -277,13 +318,16 @@ export default function QuizEditor({ id, t }) {
           <a href={quizHash(quiz.id, "check")} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20">
             <ScanSearch size={18} /> {t.chk_open}
           </a>
-          <a href={quizHash(quiz.id)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold">
+          <button onClick={() => setLauncher(true)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold">
             <Play size={18} /> {t.lib_open}
-          </a>
+          </button>
         </header>
+        {launcher && <ShowLauncher quizId={quiz.id} onClose={() => setLauncher(false)} t={t} />}
 
         <input value={quiz.title} onChange={(e) => update({ title: e.target.value })} placeholder={t.ed_untitled}
           className="w-full bg-transparent font-['League_Spartan'] text-4xl font-black tracking-wide border-b border-white/10 pb-3 focus:outline-none focus:border-yellow-500/60" />
+
+        <ReadyChecklist steps={steps} onStart={() => setLauncher(true)} t={t} />
 
         {quiz.drive && (
           <Section id="drive" warning={warnings.drive} busy={busy === "drive"} title={<>{t.gd_title} <BetaBadge t={t} /></>} help={t.gd_section_help}>
@@ -419,7 +463,7 @@ export default function QuizEditor({ id, t }) {
           )}
         </Section>
 
-        <Section id="scores" warning={warnings.scores} title={t.ed_scores} help={quiz.drive?.scoresTab ? null : t.ed_scores_help} helpId="scores">
+        <Section id="scores" warning={warnings.scores} title={t.ed_scores} help={quiz.drive?.scoresTab || scoresMode === "manual" ? null : t.ed_scores_help} helpId="scores">
           {quiz.drive?.scoresTab ? (
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <p className="flex-1 text-sm text-gray-300">{fmt(t.ed_scores_drive, { tab: quiz.drive.scoresTab })}</p>
@@ -428,6 +472,13 @@ export default function QuizEditor({ id, t }) {
               </button>
             </div>
           ) : (<>
+          <div className="flex gap-1 bg-white/5 rounded-xl p-1 w-fit text-sm">
+            {[["manual", t.ed_scores_mode_manual], ["sheet", t.ed_scores_mode_sheet]].map(([key, label]) => (
+              <button key={key} onClick={() => chooseScores(key)}
+                className={`px-3 py-1.5 rounded-lg ${scoresMode === key ? "bg-yellow-500 text-black font-bold" : "text-gray-400 hover:text-white"}`}>{label}</button>
+            ))}
+          </div>
+          {scoresMode === "manual" ? <p className="text-sm text-gray-400">{t.ed_scores_manual_help}</p> : (
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <Link2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -438,10 +489,11 @@ export default function QuizEditor({ id, t }) {
               {busy === "scores" ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />} {t.ed_test}
             </button>
           </div>
+          )}
           </>)}
           <Status status={scoresStatus} />
           {scoresPreview && <ScoresPreview scores={scoresPreview} teams={quiz.teams} t={t} />}
-          {!quiz.scoresSheetUrl && (
+          {!quiz.scoresSheetUrl && scoresMode === "manual" && (
             <a href={quizHash(quiz.id, "scores")} className={`${btnCls} w-fit`}>
               <Calculator size={16} /> {t.sc_open}
             </a>

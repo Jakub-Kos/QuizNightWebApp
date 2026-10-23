@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AlertTriangle, CheckCircle2, HelpCircle, ChevronDown } from "lucide-react";
+import { OPEN_SECTION } from "./sectionEvents";
 
 // Which sections this viewer folded away, kept per browser
 const FOLDED_KEY = "quiznight.foldedSections";
@@ -13,15 +14,27 @@ const readFolded = () => {
 // running bar along the top (work being saved).
 export function Section({ id, title, help, helpId, actions, warning, status, busy, children }) {
   const [open, setOpen] = useState(() => !id || !readFolded()[id]);
-  const toggle = () => {
-    const next = !open;
+  const ref = useRef(null);
+  const fold = (next) => {
     setOpen(next);
     if (!id) return;
     try { localStorage.setItem(FOLDED_KEY, JSON.stringify({ ...readFolded(), [id]: !next })); } catch { /* not remembered */ }
   };
+  const toggle = () => fold(!open);
+
+  useEffect(() => {
+    if (!id) return;
+    const onOpen = (e) => {
+      if (e.detail !== id) return;
+      fold(true);
+      requestAnimationFrame(() => ref.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    };
+    window.addEventListener(OPEN_SECTION, onOpen);
+    return () => window.removeEventListener(OPEN_SECTION, onOpen);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <section className={`relative overflow-hidden rounded-2xl border p-6 space-y-4 ${warning ? "bg-yellow-500/[0.04] border-yellow-500/40" : "bg-white/[0.04] border-white/10"}`}>
+    <section ref={ref} className={`scroll-mt-6 relative overflow-hidden rounded-2xl border p-6 space-y-4 ${warning ? "bg-yellow-500/[0.04] border-yellow-500/40" : "bg-white/[0.04] border-white/10"}`}>
       {busy && <div className="absolute inset-x-0 top-0 h-0.5 overflow-hidden"><div className="h-full w-2/5 bg-yellow-400 progress-indeterminate" /></div>}
       <div className="flex flex-wrap items-start gap-3">
         <div className="flex-1 min-w-[240px]">
