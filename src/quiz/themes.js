@@ -1,68 +1,72 @@
 import { createContext, useContext } from "react";
+import { THEME_FORMAT, THEME_VERSION } from "./themeFormat";
 
-// The look of a quiz's show: colours, title font, background and decorations. A theme is data only
-// (never CSS or code), so themes shared by other people are safe to open. The scenes use named colours
+// The look of a quiz's show, in the theme file format (themeFormat.js). The scenes use named colours
 // (Tailwind tokens in index.css): primary-50…950 (the main colour, blue by default), accent-50…950
 // (highlights and buttons, yellow by default), ground / ground-top / ground-bottom (the background
 // gradient) and panel (cards). Gold for first place, green and red for right and wrong, and the
 // host's controls keep their own colours. ThemeScope sets the variables for a theme; scenes draw their
 // background with SceneBackdrop, the place a theme can later change a scene's whole layout.
-//
-// theme: {
-//   id, name: { en, cs, sk },
-//   primary, accent        base colours (500), the other shades are mixed from them; omitted = default
-//   ground: { top, base, bottom }, panel
-//   font: { title, body }  font families for headings and for all other show text (numbers keep their
-//                          monospace font); fonts in FONT_LOADERS are bundled
-//   glows: [{ color, x, y, size, opacity }]   soft coloured light behind the scenes (x, y, size in %)
-//   ornament               "graveyard" | "lights" | null, drawn by SceneBackdrop on the calm scenes
-//   decoration             "bats" | "snow" | null, the overlay running over every scene
-// }
+// settings.theme is a built-in theme's id, or "custom" for the quiz's own theme (quiz.customTheme,
+// its files stored with the quiz's media).
 
 export const DEFAULT_THEME_ID = "default";
+export const CUSTOM_THEME_ID = "custom";
+
+const builtin = (fields) => ({
+  format: THEME_FORMAT, version: THEME_VERSION, author: "Quiz Night", description: {}, tags: [],
+  colors: {}, fonts: {}, decoration: { type: null }, scenes: {}, ...fields,
+  background: { image: null, imageOpacity: 0.5, imageBlur: 0, glows: [], ornament: null, ...fields.background },
+});
 
 export const THEMES = [
-  {
-    id: "default",
-    name: { en: "Classic", cs: "Klasický", sk: "Klasszikus" },
-    glows: [],
-    ornament: null,
-    decoration: null,
-  },
-  {
+  builtin({ id: "default", name: { en: "Classic", cs: "Klasický", sk: "Klasszikus" } }),
+  builtin({
     id: "halloween",
     name: { en: "Halloween", cs: "Halloween", sk: "Halloween" },
-    primary: "#8b3dff",
-    accent: "#ff7a1a",
-    ground: { top: "#1d0c30", base: "#0b0614", bottom: "#050208" },
-    panel: "#120a1d",
-    font: { title: "Rubik Wet Paint", body: "Grenze" },
-    glows: [
-      { color: "#7c2bd9", x: 8, y: 92, size: 70, opacity: 0.24 },
-      { color: "#ff6a00", x: 70, y: 105, size: 60, opacity: 0.14 },
-      { color: "#3dd68c", x: 100, y: 40, size: 40, opacity: 0.05 },
-    ],
-    ornament: "graveyard",
-    decoration: "bats",
-  },
-  {
+    tags: ["halloween"],
+    colors: { primary: "#8b3dff", accent: "#ff7a1a", groundTop: "#1d0c30", ground: "#0b0614", groundBottom: "#050208", panel: "#120a1d" },
+    fonts: { title: { family: "Rubik Wet Paint" }, body: { family: "Grenze" } },
+    background: {
+      glows: [
+        { color: "#7c2bd9", x: 8, y: 92, size: 70, opacity: 0.24 },
+        { color: "#ff6a00", x: 70, y: 100, size: 60, opacity: 0.14 },
+        { color: "#3dd68c", x: 100, y: 40, size: 40, opacity: 0.05 },
+      ],
+      ornament: "graveyard",
+    },
+    decoration: { type: "bats" },
+  }),
+  builtin({
     id: "christmas",
     name: { en: "Christmas", cs: "Vánoce", sk: "Karácsony" },
-    primary: "#e0303a",
-    accent: "#f5c542",
-    ground: { top: "#0f2a1d", base: "#06150e", bottom: "#020805" },
-    panel: "#0a1d14",
-    font: { title: "Berkshire Swash", body: "Playfair Display" },
-    glows: [
-      { color: "#e0303a", x: 0, y: 100, size: 60, opacity: 0.14 },
-      { color: "#f5c542", x: 100, y: 0, size: 50, opacity: 0.1 },
-    ],
-    ornament: "lights",
-    decoration: "snow",
-  },
+    tags: ["christmas"],
+    colors: { primary: "#e0303a", accent: "#f5c542", groundTop: "#0f2a1d", ground: "#06150e", groundBottom: "#020805", panel: "#0a1d14" },
+    fonts: { title: { family: "Berkshire Swash" }, body: { family: "Playfair Display" } },
+    background: {
+      glows: [
+        { color: "#e0303a", x: 0, y: 100, size: 60, opacity: 0.14 },
+        { color: "#f5c542", x: 100, y: 0, size: 50, opacity: 0.1 },
+      ],
+      ornament: "lights",
+    },
+    decoration: { type: "snow" },
+  }),
 ];
 
 export const themeById = (id) => THEMES.find((theme) => theme.id === id) || THEMES[0];
+
+// The theme a quiz shows with these settings
+export const themeForQuiz = (quiz, settings = quiz?.settings) =>
+  settings?.theme === CUSTOM_THEME_ID && quiz?.customTheme ? quiz.customTheme : themeById(settings?.theme);
+
+// The themes a quiz can pick: [{ key (the settings value), theme }]
+export const themeChoices = (quiz) => [
+  ...THEMES.map((theme) => ({ key: theme.id, theme })),
+  ...(quiz?.customTheme ? [{ key: CUSTOM_THEME_ID, theme: quiz.customTheme }] : []),
+];
+
+export const themeName = (theme, lang) => theme?.name?.[lang] || theme?.name?.en || Object.values(theme?.name || {})[0] || "";
 
 // Bundled fonts, loaded only when a theme uses them; all cover Czech and Slovak letters. Body fonts
 // bring the weights the scenes use (regular, bold, black).
@@ -72,9 +76,25 @@ const FONT_LOADERS = {
   Grenze: () => Promise.all([import("@fontsource/grenze/400.css"), import("@fontsource/grenze/700.css"), import("@fontsource/grenze/900.css")]),
   "Playfair Display": () => Promise.all([import("@fontsource/playfair-display/400.css"), import("@fontsource/playfair-display/700.css"), import("@fontsource/playfair-display/900.css")]),
 };
-export function loadThemeFonts(theme) {
-  for (const family of [theme?.font?.title, theme?.font?.body]) {
-    if (family && FONT_LOADERS[family]) FONT_LOADERS[family]().catch(() => {}); // offline: the usual font
+
+// A font file gets a family name of its own, so two themes' files never mix
+const hash = (s) => {
+  let h = 2166136261;
+  for (const ch of String(s)) h = Math.imul(h ^ ch.codePointAt(0), 16777619);
+  return (h >>> 0).toString(36);
+};
+export const fontFamily = (font) => (font?.file ? `qn-font-${hash(font.file)}` : font?.family || null);
+
+const loadedFiles = new Map(); // url -> family
+// resolveAsset(name): a URL for a file of the theme (a quiz media name)
+export function loadThemeFonts(theme, resolveAsset) {
+  for (const font of [theme?.fonts?.title, theme?.fonts?.body]) {
+    if (font?.family && FONT_LOADERS[font.family]) FONT_LOADERS[font.family]().catch(() => {}); // offline: the usual font
+    const url = font?.file && resolveAsset?.(font.file);
+    if (url && !loadedFiles.has(url) && typeof FontFace !== "undefined") {
+      loadedFiles.set(url, fontFamily(font));
+      new FontFace(fontFamily(font), `url(${url})`).load().then((face) => document.fonts.add(face)).catch(() => loadedFiles.delete(url));
+    }
   }
 }
 
@@ -89,24 +109,26 @@ function shades(name, base) {
 }
 
 // "#8b3dff" -> "139 61 255", for the glows written as rgb(var(--glow-…) / alpha)
-const rgbTriple = (hex) => {
-  const h = hex.replace("#", "");
-  const full = h.length === 3 ? [...h].map((c) => c + c).join("") : h;
-  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16)).join(" ");
-};
+const rgbTriple = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(" ");
 const darken = (hex, amount) => rgbTriple(hex).split(" ").map((v) => Math.round(v * (1 - amount))).join(" ");
 
-// The CSS variables a theme changes (the default theme changes none)
+// The CSS variables a theme changes (Classic changes none)
 export function themeStyle(theme) {
+  const c = theme.colors || {};
   const style = {};
-  if (theme.primary) Object.assign(style, shades("primary", theme.primary), { "--glow-primary": rgbTriple(theme.primary), "--glow-primary-deep": darken(theme.primary, 0.55) });
-  if (theme.accent) Object.assign(style, shades("accent", theme.accent), { "--glow-accent": rgbTriple(theme.accent) });
-  if (theme.ground) Object.assign(style, { "--color-ground": theme.ground.base, "--color-ground-top": theme.ground.top, "--color-ground-bottom": theme.ground.bottom });
-  if (theme.panel) style["--color-panel"] = theme.panel;
-  if (theme.font?.body) style["--theme-font"] = `"${theme.font.body}", "League Spartan"`;
-  if (theme.font?.title) style["--theme-title-font"] = `"${theme.font.title}", var(--theme-font, "League Spartan")`;
+  if (c.primary) Object.assign(style, shades("primary", c.primary), { "--glow-primary": rgbTriple(c.primary), "--glow-primary-deep": darken(c.primary, 0.55) });
+  if (c.accent) Object.assign(style, shades("accent", c.accent), { "--glow-accent": rgbTriple(c.accent) });
+  if (c.ground) style["--color-ground"] = c.ground;
+  if (c.groundTop) style["--color-ground-top"] = c.groundTop;
+  if (c.groundBottom) style["--color-ground-bottom"] = c.groundBottom;
+  if (c.panel) style["--color-panel"] = c.panel;
+  const body = fontFamily(theme.fonts?.body);
+  const title = fontFamily(theme.fonts?.title);
+  if (body) style["--theme-font"] = `"${body}", "League Spartan"`;
+  if (title) style["--theme-title-font"] = `"${title}", var(--theme-font, "League Spartan")`;
   return style;
 }
 
-export const ThemeContext = createContext(THEMES[0]);
+// The theme being shown, with imageUrl: its background picture resolved to a URL
+export const ThemeContext = createContext({ ...THEMES[0], imageUrl: null });
 export const useTheme = () => useContext(ThemeContext);

@@ -4,7 +4,7 @@ import { getQuiz, updateQuiz, listMedia, putMedia, deleteMedia, onQuizSaved } fr
 import { syncDriveConfig } from "../quiz/driveConfig";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
 import { fetchSheetCsv, sheetErrorText } from "../quiz/sheets";
-import { referencedMedia, isMediaFile } from "../quiz/package";
+import { referencedMedia, isMediaFile, downloadBlob } from "../quiz/package";
 import { mediaKey, isUrl } from "../quiz/model";
 import { validateQuiz } from "../quiz/validate";
 import { formatBytes, fmt } from "../quiz/files";
@@ -14,7 +14,9 @@ import { Section, Status, inputCls, btnCls } from "./EditorParts";
 import TeamsSection from "./TeamsSection";
 import IntroSection from "./IntroSection";
 import ThemeSection from "./ThemeSection";
-import { themeById } from "../quiz/themes";
+import { themeForQuiz, themeName, CUSTOM_THEME_ID } from "../quiz/themes";
+import { readThemePack, exportThemePack, themePackName, ThemePackError } from "../quiz/themePack";
+import { storeQuizTheme } from "../quiz/themeStore";
 import { useUiLanguage } from "../hooks/useUiLanguage";
 import { saveTeamImage } from "../quiz/teams";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
@@ -96,6 +98,23 @@ export default function QuizEditor({ id, t }) {
     setQuiz((q) => ({ ...q, ...fields }));
   };
 
+  // A theme pack becomes the quiz's own theme (themeStore.js); the result for the Look section
+  const importTheme = async (files) => {
+    try {
+      const pack = await readThemePack(files);
+      const theme = await storeQuizTheme(id, pack);
+      setQuiz((q) => ({ ...q, customTheme: theme, settings: { ...q.settings, theme: CUSTOM_THEME_ID } }));
+      await reloadMedia();
+      return { ok: true, text: fmt(t.thm_imported, { name: themeName(theme, uiLang) }), problems: pack.problems };
+    } catch (err) {
+      return { ok: false, text: err instanceof ThemePackError ? t[`thm_err_${err.message}`] : driveErrorText(err, t, google.user?.email) };
+    }
+  };
+  const exportTheme = async (theme) => {
+    const blobs = new Map(media.map((m) => [mediaKey(m.name), m.blob]));
+    downloadBlob(await exportThemePack(theme, (name) => blobs.get(mediaKey(name)) ?? null), themePackName(theme));
+  };
+
   // The theme is one of the show's settings, which the show window saves too: only that key is written
   const setTheme = (theme) => {
     setQuiz((q) => ({ ...q, settings: { ...q.settings, theme } }));
@@ -109,6 +128,7 @@ export default function QuizEditor({ id, t }) {
   const missing = referenced.filter((name) => !mediaKeys.has(mediaKey(name)));
   const usedKeys = new Set(referenced.map(mediaKey));
   const mediaUrlByKey = useMemo(() => new Map(media.map((m) => [mediaKey(m.name), m.url])), [media]);
+  const resolveMediaUrl = useMemo(() => (name) => (name ? mediaUrlByKey.get(mediaKey(name)) ?? null : null), [mediaUrlByKey]);
   // The same issues the Check page lists, for the checklist
   const issues = useMemo(() => (quiz ? validateQuiz(quiz, rounds, (name) => isUrl(name) || mediaKeys.has(mediaKey(name))) : []), [quiz, rounds, mediaKeys]);
 
@@ -319,9 +339,9 @@ export default function QuizEditor({ id, t }) {
   const toLook = issues.filter((i) => i.level === "warning").length;
   const namedTeams = quiz.teams.filter((team) => team.name.trim()).length;
   const step = (key, label, todo, status, onClick = () => openSection(key)) => ({ key, label, state: todo ? "todo" : "done", status, onClick });
-  const theme = quiz.settings?.theme ? themeById(quiz.settings.theme) : null;
+  const theme = quiz.settings?.theme ? themeForQuiz(quiz) : null;
   const steps = [
-    step("theme", t.ed_theme, warnings.theme, theme ? theme.name[uiLang] || theme.name.en : t.rd_theme_todo),
+    step("theme", t.ed_theme, warnings.theme, theme ? themeName(theme, uiLang) : t.rd_theme_todo),
     quiz.drive && step("drive", t.rd_google, !google.signedIn, google.signedIn ? t.rd_google_ok : t.rd_google_todo),
     step("questions", t.ed_questions, warnings.questions, rounds.length ? fmt(t.rd_questions_ok, { rounds: rounds.length, questions: questionCount }) : t.ed_warn_questions),
     step("media", t.ed_media, warnings.media, missing.length ? fmt(t.rd_media_todo, { count: missing.length })
@@ -369,7 +389,8 @@ export default function QuizEditor({ id, t }) {
 
         <ReadyChecklist steps={steps} onStart={() => setLauncher(true)} t={t} />
 
-        <ThemeSection quiz={quiz} onChange={setTheme} warning={warnings.theme} t={t} />
+        <ThemeSection quiz={quiz} onChange={setTheme} onImport={importTheme} onExport={exportTheme} resolveMedia={resolveMediaUrl}
+          warning={warnings.theme} t={t} />
 
         {quiz.drive && (
           <Section id="drive" warning={warnings.drive} busy={busy === "drive"} title={<>{t.gd_title} <BetaBadge t={t} /></>} help={t.gd_section_help}>

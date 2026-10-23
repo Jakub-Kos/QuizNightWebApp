@@ -2,17 +2,19 @@ import { zipSync, unzipSync, strToU8 } from "fflate";
 import { createQuiz, mediaKey, isUrl } from "./model";
 import { parseQuestionsCsv } from "./parse";
 import { listMedia, saveQuiz, putMedia, requestPersistence } from "./storage";
+import { normalizeTheme, themeFiles } from "./themeFormat";
 
 // Package layout:
 //   quiz.json       title, settings, teams, sheet links
 //   questions.csv
-//   media/<file>    question media and team images
+//   media/<file>    question media, team images and the files of the quiz's own theme
 
 const MIME = {
   jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", gif: "image/gif", webp: "image/webp",
   avif: "image/avif", svg: "image/svg+xml", bmp: "image/bmp",
   mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg", m4a: "audio/mp4", aac: "audio/aac", flac: "audio/flac",
   mp4: "video/mp4", webm: "video/webm", mov: "video/quicktime", m4v: "video/mp4",
+  woff2: "font/woff2", woff: "font/woff", ttf: "font/ttf", otf: "font/otf", // a custom theme's fonts
 };
 
 const ext = (name) => name.split(".").pop().toLowerCase();
@@ -29,6 +31,7 @@ export function referencedMedia(quiz) {
     if (q.type === "Handout" && q.answer) names.add(String(q.answer).trim()); // the answer picture
   }));
   quiz.teams.forEach((t) => t.image && names.add(t.image));
+  themeFiles(quiz.customTheme).forEach((name) => names.add(name));
   return [...names].filter((name) => !isUrl(name));
 }
 
@@ -65,6 +68,8 @@ export async function readImport(files) {
     ...(info.prizes && { prizes: info.prizes }),
     // Keyed by team id, which the teams above keep
     ...(isPlainObject(info.manualScores) && { manualScores: info.manualScores }),
+    // A file from anyone: the theme goes through the same check as a theme pack
+    ...(info.customTheme && normalizeTheme(info.customTheme, { stored: true }).theme && { customTheme: normalizeTheme(info.customTheme, { stored: true }).theme }),
     settings: info.settings,
     questionsCsv: csv ? await csv.blob.text() : "",
   });
