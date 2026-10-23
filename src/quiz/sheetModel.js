@@ -2,13 +2,42 @@ import { buildQuestions, isRoundMarker, isQuestionRow, splitMarker, normalizeTyp
 import { sortLayout, sheetLetters } from "./sort";
 
 // The questions tab as rows, for the question editor. Columns A–J are the questions.csv columns
-// (see parse.js); the editor adds K (who last changed the question) and L (when).
+// (see parse.js); the editor adds who last changed the question and when. Here those two are always
+// columns 10 and 11 of a row; in the Sheet they are wherever their headers are (stampColumns), so a
+// Sheet that already uses K and L for something else keeps it.
 // Every edit is a plan: replace `deleteCount` rows at `start` with `insert`, then write single cells
 // (`fixups`, in row numbers after the replacement). Rows are 0-based here, 1-based in the Sheet.
 
 export const COLUMNS = 12;
 export const AUTHOR_COL = 10;
 export const CHANGED_COL = 11;
+const QUESTION_COLUMNS = 10;
+
+// The headers the editor writes (qe_col_author / qe_col_changed), in every UI language
+const AUTHOR_HEADER = /^(author|autor|szerző)$/i;
+const CHANGED_HEADER = /^(changed|upraveno|módosítva)$/i;
+
+// Where the author and time columns are in the Sheet's rows: the columns with those headers, else the
+// first columns right of A–J that are empty in every row. { author, changed }, 0-based.
+export function stampColumns(rows) {
+  const headerRow = rows.find((row) => cell(row, 1).toLowerCase() === "q#") || [];
+  const find = (pattern) => headerRow.findIndex((c, i) => i >= QUESTION_COLUMNS && pattern.test(String(c ?? "").trim()));
+  let author = find(AUTHOR_HEADER);
+  let changed = find(CHANGED_HEADER);
+  const taken = (i) => i === author || i === changed || rows.some((row) => cell(row, i));
+  const nextFree = () => {
+    let i = QUESTION_COLUMNS;
+    while (taken(i)) i++;
+    return i;
+  };
+  if (author < 0) author = nextFree();
+  if (changed < 0) changed = nextFree();
+  return { author, changed };
+}
+
+// Sheet rows -> rows of this module (A–J, author, time)
+export const toModelRows = (rows, cols) =>
+  rows.map((row) => [...Array.from({ length: QUESTION_COLUMNS }, (_, i) => row?.[i] ?? ""), row?.[cols.author] ?? "", row?.[cols.changed] ?? ""]);
 
 const cell = (row, i) => String(row?.[i] ?? "").trim();
 const pad = (row) => Array.from({ length: COLUMNS }, (_, i) => String(row?.[i] ?? ""));
@@ -261,4 +290,38 @@ export function planMove(sheet, ri, qi, dir, meta) {
   rows.forEach((row) => { if (row[0] === marker) row[0] = ""; });
   rows[0][0] = marker;
   return finish(sheet, ri, { start: first.start, deleteCount: second.end - first.start + 1, insert: rows }, { ...meta, headers: null });
+}
+
+const column = (i) => (i < 26 ? String.fromCharCode(65 + i) : String.fromCharCode(64 + Math.floor(i / 26)) + String.fromCharCode(65 + (i % 26)));
+
+// A plan as Sheets API requests: { structure } for :batchUpdate (rows inserted or deleted, sent first),
+// then { raw, entered } value ranges. Text goes in exactly as typed (RAW: no formulas, dates or number
+// formats), Q# as a number like the rest of the column (USER_ENTERED). A–J are written as one block,
+// author and time into their own columns (tab.stamps); other columns of the tab are left alone.
+// name: the tab's name quoted for a range.
+export function sheetWrites(tab, name, { start, deleteCount, insert, fixups }) {
+  const structure = [];
+  const diff = insert.length - deleteCount;
+  if (diff > 0) {
+    const at = start + deleteCount;
+    structure.push({ insertDimension: { range: { sheetId: tab.sheetId, dimension: "ROWS", startIndex: at, endIndex: at + diff }, inheritFromBefore: at > 0 } });
+  }
+  if (diff < 0) {
+    structure.push({ deleteDimension: { range: { sheetId: tab.sheetId, dimension: "ROWS", startIndex: start + insert.length, endIndex: start + deleteCount } } });
+  }
+
+  const raw = [];
+  const entered = [];
+  const sheetCol = (col) => (col === AUTHOR_COL ? tab.stamps.author : col === CHANGED_COL ? tab.stamps.changed : col);
+  const end = start + insert.length;
+  if (insert.length) {
+    raw.push({ range: `${name}!A${start + 1}:${column(QUESTION_COLUMNS - 1)}${end}`, values: insert.map((row) => pad(row).slice(0, QUESTION_COLUMNS)) });
+    [AUTHOR_COL, CHANGED_COL].forEach((col) => {
+      const at = column(sheetCol(col));
+      raw.push({ range: `${name}!${at}${start + 1}:${at}${end}`, values: insert.map((row) => [pad(row)[col]]) });
+    });
+  }
+  insert.forEach((row, i) => entered.push({ range: `${name}!B${start + i + 1}`, values: [[pad(row)[1]]] }));
+  fixups.forEach((f) => (f.col === 1 ? entered : raw).push({ range: `${name}!${column(sheetCol(f.col))}${f.row + 1}`, values: [[f.value]] }));
+  return { structure, raw, entered };
 }
