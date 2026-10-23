@@ -25,7 +25,14 @@
     "groundBottom": "#01080d",
     "panel": "#05202e"
   },
-  "fonts": {},
+  "fonts": {
+    "title": {
+      "family": "Oswald"
+    },
+    "body": {
+      "family": "Nunito"
+    }
+  },
   "background": {
     "image": null,
     "imageOpacity": 0.5,
@@ -46,10 +53,10 @@
         "opacity": 0.1
       }
     ],
-    "ornament": null
+    "ornament": "waves"
   },
   "decoration": {
-    "type": "snow"
+    "type": "bubbles"
   },
   "scenes": {}
 }

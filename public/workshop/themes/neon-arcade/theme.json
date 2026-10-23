@@ -25,7 +25,14 @@
     "groundBottom": "#030008",
     "panel": "#12041f"
   },
-  "fonts": {},
+  "fonts": {
+    "title": {
+      "family": "Monoton"
+    },
+    "body": {
+      "family": "Montserrat"
+    }
+  },
   "background": {
     "image": null,
     "imageOpacity": 0.5,
@@ -53,10 +60,10 @@
         "opacity": 0.08
       }
     ],
-    "ornament": null
+    "ornament": "skyline"
   },
   "decoration": {
-    "type": null
+    "type": "stars"
   },
   "scenes": {}
 }

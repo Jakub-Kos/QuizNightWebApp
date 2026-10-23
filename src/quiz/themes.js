@@ -75,6 +75,15 @@ const FONT_LOADERS = {
   "Berkshire Swash": () => import("@fontsource/berkshire-swash/400.css"),
   Grenze: () => Promise.all([import("@fontsource/grenze/400.css"), import("@fontsource/grenze/700.css"), import("@fontsource/grenze/900.css")]),
   "Playfair Display": () => Promise.all([import("@fontsource/playfair-display/400.css"), import("@fontsource/playfair-display/700.css"), import("@fontsource/playfair-display/900.css")]),
+  "Bebas Neue": () => import("@fontsource/bebas-neue/400.css"),
+  Pacifico: () => import("@fontsource/pacifico/400.css"),
+  Bungee: () => import("@fontsource/bungee/400.css"),
+  Monoton: () => import("@fontsource/monoton/400.css"),
+  "Special Elite": () => import("@fontsource/special-elite/400.css"),
+  Audiowide: () => import("@fontsource/audiowide/400.css"),
+  Montserrat: () => Promise.all([import("@fontsource/montserrat/400.css"), import("@fontsource/montserrat/700.css"), import("@fontsource/montserrat/900.css")]),
+  Nunito: () => Promise.all([import("@fontsource/nunito/400.css"), import("@fontsource/nunito/700.css"), import("@fontsource/nunito/900.css")]),
+  Oswald: () => Promise.all([import("@fontsource/oswald/400.css"), import("@fontsource/oswald/700.css")]),
 };
 
 // A font file gets a family name of its own, so two themes' files never mix
