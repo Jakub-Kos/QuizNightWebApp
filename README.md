@@ -129,7 +129,7 @@ Every push to `main` deploys to GitHub Pages.
 
 ### Reviewing a workshop submission
 
-Submissions arrive as issues labelled `theme`, with the theme's `.zip` attached.
+Submissions arrive as issues labelled `theme`, with the theme's `.zip` attached. A workflow (`.github/workflows/theme-check.yml`) checks the attached file and comments the result on the issue: whether it passes, what it contains, readability, and the exact command to add it. It updates that comment when the issue is edited.
 
 1. Look at it: download the zip and import it in any quiz's setup (Look → Import theme), then click through the show.
 2. Add it: `npm run workshop:add <URL of the attached .zip>` (or a downloaded file). It runs the same check as the app and refuses a theme that would lose anything; `--replace` updates a theme with the same id.
