@@ -1,0 +1,53 @@
+# Checks a theme submitted to the workshop (an issue labelled "theme", from the Share a theme form) and
+# comments the result: whether it passes the same check as the app, what it contains, and the command
+# to add it. The comment is updated when the issue is edited, for example after a new file is attached.
+# Nothing from the submission is run: the .zip is only unpacked and read (scripts/workshop.mjs check).
+name: Check theme submission
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: theme-check-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    if: contains(github.event.issue.labels.*.name, 'theme')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --omit=dev --ignore-scripts
+
+      - name: Check the attached theme
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: node scripts/workshop.mjs check --from-issue > report.md
+
+      - name: Comment the result
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          id=$(gh api "repos/$REPO/issues/$ISSUE/comments" --paginate \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- workshop-check -->"))) | .id' | head -n 1)
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$id" -F body=@report.md > /dev/null
+          else
+            gh issue comment "$ISSUE" --repo "$REPO" --body-file report.md
+          fi

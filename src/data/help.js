@@ -9,7 +9,7 @@ export const HELP = {
       map: "See every screen of the demo",
       steps: [
         ["Write the questions", "In a copy of the Google Sheets template, one row per question. Or load the example round on a new quiz's setup page."],
-        ["Fill in the setup page", "Ready for the show at the top lists what is still missing: media, teams, scores, rules and prizes."],
+        ["Fill in the setup page", "Ready for the show at the top lists what is still missing: the look, media, teams, scores, rules and prizes."],
         ["Check it", "Check shows every question as it will look on the TV. Map shows every screen and how you get from one to the next."],
         ["Start the show", "Start show opens the TV window (drag it to the TV, press F11) and the presenter window for your laptop."],
         ["Run the night", "Every round twice: Questions while the teams write, then Answers. After that, the leaderboard reveal."],
@@ -206,6 +206,18 @@ export const HELP = {
           "Map (on the setup page and in Check) shows every screen of your quiz in the order the night goes, and which key or button leads from one to the next.",
         ],
       },
+      {
+        id: "themes", title: "Looks and themes",
+        items: [
+          "Every quiz picks its look in Look, the first section of the setup page: Classic (the usual dark look), Halloween, Christmas, or a theme of its own. The cards show the round overview in each look.",
+          "Halloween and Christmas bring their own colours, fonts, scenery (a graveyard with jack-o'-lanterns, a string of lights) and decorations (bats, snow). The scenery shows only on the calm screens, and the decorations almost disappear over questions and the leaderboard, so nothing gets in the way of reading.",
+          "New theme from … opens the theme editor with a copy of the chosen look. Change the six colours, the fonts for headings and for the rest, a background picture, glows, scenery and decoration, and watch every screen of your quiz in the preview. Everything is saved into the quiz as you go.",
+          "The readability check under the preview warns when text would be hard to read from the back of the room, and says what to change.",
+          "Save to My themes keeps a theme in this browser, to use it in other quizzes from the Look section. Export saves it as a file (a `.zip` with `theme.json`), which anyone can bring in with Import theme.",
+          "The theme workshop (button in the library) shows themes other hosts shared. Open one to see it on every screen, then use it in one of your quizzes. To share your own, click Share to the workshop in the theme editor: the file downloads and a GitHub form opens for it; the theme appears after it has been looked at.",
+        ],
+        note: "A theme is only colours, fonts, pictures and the app's own effects, never code, so opening a theme someone sent you is safe. Anything a theme file asks for that the app does not know is left out, and the import says what.",
+      },
     ],
   },
 
@@ -217,7 +229,7 @@ export const HELP = {
       map: "Všechny obrazovky ukázky",
       steps: [
         ["Napište otázky", "V kopii šablony Google Tabulek, jeden řádek na otázku. Nebo na stránce nového kvízu načtěte ukázkové kolo."],
-        ["Vyplňte stránku kvízu", "Připraveno na show nahoře ukazuje, co ještě chybí: média, týmy, body, pravidla a ceny."],
+        ["Vyplňte stránku kvízu", "Připraveno na show nahoře ukazuje, co ještě chybí: vzhled, média, týmy, body, pravidla a ceny."],
         ["Zkontrolujte ho", "Kontrola ukáže každou otázku tak, jak bude vypadat na televizi. Mapa ukáže všechny obrazovky a jak se mezi nimi přechází."],
         ["Spusťte show", "Spustit show otevře okno pro televizi (přetáhněte ho na televizi, F11) a okno moderátora pro notebook."],
         ["Veďte večer", "Každé kolo dvakrát: Otázky, zatímco týmy píšou, pak Odpovědi. Potom odhalení pořadí."],
@@ -413,6 +425,18 @@ export const HELP = {
           "Mapa (na stránce kvízu a v Kontrole) ukazuje všechny obrazovky vašeho kvízu v pořadí, v jakém večer probíhá, a která klávesa nebo tlačítko vede z jedné na druhou.",
         ],
       },
+      {
+        id: "themes", title: "Vzhled a motivy",
+        items: [
+          "Každý kvíz si vybírá vzhled v sekci Vzhled, první na stránce nastavení: Klasický (obvyklý tmavý vzhled), Halloween, Vánoce, nebo vlastní motiv. Karty ukazují přehled kol v každém vzhledu.",
+          "Halloween a Vánoce mají vlastní barvy, písma, scenérii (hřbitov s dýněmi, řetěz světýlek) a ozdoby (netopýři, sníh). Scenérie je jen na klidných obrazovkách a ozdoby u otázek a žebříčku skoro zmizí, takže nic neruší čtení.",
+          "Nový motiv z … otevře editor motivu s kopií vybraného vzhledu. Změňte šest barev, písmo nadpisů a ostatního textu, obrázek na pozadí, záře, scenérii a ozdobu a v náhledu sledujte všechny obrazovky svého kvízu. Vše se průběžně ukládá do kvízu.",
+          "Kontrola čitelnosti pod náhledem upozorní, když by byl text ze zadní části sálu špatně čitelný, a řekne, co změnit.",
+          "Uložit do Mých motivů si motiv nechá v tomto prohlížeči, abyste ho mohli použít v dalších kvízech ze sekce Vzhled. Exportovat ho uloží jako soubor (`.zip` se souborem `theme.json`), který kdokoli přidá přes Importovat motiv.",
+          "Dílna motivů (tlačítko v knihovně) ukazuje motivy, které sdílí jiní moderátoři. Otevřete motiv, uvidíte ho na všech obrazovkách, a použijte ho v některém ze svých kvízů. Vlastní motiv sdílíte tlačítkem Sdílet do dílny v editoru motivu: soubor se stáhne a otevře se pro něj formulář na GitHubu; motiv se objeví, až se prohlédne.",
+        ],
+        note: "Motiv jsou jen barvy, písma, obrázky a vlastní efekty aplikace, nikdy kód, takže otevřít motiv, který vám někdo poslal, je bezpečné. Cokoli, co soubor motivu chce a aplikace nezná, se vynechá a import řekne co.",
+      },
     ],
   },
 
@@ -424,7 +448,7 @@ export const HELP = {
       map: "A minta összes képernyője",
       steps: [
         ["Írd meg a kérdéseket", "A Google Táblázatok sablon másolatában, soronként egy kérdés. Vagy töltsd be a példafordulót egy új kvíz beállításainál."],
-        ["Töltsd ki a beállításokat", "A Kész a showra lista fent megmutatja, mi hiányzik még: média, csapatok, pontok, szabályok és díjak."],
+        ["Töltsd ki a beállításokat", "A Kész a showra lista fent megmutatja, mi hiányzik még: megjelenés, média, csapatok, pontok, szabályok és díjak."],
         ["Ellenőrizd", "Az Ellenőrzés minden kérdést úgy mutat, ahogy a tévén fog kinézni. A Térkép minden képernyőt megmutat, és hogy hogyan jutsz egyikről a másikra."],
         ["Indítsd a showt", "A Show indítása megnyitja a tévé ablakát (húzd a tévére, F11) és a műsorvezetői ablakot a laptopodra."],
         ["Vezesd az estet", "Minden forduló kétszer: Kérdések, amíg a csapatok írnak, aztán Válaszok. Utána a ranglista felfedése."],
@@ -619,6 +643,18 @@ export const HELP = {
           "Billentyűk: `→` következő lépés, `←` vissza, `Z` kép nagyítása, `Esc` vissza az áttekintőhöz, `Shift+D` áttekintő, `Shift+C` kalibrálás, `Shift+P` műsorvezető.",
           "A Térkép (a kvíz beállításainál és az Ellenőrzésben) megmutatja a kvíz összes képernyőjét abban a sorrendben, ahogy az est zajlik, és hogy melyik billentyű vagy gomb vezet egyikről a másikra.",
         ],
+      },
+      {
+        id: "themes", title: "Megjelenés és témák",
+        items: [
+          "Minden kvíz a Megjelenés részben választja ki a kinézetét, ez az első a beállítások oldalán: Klasszikus (a megszokott sötét megjelenés), Halloween, Karácsony, vagy saját téma. A kártyák minden megjelenésben a fordulók áttekintését mutatják.",
+          "A Halloween és a Karácsony saját színeket, betűtípusokat, díszletet (temető töklámpásokkal, égősor) és díszeket (denevérek, hó) hoz. A díszlet csak a nyugodt képernyőkön látszik, a díszek pedig a kérdéseknél és a ranglistánál szinte eltűnnek, így semmi sem zavarja az olvasást.",
+          "Az Új téma ebből: … megnyitja a témaszerkesztőt a kiválasztott megjelenés másolatával. Változtasd meg a hat színt, a címek és a többi szöveg betűtípusát, a háttérképet, a fényeket, a díszletet és a díszt, és nézd az előnézetben a kvízed összes képernyőjét. Minden menet közben mentődik a kvízbe.",
+          "Az előnézet alatti olvashatósági ellenőrzés figyelmeztet, ha a szöveg a terem végéből nehezen olvasható lenne, és megmondja, mit változtass.",
+          "A Mentés a Témáim közé ebben a böngészőben megőrzi a témát, hogy más kvízekben is használhasd a Megjelenés részből. Az Exportálás fájlként menti (`.zip`, benne `theme.json`), amit bárki behozhat a Téma importálásával.",
+          "A témaműhely (gomb a könyvtárban) a más kvízvezetők által megosztott témákat mutatja. Nyiss meg egyet, nézd meg minden képernyőn, aztán használd valamelyik kvízedben. A sajátodat a témaszerkesztő Megosztás a műhelyben gombjával osztod meg: a fájl letöltődik, és megnyílik hozzá egy GitHub-űrlap; a téma azután jelenik meg, hogy megnézték.",
+        ],
+        note: "Egy téma csak színekből, betűtípusokból, képekből és az alkalmazás saját effektusaiból áll, sosem kód, így biztonságos megnyitni egy kapott témát. Amit a témafájl kér, de az alkalmazás nem ismer, kimarad, és az importálás megmondja, mi.",
       },
     ],
   },
