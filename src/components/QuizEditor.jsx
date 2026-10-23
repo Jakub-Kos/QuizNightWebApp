@@ -21,6 +21,8 @@ import { useDriveSync } from "../hooks/useDriveSync";
 import { teamForScores } from "../quiz/teams";
 import DrivePeople from "./DrivePeople";
 import ReadyChecklist from "./ReadyChecklist";
+import QuestionsStart from "./QuestionsStart";
+import { exampleQuestions } from "../quiz/examples";
 import ShowLauncher from "./ShowLauncher";
 import { openSection } from "./sectionEvents";
 
@@ -157,6 +159,27 @@ export default function QuizEditor({ id, t }) {
     setQuestionsStatus(parsed.length
       ? { ok: true, text: `${t.ed_loaded}: ${parsed.length} ${t.lib_rounds}` }
       : { ok: false, text: t.ed_no_rounds });
+  };
+
+  // A first round with an example of every question type, and the demo files those use
+  const loadExamples = async () => {
+    setBusy("examples");
+    try {
+      const { csv, media: names } = exampleQuestions(quiz.settings?.language || "cs", t.ed_example_round);
+      const files = await Promise.all(names.map(async (name) => {
+        const res = await fetch(`${import.meta.env.BASE_URL}source/${name}`);
+        if (!res.ok) throw new Error(`${name}: HTTP ${res.status}`);
+        return { name, blob: await res.blob() };
+      }));
+      await putMedia(id, files);
+      await reloadMedia();
+      update({ questionsCsv: csv, questionsSheetUrl: "" });
+      setSheetUrl("");
+      setQuestionsStatus({ ok: true, text: t.qs_examples_done });
+    } catch (err) {
+      setQuestionsStatus({ ok: false, text: String(err.message || err) });
+    }
+    setBusy(null);
   };
 
   // Drive quizzes: dropped files go into the media folder on Drive (a dropped folder keeps its
@@ -405,8 +428,10 @@ export default function QuizEditor({ id, t }) {
                 <span>{rounds.length} {t.lib_rounds}</span><span>{questionCount} {t.lib_questions}</span>
               </li>
             </ul>
-          ) : (
+          ) : quiz.drive ? (
             <p className="text-sm text-gray-500">{t.ed_no_questions}</p>
+          ) : (
+            <QuestionsStart lang={quiz.settings?.language || "cs"} onExamples={loadExamples} loading={busy === "examples"} t={t} />
           )}
         </Section>
 

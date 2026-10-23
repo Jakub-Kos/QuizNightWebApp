@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2, MailOpen, LogIn, RefreshCw } from "lucide-react";
+import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2, MailOpen, LogIn, RefreshCw, X, PackageOpen } from "lucide-react";
 import { listQuizzes, saveQuiz, updateQuiz, deleteQuiz, requestPersistence } from "../quiz/storage";
 import { createQuiz, loadQuizBundle, DEMO_ID } from "../quiz/model";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -16,6 +16,7 @@ import { Status, inputCls, btnCls } from "./EditorParts";
 import { fmt } from "../quiz/files";
 
 const LANGUAGES = [["cs", "Čeština"], ["sk", "Slovenčina"], ["en", "English"]];
+const WELCOME_KEY = "quiznight.welcomeDismissed";
 
 function summarize(quiz) {
   const rounds = parseQuestionsCsv(quiz.questionsCsv);
@@ -28,6 +29,13 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
   const [busy, setBusy] = useState(null); // id of the card (or "import") with an action running
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [launching, setLaunching] = useState(null); // id of the quiz whose show is being started
+  const [welcomeDismissed, setWelcomeDismissed] = useState(() => {
+    try { return localStorage.getItem(WELCOME_KEY) === "1"; } catch { return false; }
+  });
+  const dismissWelcome = () => {
+    setWelcomeDismissed(true);
+    try { localStorage.setItem(WELCOME_KEY, "1"); } catch { /* shown again next visit */ }
+  };
   const [error, setError] = useState(null);
   const google = useGoogleAccount();
   const [driveInvited] = useState(() => {
@@ -114,6 +122,10 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
           <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-200">
             <AlertTriangle size={20} className="shrink-0 mt-0.5" /> <span>{error}</span>
           </div>
+        )}
+
+        {quizzes?.length === 0 && !welcomeDismissed && (
+          <Welcome onDemo={() => setLaunching(DEMO_ID)} onNew={handleNew} onClose={dismissWelcome} t={t} />
         )}
 
         <section className="grid md:grid-cols-[1fr_2fr] gap-4">
@@ -213,6 +225,35 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
         </section>
       </div>
     </div>
+  );
+}
+
+// First visit (no quizzes of their own yet): the three ways in, until dismissed or a quiz exists
+function Welcome({ onDemo, onNew, onClose, t }) {
+  const card = (icon, title, text, action) => (
+    <div className="rounded-xl bg-black/30 border border-white/10 p-5 flex flex-col gap-3">
+      <div className="w-10 h-10 rounded-xl bg-yellow-500/15 text-yellow-400 flex items-center justify-center">{icon}</div>
+      <h3 className="font-bold text-lg">{title}</h3>
+      <p className="text-sm text-gray-400 flex-1">{text}</p>
+      {action}
+    </div>
+  );
+  return (
+    <section className="relative rounded-2xl bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/30 p-6 space-y-5">
+      <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/10" aria-label={t.chk_close}><X size={18} /></button>
+      <div className="space-y-2 pr-10">
+        <h2 className="font-['League_Spartan'] text-2xl font-bold uppercase tracking-widest">{t.wl_title}</h2>
+        <p className="text-gray-300 max-w-2xl">{t.wl_text}</p>
+      </div>
+      <div className="grid md:grid-cols-3 gap-3">
+        {card(<Play size={20} />, t.wl_demo_title, t.wl_demo_text,
+          <button onClick={onDemo} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm"><Play size={16} /> {t.wl_demo_button}</button>)}
+        {card(<Plus size={20} />, t.wl_new_title, t.wl_new_text,
+          <button onClick={onNew} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 font-bold text-sm"><Plus size={16} /> {t.lib_new}</button>)}
+        {card(<PackageOpen size={20} />, t.wl_import_title, t.wl_import_text, null)}
+      </div>
+      <a href="#/help/start" className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-yellow-400"><HelpCircle size={14} /> {t.wl_help}</a>
+    </section>
   );
 }
 
