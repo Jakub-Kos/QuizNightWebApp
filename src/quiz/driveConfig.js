@@ -207,6 +207,12 @@ async function readScoresTab(quiz) {
   const tabs = await sheetTabs(spreadsheetId);
   const tab = tabs.find((t) => String(t.sheetId) === gid) ?? tabs[0];
   const values = (await googleJson(`${SHEETS_API}/${spreadsheetId}/values/${encodeURIComponent(tabRange(tab.title))}`)).values || [];
+  const table = scoresTable(values);
+  return table && { spreadsheetId, tab, ...table };
+}
+
+// The team rows of the scores tab's values (see readScoresTab), or null
+export function scoresTable(values) {
   const header = values.findIndex((row) => row.some((c) => TEAM_COLUMN.test(String(c))));
   if (header < 0) return null;
   const nameCol = values[header].findIndex((c) => TEAM_COLUMN.test(String(c)));
@@ -218,15 +224,23 @@ async function readScoresTab(quiz) {
     if (cell(r, nameCol)) rows.push({ row: r, name: cell(r, nameCol), id: idCol >= 0 ? cell(r, idCol) || null : null });
     else empty.push(r);
   }
-  return { spreadsheetId, tab, header, nameCol, idCol, width: Math.max(0, ...values.map((v) => v.length)), end: values.length, rows, empty };
+  return { header, nameCol, idCol, width: Math.max(0, ...values.map((v) => v.length)), end: values.length, rows, empty };
 }
 
 // Ids, renames, cleared names and new teams as cell values. New teams go into the first empty name
 // cells below the header (the template prepares rows with formulas), then into rows inserted right
 // below the table. The id column is added, hidden, right of the table's last column the first time.
 export async function writeScoresTab(sheet, ops) {
-  const { spreadsheetId, tab, header, nameCol } = sheet;
-  const name = tabRange(tab.title);
+  const { structure, cells } = scoresWrites(sheet, tabRange(sheet.tab.title), ops);
+  // Columns and rows first, so the values land in them
+  if (structure.length) await post(`${SHEETS_API}/${sheet.spreadsheetId}:batchUpdate`, { requests: structure });
+  if (cells.length) await post(`${SHEETS_API}/${sheet.spreadsheetId}/values:batchUpdate`, { valueInputOption: "RAW", data: cells });
+}
+
+// The requests writeScoresTab sends: { structure } for :batchUpdate, { cells } as RAW values.
+// name: the tab's name quoted for a range.
+export function scoresWrites(sheet, name, ops) {
+  const { tab, header, nameCol } = sheet;
   let idCol = sheet.idCol;
   const cells = [];
   const structure = [];
@@ -250,9 +264,7 @@ export async function writeScoresTab(sheet, ops) {
     set(row, nameCol, value);
     set(row, idCol, id);
   });
-  // Columns and rows first, so the values land in them
-  if (structure.length) await post(`${SHEETS_API}/${spreadsheetId}:batchUpdate`, { requests: structure });
-  if (cells.length) await post(`${SHEETS_API}/${spreadsheetId}/values:batchUpdate`, { valueInputOption: "RAW", data: cells });
+  return { structure, cells };
 }
 
 // Edit access rarely changes during a session; asked again after a few minutes

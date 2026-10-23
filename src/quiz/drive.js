@@ -5,6 +5,7 @@ import { listMedia, putMedia, deleteMedia } from "./storage";
 import { isMediaFile } from "./package";
 import { mediaKey } from "./model";
 import { fmt } from "./files";
+import { WriteBlockedError } from "./writeGuard";
 
 // A quiz on Google Drive is a folder with the Sheet (scores tab + questions tab) and a media folder
 // ("Zdroje", "source", …). Zdroj cells are paths inside the media folder, e.g. "kolo3/kocka.jpg".
@@ -20,7 +21,8 @@ export const isMediaFolderName = (name) => MEDIA_FOLDER.test(String(name).trim()
 // code: "link" (not a Drive link), "access" (not found or not shared with you), "no_sheet", "auth"
 // (signed out or expired), "readonly" (cannot edit the Sheet), "upload_denied" (cannot add files),
 // "no_folder" (opened from a Sheet whose folder is not shared), "bad_email" (no such Google account),
-// "template" (the template Sheet could not be copied), "api" (anything else; message from Google)
+// "template" (the template Sheet could not be copied), "blocked" (a write outside the quiz, refused by
+// writeGuard.js), "api" (anything else; message from Google)
 export class DriveError extends Error {
   constructor(code, message = code) {
     super(message);
@@ -31,6 +33,7 @@ export class DriveError extends Error {
 export const toDriveError = (err) => {
   if (err instanceof DriveError) return err;
   if (err instanceof GoogleAuthError) return new DriveError("auth");
+  if (err instanceof WriteBlockedError) return new DriveError("blocked", err.message);
   if (err instanceof GoogleApiError && (err.status === 404 || err.status === 403)) return new DriveError("access");
   return new DriveError("api", err.message);
 };
@@ -253,7 +256,7 @@ export async function createDriveQuiz({ title, parentLink, templateUrl }) {
         body: JSON.stringify({ name: title.trim(), parents: [folder.id] }),
       });
     } catch (err) {
-      throw err instanceof GoogleAuthError ? err : new DriveError("template", err.message);
+      throw err instanceof GoogleAuthError || err instanceof WriteBlockedError ? err : new DriveError("template", err.message);
     }
     await createFolder(folder.id, "Zdroje");
     return folder.id;
@@ -375,5 +378,6 @@ export function driveErrorText(err, t, email) {
   if (err?.code === "no_folder") return t.gd_err_no_folder;
   if (err?.code === "bad_email") return t.gd_err_bad_email;
   if (err?.code === "template") return t.gd_err_template;
+  if (err?.code === "blocked" || err instanceof WriteBlockedError) return t.gd_err_blocked;
   return fmt(t.gd_err_api, { message: err?.message || String(err) });
 }

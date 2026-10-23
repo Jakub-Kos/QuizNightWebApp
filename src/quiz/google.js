@@ -1,11 +1,14 @@
 import { GOOGLE_CLIENT_ID } from "../config";
+import { listQuizzes } from "./storage";
+import { createWriteGuard, quizFileIds } from "./writeGuard";
 
 // Google sign-in in the browser (Google Identity Services, token model): no backend, so there are no
 // refresh tokens. An access token lasts about an hour; after that the user signs in again with one click.
 // The token is kept in localStorage so the TV and presenter windows share it.
 
 // Full Drive access: quiz folders are created and shared by other people, and later the app writes to them.
-// It also covers the Sheets API.
+// It also covers the Sheets API. Every write goes past the guard in writeGuard.js, which keeps it inside
+// the quizzes opened in this browser.
 const SCOPE = "https://www.googleapis.com/auth/drive";
 const STORAGE_KEY = "quiznight.google";
 
@@ -142,10 +145,19 @@ export function signOut() {
   writeSession(null);
 }
 
-// fetch with the signed-in user's token; GoogleAuthError when there is none or it was rejected
+const DRIVE_FILES = "https://www.googleapis.com/drive/v3/files";
+const guard = createWriteGuard({
+  roots: async () => (await listQuizzes()).flatMap(quizFileIds),
+  parentsOf: async (id) => (await googleJson(`${DRIVE_FILES}/${id}?fields=parents&supportsAllDrives=true`)).parents || [],
+  rootFolder: async () => (await googleJson(`${DRIVE_FILES}/root?fields=id`)).id,
+});
+
+// fetch with the signed-in user's token; GoogleAuthError when there is none or it was rejected,
+// WriteBlockedError for a write outside the quizzes opened in this browser
 export async function googleFetch(url, options = {}) {
   const token = currentToken();
   if (!token) throw new GoogleAuthError("signed_out");
+  const target = await guard.check(options.method, url, options.body);
   let res;
   try {
     res = await fetch(url, { ...options, headers: { ...options.headers, Authorization: `Bearer ${token}` } });
@@ -161,6 +173,9 @@ export async function googleFetch(url, options = {}) {
     let message = `HTTP ${res.status}`;
     try { message = (await res.json()).error?.message || message; } catch { /* not JSON */ }
     throw new GoogleApiError(res.status, message);
+  }
+  if (target?.kind === "create" || target?.kind === "folder") {
+    try { guard.created((await res.clone().json()).id); } catch { /* a resumable upload answers later */ }
   }
   return res;
 }
