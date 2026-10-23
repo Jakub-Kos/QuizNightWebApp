@@ -2,9 +2,11 @@ import { googleJson, googleFetch, currentToken, GoogleApiError } from "./google"
 import { getQuiz, updateQuiz, onQuizSaved } from "./storage";
 import { sheetTabs, tabRange } from "./sheets";
 import { TEAM_COLUMN, TEAM_ID_HEADER } from "./parse";
+import { normalizeTheme } from "./themeFormat";
 
 // The setup of a Drive quiz lives in its folder, so everyone who opens it sees the same quiz:
-//   quiznight.json   title, show settings, rules, prizes, and the teams' details keyed by team id
+//   quiznight.json   title, show settings, rules, prizes, the quiz's own theme (its files in the media
+//                    folder's theme/), and the teams' details keyed by team id
 //   the scores tab   the teams themselves: one row each, with the team id in a hidden column
 // Ids never come from names, so a rename (in the Sheet or here) keeps a team's details, and no team
 // name can collide with anything. A team whose row is deleted (or whose name is cleared) is archived
@@ -64,7 +66,7 @@ export function configFromQuiz(quiz) {
   quiz.teams.forEach(({ id, ...team }) => {
     if (!team.draft && String(team.name || "").trim()) teams[id] = { ...team, name: String(team.name).trim() };
   });
-  return { version: VERSION, title: quiz.title, settings: quiz.settings, rules: quiz.rules, prizes: quiz.prizes, teams };
+  return { version: VERSION, title: quiz.title, settings: quiz.settings, rules: quiz.rules, prizes: quiz.prizes, customTheme: quiz.customTheme ?? null, teams };
 }
 
 // The quiz record for a config; order: the ids shown, in order (the rest of the teams is archived)
@@ -79,6 +81,8 @@ export function applyConfig(quiz, config, order) {
     settings: { ...quiz.settings, ...config.settings },
     rules: config.rules ?? quiz.rules,
     prizes: config.prizes ?? quiz.prizes,
+    // Anyone with edit access can change the file: the theme goes through the same check as a theme pack
+    customTheme: config.customTheme ? normalizeTheme(config.customTheme, { stored: true }).theme : config.customTheme === null ? null : quiz.customTheme,
     teams: [...shown.map((id) => ({ ...strip(teams[id]), id })), ...quiz.teams.filter((team) => team.draft)],
     teamArchive: Object.fromEntries(Object.entries(teams).filter(([id]) => !visible.has(id)).map(([id, entry]) => [id, strip(entry)])),
   };

@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useId } from "react";
-import { ThemeContext, themeById, themeStyle, loadThemeFonts, useTheme } from "../quiz/themes";
+import { ThemeContext, THEMES, themeStyle, loadThemeFonts, useTheme } from "../quiz/themes";
 
-// The theme's colours and fonts for everything inside (see quiz/themes.js)
-export function ThemeScope({ themeId, className = "", children }) {
-  const theme = themeById(themeId);
-  useEffect(() => loadThemeFonts(theme), [theme]);
+// The theme's colours and fonts for everything inside (see quiz/themes.js). resolveAsset(name) gives
+// a URL for the theme's files (stored with the quiz's media).
+export function ThemeScope({ theme = THEMES[0], resolveAsset, className = "", children }) {
+  useEffect(() => loadThemeFonts(theme, resolveAsset), [theme, resolveAsset]);
+  const value = useMemo(() => ({ ...theme, imageUrl: theme.background?.image ? resolveAsset?.(theme.background.image) ?? null : null }), [theme, resolveAsset]);
   return (
-    <ThemeContext.Provider value={theme}>
+    <ThemeContext.Provider value={value}>
       <div className={className} style={themeStyle(theme)}>{children}</div>
     </ThemeContext.Provider>
   );
@@ -172,12 +173,17 @@ export function SceneBackdrop({ quiet = false }) {
   return (
     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-ground-top to-ground-bottom" />
-      {theme.glows.map((g, i) => (
+      {theme.imageUrl && (
+        // A busy scene gets the picture fainter, so text stays readable
+        <div className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url("${theme.imageUrl}")`, opacity: theme.background.imageOpacity * (quiet ? 0.5 : 1), filter: theme.background.imageBlur ? `blur(${theme.background.imageBlur}px)` : undefined, transform: theme.background.imageBlur ? "scale(1.05)" : undefined }} />
+      )}
+      {theme.background.glows.map((g, i) => (
         <div key={i} className="absolute rounded-full -translate-x-1/2 -translate-y-1/2"
           style={{ left: `${g.x}%`, top: `${g.y}%`, width: `${g.size}cqw`, height: `${g.size}cqw`, opacity: g.opacity, background: `radial-gradient(circle, ${g.color} 0%, transparent 70%)` }} />
       ))}
-      {!quiet && theme.ornament === "graveyard" && <><Moon /><Cobweb /><Fog /><Graveyard /></>}
-      {!quiet && theme.ornament === "lights" && <Lights />}
+      {!quiet && theme.background.ornament === "graveyard" && <><Moon /><Cobweb /><Fog /><Graveyard /></>}
+      {!quiet && theme.background.ornament === "lights" && <Lights />}
     </div>
   );
 }
@@ -253,11 +259,12 @@ function Embers() {
 // The theme's decoration over every scene, nearly hidden (quiet) over questions and the leaderboard
 export function ThemeDecorations({ quiet = false }) {
   const theme = useTheme();
-  if (!theme.decoration) return null;
+  const type = theme.decoration?.type;
+  if (!type) return null;
   return (
     <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden transition-opacity duration-1000" style={{ opacity: quiet ? 0.15 : 1 }}>
-      {theme.decoration === "snow" && <Snow />}
-      {theme.decoration === "bats" && <><Embers /><Bats /></>}
+      {type === "snow" && <Snow />}
+      {type === "bats" && <><Embers /><Bats /></>}
     </div>
   );
 }

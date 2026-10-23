@@ -27,6 +27,7 @@ import { CalibrationPattern, CalibrationControls } from "./CalibrationScreen";
 import FullscreenHint from "./FullscreenHint";
 import TourGuide from "./TourGuide";
 import { ThemeScope, ThemeDecorations } from "./Theme";
+import { themeForQuiz } from "../quiz/themes";
 
 const SCENES = {
   WELCOME: "welcome",
@@ -118,7 +119,7 @@ export default function QuizShow({ bundle, isPresenter }) {
     <QuizContext.Provider value={quizContext}>
     {/* Presenter control panels use the full window; everything else renders on the scaled stage */}
     <Stage display={display} bypass={isPresenter && !isCalibrating && [SCENES.GAME, SCENES.LEADERBOARD, SCENES.PAUSE].includes(scene)}>
-    <ThemeScope themeId={config.theme} className="bg-ground h-full w-full font-show overflow-hidden relative selection:bg-accent-500/30 text-white">
+    <ThemeScope theme={themeForQuiz(quiz, config)} resolveAsset={resolveMedia} className="bg-ground h-full w-full font-show overflow-hidden relative selection:bg-accent-500/30 text-white">
       {!isPresenter && (
           <div className="absolute top-0 w-full p-6 flex justify-between z-50 pointer-events-none">
             <div className="pointer-events-auto flex gap-2">
@@ -184,6 +185,7 @@ export default function QuizShow({ bundle, isPresenter }) {
       {isSettingsOpen && (
         <SettingsModal
           config={config}
+          customTheme={quiz.customTheme}
           onUpdate={updateConfig}
           onClose={() => setIsSettingsOpen(false)}
           onOpenCalibration={() => { setIsSettingsOpen(false); setIsCalibrating(true); }}
