@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Trophy, Medal, Gift } from "lucide-react";
+import { SceneBackdrop } from "./Theme";
 
 // prizes: { first, second, third, extra } texts from the quiz (quiz/intro.js); empty texts show only the place
 export default function PrizesScreen({ prizes: texts, onNext, t }) {
@@ -40,11 +41,11 @@ export default function PrizesScreen({ prizes: texts, onNext, t }) {
   ];
 
   return (
-    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col items-center justify-center font-['League_Spartan']">
+    <div className="h-full w-full bg-ground relative overflow-hidden flex flex-col items-center justify-center font-show">
 
       {/* --- BACKGROUND AMBIENCE --- */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-yellow-600/10 blur-[130px] rounded-full pointer-events-none" />
+      <SceneBackdrop />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-accent-600/10 blur-[130px] rounded-full pointer-events-none" />
 
       {/* --- TITLE --- */}
       <motion.div
@@ -52,7 +53,7 @@ export default function PrizesScreen({ prizes: texts, onNext, t }) {
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10 text-center mb-12"
       >
-          <h1 className="text-8xl font-black text-white uppercase tracking-[0.1em] drop-shadow-2xl mb-2">{t.prizes_title}</h1>
+          <h1 className="font-title text-8xl font-black text-white uppercase tracking-[0.1em] drop-shadow-2xl mb-2">{t.prizes_title}</h1>
       </motion.div>
 
       {/* --- CARDS CONTAINER --- */}
@@ -71,7 +72,7 @@ export default function PrizesScreen({ prizes: texts, onNext, t }) {
                 className={`relative w-[320px] ${p.height} rounded-[3rem] p-[2px] bg-gradient-to-b ${p.color} ${p.glow} shadow-2xl flex-shrink-0 group hover:-translate-y-4 transition-transform duration-500`}
               >
                   {/* INNER GLASS CARD */}
-                  <div className="w-full h-full bg-[#0a0a0a] rounded-[2.9rem] flex flex-col items-center p-8 relative overflow-hidden">
+                  <div className="w-full h-full bg-panel rounded-[2.9rem] flex flex-col items-center p-8 relative overflow-hidden">
 
                       {/* Inner Shine/Gradient */}
                       <div className={`absolute inset-0 bg-gradient-to-b ${p.color} opacity-10 group-hover:opacity-20 transition-opacity duration-500`} />
@@ -131,7 +132,7 @@ export default function PrizesScreen({ prizes: texts, onNext, t }) {
          <button
             data-tour="next"
             onClick={onNext}
-            className="px-12 py-4 bg-white/10 hover:bg-yellow-500 text-white hover:text-black border border-white/20 hover:border-yellow-500 font-bold text-lg uppercase tracking-[0.2em] rounded-xl transition-all hover:scale-105 backdrop-blur-md"
+            className="px-12 py-4 bg-white/10 hover:bg-accent-500 text-white hover:text-black border border-white/20 hover:border-accent-500 font-bold text-lg uppercase tracking-[0.2em] rounded-xl transition-all hover:scale-105 backdrop-blur-md"
         >
             {t.continue_dash}
         </button>

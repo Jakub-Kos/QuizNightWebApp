@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { Shield, Check, AlertTriangle, Gavel, ArrowRight, Clock, Users, Star, Info } from "lucide-react";
+import { SceneBackdrop } from "./Theme";
 
 // Icons for the rules in order; they repeat when there are more rules
 const ICONS = [
-  [Shield, "text-blue-400"], [Gavel, "text-red-400"], [AlertTriangle, "text-yellow-400"], [Check, "text-green-400"],
+  [Shield, "text-primary-400"], [Gavel, "text-red-400"], [AlertTriangle, "text-yellow-400"], [Check, "text-green-400"],
   [Clock, "text-purple-400"], [Users, "text-cyan-400"], [Star, "text-orange-400"], [Info, "text-pink-400"],
 ];
 
@@ -17,11 +18,11 @@ export default function RulesScreen({ rules: texts, onNext, t }) {
   const textSize = rules.length <= 4 ? "text-2xl" : rules.length <= 6 ? "text-xl" : "text-lg";
 
   return (
-    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col items-center justify-center font-['League_Spartan']">
+    <div className="h-full w-full bg-ground relative overflow-hidden flex flex-col items-center justify-center font-show">
 
       {/* --- BACKGROUND AMBIENCE (Matching Welcome) --- */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full opacity-50 pointer-events-none" />
+      <SceneBackdrop />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary-600/10 blur-[120px] rounded-full opacity-50 pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-900/10 blur-[150px] rounded-full opacity-30 pointer-events-none" />
 
       {/* --- MAIN CONTENT CONTAINER --- */}
@@ -37,7 +38,7 @@ export default function RulesScreen({ rules: texts, onNext, t }) {
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, type: "spring" }}
-                className="text-8xl font-black text-white uppercase tracking-[0.1em] drop-shadow-2xl"
+                className="font-title text-8xl font-black text-white uppercase tracking-[0.1em] drop-shadow-2xl"
              >
                 {t.rules_title}
              </motion.h1>
@@ -45,7 +46,7 @@ export default function RulesScreen({ rules: texts, onNext, t }) {
                 initial={{ width: 0 }}
                 animate={{ width: "200px" }}
                 transition={{ delay: 0.5, duration: 0.8 }}
-                className="h-1 bg-blue-500 mx-auto mt-4 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                className="h-1 bg-primary-500 mx-auto mt-4 rounded-full shadow-[0_0_15px_rgb(var(--glow-primary)/0.5)]"
              />
         </div>
 
@@ -60,7 +61,7 @@ export default function RulesScreen({ rules: texts, onNext, t }) {
                     className="group relative overflow-hidden bg-white/5 border border-white/10 rounded-3xl p-8 hover:bg-white/10 transition-colors duration-300"
                 >
                     {/* Hover Glow Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-white/5 to-blue-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary-500/0 via-white/5 to-primary-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
 
                     <div className="flex items-center gap-6 relative z-10">
                         <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
@@ -86,7 +87,7 @@ export default function RulesScreen({ rules: texts, onNext, t }) {
                 onClick={onNext}
                 className="group relative px-12 py-5 bg-white text-black font-black text-xl uppercase tracking-widest rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
             >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-cyan-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative z-10 flex items-center gap-3">
                     {t.continue} <ArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </span>

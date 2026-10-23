@@ -105,7 +105,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
               rankHistory: historyByTeam[t.name],
               image: teamMeta.image,
               initials: teamMeta.initials,
-              color: teamMeta.color || "from-blue-900 to-blue-950",
+              color: teamMeta.color || "from-primary-900 to-primary-950",
               quote: teamMeta.quote || "",
           };
       });
@@ -163,15 +163,15 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
 
   if (isPresenter) {
       return (
-          <div className="h-full w-full bg-[#0a0a0a] text-white p-10 font-sans flex flex-col items-center justify-center relative">
+          <div className="h-full w-full bg-panel text-white p-10 font-sans flex flex-col items-center justify-center relative">
               <button onClick={onBack} className="absolute top-10 left-10 flex items-center gap-3 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all font-bold">
                   <ArrowLeft size={20}/> {t.pause_back}
               </button>
 
-              <Coffee size={80} className="text-blue-500 mb-6 opacity-50" />
-              <h1 className="text-4xl font-black uppercase tracking-widest text-blue-400 mb-12">{t.pause_controls}</h1>
+              <Coffee size={80} className="text-primary-500 mb-6 opacity-50" />
+              <h1 className="text-4xl font-black uppercase tracking-widest text-primary-400 mb-12">{t.pause_controls}</h1>
 
-              <div className="text-[120px] font-mono font-bold leading-none mb-12 drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]">
+              <div className="text-[120px] font-mono font-bold leading-none mb-12 drop-shadow-[0_0_30px_rgb(var(--glow-primary)/0.5)]">
                   {formatTime(timeLeft)}
               </div>
 
@@ -191,9 +191,9 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
   const tickerItems = [...sortedTeams, ...sortedTeams];
 
   return (
-    <div className="h-full w-full bg-[#050505] relative overflow-hidden flex flex-col font-['League_Spartan'] selection:bg-blue-500/30">
+    <div className="h-full w-full bg-ground relative overflow-hidden flex flex-col font-show selection:bg-primary-500/30">
 
-        <div className="absolute inset-0 bg-black z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-ground-bottom z-0 pointer-events-none" />
         <AnimatePresence>
             {currentTeam && (
                 <motion.div
@@ -207,13 +207,13 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
         <div className="relative z-10 flex flex-col h-full w-full">
 
             <div className="flex-none h-[22cqh] flex flex-col items-center justify-center pt-8">
-                <div className="flex items-center gap-4 text-blue-500 mb-2 animate-pulse">
+                <div className="flex items-center gap-4 text-primary-500 mb-2 animate-pulse">
                     <Coffee size={28} />
-                    <h2 className="text-2xl font-black uppercase tracking-[0.4em]">{t.pause_title}</h2>
+                    <h2 className="font-title text-2xl font-black uppercase tracking-[0.4em]">{t.pause_title}</h2>
                     <Coffee size={28} />
                 </div>
 
-                <div className={`text-[120px] font-mono font-black leading-none drop-shadow-[0_0_50px_rgba(59,130,246,0.3)] transition-colors duration-1000 ${timeLeft <= 60 ? 'text-red-500 drop-shadow-[0_0_50px_rgba(239,68,68,0.5)]' : 'text-white'}`}>
+                <div className={`text-[120px] font-mono font-black leading-none drop-shadow-[0_0_50px_rgb(var(--glow-primary)/0.3)] transition-colors duration-1000 ${timeLeft <= 60 ? 'text-red-500 drop-shadow-[0_0_50px_rgba(239,68,68,0.5)]' : 'text-white'}`}>
                     {formatTime(timeLeft)}
                 </div>
 
@@ -265,7 +265,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                                     </div>
 
                                     <div className="flex flex-col items-end shrink-0 mt-auto">
-                                        <span className="text-[110px] font-mono font-black text-blue-400 leading-none drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+                                        <span className="text-[110px] font-mono font-black text-primary-400 leading-none drop-shadow-[0_0_30px_rgb(var(--glow-primary)/0.3)]">
                                             {currentTeam.total}
                                         </span>
                                         <span className="text-2xl text-white/30 font-bold tracking-widest font-sans mt-2">
@@ -279,12 +279,12 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                 </AnimatePresence>
             </div>
 
-            <div className="flex-none h-[10cqh] bg-blue-950/20 border-t border-blue-500/20 flex items-center overflow-hidden backdrop-blur-md relative z-20">
-                <div className="h-full bg-blue-600 px-8 flex items-center justify-center relative z-30 shadow-[10px_0_20px_rgba(0,0,0,0.5)]">
+            <div className="flex-none h-[10cqh] bg-primary-950/20 border-t border-primary-500/20 flex items-center overflow-hidden backdrop-blur-md relative z-20">
+                <div className="h-full bg-primary-600 px-8 flex items-center justify-center relative z-30 shadow-[10px_0_20px_rgba(0,0,0,0.5)]">
                     <span className="font-black text-white uppercase tracking-[0.3em] text-lg whitespace-nowrap">
                         {t.pause_live}
                     </span>
-                    <div className="absolute right-[-14px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[15px] border-t-transparent border-l-[15px] border-l-blue-600 border-b-[15px] border-b-transparent"></div>
+                    <div className="absolute right-[-14px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[15px] border-t-transparent border-l-[15px] border-l-primary-600 border-b-[15px] border-b-transparent"></div>
                 </div>
 
                 <div className="flex-1 overflow-hidden h-full flex items-center relative mask-image-fade">
@@ -300,7 +300,7 @@ export default function PauseScreen({ isPresenter, leaderboardData, availableRou
                                 <div key={`${team.name}-${i}`} className="flex items-center gap-6 px-12 border-r border-white/10 h-[50%]">
                                     <span className={`text-2xl font-black ${realTeam.rank === 1 ? 'text-yellow-500' : 'text-white/30'}`}>{realTeam.rank}.</span>
                                     <span className="text-3xl font-bold text-white uppercase tracking-wider">{realTeam.name}</span>
-                                    <span className="text-3xl font-mono font-black text-blue-400">[{realTeam.total} {t.pts}]</span>
+                                    <span className="text-3xl font-mono font-black text-primary-400">[{realTeam.total} {t.pts}]</span>
                                 </div>
                             )
                         })}

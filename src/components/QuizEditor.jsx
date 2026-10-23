@@ -13,6 +13,9 @@ import FileDrop from "./FileDrop";
 import { Section, Status, inputCls, btnCls } from "./EditorParts";
 import TeamsSection from "./TeamsSection";
 import IntroSection from "./IntroSection";
+import ThemeSection from "./ThemeSection";
+import { themeById } from "../quiz/themes";
+import { useUiLanguage } from "../hooks/useUiLanguage";
 import { saveTeamImage } from "../quiz/teams";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
 import { readDriveQuiz, syncDriveMedia, mergeDrive, driveErrorText, folderUrl, sheetUrl as driveSheetUrl, ensureMediaFolder, uploadMedia, isMediaFolderName } from "../quiz/drive";
@@ -38,6 +41,7 @@ export default function QuizEditor({ id, t }) {
   const [uploadStatus, setUploadStatus] = useState(null);
   const [driveProgress, setDriveProgress] = useState(null);
   const google = useGoogleAccount();
+  const [uiLang] = useUiLanguage();
   const sync = useDriveSync(id);
   const [scoresPreview, setScoresPreview] = useState(null); // parseScoresCsv result of the last test
   const csvInput = useRef(null);
@@ -90,6 +94,12 @@ export default function QuizEditor({ id, t }) {
     dirty.current = true;
     setSaveState("saving");
     setQuiz((q) => ({ ...q, ...fields }));
+  };
+
+  // The theme is one of the show's settings, which the show window saves too: only that key is written
+  const setTheme = (theme) => {
+    setQuiz((q) => ({ ...q, settings: { ...q.settings, theme } }));
+    updateQuiz(id, (q) => ({ ...q, settings: { ...q.settings, theme } }));
   };
 
   const rounds = useMemo(() => (quiz ? parseQuestionsCsv(quiz.questionsCsv) : []), [quiz]);
@@ -301,13 +311,17 @@ export default function QuizEditor({ id, t }) {
     scores: scoresMode === "sheet" && !quiz.scoresSheetUrl ? t.ed_warn_scores : null,
     teams: !quiz.teams.some((team) => team.name.trim()) ? t.ed_warn_teams : null,
     intro: prizes.enabled && !["first", "second", "third", "extra"].some((k) => String(prizes[k] || "").trim()) ? t.ed_warn_prizes : null,
+    // No theme until one is picked (Classic counts once chosen), so the look is a conscious step
+    theme: !quiz.settings?.theme ? t.ed_warn_theme : null,
   };
   // Ready for the show: each step opens its section (the check its own page)
   const errors = issues.filter((i) => i.level === "error").length;
   const toLook = issues.filter((i) => i.level === "warning").length;
   const namedTeams = quiz.teams.filter((team) => team.name.trim()).length;
   const step = (key, label, todo, status, onClick = () => openSection(key)) => ({ key, label, state: todo ? "todo" : "done", status, onClick });
+  const theme = quiz.settings?.theme ? themeById(quiz.settings.theme) : null;
   const steps = [
+    step("theme", t.ed_theme, warnings.theme, theme ? theme.name[uiLang] || theme.name.en : t.rd_theme_todo),
     quiz.drive && step("drive", t.rd_google, !google.signedIn, google.signedIn ? t.rd_google_ok : t.rd_google_todo),
     step("questions", t.ed_questions, warnings.questions, rounds.length ? fmt(t.rd_questions_ok, { rounds: rounds.length, questions: questionCount }) : t.ed_warn_questions),
     step("media", t.ed_media, warnings.media, missing.length ? fmt(t.rd_media_todo, { count: missing.length })
@@ -354,6 +368,8 @@ export default function QuizEditor({ id, t }) {
           className="w-full bg-transparent font-['League_Spartan'] text-4xl font-black tracking-wide border-b border-white/10 pb-3 focus:outline-none focus:border-yellow-500/60" />
 
         <ReadyChecklist steps={steps} onStart={() => setLauncher(true)} t={t} />
+
+        <ThemeSection quiz={quiz} onChange={setTheme} warning={warnings.theme} t={t} />
 
         {quiz.drive && (
           <Section id="drive" warning={warnings.drive} busy={busy === "drive"} title={<>{t.gd_title} <BetaBadge t={t} /></>} help={t.gd_section_help}>

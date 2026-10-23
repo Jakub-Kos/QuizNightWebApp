@@ -6,6 +6,7 @@ import { teamInitials } from "../quiz/initials";
 import TeamAvatar from "./TeamAvatar";
 import TeamWall from "./TeamWall";
 import { Clock, Users, Trophy, Medal, TrendingUp, Target, Crown, Play, Timer, RotateCw } from "lucide-react";
+import { SceneBackdrop } from "./Theme";
 
 // --- SUB-COMPONENT: RANK GRAPH (BAR CHART VERSION) ---
 const RankGraph = ({ history, t }) => {
@@ -29,8 +30,8 @@ const RankGraph = ({ history, t }) => {
 
                 // --- COLOR LOGIC ---
                 // Default (4th place and below) - Using the readable "Deep Tech Blue"
-                let barClass = "bg-gradient-to-t from-blue-950 to-blue-800 border border-blue-500/20 group-hover:from-blue-900 group-hover:to-blue-700 shadow-[0_0_10px_rgba(30,58,138,0.2)]";
-                let textClass = "text-blue-400/70 group-hover:text-blue-300 transition-colors";
+                let barClass = "bg-gradient-to-t from-primary-950 to-primary-800 border border-primary-500/20 group-hover:from-primary-900 group-hover:to-primary-700 shadow-[0_0_10px_rgb(var(--glow-primary-deep)/0.2)]";
+                let textClass = "text-primary-400/70 group-hover:text-primary-300 transition-colors";
 
                 if (rank === 1) { // GOLD
                     barClass = "bg-gradient-to-t from-yellow-600 to-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.6)]";
@@ -164,7 +165,7 @@ const RecentFormBadges = ({ history, t }) => {
 
                 // --- BADGE COLOR & ICON LOGIC ---
                 // Default (4th place and below)
-                let badgeClass = "bg-blue-950/80 border-blue-800 text-blue-300 shadow-[0_2px_10px_rgba(30,58,138,0.2)]";
+                let badgeClass = "bg-primary-950/80 border-primary-800 text-primary-300 shadow-[0_2px_10px_rgb(var(--glow-primary-deep)/0.2)]";
 
                 // Use our new Slot Machine component! Stagger the spin delay based on index.
                 let rankContent = <SlotMachineRank rank={rank} delay={0.2 + (k * 0.15)} />;
@@ -243,8 +244,8 @@ const AchievementSlots = ({ history }) => {
 
                 // --- FILLED SLOT COLOR LOGIC ---
                 // Default (4th place and below) - Deep Blue
-                let slotClass = "bg-gradient-to-br from-blue-950 to-slate-900 border-blue-500/30 shadow-[0_0_15px_rgba(30,58,138,0.3)]";
-                let textClass = "text-blue-300";
+                let slotClass = "bg-gradient-to-br from-primary-950 to-slate-900 border-primary-500/30 shadow-[0_0_15px_rgb(var(--glow-primary-deep)/0.3)]";
+                let textClass = "text-primary-300";
 
                 if (rank === 1) { // GOLD
                     slotClass = "bg-gradient-to-br from-yellow-400 to-yellow-600 border-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.6)]";
@@ -425,10 +426,10 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
       initial={{ y: 0 }}
       animate={isExiting ? { y: "-100%" } : { y: 0 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
-      className="h-full w-full relative overflow-hidden flex flex-col bg-[#050505] font-['League_Spartan']"
+      className="h-full w-full relative overflow-hidden flex flex-col bg-ground font-show"
     >
 
-      <div className="absolute inset-0 bg-gradient-to-b from-[#111] to-black z-0" />
+      <SceneBackdrop />
       <div className={`absolute inset-0 opacity-20 bg-gradient-to-r ${layout === "wall" ? "from-purple-600 to-indigo-900" : activeTeam.color} blur-[150px] transition-colors duration-1000`} />
 
       <div className="relative w-full h-full flex flex-col isolate">
@@ -439,15 +440,15 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
               {(headerState === 0 || !showTime) && (
                 <RotatingHeaderItem key="title">
                    {/* text-shadow, not a drop-shadow filter: filters inside the 3D rotation are drawn out of step and flicker */}
-                   <h1 className="text-8xl font-black text-white uppercase tracking-[0.1em]" style={{ textShadow: "0 18px 40px rgba(0,0,0,0.45)" }}>{t.title}</h1>
+                   <h1 className="font-title text-8xl font-black text-white uppercase tracking-[0.1em]" style={{ textShadow: "0 18px 40px rgba(0,0,0,0.45)" }}>{t.title}</h1>
                 </RotatingHeaderItem>
               )}
               {headerState === 1 && showTime && (
                  <RotatingHeaderItem key="time">
                     <div className="flex flex-col items-center">
-                        <span className="text-3xl text-yellow-500 font-bold tracking-[0.3em] mb-2 uppercase">{t.event_schedule}</span>
+                        <span className="text-3xl text-accent-500 font-bold tracking-[0.3em] mb-2 uppercase">{t.event_schedule}</span>
                         <div className="flex items-center gap-4 text-white font-mono text-6xl font-bold bg-white/[0.07] px-8 py-2 rounded-2xl border border-white/10">
-                           <Clock size={48} className="text-yellow-500" />
+                           <Clock size={48} className="text-accent-500" />
                            <span>{startTime}</span>
                         </div>
                     </div>
@@ -471,7 +472,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
         <div className="h-[65cqh] w-full relative flex items-center pl-32 perspective-1000">
 
             {!hasTeams && (
-                <h1 className="w-full pr-32 text-center text-8xl font-black uppercase tracking-widest text-white/90">{quiz.title}</h1>
+                <h1 className="font-title w-full pr-32 text-center text-8xl font-black uppercase tracking-widest text-white/90">{quiz.title}</h1>
             )}
             {hasTeams && layout === "wall" && (
                 <div className="absolute inset-0">
@@ -551,7 +552,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                             animate={{ opacity: 1, x: 620, zIndex: 10 }}
                             exit={{ opacity: 0, x: 200 }}
                             transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-                            className="absolute top-0 bottom-0 w-[850px] bg-[#0a0a0a] border border-white/20 rounded-r-[3rem] rounded-l-[2rem] p-10 flex flex-col shadow-2xl"
+                            className="absolute top-0 bottom-0 w-[850px] bg-panel border border-white/20 rounded-r-[3rem] rounded-l-[2rem] p-10 flex flex-col shadow-2xl"
                         >
                             <div className="flex justify-between items-start border-b border-white/10 pb-6 mb-6">
                                 <div>
@@ -619,18 +620,18 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                                layout
                                onClick={() => handleManualSelect(i)} // MANUAL SELECTION
                                className={`aspect-square rounded-xl border relative overflow-hidden transition-all duration-300 group cursor-pointer
-                                   ${isActive ? "border-yellow-500 scale-110 shadow-[0_0_15px_rgba(234,179,8,0.6)] z-20 bg-white/20" : "border-white/10 bg-white/5"}
+                                   ${isActive ? "border-accent-500 scale-110 shadow-[0_0_15px_rgb(var(--glow-accent)/0.6)] z-20 bg-white/20" : "border-white/10 bg-white/5"}
                                    ${isPast ? "opacity-30 grayscale border-transparent hover:opacity-100 hover:grayscale-0" : "opacity-70 hover:opacity-100 hover:border-white/30"}
                                `}
                            >
                                <TeamAvatar team={team} className="w-full h-full" textClass="text-3xl" />
                                <div className={`absolute top-1 left-1 text-[15px] font-bold px-1.5 rounded
-                                   ${isActive ? "bg-yellow-500 text-black" : "bg-black/50 text-white/50"}`}>
+                                   ${isActive ? "bg-accent-500 text-black" : "bg-black/50 text-white/50"}`}>
                                    {i + 1}
                                </div>
                                {isActive && (
                                  <motion.div
-                                    className="absolute inset-0 border-2 border-yellow-500 rounded-xl"
+                                    className="absolute inset-0 border-2 border-accent-500 rounded-xl"
                                     animate={{ opacity: [0.5, 1, 0.5] }}
                                     transition={{ duration: 1.5, repeat: Infinity }}
                                  />
@@ -653,18 +654,18 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
                     className="group relative flex flex-col items-center justify-center p-10 outline-none"
                 >
                     {/* The Main Text - Starts Ghosted, Glows on Hover */}
-                    <span className="text-4xl font-black uppercase tracking-[0.2em] text-white/20 transition-all duration-500 group-hover:text-yellow-400 group-hover:tracking-[0.4em] group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgba(234,179,8,0.8)]">
+                    <span className="text-4xl font-black uppercase tracking-[0.2em] text-white/20 transition-all duration-500 group-hover:text-accent-400 group-hover:tracking-[0.4em] group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgb(var(--glow-accent)/0.8)]">
                         {t.start_show}
                     </span>
 
                     {/* The "Power Line" - Expands from center */}
-                    <div className="h-[2px] bg-gradient-to-r from-transparent via-yellow-500 to-transparent w-0 group-hover:w-full transition-all duration-700 ease-out mt-4 opacity-0 group-hover:opacity-100" />
+                    <div className="h-[2px] bg-gradient-to-r from-transparent via-accent-500 to-transparent w-0 group-hover:w-full transition-all duration-700 ease-out mt-4 opacity-0 group-hover:opacity-100" />
 
                     {/* Subtle Play Icon that appears */}
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         whileHover={{ opacity: 1, y: 5 }}
-                        className="absolute bottom-2 text-yellow-500"
+                        className="absolute bottom-2 text-accent-500"
                     >
                          <Play size={16} fill="currentColor" />
                     </motion.div>
