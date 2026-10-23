@@ -27,7 +27,10 @@
   },
   "fonts": {
     "title": {
-      "family": "Playfair Display"
+      "family": "Pacifico"
+    },
+    "body": {
+      "family": "Nunito"
     }
   },
   "background": {
@@ -50,10 +53,10 @@
         "opacity": 0.12
       }
     ],
-    "ornament": null
+    "ornament": "meadow"
   },
   "decoration": {
-    "type": null
+    "type": "petals"
   },
   "scenes": {}
 }

@@ -11,7 +11,7 @@ import { previewStep } from "../quiz/validate";
 import { fmt } from "../quiz/files";
 import { downloadBlob } from "../quiz/package";
 import { themeForQuiz, themeName, THEMES, CUSTOM_THEME_ID } from "../quiz/themes";
-import { normalizeTheme, readabilityIssues, BUNDLED_FONTS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
+import { normalizeTheme, readabilityIssues, FONT_GROUPS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
 import { exportThemePack, themePackName } from "../quiz/themePack";
 import { storeThemeFile, pruneThemeFiles, saveToLibrary, FileError } from "../quiz/themeStore";
 import { driveErrorText } from "../quiz/drive";
@@ -345,7 +345,11 @@ function FontField({ label, font, busy, onFamily, onFile, t }) {
         <select className={`${inputCls} flex-1`} value={font?.family ?? (font?.file ? "__file" : "")}
           onChange={(e) => (e.target.value === "__upload" ? input.current?.click() : e.target.value !== "__file" && onFamily(e.target.value || null))}>
           <option value="">{t.te_f_default}</option>
-          {BUNDLED_FONTS.map((f) => <option key={f} value={f}>{f}</option>)}
+          {Object.entries(FONT_GROUPS).map(([group, fonts]) => (
+            <optgroup key={group} label={t[`te_f_group_${group}`]}>
+              {fonts.map((f) => <option key={f} value={f}>{f}</option>)}
+            </optgroup>
+          ))}
           {font?.file && <option value="__file">{fmt(t.te_f_file, { name: font.file.replace(/^theme-/, "") })}</option>}
           <option value="__upload">{t.te_f_upload}</option>
         </select>

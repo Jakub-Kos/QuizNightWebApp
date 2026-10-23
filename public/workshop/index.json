@@ -31,7 +31,14 @@
           "groundBottom": "#01080d",
           "panel": "#05202e"
         },
-        "fonts": {},
+        "fonts": {
+          "title": {
+            "family": "Oswald"
+          },
+          "body": {
+            "family": "Nunito"
+          }
+        },
         "background": {
           "image": null,
           "imageOpacity": 0.5,
@@ -52,10 +59,10 @@
               "opacity": 0.1
             }
           ],
-          "ornament": null
+          "ornament": "waves"
         },
         "decoration": {
-          "type": "snow"
+          "type": "bubbles"
         },
         "scenes": {}
       }
@@ -90,7 +97,14 @@
           "groundBottom": "#030008",
           "panel": "#12041f"
         },
-        "fonts": {},
+        "fonts": {
+          "title": {
+            "family": "Monoton"
+          },
+          "body": {
+            "family": "Montserrat"
+          }
+        },
         "background": {
           "image": null,
           "imageOpacity": 0.5,
@@ -118,10 +132,10 @@
               "opacity": 0.08
             }
           ],
-          "ornament": null
+          "ornament": "skyline"
         },
         "decoration": {
-          "type": null
+          "type": "stars"
         },
         "scenes": {}
       }
@@ -158,7 +172,10 @@
         },
         "fonts": {
           "title": {
-            "family": "Playfair Display"
+            "family": "Pacifico"
+          },
+          "body": {
+            "family": "Nunito"
           }
         },
         "background": {
@@ -181,10 +198,10 @@
               "opacity": 0.12
             }
           ],
-          "ornament": null
+          "ornament": "meadow"
         },
         "decoration": {
-          "type": null
+          "type": "petals"
         },
         "scenes": {}
       }

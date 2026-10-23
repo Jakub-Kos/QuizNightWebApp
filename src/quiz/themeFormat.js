@@ -14,9 +14,9 @@
 //   "background": {
 //     "image": "assets/bg.jpg", "imageOpacity": 0–1, "imageBlur": 0–20 (px on the 2400 px wide stage),
 //     "glows": [{ "color", "x": 0–100, "y": 0–100, "size": 5–150, "opacity": 0–1 }],   at most 6
-//     "ornament": "graveyard" | "lights" | null
+//     "ornament": "graveyard" | "lights" | "skyline" | "waves" | "meadow" | null
 //   },
-//   "decoration": { "type": "bats" | "snow" | null },
+//   "decoration": { "type": "bats" | "snow" | "leaves" | "petals" | "hearts" | "confetti" | "bubbles" | "stars" | null },
 //   "scenes": {}                                 reserved for per-scene looks; ignored for now
 // }
 // Missing colours keep the Classic ones; files are paths inside the theme pack (themePack.js).
@@ -24,10 +24,15 @@
 export const THEME_FORMAT = "quiznight-theme";
 export const THEME_VERSION = 1;
 
-// Fonts the app bundles (quiz/themes.js loads them); others come as files in the pack
-export const BUNDLED_FONTS = ["Rubik Wet Paint", "Grenze", "Berkshire Swash", "Playfair Display"];
-export const ORNAMENTS = ["graveyard", "lights"];
-export const DECORATIONS = ["bats", "snow"];
+// Fonts the app bundles (quiz/themes.js loads them), all with Czech and Slovak letters; others come as
+// files in the pack. Display fonts are for headings, text fonts (with bold weights) for everything.
+export const FONT_GROUPS = {
+  display: ["Rubik Wet Paint", "Berkshire Swash", "Bebas Neue", "Pacifico", "Bungee", "Monoton", "Special Elite", "Audiowide"],
+  text: ["Grenze", "Playfair Display", "Montserrat", "Nunito", "Oswald"],
+};
+export const BUNDLED_FONTS = [...FONT_GROUPS.display, ...FONT_GROUPS.text];
+export const ORNAMENTS = ["graveyard", "lights", "skyline", "waves", "meadow"];
+export const DECORATIONS = ["bats", "snow", "leaves", "petals", "hearts", "confetti", "bubbles", "stars"];
 export const COLOR_KEYS = ["primary", "accent", "groundTop", "ground", "groundBottom", "panel"];
 export const LANGS = ["en", "cs", "sk"];
 
