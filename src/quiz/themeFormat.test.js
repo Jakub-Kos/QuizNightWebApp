@@ -156,3 +156,20 @@ describe("My themes", () => {
     expect(stored.media.map((m) => m.name)).toEqual(["theme-bg.jpg"]);
   });
 });
+
+describe("the workshop", () => {
+  it("has only themes that pass the check without dropping anything", async () => {
+    const { readFileSync, readdirSync, statSync } = await import("node:fs");
+    const dir = new URL("../../public/workshop/", import.meta.url);
+    const index = JSON.parse(readFileSync(new URL("index.json", dir), "utf8"));
+    const folders = readdirSync(new URL("themes/", dir)).filter((id) => statSync(new URL(`themes/${id}`, dir)).isDirectory());
+    expect(index.themes.map((e) => e.theme.id).sort()).toEqual(folders.sort());
+    for (const entry of index.themes) {
+      const files = themeFiles(entry.theme).map((name) => ({ name, size: statSync(new URL(`${entry.path}${name}`, dir)).size }));
+      const { theme, problems } = normalizeTheme(entry.theme, { assets: files });
+      expect(problems).toEqual([]);
+      expect(theme).toEqual(entry.theme);
+      expect(readabilityIssues(theme)).toEqual([]);
+    }
+  });
+});

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useDeferredValue } from "react";
 import { MotionConfig } from "framer-motion";
-import { ArrowLeft, Upload, Trash2, Plus, Download, BookmarkPlus, CheckCircle2, AlertTriangle, Loader2, RotateCcw } from "lucide-react";
+import { ArrowLeft, Upload, Trash2, Plus, Download, BookmarkPlus, CheckCircle2, AlertTriangle, Loader2, RotateCcw, Share2, X, ExternalLink } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { getQuiz, updateQuiz, listMedia } from "../quiz/storage";
 import { QuizContext } from "../quiz/context";
@@ -15,6 +15,7 @@ import { normalizeTheme, readabilityIssues, BUNDLED_FONTS, ORNAMENTS, DECORATION
 import { exportThemePack, themePackName } from "../quiz/themePack";
 import { storeThemeFile, pruneThemeFiles, saveToLibrary, FileError } from "../quiz/themeStore";
 import { driveErrorText } from "../quiz/drive";
+import { shareUrl } from "../quiz/workshop";
 import { quizHash } from "../hooks/useHashRoute";
 import { useDisplaySettings } from "../hooks/useDisplay";
 import { useScores } from "../hooks/useScores";
@@ -90,6 +91,7 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
   const [notice, setNotice] = useState(null); // { ok, text }
   const [busy, setBusy] = useState(null);
   const [libraryId, setLibraryId] = useState(null);
+  const [sharing, setSharing] = useState(false);
   const changed = useRef(false);
 
   // Every change is saved shortly after, as the quiz's own theme, chosen for the show
@@ -183,6 +185,7 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
               {busy === "library" ? <Loader2 size={16} className="animate-spin" /> : <BookmarkPlus size={16} />} {libraryId ? t.te_lib_update : t.te_lib_save}
             </button>
             <button type="button" className={btnCls} onClick={exportTheme}><Download size={16} /> {t.te_export}</button>
+            <button type="button" className={`${btnCls} bg-yellow-500 hover:bg-yellow-400 text-black font-bold`} onClick={() => setSharing(true)}><Share2 size={16} /> {t.te_share}</button>
           </div>
         </header>
 
@@ -197,6 +200,13 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
               </Field>
               <Field label={t.te_author}>
                 <input className={inputCls} value={draft.author} maxLength={LIMITS.text} onChange={(e) => set("author", e.target.value)} />
+              </Field>
+              <Field label={t.te_description}>
+                <textarea className={`${inputCls} min-h-20`} value={draft.description[lang] || draft.description.en || ""} maxLength={LIMITS.description}
+                  onChange={(e) => set("description", Object.fromEntries(LANGS.map((l) => [l, e.target.value])))} />
+              </Field>
+              <Field label={t.te_tags}>
+                <TagsInput tags={draft.tags} onChange={(tags) => set("tags", tags)} placeholder={t.te_tags_hint} />
               </Field>
             </Panel>
 
@@ -287,6 +297,7 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
           </main>
         </div>
       </div>
+      {sharing && <ShareDialog theme={draft} issues={issues} lang={lang} onExport={exportTheme} onClose={() => setSharing(false)} t={t} />}
     </QuizContext.Provider>
   );
 }
@@ -385,6 +396,61 @@ function Choice({ label, value, options, name, onChange }) {
             {name(o)}
           </button>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// Tags as chips: typing a comma or Enter adds one (made into a-z, 0-9 and dashes, like the file keeps them)
+function TagsInput({ tags, onChange, placeholder }) {
+  const [text, setText] = useState("");
+  const add = (value) => {
+    const tag = slug(value);
+    if (tag && !tags.includes(tag) && tags.length < LIMITS.tags) onChange([...tags, tag]);
+    setText("");
+  };
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 bg-black/40 border border-white/10 rounded-xl px-3 py-2">
+      {tags.map((tag) => (
+        <span key={tag} className="flex items-center gap-1 pl-2 pr-1 py-0.5 rounded-full bg-white/10 text-sm">
+          #{tag}
+          <button type="button" onClick={() => onChange(tags.filter((x) => x !== tag))} className="p-0.5 rounded-full hover:bg-white/20" aria-label={tag}><X size={12} /></button>
+        </span>
+      ))}
+      <input value={text} placeholder={tags.length ? "" : placeholder} className="flex-1 min-w-24 bg-transparent py-1 text-white placeholder-gray-600 focus:outline-none"
+        onChange={(e) => (e.target.value.endsWith(",") ? add(e.target.value.slice(0, -1)) : setText(e.target.value))}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(text); } if (e.key === "Backspace" && !text && tags.length) onChange(tags.slice(0, -1)); }}
+        onBlur={() => text && add(text)} />
+    </div>
+  );
+}
+
+// Sharing to the workshop: the theme file is downloaded, and the GitHub form opens filled in, for the
+// file to be attached there; the theme appears in the gallery once it has been reviewed
+function ShareDialog({ theme, issues, lang, onExport, onClose, t }) {
+  const missing = !themeName(theme, lang).trim() || !theme.author.trim();
+  const share = async () => {
+    await onExport();
+    window.open(shareUrl(theme, lang), "_blank", "noopener");
+  };
+  return (
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+      <div className="w-full max-w-lg rounded-2xl bg-[#0d0d10] border border-white/15 p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-start gap-3">
+          <h2 className="flex-1 text-xl font-bold">{t.te_share_title}</h2>
+          <button type="button" onClick={onClose} aria-label={t.chk_close} className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10"><X size={18} /></button>
+        </div>
+        <ol className="list-decimal pl-5 space-y-2 text-gray-300">
+          <li>{t.te_share_step1}</li>
+          <li>{t.te_share_step2}</li>
+          <li>{t.te_share_step3}</li>
+        </ol>
+        <p className="text-sm text-gray-500">{t.te_share_github}</p>
+        {missing && <p className="flex gap-2 text-sm text-yellow-300"><AlertTriangle size={16} className="shrink-0 mt-0.5" /> {t.te_share_missing}</p>}
+        {issues.length > 0 && <p className="flex gap-2 text-sm text-yellow-300"><AlertTriangle size={16} className="shrink-0 mt-0.5" /> {t.te_share_readability}</p>}
+        <button type="button" onClick={share} disabled={missing} className={`${btnCls} w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold`}>
+          <ExternalLink size={16} /> {t.te_share_go}
+        </button>
       </div>
     </div>
   );

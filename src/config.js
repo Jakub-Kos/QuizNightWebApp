@@ -12,3 +12,7 @@ export function googleCopyUrl(url) {
 // Google Drive. Without it the Drive features are hidden. Not a secret: Google only accepts it from the
 // JavaScript origins listed in the console.
 export const GOOGLE_CLIENT_ID = "321755554883-pegnabl76bbm71d58akvtaqhq2hm2ik0.apps.googleusercontent.com";
+
+// The GitHub repository whose public/workshop/ holds the theme workshop; "Share to the workshop" opens a
+// submission form (.github/ISSUE_TEMPLATE/theme.yml) there
+export const WORKSHOP_REPO = "Jakub-Kos/QuizNightWebApp";

@@ -1,0 +1,55 @@
+{
+  "format": "quiznight-theme",
+  "version": 1,
+  "id": "deep-ocean",
+  "name": {
+    "en": "Deep ocean",
+    "cs": "Hlubina oceánu",
+    "sk": "Mély óceán"
+  },
+  "author": "Quiz Night",
+  "description": {
+    "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+    "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+    "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+  },
+  "tags": [
+    "calm",
+    "blue"
+  ],
+  "colors": {
+    "primary": "#0284c7",
+    "accent": "#5eead4",
+    "groundTop": "#062a3d",
+    "ground": "#031621",
+    "groundBottom": "#01080d",
+    "panel": "#05202e"
+  },
+  "fonts": {},
+  "background": {
+    "image": null,
+    "imageOpacity": 0.5,
+    "imageBlur": 0,
+    "glows": [
+      {
+        "color": "#14b8a6",
+        "x": 30,
+        "y": 100,
+        "size": 80,
+        "opacity": 0.2
+      },
+      {
+        "color": "#0ea5e9",
+        "x": 95,
+        "y": 20,
+        "size": 50,
+        "opacity": 0.1
+      }
+    ],
+    "ornament": null
+  },
+  "decoration": {
+    "type": "snow"
+  },
+  "scenes": {}
+}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Upload, Download, Loader2, Pencil, Sparkles, X } from "lucide-react";
+import { Check, Upload, Download, Loader2, Pencil, Sparkles, X, Palette } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -98,6 +98,7 @@ export default function ThemeSection({ quiz, onChange, onImport, onUseLibrary, o
         <button type="button" className={btnCls} disabled={busy} onClick={() => onExport(shown)}>
           <Download size={16} /> {fmt(t.thm_export, { name: themeName(shown, lang) })}
         </button>
+        <a href="#/themes" className={btnCls}><Palette size={16} /> {t.thm_browse}</a>
         <input ref={input} type="file" accept=".zip,.json,application/zip,application/json" className="hidden"
           onChange={(e) => { importFiles([...e.target.files]); e.target.value = ""; }} />
       </div>
