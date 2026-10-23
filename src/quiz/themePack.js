@@ -46,8 +46,9 @@ export function themeForQuizMedia({ theme, assets }) {
   const names = new Map();
   const taken = new Set();
   for (const a of assets) {
-    let name = `theme-${baseName(a.name)}`;
-    for (let i = 2; taken.has(name.toLowerCase()); i++) name = `theme-${i}-${baseName(a.name)}`;
+    const plain = baseName(a.name).replace(/^theme-/, ""); // files from My themes already carry it
+    let name = `theme-${plain}`;
+    for (let i = 2; taken.has(name.toLowerCase()); i++) name = `theme-${i}-${plain}`;
     taken.add(name.toLowerCase());
     names.set(a.name, name);
   }

@@ -100,3 +100,34 @@ export const putMedia = (quizId, files) =>
 
 export const deleteMedia = (quizId, name) =>
   tx(["media"], "readwrite", (t) => promisify(t.objectStore("media").delete(`${quizId}/${name}`)));
+
+// My themes: themes saved in this browser to use in any quiz, in a database of their own (adding a
+// store to "quiznight" would need a version upgrade, which waits for every open window to close).
+// { id, theme, files: [{ name, blob }] (the theme's files, by the names the theme uses), savedAt }
+let libraryPromise = null;
+function openLibrary() {
+  if (!libraryPromise) {
+    libraryPromise = new Promise((resolve, reject) => {
+      const req = indexedDB.open("quiznight-library", 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("themes", { keyPath: "id" });
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  return libraryPromise;
+}
+async function libraryTx(mode, fn) {
+  const db = await openLibrary();
+  const t = db.transaction(["themes"], mode);
+  const done = new Promise((resolve, reject) => {
+    t.oncomplete = resolve;
+    t.onerror = () => reject(t.error);
+  });
+  const result = await fn(t.objectStore("themes"));
+  await done;
+  return result;
+}
+export const listLibraryThemes = async () =>
+  (await libraryTx("readonly", (s) => promisify(s.getAll()))).sort((a, b) => b.savedAt - a.savedAt);
+export const putLibraryTheme = (entry) => libraryTx("readwrite", (s) => promisify(s.put({ ...entry, savedAt: Date.now() })));
+export const deleteLibraryTheme = (id) => libraryTx("readwrite", (s) => promisify(s.delete(id)));

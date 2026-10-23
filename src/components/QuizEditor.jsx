@@ -16,7 +16,7 @@ import IntroSection from "./IntroSection";
 import ThemeSection from "./ThemeSection";
 import { themeForQuiz, themeName, CUSTOM_THEME_ID } from "../quiz/themes";
 import { readThemePack, exportThemePack, themePackName, ThemePackError } from "../quiz/themePack";
-import { storeQuizTheme } from "../quiz/themeStore";
+import { storeQuizTheme, applyLibraryTheme } from "../quiz/themeStore";
 import { useUiLanguage } from "../hooks/useUiLanguage";
 import { saveTeamImage } from "../quiz/teams";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
@@ -108,6 +108,16 @@ export default function QuizEditor({ id, t }) {
       return { ok: true, text: fmt(t.thm_imported, { name: themeName(theme, uiLang) }), problems: pack.problems };
     } catch (err) {
       return { ok: false, text: err instanceof ThemePackError ? t[`thm_err_${err.message}`] : driveErrorText(err, t, google.user?.email) };
+    }
+  };
+  const applyLibraryEntry = async (entry) => {
+    try {
+      const theme = await applyLibraryTheme(id, entry);
+      setQuiz((q) => ({ ...q, customTheme: theme, settings: { ...q.settings, theme: CUSTOM_THEME_ID } }));
+      await reloadMedia();
+      return { ok: true, text: fmt(t.thm_applied, { name: themeName(theme, uiLang) }) };
+    } catch (err) {
+      return { ok: false, text: driveErrorText(err, t, google.user?.email) };
     }
   };
   const exportTheme = async (theme) => {
@@ -389,7 +399,7 @@ export default function QuizEditor({ id, t }) {
 
         <ReadyChecklist steps={steps} onStart={() => setLauncher(true)} t={t} />
 
-        <ThemeSection quiz={quiz} onChange={setTheme} onImport={importTheme} onExport={exportTheme} resolveMedia={resolveMediaUrl}
+        <ThemeSection quiz={quiz} onChange={setTheme} onImport={importTheme} onUseLibrary={applyLibraryEntry} onExport={exportTheme} resolveMedia={resolveMediaUrl}
           warning={warnings.theme} t={t} />
 
         {quiz.drive && (

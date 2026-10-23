@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from "react";
-import { Check, Upload, Download, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Check, Upload, Download, Loader2, Pencil, Sparkles, X } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -7,6 +7,8 @@ import { themeChoices, themeForQuiz, themeName, CUSTOM_THEME_ID } from "../quiz/
 import { useDisplaySettings } from "../hooks/useDisplay";
 import { useUiLanguage } from "../hooks/useUiLanguage";
 import { fmt } from "../quiz/files";
+import { listLibraryThemes, deleteLibraryTheme } from "../quiz/storage";
+import { quizHash, navigate } from "../hooks/useHashRoute";
 import { Section, btnCls } from "./EditorParts";
 import { StageFrame } from "./Stage";
 import { ThemeDecorations } from "./Theme";
@@ -15,9 +17,10 @@ import Dashboard from "./Dashboard";
 const noop = () => {};
 
 // The show's look (quiz/themes.js): a card per theme with the round overview as it would appear, the
-// quiz's own theme among them once one is imported. onImport(files) resolves with { ok, text, problems }.
+// quiz's own theme among them once one is imported or made in the theme editor, and My themes (saved in
+// this browser) to use here. onImport(files) and onUseLibrary(entry) resolve with { ok, text, problems }.
 // resolveMedia and onExport come from the setup page, which holds the quiz's media.
-export default function ThemeSection({ quiz, onChange, onImport, onExport, resolveMedia, warning, t }) {
+export default function ThemeSection({ quiz, onChange, onImport, onUseLibrary, onExport, resolveMedia, warning, t }) {
   const [display] = useDisplaySettings("main");
   const [lang] = useUiLanguage();
   const [busy, setBusy] = useState(false);
@@ -28,6 +31,25 @@ export default function ThemeSection({ quiz, onChange, onImport, onExport, resol
   const context = useMemo(() => ({ quiz, rounds, teams: [], resolveMedia }), [quiz, rounds, resolveMedia]);
   const current = quiz.settings?.theme ?? null; // none yet: nothing is marked as chosen
   const shown = themeForQuiz(quiz);
+  const [library, setLibrary] = useState([]);
+  useEffect(() => { listLibraryThemes().then(setLibrary).catch(() => {}); }, []);
+
+  // A new own theme starts from the one shown; it replaces an existing own theme, so that is asked first
+  const newTheme = () => {
+    if (quiz.customTheme && !window.confirm(fmt(t.thm_new_confirm, { name: themeName(quiz.customTheme, lang) }))) return;
+    navigate(quizHash(quiz.id, "theme/new"));
+  };
+  const applyEntry = async (entry) => {
+    if (quiz.customTheme && !window.confirm(fmt(t.thm_new_confirm, { name: themeName(quiz.customTheme, lang) }))) return;
+    setBusy(true);
+    setStatus(await onUseLibrary(entry));
+    setBusy(false);
+  };
+  const forget = async (entry) => {
+    if (!window.confirm(fmt(t.thm_lib_delete_confirm, { name: themeName(entry.theme, lang) }))) return;
+    await deleteLibraryTheme(entry.id);
+    setLibrary(await listLibraryThemes());
+  };
 
   const importFiles = async (files) => {
     if (!files.length) return;
@@ -64,6 +86,12 @@ export default function ThemeSection({ quiz, onChange, onImport, onExport, resol
       </QuizContext.Provider>
 
       <div className="flex flex-wrap items-center gap-2 mt-4">
+        {quiz.customTheme && (
+          <a href={quizHash(quiz.id, "theme")} className={btnCls}><Pencil size={16} /> {t.thm_edit}</a>
+        )}
+        {shown !== quiz.customTheme && (
+          <button type="button" className={btnCls} onClick={newTheme}><Sparkles size={16} /> {fmt(t.thm_new, { name: themeName(shown, lang) })}</button>
+        )}
         <button type="button" className={btnCls} disabled={busy} onClick={() => input.current?.click()}>
           {busy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />} {t.thm_import}
         </button>
@@ -73,6 +101,26 @@ export default function ThemeSection({ quiz, onChange, onImport, onExport, resol
         <input ref={input} type="file" accept=".zip,.json,application/zip,application/json" className="hidden"
           onChange={(e) => { importFiles([...e.target.files]); e.target.value = ""; }} />
       </div>
+      {library.length > 0 && (
+        <div className="mt-5 space-y-2">
+          <h3 className="text-sm font-bold text-gray-300">{t.thm_library}</h3>
+          <p className="text-xs text-gray-500">{t.thm_library_help}</p>
+          <ul className="flex flex-wrap gap-2">
+            {library.map((entry) => (
+              <li key={entry.id} className="flex items-center rounded-xl border border-white/10 bg-black/20">
+                <button type="button" disabled={busy} onClick={() => applyEntry(entry)} className="flex items-center gap-2 pl-3 pr-2 py-2 text-sm hover:text-yellow-300">
+                  <span className="flex -space-x-1">
+                    {["primary", "accent", "ground"].map((k) => <span key={k} className="w-3.5 h-3.5 rounded-full ring-1 ring-black/60" style={{ background: entry.theme.colors?.[k] || "#333" }} />)}
+                  </span>
+                  {themeName(entry.theme, lang)}
+                </button>
+                <button type="button" onClick={() => forget(entry)} aria-label={t.thm_lib_delete} title={t.thm_lib_delete}
+                  className="p-2 text-gray-500 hover:text-red-400"><X size={14} /></button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {status && (
         <div className={`mt-3 text-sm ${status.ok ? "text-green-400" : "text-red-400"}`}>
           <p>{status.text}</p>

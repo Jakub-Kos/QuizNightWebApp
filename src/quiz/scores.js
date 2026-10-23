@@ -27,3 +27,22 @@ export function manualLeaderboard(teams, rounds, manualScores = {}, roundWord) {
     })),
   };
 }
+
+// Made-up points for previews when a quiz has no scores yet (the theme editor's leaderboard): the
+// quiz's teams, or the demo's, over its rounds (four when it has none), the same on every render
+export function sampleLeaderboard(teams, rounds, roundWord, fallbackNames) {
+  const names = teams.map((team) => String(team.name || "").trim()).filter(Boolean);
+  const labels = rounds.length ? rounds : [1, 2, 3, 4].map((n) => `${roundWord || "Kolo"} ${n}`);
+  let seed = 11;
+  const next = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  return {
+    rounds: labels,
+    teams: (names.length ? names : fallbackNames).map((name) => ({
+      name,
+      scores: Object.fromEntries(labels.map((label) => [label, Math.round(next() * 20) / 2])),
+    })),
+  };
+}
+
+// Whether a leaderboard has any points at all
+export const hasPoints = (board) => board.teams.some((team) => Object.values(team.scores).some((v) => Number(v) > 0));

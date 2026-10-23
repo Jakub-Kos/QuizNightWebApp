@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 //   #/quiz/<id>/check        quiz check (problems + thumbnails)
 //   #/quiz/<id>/map          quiz map (every screen of the show and how they connect)
 //   #/quiz/<id>/questions    question editor (quizzes on Google Drive)
+//   #/quiz/<id>/theme        theme editor (the quiz's own theme); …/theme/new starts a new one
 //   #/quiz/<id>/scores       manual score entry
 //   #/quiz/<id>/attendance   attendance check and seating map
 //   #/help, #/help/<section> help page
@@ -18,8 +19,8 @@ function parse(hash) {
   if (parts[0] === "drive") return { name: "drive", folder: parts[1] || null };
   if (parts[0] === "help") return { name: "help", section: parts[1] || null };
   if (parts[0] === "quiz" && parts[1]) {
-    const view = ["presenter", "edit", "check", "map", "scores", "attendance", "questions"].includes(parts[2]) ? parts[2] : "show";
-    return { name: view, id: parts[1] };
+    const view = ["presenter", "edit", "check", "map", "scores", "attendance", "questions", "theme"].includes(parts[2]) ? parts[2] : "show";
+    return { name: view, id: parts[1], fresh: view === "theme" && parts[3] === "new" };
   }
   return { name: "library" };
 }

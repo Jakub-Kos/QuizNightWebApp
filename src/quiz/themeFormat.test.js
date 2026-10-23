@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { zipSync, strToU8 } from "fflate";
-import { normalizeTheme, themeFiles, THEME_FORMAT } from "./themeFormat";
+import { normalizeTheme, themeFiles, readabilityIssues, THEME_FORMAT } from "./themeFormat";
 import { readThemePack, exportThemePack, themeForQuizMedia, ThemePackError } from "./themePack";
 import { THEMES, themeStyle, themeForQuiz, themeChoices, CUSTOM_THEME_ID } from "./themes";
 
@@ -132,5 +132,27 @@ describe("themes in a quiz", () => {
     expect(Object.keys(style).filter((k) => k.startsWith("--color-primary-"))).toHaveLength(11);
     expect(style["--glow-accent"]).toBe("255 122 26");
     expect(style["--theme-font"]).toContain("Grenze");
+  });
+});
+
+describe("readability", () => {
+  it("passes Classic and the built-in themes", () => {
+    for (const theme of THEMES) expect(readabilityIssues(theme)).toEqual([]);
+  });
+
+  it("flags light backgrounds, dark highlights, light main colours and loud pictures", () => {
+    expect(readabilityIssues({ colors: { ground: "#888888", panel: "#999999", accent: "#333333", primary: "#ffff66" } }))
+      .toEqual(["text_ground", "text_panel", "accent_text", "primary_text"]);
+    expect(readabilityIssues({ colors: {}, background: { image: "x.jpg", imageOpacity: 0.9, imageBlur: 0 } })).toEqual(["image"]);
+    expect(readabilityIssues({ colors: {}, background: { image: "x.jpg", imageOpacity: 0.9, imageBlur: 8 } })).toEqual([]);
+  });
+});
+
+describe("My themes", () => {
+  it("keeps the names of files that are already theme files", () => {
+    const theme = normalizeTheme(base({ background: { image: "theme-bg.jpg" } }), { stored: true }).theme;
+    const stored = themeForQuizMedia({ theme, assets: [{ name: "theme-bg.jpg", blob: new Blob(["x"]) }] });
+    expect(stored.theme.background.image).toBe("theme-bg.jpg");
+    expect(stored.media.map((m) => m.name)).toEqual(["theme-bg.jpg"]);
   });
 });
