@@ -6,6 +6,7 @@ import { parseQuestionsCsv } from "../quiz/parse";
 import { readImport, saveImport, exportZip, duplicateQuiz, downloadBlob, safeFileName } from "../quiz/package";
 import { quizHash, navigate } from "../hooks/useHashRoute";
 import FileDrop from "./FileDrop";
+import ShowLauncher from "./ShowLauncher";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
 import { readDriveQuiz, mergeDrive, sameDriveQuiz, driveErrorText, createDriveQuiz, folderUrl } from "../quiz/drive";
 import { GOOGLE_SHEET_TEMPLATE } from "../config";
@@ -26,6 +27,7 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
   const [demo, setDemo] = useState(null);
   const [busy, setBusy] = useState(null); // id of the card (or "import") with an action running
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [launching, setLaunching] = useState(null); // id of the quiz whose show is being started
   const [error, setError] = useState(null);
   const google = useGoogleAccount();
   const [driveInvited] = useState(() => {
@@ -140,6 +142,7 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
           )}
         </section>
 
+        {launching && <ShowLauncher quizId={launching} onClose={() => setLaunching(null)} t={t} />}
         {driveOpen && <DriveOpen account={google} quizzes={quizzes} lang={lang} t={t} />}
         {driveFolder && google.enabled && <InviteScreen folder={driveFolder} account={google} quizzes={quizzes} lang={lang} t={t} />}
 
@@ -179,9 +182,9 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
                     </div>
                   ) : (
                     <div className="flex flex-wrap gap-2">
-                      <a href={quizHash(quiz.id)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm">
+                      <button onClick={() => setLaunching(quiz.id)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm">
                         <Play size={16} /> {t.lib_open}
-                      </a>
+                      </button>
                       {!quiz.builtin && (
                         <a href={quizHash(quiz.id, "edit")} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm">
                           <Pencil size={16} /> {t.lib_edit}
