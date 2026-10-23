@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { Tv, Laptop, X, CheckCircle2, AlertTriangle, Play } from "lucide-react";
+import { Tv, Laptop, X, CheckCircle2, AlertTriangle, Play, Compass } from "lucide-react";
+import { DEMO_ID } from "../quiz/model";
+import { startTour } from "../quiz/tour";
 import { quizHash, navigate } from "../hooks/useHashRoute";
 import Rich from "./RichText";
 
@@ -77,10 +79,15 @@ export default function ShowLauncher({ quizId, onClose, t }) {
         {step(2, presenter, <Laptop size={18} />, t.sl_presenter_title, t.sl_presenter_text, t.sl_presenter_open, openPresenter)}
 
         <p className="text-sm text-gray-400"><Rich text={t.sl_keys} /></p>
-        <div className="pt-4 border-t border-white/5">
+        <div className="pt-4 border-t border-white/5 flex flex-wrap gap-x-6 gap-y-2">
           <button onClick={() => navigate(quizHash(quizId))} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white">
             <Play size={16} /> {t.sl_one_screen}
           </button>
+          {quizId === DEMO_ID && (
+            <button onClick={() => startTour(quizId)} className="flex items-center gap-2 text-sm text-yellow-300 hover:text-yellow-200">
+              <Compass size={16} /> {t.tr_start}
+            </button>
+          )}
         </div>
       </div>
     </div>

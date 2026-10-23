@@ -76,6 +76,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
           <div className="flex gap-6">
               {/* NEW HALF-TIME BUTTON */}
               <button
+                 data-tour="pause"
                  onClick={onOpenPause}
                  className="group relative flex items-center gap-3 px-8 py-5 bg-gradient-to-br from-blue-900/50 to-blue-800/30 hover:from-blue-600 hover:to-blue-500 text-white rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] border border-blue-500/20"
               >
@@ -86,6 +87,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
               </button>
 
               <button
+                 data-tour="leaderboard"
                  onClick={onOpenLeaderboard}
                  className="group relative flex items-center gap-4 px-10 py-5 bg-gradient-to-br from-yellow-600 to-yellow-400 hover:from-yellow-400 hover:to-yellow-300 text-black rounded-full transition-all duration-300 hover:scale-[1.03] shadow-[0_0_30px_rgba(234,179,8,0.2)] hover:shadow-[0_0_50px_rgba(234,179,8,0.5)] overflow-hidden"
               >
@@ -118,6 +120,7 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                     return (
                         <motion.div
                             key={round.id || index}
+                            data-tour={index === 0 ? "round" : undefined}
                             onMouseEnter={() => setHoveredRound(index)}
                             animate={{ flex: isHovered ? 4 : 1, opacity: hoveredRound !== null && !isHovered ? 0.4 : 1 }}
                             transition={{ type: "spring", bounce: 0.2, duration: 0.7 }}
@@ -181,10 +184,10 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
                                         </h2>
 
                                         <div className="grid grid-cols-2 gap-4 w-full mb-6">
-                                            <button onClick={() => onSelectRound(round, "questions_only")} className="py-5 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold tracking-widest text-xs flex flex-col items-center justify-center gap-2 transition-all border border-white/10 hover:border-white/20">
+                                            <button data-tour={index === 0 ? "questions" : undefined} onClick={() => onSelectRound(round, "questions_only")} className="py-5 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold tracking-widest text-xs flex flex-col items-center justify-center gap-2 transition-all border border-white/10 hover:border-white/20">
                                                 <Eye size={24} className="text-gray-400"/><span>{t.btn_questions}</span>
                                             </button>
-                                            <button onClick={() => onSelectRound(round, "with_answers")} className="py-5 bg-gradient-to-br from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 text-black rounded-2xl font-black tracking-widest text-xs flex flex-col items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-[1.02]">
+                                            <button data-tour={index === 0 ? "answers" : undefined} onClick={() => onSelectRound(round, "with_answers")} className="py-5 bg-gradient-to-br from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 text-black rounded-2xl font-black tracking-widest text-xs flex flex-col items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-[1.02]">
                                                 <Play size={24} fill="currentColor"/><span>{t.btn_answers}</span>
                                             </button>
                                         </div>

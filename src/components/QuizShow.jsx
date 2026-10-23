@@ -25,6 +25,7 @@ import Stage from "./Stage";
 import { useDisplaySettings } from "../hooks/useDisplay";
 import { CalibrationPattern, CalibrationControls } from "./CalibrationScreen";
 import FullscreenHint from "./FullscreenHint";
+import TourGuide from "./TourGuide";
 
 const SCENES = {
   WELCOME: "welcome",
@@ -189,6 +190,7 @@ export default function QuizShow({ bundle, isPresenter }) {
     </AnimatePresence>
     {isCalibrating && <CalibrationControls display={display} onUpdate={setDisplay} onClose={() => setIsCalibrating(false)} t={t} />}
     {!isPresenter && !isCalibrating && <FullscreenHint t={t} />}
+    {!isCalibrating && <TourGuide quizId={quiz.id} scene={scene} activeRound={activeRound} isPresenter={isPresenter} t={t} />}
     {/* Host tools in the presenter window, each opened in its own window */}
     {isPresenter && !quiz.builtin && (
       <div className="fixed bottom-4 left-4 z-[150] flex gap-2 font-sans">

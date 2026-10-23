@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2, MailOpen, LogIn, RefreshCw, X, PackageOpen } from "lucide-react";
+import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2, MailOpen, LogIn, RefreshCw, X, PackageOpen, Compass } from "lucide-react";
 import { listQuizzes, saveQuiz, updateQuiz, deleteQuiz, requestPersistence } from "../quiz/storage";
 import { createQuiz, loadQuizBundle, DEMO_ID } from "../quiz/model";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -7,6 +7,7 @@ import { readImport, saveImport, exportZip, duplicateQuiz, downloadBlob, safeFil
 import { quizHash, navigate } from "../hooks/useHashRoute";
 import FileDrop from "./FileDrop";
 import ShowLauncher from "./ShowLauncher";
+import { startTour } from "../quiz/tour";
 import { useGoogleAccount } from "../hooks/useGoogleAccount";
 import { readDriveQuiz, mergeDrive, sameDriveQuiz, driveErrorText, createDriveQuiz, folderUrl } from "../quiz/drive";
 import { GOOGLE_SHEET_TEMPLATE } from "../config";
@@ -246,8 +247,12 @@ function Welcome({ onDemo, onNew, onClose, t }) {
         <p className="text-gray-300 max-w-2xl">{t.wl_text}</p>
       </div>
       <div className="grid md:grid-cols-3 gap-3">
-        {card(<Play size={20} />, t.wl_demo_title, t.wl_demo_text,
-          <button onClick={onDemo} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm"><Play size={16} /> {t.wl_demo_button}</button>)}
+        {card(<Play size={20} />, t.wl_demo_title, t.wl_demo_text, (
+          <div className="flex flex-col gap-2">
+            <button onClick={() => startTour(DEMO_ID)} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm"><Compass size={16} /> {t.tr_start}</button>
+            <button onClick={onDemo} className="text-sm text-gray-400 hover:text-white">{t.wl_demo_button}</button>
+          </div>
+        ))}
         {card(<Plus size={20} />, t.wl_new_title, t.wl_new_text,
           <button onClick={onNew} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 font-bold text-sm"><Plus size={16} /> {t.lib_new}</button>)}
         {card(<PackageOpen size={20} />, t.wl_import_title, t.wl_import_text, null)}

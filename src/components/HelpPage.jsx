@@ -1,5 +1,7 @@
 import { useEffect } from "react";
-import { ArrowLeft, Download, Copy, Info } from "lucide-react";
+import { ArrowLeft, Download, Copy, Info, Compass } from "lucide-react";
+import { DEMO_ID } from "../quiz/model";
+import { startTour } from "../quiz/tour";
 import { HELP } from "../data/help";
 import { GOOGLE_SHEET_TEMPLATE, googleCopyUrl } from "../config";
 import { hasDriveInvite } from "../quiz/google";
@@ -41,7 +43,12 @@ export default function HelpPage({ section, lang, t }) {
 
         <main className="space-y-12 min-w-0">
           <header className="space-y-6">
-            <h1 className="font-['League_Spartan'] text-4xl font-black uppercase tracking-widest text-yellow-400">{help.title}</h1>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h1 className="font-['League_Spartan'] text-4xl font-black uppercase tracking-widest text-yellow-400">{help.title}</h1>
+              <button onClick={() => startTour(DEMO_ID)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm">
+                <Compass size={16} /> {t.tr_start}
+              </button>
+            </div>
             <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5 space-y-3">
               <h2 className="font-bold">{help.templates.title}</h2>
               <div className="flex flex-wrap gap-2">

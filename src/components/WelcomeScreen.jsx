@@ -648,6 +648,7 @@ export default function WelcomeScreen({ onStart, startTime, showTime, config, t 
         <div className="h-[15cqh] w-full flex items-center justify-center z-[100] relative">
             {!isExiting && (
                 <button
+                    data-tour="start"
                     onClick={handleStart}
                     className="group relative flex flex-col items-center justify-center p-10 outline-none"
                 >
