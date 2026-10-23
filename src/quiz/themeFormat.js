@@ -17,7 +17,13 @@
 //     "ornament": "graveyard" | "lights" | "skyline" | "waves" | "meadow" | null
 //   },
 //   "decoration": { "type": "bats" | "snow" | "leaves" | "petals" | "hearts" | "confetti" | "bubbles" | "stars" | null },
-//   "scenes": {}                                 reserved for per-scene looks; ignored for now
+//   "style": {                                   the shape of every screen (missing = Classic)
+//     "corners": "sharp" | "rounded" | "round", "cards": "solid" | "glass" | "outline",
+//     "headings": "spaced" | "plain", "effects": "normal" | "neon" | "flat"
+//   },
+//   "celebration": { "type": "confetti" | "fireworks" | "decoration" | null },   when the final standings appear
+//   "sounds": { "pack": "chimes" | "spooky" | "festive" | "arcade" | null },     sounds the app makes itself
+//   "scenes": { "leaderboard": { "layout": "table" | "podium" | "race" } }      per-scene looks
 // }
 // Missing colours keep the Classic ones; files are paths inside the theme pack (themePack.js).
 
@@ -33,6 +39,15 @@ export const FONT_GROUPS = {
 export const BUNDLED_FONTS = [...FONT_GROUPS.display, ...FONT_GROUPS.text];
 export const ORNAMENTS = ["graveyard", "lights", "skyline", "waves", "meadow"];
 export const DECORATIONS = ["bats", "snow", "leaves", "petals", "hearts", "confetti", "bubbles", "stars"];
+export const STYLE_OPTIONS = {
+  corners: ["rounded", "sharp", "round"],
+  cards: ["solid", "glass", "outline"],
+  headings: ["spaced", "plain"],
+  effects: ["normal", "neon", "flat"],
+};
+export const CELEBRATIONS = ["confetti", "fireworks", "decoration"];
+export const SOUND_PACKS = ["chimes", "spooky", "festive", "arcade"];
+export const LEADERBOARD_LAYOUTS = ["table", "podium", "race"];
 export const COLOR_KEYS = ["primary", "accent", "groundTop", "ground", "groundBottom", "panel"];
 export const LANGS = ["en", "cs", "sk"];
 
@@ -100,6 +115,9 @@ export function normalizeTheme(raw, { assets = [], stored = false } = {}) {
     fonts: {},
     background: { image: null, imageOpacity: 0.5, imageBlur: 0, glows: [], ornament: null },
     decoration: { type: null },
+    style: {},
+    celebration: { type: null },
+    sounds: { pack: null },
     scenes: {},
   };
 
@@ -149,6 +167,23 @@ export function normalizeTheme(raw, { assets = [], stored = false } = {}) {
     if (DECORATIONS.includes(deco.type)) theme.decoration.type = deco.type;
     else problem("decoration", deco.type);
   }
+
+  // One of a list, or left out (with a problem when something unknown was asked for)
+  const pick = (value, options, code) => {
+    if (value == null) return undefined;
+    if (options.includes(value)) return value;
+    problem(code, value);
+    return undefined;
+  };
+  const style = isObject(raw.style) ? raw.style : {};
+  for (const [key, options] of Object.entries(STYLE_OPTIONS)) {
+    const value = pick(style[key], options, "style");
+    if (value) theme.style[key] = value;
+  }
+  theme.celebration.type = pick(isObject(raw.celebration) ? raw.celebration.type : null, CELEBRATIONS, "celebration") ?? null;
+  theme.sounds.pack = pick(isObject(raw.sounds) ? raw.sounds.pack : null, SOUND_PACKS, "sounds") ?? null;
+  const layout = pick(isObject(raw.scenes) && isObject(raw.scenes.leaderboard) ? raw.scenes.leaderboard.layout : null, LEADERBOARD_LAYOUTS, "layout");
+  if (layout) theme.scenes.leaderboard = { layout };
 
   if (!stored) for (const a of assets) if (!used.has(a.name)) problem("unused_file", a.name);
   return { theme, problems };

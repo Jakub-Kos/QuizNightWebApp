@@ -15,12 +15,12 @@ export const CUSTOM_THEME_ID = "custom";
 
 const builtin = (fields) => ({
   format: THEME_FORMAT, version: THEME_VERSION, author: "Quiz Night", description: {}, tags: [],
-  colors: {}, fonts: {}, decoration: { type: null }, scenes: {}, ...fields,
+  colors: {}, fonts: {}, decoration: { type: null }, style: {}, celebration: { type: null }, sounds: { pack: null }, scenes: {}, ...fields,
   background: { image: null, imageOpacity: 0.5, imageBlur: 0, glows: [], ornament: null, ...fields.background },
 });
 
 export const THEMES = [
-  builtin({ id: "default", name: { en: "Classic", cs: "Klasický", sk: "Klasszikus" } }),
+  builtin({ id: "default", name: { en: "Classic", cs: "Klasický", sk: "Klasszikus" }, celebration: { type: "confetti" } }),
   builtin({
     id: "halloween",
     name: { en: "Halloween", cs: "Halloween", sk: "Halloween" },
@@ -36,6 +36,8 @@ export const THEMES = [
       ornament: "graveyard",
     },
     decoration: { type: "bats" },
+    celebration: { type: "decoration" },
+    sounds: { pack: "spooky" },
   }),
   builtin({
     id: "christmas",
@@ -51,6 +53,8 @@ export const THEMES = [
       ornament: "lights",
     },
     decoration: { type: "snow" },
+    celebration: { type: "decoration" },
+    sounds: { pack: "festive" },
   }),
 ];
 

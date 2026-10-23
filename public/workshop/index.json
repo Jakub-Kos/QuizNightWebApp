@@ -64,6 +64,13 @@
         "decoration": {
           "type": "bubbles"
         },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
         "scenes": {}
       }
     },
@@ -137,6 +144,13 @@
         "decoration": {
           "type": "stars"
         },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
         "scenes": {}
       }
     },
@@ -202,6 +216,13 @@
         },
         "decoration": {
           "type": "petals"
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
         },
         "scenes": {}
       }
