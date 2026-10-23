@@ -9,29 +9,11 @@ import { useDisplaySettings } from "../hooks/useDisplay";
 import { StageFrame } from "./Stage";
 import QuestionScreen from "./QuestionScreen";
 import Rich from "./RichText";
+import { SHEET_HEAD, exampleRows } from "../quiz/examples";
 
-// Sample files shipped with the demo in public/source/
-const MEDIA = { Image: "pad_BM2.webp", PImage: "1944paris.jpg", Audio: "audio.m4a", Video: "video.mp4", PVideo: "video.mp4", Handout: "handout.jpg" };
 const resolveMedia = (name) => (name ? `${import.meta.env.BASE_URL}source/${name}` : null);
-
-// Header of the questions sheet template (public/templates), with the column letters of Google Sheets
-const SHEET_HEAD = ["Kolo", "Q#", "Otázka", "Typ Odpovědi", "A", "B", "C", "D", "Správná odpověď", "Zdroj"];
 const COLUMN_LETTERS = "ABCDEFGHIJ".split("");
 
-// The sheet rows that make up a type's example, written the way the help table tells users to
-function exampleRows(type, example) {
-  const options = ["A", "B", "C", "D"].map((o) => example.options?.[o] ?? "");
-  const row = (number, text, typeCell, opts, answer, media) => ["", String(number), text, typeCell, ...opts, answer, media];
-  const none = ["", "", "", ""];
-  if (type === "Top5") {
-    const [first, ...rest] = example.answer;
-    return [row(1, example.text, type, none, first, ""), ...rest.map((answer, i) => row(i + 2, "", "", none, answer, ""))];
-  }
-  if (type === "Sort") {
-    return example.items.map((item, i) => row(i + 1, i ? "" : example.text, i ? "" : type, [item, "", "", ""], example.letters?.[i] ?? "", ""));
-  }
-  return [row(1, example.text, type, options, example.answer ?? "", MEDIA[type] || "")];
-}
 
 // Steps of QuestionScreen worth showing per type: PImage/PVideo show their media alone first
 function framesFor(type, labels) {
@@ -124,7 +106,7 @@ export default function HelpTypes({ section, lang, t }) {
 }
 
 // The example's rows as they look in Google Sheets: column letters, the template header, then the rows
-function SheetRows({ rows, label }) {
+export function SheetRows({ rows, label }) {
   const cell = "border border-white/10 px-1.5 py-1 whitespace-nowrap";
   return (
     <div className="space-y-1">
