@@ -1,0 +1,59 @@
+{
+  "format": "quiznight-theme",
+  "version": 1,
+  "id": "spring-garden",
+  "name": {
+    "en": "Spring garden",
+    "cs": "Jarní zahrada",
+    "sk": "Tavaszi kert"
+  },
+  "author": "Quiz Night",
+  "description": {
+    "en": "Fresh green with blossom pink and elegant headings, for spring and Easter quizzes.",
+    "cs": "Svěží zelená s květinově růžovou a elegantními nadpisy, pro jarní a velikonoční kvízy.",
+    "sk": "Friss zöld virágrózsaszínnel és elegáns címekkel, tavaszi és húsvéti kvízekhez."
+  },
+  "tags": [
+    "spring",
+    "easter"
+  ],
+  "colors": {
+    "primary": "#16a34a",
+    "accent": "#f9a8d4",
+    "groundTop": "#0d2414",
+    "ground": "#07150b",
+    "groundBottom": "#020703",
+    "panel": "#0b1d10"
+  },
+  "fonts": {
+    "title": {
+      "family": "Playfair Display"
+    }
+  },
+  "background": {
+    "image": null,
+    "imageOpacity": 0.5,
+    "imageBlur": 0,
+    "glows": [
+      {
+        "color": "#f472b6",
+        "x": 100,
+        "y": 100,
+        "size": 60,
+        "opacity": 0.14
+      },
+      {
+        "color": "#22c55e",
+        "x": 0,
+        "y": 0,
+        "size": 60,
+        "opacity": 0.12
+      }
+    ],
+    "ornament": null
+  },
+  "decoration": {
+    "type": null
+  },
+  "scenes": {}
+}

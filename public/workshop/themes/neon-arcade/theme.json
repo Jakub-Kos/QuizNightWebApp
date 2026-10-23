@@ -1,0 +1,62 @@
+{
+  "format": "quiznight-theme",
+  "version": 1,
+  "id": "neon-arcade",
+  "name": {
+    "en": "Neon arcade",
+    "cs": "Neonová herna",
+    "sk": "Neon játékterem"
+  },
+  "author": "Quiz Night",
+  "description": {
+    "en": "Hot pink and cyan glowing in the dark, for a loud party quiz.",
+    "cs": "Zářivě růžová a azurová ve tmě, pro hlučný párty kvíz.",
+    "sk": "Rikító rózsaszín és cián a sötétben, egy hangos parti kvízhez."
+  },
+  "tags": [
+    "party",
+    "neon"
+  ],
+  "colors": {
+    "primary": "#e81cc4",
+    "accent": "#22e5ff",
+    "groundTop": "#1a0533",
+    "ground": "#0a0118",
+    "groundBottom": "#030008",
+    "panel": "#12041f"
+  },
+  "fonts": {},
+  "background": {
+    "image": null,
+    "imageOpacity": 0.5,
+    "imageBlur": 0,
+    "glows": [
+      {
+        "color": "#ff2bd6",
+        "x": 0,
+        "y": 100,
+        "size": 70,
+        "opacity": 0.25
+      },
+      {
+        "color": "#22e5ff",
+        "x": 100,
+        "y": 0,
+        "size": 60,
+        "opacity": 0.18
+      },
+      {
+        "color": "#7c3aed",
+        "x": 50,
+        "y": 50,
+        "size": 90,
+        "opacity": 0.08
+      }
+    ],
+    "ornament": null
+  },
+  "decoration": {
+    "type": null
+  },
+  "scenes": {}
+}

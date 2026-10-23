@@ -1,0 +1,45 @@
+name: Share a theme
+description: Submit a show theme to the Quiz Night workshop. It appears in the gallery once it has been reviewed.
+title: "Theme: "
+labels: ["theme"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing a theme! The app filled in what it knows. **Drag the theme file it downloaded (`theme-….zip`) into the "Theme file" box below**, then submit.
+        The theme is checked and looked at before it appears in the workshop gallery.
+  - type: input
+    id: name
+    attributes:
+      label: Theme name
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      description: The name shown with the theme in the gallery.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What the theme is for, in a sentence or two.
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: A few words, separated by commas (for example christmas, calm).
+  - type: textarea
+    id: file
+    attributes:
+      label: Theme file
+      description: Drag the downloaded theme-….zip here.
+    validations:
+      required: true
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Sharing
+      options:
+        - label: I made this theme and I may share its pictures and fonts (for example my own photo, or a font with an open licence).
+          required: true

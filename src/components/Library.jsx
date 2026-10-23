@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2, MailOpen, LogIn, RefreshCw, X, PackageOpen, Compass } from "lucide-react";
+import { Plus, Play, Pencil, Copy, Download, Trash2, FileDown, Loader2, AlertTriangle, ScanSearch, HelpCircle, HardDrive, Link2, MailOpen, LogIn, RefreshCw, X, PackageOpen, Compass, Palette } from "lucide-react";
 import { listQuizzes, saveQuiz, updateQuiz, deleteQuiz, requestPersistence } from "../quiz/storage";
 import { createQuiz, loadQuizBundle, DEMO_ID } from "../quiz/model";
 import { parseQuestionsCsv } from "../quiz/parse";
@@ -105,6 +105,9 @@ export default function Library({ t, lang, onLanguage, openDrive = false, driveF
             <p className="text-gray-400 mt-3 max-w-xl">{t.lib_subtitle}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
+          <a href="#/themes" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm">
+            <Palette size={16} /> {t.ws_title}
+          </a>
           <a href="#/help" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm">
             <HelpCircle size={16} /> {t.lib_help}
           </a>

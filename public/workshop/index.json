@@ -1,0 +1,193 @@
+{
+  "version": 1,
+  "themes": [
+    {
+      "path": "themes/deep-ocean/",
+      "addedAt": "2026-10-23",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "deep-ocean",
+        "name": {
+          "en": "Deep ocean",
+          "cs": "Hlubina oceánu",
+          "sk": "Mély óceán"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+          "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+          "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+        },
+        "tags": [
+          "calm",
+          "blue"
+        ],
+        "colors": {
+          "primary": "#0284c7",
+          "accent": "#5eead4",
+          "groundTop": "#062a3d",
+          "ground": "#031621",
+          "groundBottom": "#01080d",
+          "panel": "#05202e"
+        },
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#14b8a6",
+              "x": 30,
+              "y": 100,
+              "size": 80,
+              "opacity": 0.2
+            },
+            {
+              "color": "#0ea5e9",
+              "x": 95,
+              "y": 20,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": "snow"
+        },
+        "scenes": {}
+      }
+    },
+    {
+      "path": "themes/neon-arcade/",
+      "addedAt": "2026-10-23",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "neon-arcade",
+        "name": {
+          "en": "Neon arcade",
+          "cs": "Neonová herna",
+          "sk": "Neon játékterem"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Hot pink and cyan glowing in the dark, for a loud party quiz.",
+          "cs": "Zářivě růžová a azurová ve tmě, pro hlučný párty kvíz.",
+          "sk": "Rikító rózsaszín és cián a sötétben, egy hangos parti kvízhez."
+        },
+        "tags": [
+          "party",
+          "neon"
+        ],
+        "colors": {
+          "primary": "#e81cc4",
+          "accent": "#22e5ff",
+          "groundTop": "#1a0533",
+          "ground": "#0a0118",
+          "groundBottom": "#030008",
+          "panel": "#12041f"
+        },
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ff2bd6",
+              "x": 0,
+              "y": 100,
+              "size": 70,
+              "opacity": 0.25
+            },
+            {
+              "color": "#22e5ff",
+              "x": 100,
+              "y": 0,
+              "size": 60,
+              "opacity": 0.18
+            },
+            {
+              "color": "#7c3aed",
+              "x": 50,
+              "y": 50,
+              "size": 90,
+              "opacity": 0.08
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "scenes": {}
+      }
+    },
+    {
+      "path": "themes/spring-garden/",
+      "addedAt": "2026-10-23",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "spring-garden",
+        "name": {
+          "en": "Spring garden",
+          "cs": "Jarní zahrada",
+          "sk": "Tavaszi kert"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Fresh green with blossom pink and elegant headings, for spring and Easter quizzes.",
+          "cs": "Svěží zelená s květinově růžovou a elegantními nadpisy, pro jarní a velikonoční kvízy.",
+          "sk": "Friss zöld virágrózsaszínnel és elegáns címekkel, tavaszi és húsvéti kvízekhez."
+        },
+        "tags": [
+          "spring",
+          "easter"
+        ],
+        "colors": {
+          "primary": "#16a34a",
+          "accent": "#f9a8d4",
+          "groundTop": "#0d2414",
+          "ground": "#07150b",
+          "groundBottom": "#020703",
+          "panel": "#0b1d10"
+        },
+        "fonts": {
+          "title": {
+            "family": "Playfair Display"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#f472b6",
+              "x": 100,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#22c55e",
+              "x": 0,
+              "y": 0,
+              "size": 60,
+              "opacity": 0.12
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "scenes": {}
+      }
+    }
+  ]
+}

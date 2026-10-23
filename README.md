@@ -105,6 +105,12 @@ Export a quiz as one `.zip` to back it up or move it to the laptop you will use 
 
 The app is in **English, Czech and Hungarian**. It works best in Chrome or Edge.
 
+## Themes
+
+Every quiz picks a look in its setup: Classic, Halloween, Christmas, or its own theme made in the theme editor (colours, fonts, a background picture, glows, scenery and decorations, with a live preview of every screen and a readability check). Themes can be exported, imported and kept in **My themes** for other quizzes.
+
+The **theme workshop** (`#/themes`, linked from the library) shows themes other hosts shared. Anyone can submit one from the theme editor (**Share to the workshop** opens a GitHub form); it appears after review.
+
 ## For developers
 
 React 19 + Vite, Tailwind CSS v4, Framer Motion, Lucide icons, PapaParse and fflate. There is no backend: quizzes and media live in IndexedDB, the two windows talk over `BroadcastChannel`, and Google Sheets are read as CSV.
@@ -115,10 +121,21 @@ cd QuizNightWebApp
 npm install
 npm run dev     # development server
 npm run lint    # ESLint
-npm run build   # production build in dist/
+npm run build   # production build in dist/ (checks the workshop themes first)
+npm test        # Vitest
 ```
 
 Every push to `main` deploys to GitHub Pages.
+
+### Reviewing a workshop submission
+
+Submissions arrive as issues labelled `theme`, with the theme's `.zip` attached.
+
+1. Look at it: download the zip and import it in any quiz's setup (Look → Import theme), then click through the show.
+2. Add it: `npm run workshop:add <URL of the attached .zip>` (or a downloaded file). It runs the same check as the app and refuses a theme that would lose anything; `--replace` updates a theme with the same id.
+3. Commit `public/workshop/` and push. Close the issue.
+
+Themes are plain data (colours, fonts, pictures and built-in effects, never CSS or code); the format is described at the top of `src/quiz/themeFormat.js`.
 
 ## License
 

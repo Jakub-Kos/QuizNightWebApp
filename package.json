@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/workshop.mjs index && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "workshop:add": "node scripts/workshop.mjs add",
+    "workshop:index": "node scripts/workshop.mjs index"
   },
   "dependencies": {
     "@fontsource/berkshire-swash": "^5.3.0",

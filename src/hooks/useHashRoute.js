@@ -12,12 +12,14 @@ import { useState, useEffect } from "react";
 //   #/quiz/<id>/scores       manual score entry
 //   #/quiz/<id>/attendance   attendance check and seating map
 //   #/help, #/help/<section> help page
+//   #/themes                 the theme workshop (themes shared by others)
 //   #/drive                  library with Google Drive open (the private beta invitation link)
 //   #/drive/<folder id>      opens that Drive quiz (the link a quiz's setup page shares)
 function parse(hash) {
   const parts = hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
   if (parts[0] === "drive") return { name: "drive", folder: parts[1] || null };
   if (parts[0] === "help") return { name: "help", section: parts[1] || null };
+  if (parts[0] === "themes") return { name: "themes" };
   if (parts[0] === "quiz" && parts[1]) {
     const view = ["presenter", "edit", "check", "map", "scores", "attendance", "questions", "theme"].includes(parts[2]) ? parts[2] : "show";
     return { name: view, id: parts[1], fresh: view === "theme" && parts[3] === "new" };
