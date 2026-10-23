@@ -13,17 +13,19 @@ const sameScores = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 // The latest round anyone has points in
 const defaultRound = (snap) => [...snap.rounds].reverse().find(r => snap.teams.some(t => t.scores[r] > 0)) ?? snap.rounds[0] ?? "";
 
-export default function Leaderboard({ isPresenter, data, availableRounds, lastSync, onReload, authNeeded, onSignIn, onClose, t }) {
+// preview: { step } renders one fixed frame of the reveal (the quiz map): no keys and no sync
+export default function Leaderboard({ isPresenter, data, availableRounds, lastSync, onReload, authNeeded, onSignIn, onClose, t, preview = null }) {
   const tr = t;
   const { quiz, teams } = useQuiz();
   const role = isPresenter ? 'presenter' : 'main';
+  const isPreview = preview !== null;
   const live = useMemo(() => toSnapshot({ teams: data, rounds: availableRounds }), [data, availableRounds]);
 
   // The reveal works on a snapshot of the scores, shared by both windows so they show the same groups.
   // Until the reveal starts it follows the live scores; later only Reload scores changes it.
   const [snapshot, setSnapshot] = useState(live);
   const [selectedRound, setSelectedRound] = useState(() => defaultRound(live));
-  const [revealStep, setRevealStep] = useState(0);
+  const [stepState, setRevealStep] = useState(0);
   const [roundChosen, setRoundChosen] = useState(false); // picked in the presenter window, so new scores keep it
   // Main window: whether the presenter window is open (it then shows the controls)
   const [presenterOpen, setPresenterOpen] = useState(false);
@@ -40,7 +42,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
   const [seenLive, setSeenLive] = useState(live);
   if (live !== seenLive) {
       setSeenLive(live);
-      if ((isPresenter || !presenterOpen) && revealStep === 0 && !sameScores(live, snapshot)) adopt(live);
+      if ((isPresenter || !presenterOpen) && stepState === 0 && !sameScores(live, snapshot)) adopt(live);
   }
 
   const reload = async () => {
@@ -55,14 +57,15 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
   // --- 2-WAY SYNC (see QuestionScreen) ---
   // Only local changes are broadcast; lastSyncedRef holds the state at mount or last received, so a
   // window joining mid-reveal adopts the other's state instead of resetting it.
-  const channel = useMemo(() => new BroadcastChannel('quiz-leaderboard-sync'), []);
-  const syncKey = JSON.stringify([snapshot, revealStep, selectedRound]);
+  const channel = useMemo(() => (isPreview ? null : new BroadcastChannel('quiz-leaderboard-sync')), [isPreview]);
+  const syncKey = JSON.stringify([snapshot, stepState, selectedRound]);
   const lastSyncedRef = useRef(syncKey);
   // The current state for replies to the other window (declared before the effects that read it)
-  const stateRef = useRef({ snapshot, revealStep, selectedRound });
-  useEffect(() => { stateRef.current = { snapshot, revealStep, selectedRound }; }, [snapshot, revealStep, selectedRound]);
+  const stateRef = useRef({ snapshot, revealStep: stepState, selectedRound });
+  useEffect(() => { stateRef.current = { snapshot, revealStep: stepState, selectedRound }; }, [snapshot, stepState, selectedRound]);
 
   useEffect(() => {
+    if (!channel) return;
     channel.postMessage({ type: 'LB_REQUEST', sender: role });
     // Closing the presenter window hands the controls back to the main window
     const leave = () => channel.postMessage({ type: 'LB_LEAVE', sender: role });
@@ -71,12 +74,13 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
   }, [channel, role, isPresenter]);
 
   useEffect(() => {
-    if (syncKey === lastSyncedRef.current) return;
+    if (!channel || syncKey === lastSyncedRef.current) return;
     lastSyncedRef.current = syncKey;
     channel.postMessage({ type: 'LB_UPDATE', sender: role, payload: stateRef.current });
   }, [syncKey, role, channel]);
 
   useEffect(() => {
+    if (!channel) return;
     const apply = (payload) => {
         lastSyncedRef.current = JSON.stringify([payload.snapshot, payload.revealStep, payload.selectedRound]);
         setSnapshot(payload.snapshot);
@@ -162,10 +166,12 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
   }, [frozenData, frozenRounds, selectedRound, teams]);
 
   const maxStep = scoreGroups.length * 2 + 1;
+  const revealStep = isPreview ? Math.min(preview.step, maxStep) : stepState;
   const isShuffled = revealStep === maxStep;
   const maxPointsThisRound = scoreGroups.length > 0 ? scoreGroups[scoreGroups.length - 1].points : 0;
 
   useEffect(() => {
+    if (isPreview) return;
     const handleKeyDown = (e) => {
       // Either window can step; the change is shared with the other
       if (e.key === "ArrowRight") setRevealStep(prev => Math.min(prev + 1, maxStep));
@@ -174,7 +180,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [maxStep, onClose]);
+  }, [maxStep, onClose, isPreview]);
 
   // ==========================================
   // CALCULATE CURRENT TABLE STATE
@@ -514,7 +520,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
 
             {/* Run from this window (no presenter window): how to step, until the reveal starts */}
             <AnimatePresence>
-                {!presenterOpen && revealStep === 0 && frozenData.length > 0 && (
+                {!isPreview && !presenterOpen && revealStep === 0 && frozenData.length > 0 && (
                     <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         className="absolute bottom-[3.5cqh] inset-x-0 text-center text-white/40 font-sans text-xl tracking-wide">
                         {t.lb_keys_hint}

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 //   #/quiz/<id>/presenter    show (host window)
 //   #/quiz/<id>/edit         quiz setup
 //   #/quiz/<id>/check        quiz check (problems + thumbnails)
+//   #/quiz/<id>/map          quiz map (every screen of the show and how they connect)
 //   #/quiz/<id>/questions    question editor (quizzes on Google Drive)
 //   #/quiz/<id>/scores       manual score entry
 //   #/quiz/<id>/attendance   attendance check and seating map
@@ -17,7 +18,7 @@ function parse(hash) {
   if (parts[0] === "drive") return { name: "drive", folder: parts[1] || null };
   if (parts[0] === "help") return { name: "help", section: parts[1] || null };
   if (parts[0] === "quiz" && parts[1]) {
-    const view = ["presenter", "edit", "check", "scores", "attendance", "questions"].includes(parts[2]) ? parts[2] : "show";
+    const view = ["presenter", "edit", "check", "map", "scores", "attendance", "questions"].includes(parts[2]) ? parts[2] : "show";
     return { name: view, id: parts[1] };
   }
   return { name: "library" };

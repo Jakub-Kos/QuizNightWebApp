@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { MotionConfig } from "framer-motion";
-import { ArrowLeft, ArrowRight, AlertTriangle, AlertCircle, Info, CheckCircle2, Play, X, EyeOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, AlertTriangle, AlertCircle, Info, CheckCircle2, Play, X, EyeOff, Network } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { QuizContext } from "../quiz/context";
 import { parseQuestionsCsv, isRoundHidden } from "../quiz/parse";
@@ -135,6 +135,9 @@ function CheckView({ bundle, t }) {
                   {t.chk_size}
                   <input type="range" min="2" max="8" value={10 - columns} onChange={(e) => setColumns(10 - Number(e.target.value))} className="w-24 accent-yellow-500" />
                 </label>
+                <a href={quizHash(quiz.id, "map")} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm">
+                  <Network size={16} /> {t.mp_open}
+                </a>
                 <a href={quizHash(quiz.id)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm">
                   <Play size={16} /> {t.lib_open}
                 </a>
