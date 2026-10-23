@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle, HardDrive, FolderOpen, FileSpreadsheet, ListChecks, Copy, Check } from "lucide-react";
+import { ArrowLeft, Play, Link2, RefreshCw, FileUp, Trash2, Music, Film, AlertTriangle, CheckCircle2, Loader2, ScanSearch, Calculator, HelpCircle, HardDrive, FolderOpen, FileSpreadsheet, ListChecks, Copy, Check, Network } from "lucide-react";
 import { getQuiz, updateQuiz, listMedia, putMedia, deleteMedia, onQuizSaved } from "../quiz/storage";
 import { syncDriveConfig } from "../quiz/driveConfig";
 import { parseQuestionsCsv, parseScoresCsv } from "../quiz/parse";
@@ -338,6 +338,9 @@ export default function QuizEditor({ id, t }) {
           </a>
           <a href="#/help" className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm"><HelpCircle size={16} /> {t.lib_help}</a>
           <span className="ml-auto text-xs text-gray-500">{saveState === "saving" ? t.ed_saving : t.ed_saved}</span>
+          <a href={quizHash(quiz.id, "map")} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20">
+            <Network size={18} /> {t.mp_open}
+          </a>
           <a href={quizHash(quiz.id, "check")} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20">
             <ScanSearch size={18} /> {t.chk_open}
           </a>
