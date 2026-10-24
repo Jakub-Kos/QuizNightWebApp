@@ -167,7 +167,7 @@ function Detail({ entry, demo, lang, t, onClose }) {
     ["dashboard", t.te_s_dashboard, <Dashboard rounds={rounds} onSelectRound={noop} onOpenLeaderboard={noop} onOpenPause={noop} t={t} />],
     firstRound && ["round", t.te_s_round, <QuestionScreen roundData={firstRound} mode="with_answers" onBack={noop} isPresenter={false} t={t} preview={{ qIndex: -1, step: 0 }} />],
     firstRound && ["question", t.te_s_question, <QuestionScreen roundData={firstRound} mode="with_answers" onBack={noop} isPresenter={false} t={t} preview={{ qIndex: 0, step: previewStep(firstRound.questions[0].type, "question") }} />],
-    ["leaderboard", t.te_s_leaderboard, <Leaderboard data={board.teams} availableRounds={board.rounds} onClose={noop} isPresenter={false} t={t} preview={{ step: 0 }} />],
+    ["leaderboard", t.te_s_leaderboard, <Leaderboard data={board.teams} availableRounds={board.rounds} onClose={noop} isPresenter={false} t={t} preview={{ step: 99 }} />],
   ].filter(Boolean);
   const shown = screens.find(([key]) => key === scene) || screens[0];
 

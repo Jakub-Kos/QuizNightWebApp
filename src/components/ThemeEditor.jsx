@@ -11,7 +11,7 @@ import { previewStep } from "../quiz/validate";
 import { fmt } from "../quiz/files";
 import { downloadBlob } from "../quiz/package";
 import { themeForQuiz, themeName, THEMES, CUSTOM_THEME_ID } from "../quiz/themes";
-import { normalizeTheme, readabilityIssues, FONT_GROUPS, STYLE_OPTIONS, CELEBRATIONS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
+import { normalizeTheme, readabilityIssues, FONT_GROUPS, STYLE_OPTIONS, CELEBRATIONS, LEADERBOARD_LAYOUTS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
 import { exportThemePack, themePackName } from "../quiz/themePack";
 import { storeThemeFile, pruneThemeFiles, saveToLibrary, FileError } from "../quiz/themeStore";
 import { driveErrorText } from "../quiz/drive";
@@ -170,7 +170,7 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
     firstRound && ["round", t.te_s_round, <QuestionScreen roundData={firstRound} mode="with_answers" onBack={noop} isPresenter={false} t={showT} preview={{ qIndex: -1, step: 0 }} />],
     firstRound && ["question", t.te_s_question, <QuestionScreen roundData={firstRound} mode="with_answers" onBack={noop} isPresenter={false} t={showT} preview={{ qIndex: 0, step: previewStep(firstRound.questions[0].type, "question") }} />],
     firstRound && ["answer", t.te_s_answer, <QuestionScreen roundData={firstRound} mode="with_answers" onBack={noop} isPresenter={false} t={showT} preview={{ qIndex: 0, step: previewStep(firstRound.questions[0].type, "answer") }} />],
-    ["leaderboard", t.te_s_leaderboard, <Leaderboard data={scores.teams} availableRounds={scores.rounds} onClose={noop} isPresenter={false} t={showT} preview={{ step: 0 }} />],
+    ["leaderboard", t.te_s_leaderboard, <Leaderboard data={scores.teams} availableRounds={scores.rounds} onClose={noop} isPresenter={false} t={showT} preview={{ step: 99 }} />],
     ["pause", t.mp_pause, <PauseScreen isPresenter={false} leaderboardData={scores.teams} availableRounds={scores.rounds} onBack={noop} t={showT} />],
   ].filter(Boolean);
   const shown = screens.find(([key]) => key === scene) || screens[0];
@@ -278,8 +278,12 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
               ))}
             </Panel>
 
-            <Panel title={t.te_celebration} help={t.te_celebration_help}>
-              <Choice value={draft.celebration.type} options={[null, ...CELEBRATIONS]} name={(o) => t[`te_cb_${o ?? "none"}`]} onChange={(v) => set("celebration.type", v)} />
+            <Panel title={t.te_leaderboard}>
+              <Choice label={t.te_lb_layout} value={draft.scenes.leaderboard?.layout ?? "table"} options={LEADERBOARD_LAYOUTS} name={(o) => t[`te_lb_${o}`]}
+                onChange={(v) => { setScene("leaderboard"); change((d) => ({ ...d, scenes: { ...d.scenes, leaderboard: { layout: v } } })); }} />
+              <p className="text-xs text-gray-500">{t.te_lb_help}</p>
+              <Choice label={t.te_celebration} value={draft.celebration.type} options={[null, ...CELEBRATIONS]} name={(o) => t[`te_cb_${o ?? "none"}`]} onChange={(v) => set("celebration.type", v)} />
+              <p className="text-xs text-gray-500">{t.te_celebration_help}</p>
               <button type="button" className={btnCls} disabled={!draft.celebration.type}
                 onClick={() => { setScene("leaderboard"); setCelebrating((n) => n + 1); }}>
                 <PartyPopper size={16} /> {t.te_cb_play}
