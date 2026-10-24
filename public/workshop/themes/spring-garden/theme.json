@@ -64,6 +64,12 @@
     },
     "dashboard": {
       "layout": "timeline"
+    },
+    "round": {
+      "layout": "slam"
+    },
+    "welcome": {
+      "intro": "polaroid"
     }
   },
   "style": {

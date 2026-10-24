@@ -71,6 +71,12 @@
     },
     "dashboard": {
       "layout": "tiles"
+    },
+    "round": {
+      "layout": "marquee"
+    },
+    "welcome": {
+      "intro": "broadcast"
     }
   },
   "style": {

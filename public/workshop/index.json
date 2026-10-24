@@ -79,6 +79,12 @@
           },
           "dashboard": {
             "layout": "tiles"
+          },
+          "round": {
+            "layout": "curtain"
+          },
+          "welcome": {
+            "intro": "spotlight"
           }
         }
       }
@@ -169,6 +175,12 @@
           },
           "dashboard": {
             "layout": "tiles"
+          },
+          "round": {
+            "layout": "marquee"
+          },
+          "welcome": {
+            "intro": "broadcast"
           }
         }
       }
@@ -252,6 +264,12 @@
           },
           "dashboard": {
             "layout": "timeline"
+          },
+          "round": {
+            "layout": "slam"
+          },
+          "welcome": {
+            "intro": "polaroid"
           }
         }
       }
