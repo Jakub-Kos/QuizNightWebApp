@@ -152,6 +152,7 @@ export default function QuizShow({ bundle, isPresenter }) {
               authNeeded={liveLeaderboard.authNeeded}
               onSignIn={renewSignIn}
               isPresenter={isPresenter}
+              celebrate={config.celebration !== false}
               onClose={() => setScene(SCENES.DASHBOARD)}
               t={t}
           />

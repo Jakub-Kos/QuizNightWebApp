@@ -138,6 +138,17 @@ export default function SettingsModal({ onClose, onOpenCalibration, onExit, conf
               </div>
             )}
 
+            {/* The theme's celebration when the final standings appear */}
+            <div className="flex items-center justify-between bg-black/20 p-4 rounded-xl border border-white/5">
+              <span className="text-gray-200 font-medium">{t.set_celebration}</span>
+              <button
+                onClick={() => handleChange("celebration", config.celebration === false)}
+                className={`w-14 h-8 rounded-full p-1 transition-all duration-300 ${config.celebration !== false ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.4)]" : "bg-gray-700"}`}
+              >
+                <div className={`w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 ${config.celebration !== false ? "translate-x-6" : "translate-x-0"}`} />
+              </button>
+            </div>
+
             {/* Toggle: Show Clock */}
             <div className="flex items-center justify-between bg-black/20 p-4 rounded-xl border border-white/5">
               <span className="text-gray-200 font-medium">{t.show_clock}</span>

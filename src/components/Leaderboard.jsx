@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Minus as MinusIcon, Trophy, Crown, CheckCircle, HelpCircle, Shuffle, Database, Flame, RefreshCw, AlertTriangle, Info, Loader2, LogIn } from "lucide-react";
 import { useQuiz } from "../quiz/context";
@@ -7,6 +7,7 @@ import VenueMap from "./VenueMap";
 import TeamAvatar from "./TeamAvatar";
 import { fmt } from "../quiz/files";
 import { SceneBackdrop } from "./Theme";
+import Celebration from "./Celebration";
 
 // The scores the reveal works on, without the poll time, so equal scores compare equal
 const toSnapshot = (scores) => ({ teams: scores?.teams || [], rounds: scores?.rounds || [] });
@@ -14,8 +15,9 @@ const sameScores = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 // The latest round anyone has points in
 const defaultRound = (snap) => [...snap.rounds].reverse().find(r => snap.teams.some(t => t.scores[r] > 0)) ?? snap.rounds[0] ?? "";
 
-// preview: { step } renders one fixed frame of the reveal (the quiz map): no keys and no sync
-export default function Leaderboard({ isPresenter, data, availableRounds, lastSync, onReload, authNeeded, onSignIn, onClose, t, preview = null }) {
+// preview: { step } renders one fixed frame of the reveal (the quiz map): no keys and no sync.
+// celebrate: the TV window celebrates the final standings with the theme's celebration.
+export default function Leaderboard({ isPresenter, data, availableRounds, lastSync, onReload, authNeeded, onSignIn, onClose, t, preview = null, celebrate = false }) {
   const tr = t;
   const { quiz, teams } = useQuiz();
   const role = isPresenter ? 'presenter' : 'main';
@@ -169,6 +171,17 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
   const maxStep = scoreGroups.length * 2 + 1;
   const revealStep = isPreview ? Math.min(preview.step, maxStep) : stepState;
   const isShuffled = revealStep === maxStep;
+
+  // Reaching the final standings (stepping forward onto them, in this window or the other) celebrates
+  // once on the TV; stepping back stops it
+  const [celebrating, setCelebrating] = useState(false);
+  const [seenStep, setSeenStep] = useState(stepState);
+  if (seenStep !== stepState) {
+      setSeenStep(stepState);
+      if (stepState === maxStep && stepState > seenStep && celebrate && !isPresenter && !isPreview && frozenData.length > 0) setCelebrating(true);
+      else if (stepState < maxStep) setCelebrating(false);
+  }
+  const endCelebration = useCallback(() => setCelebrating(false), []);
   const maxPointsThisRound = scoreGroups.length > 0 ? scoreGroups[scoreGroups.length - 1].points : 0;
 
   useEffect(() => {
@@ -394,6 +407,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
         `}} />
 
         <SceneBackdrop quiet />
+        {celebrating && <Celebration onDone={endCelebration} />}
         <div className="absolute top-0 right-0 w-[1200px] h-[1200px] bg-primary-900/10 blur-[250px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-accent-900/5 blur-[200px] rounded-full pointer-events-none" />
 
