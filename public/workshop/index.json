@@ -75,7 +75,10 @@
         },
         "scenes": {
           "leaderboard": {
-            "layout": "podium"
+            "layout": "spotlight"
+          },
+          "dashboard": {
+            "layout": "tiles"
           }
         }
       }
@@ -163,6 +166,9 @@
         "scenes": {
           "leaderboard": {
             "layout": "race"
+          },
+          "dashboard": {
+            "layout": "tiles"
           }
         }
       }
@@ -242,7 +248,10 @@
         },
         "scenes": {
           "leaderboard": {
-            "layout": "podium"
+            "layout": "medals"
+          },
+          "dashboard": {
+            "layout": "timeline"
           }
         }
       }

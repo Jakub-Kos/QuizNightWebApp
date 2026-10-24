@@ -60,7 +60,10 @@
   },
   "scenes": {
     "leaderboard": {
-      "layout": "podium"
+      "layout": "medals"
+    },
+    "dashboard": {
+      "layout": "timeline"
     }
   },
   "style": {

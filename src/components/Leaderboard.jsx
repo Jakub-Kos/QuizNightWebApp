@@ -465,6 +465,8 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                 )}
                 {layout === "race" ? <RaceView teams={activeTeamsList} isShuffled={isShuffled} t={t} />
                   : layout === "podium" && isShuffled ? <PodiumView teams={activeTeamsList} />
+                  : layout === "spotlight" && isShuffled ? <SpotlightView teams={activeTeamsList} />
+                  : layout === "medals" && isShuffled ? <MedalsView teams={activeTeamsList} />
                   : (
                 <div className="grid grid-cols-2 grid-flow-row gap-x-16 gap-y-5 w-full content-start">
 
@@ -696,19 +698,97 @@ function PodiumView({ teams }) {
         {block(first, "25cqh", "bg-gradient-to-b from-yellow-300 to-yellow-500", 1.2)}
         {block(third, "12cqh", "bg-gradient-to-b from-orange-300 to-orange-600", 0)}
       </div>
-      {rest.length > 0 && (
-        <div className="grid grid-cols-3 gap-x-6 gap-y-[0.8cqh] mt-[2.5cqh] shrink-0">
-          {rest.map((team, i) => (
-            <motion.div key={team.name} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.6 + i * 0.04 }}
-              className="flex items-center gap-3 h-[4cqh] px-3 rounded-lg bg-black/40 border border-white/10">
-              <span className="w-[2.5cqw] font-mono font-black text-[1.8cqh] text-white/60">{team.displayRank}</span>
-              <TeamAvatar team={team} className="h-[70%] aspect-square rounded-full border border-white/20 shrink-0" textClass="text-[1.1cqh]" />
-              <span className="flex-1 truncate font-bold uppercase tracking-wider text-[1.7cqh] text-white">{team.name}</span>
-              <span className="font-mono font-black text-[2cqh] text-primary-300">{team.currentScore}</span>
-            </motion.div>
-          ))}
-        </div>
-      )}
+      <RestList teams={rest} />
+    </div>
+  );
+}
+
+// Everyone below the top three, in a compact list under the final standings' top three
+function RestList({ teams, delay = 1.6 }) {
+  if (!teams.length) return null;
+  return (
+    <div className="grid grid-cols-3 gap-x-6 gap-y-[0.8cqh] mt-[2.5cqh] shrink-0">
+      {teams.map((team, i) => (
+        <motion.div key={team.name} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: delay + i * 0.04 }}
+          className="flex items-center gap-3 h-[4cqh] px-3 rounded-lg bg-black/40 border border-white/10">
+          <span className="w-[2.5cqw] font-mono font-black text-[1.8cqh] text-white/60">{team.displayRank}</span>
+          <TeamAvatar team={team} className="h-[70%] aspect-square rounded-full border border-white/20 shrink-0" textClass="text-[1.1cqh]" />
+          <span className="flex-1 truncate font-bold uppercase tracking-wider text-[1.7cqh] text-white">{team.name}</span>
+          <span className="font-mono font-black text-[2cqh] text-primary-300">{team.currentScore}</span>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+// The final standings on a stage: the winner in the middle under a spotlight, second and third to the
+// sides in dimmer beams; the lights come on third, second, first
+function SpotlightView({ teams }) {
+  const [first, second, third] = teams;
+  const spot = (team, { x, size, beam, delay, big }) => team && (
+    <div key={team.name} className="absolute bottom-0 flex flex-col items-center" style={{ left: `${x}%`, transform: "translateX(-50%)", width: big ? "30%" : "22%" }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay, duration: 0.8 }}
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none"
+        style={{ width: `${beam}cqw`, height: "70cqh", clipPath: "polygon(42% 0, 58% 0, 100% 100%, 0 100%)", background: `linear-gradient(to bottom, rgba(255, 244, 214, ${big ? 0.32 : 0.16}), rgba(255, 244, 214, 0.02))` }} />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay, duration: 0.8 }}
+        className="absolute bottom-[1cqh] left-1/2 -translate-x-1/2 rounded-[50%] pointer-events-none"
+        style={{ width: `${beam * 0.9}cqw`, height: "5cqh", background: `radial-gradient(ellipse, rgba(255, 244, 214, ${big ? 0.35 : 0.18}), transparent 70%)` }} />
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: delay + 0.3, type: "spring", bounce: 0.35 }}
+        className="relative flex flex-col items-center pb-[3cqh] w-full">
+        {big && <Crown size={64} className="text-yellow-400 drop-shadow-[0_0_20px_rgba(234,179,8,0.8)] mb-[0.5cqh]" />}
+        <TeamAvatar team={team} className={`${size} rounded-full border-4 ${big ? "border-yellow-300/80" : "border-white/30"} shadow-2xl mb-[1.2cqh]`} textClass={big ? "text-[6cqh]" : "text-[3.5cqh]"} />
+        <div className={`w-full text-center truncate font-title font-black uppercase ${big ? "text-[4.4cqh] text-yellow-300" : "text-[2.6cqh] text-white"}`}>{team.name}</div>
+        <div className={`font-mono font-black ${big ? "text-[4cqh] text-white" : "text-[2.8cqh] text-white/70"}`}>{team.currentScore}</div>
+        <div className={`mt-[0.6cqh] px-4 py-1 rounded-full font-black text-[1.6cqh] ${big ? "bg-yellow-400 text-black" : "bg-white/10 text-white/80"}`}>#{team.displayRank}</div>
+      </motion.div>
+    </div>
+  );
+  return (
+    <div className="h-full flex flex-col">
+      <div className="relative flex-1 min-h-0">
+        {spot(second, { x: 20, size: "w-[13cqh] h-[13cqh]", beam: 20, delay: 0.7 })}
+        {spot(third, { x: 80, size: "w-[13cqh] h-[13cqh]", beam: 20, delay: 0 })}
+        {spot(first, { x: 50, size: "w-[22cqh] h-[22cqh]", beam: 32, delay: 1.5, big: true })}
+      </div>
+      <RestList teams={teams.slice(3)} delay={2.4} />
+    </div>
+  );
+}
+
+const MEDALS = {
+  1: { card: "from-yellow-300/25 to-yellow-700/10 border-yellow-300/70", medal: "from-yellow-200 to-yellow-500", ribbon: "bg-primary-600" },
+  2: { card: "from-slate-200/20 to-slate-600/10 border-slate-200/60", medal: "from-slate-100 to-slate-400", ribbon: "bg-primary-700" },
+  3: { card: "from-orange-300/20 to-orange-800/10 border-orange-300/60", medal: "from-orange-200 to-orange-600", ribbon: "bg-primary-800" },
+};
+// The final standings as three tall medal cards (second, first, third), each with a ribboned medal
+function MedalsView({ teams }) {
+  const [first, second, third] = teams;
+  const card = (team, place, tall, delay) => team && (
+    <motion.div key={team.name} initial={{ opacity: 0, rotateY: 80 }} animate={{ opacity: 1, rotateY: 0 }} transition={{ delay, type: "spring", bounce: 0.3, duration: 1.2 }}
+      className={`relative flex flex-col items-center w-[24%] rounded-[2rem] border-2 bg-gradient-to-b ${MEDALS[place].card} px-[1.5cqw] pb-[2.5cqh]`}
+      style={{ height: tall ? "100%" : "86%" }}>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 flex gap-[0.6cqw]">
+        <div className={`w-[2.2cqw] h-[7cqh] ${MEDALS[place].ribbon} origin-top -rotate-12`} />
+        <div className={`w-[2.2cqw] h-[7cqh] ${MEDALS[place].ribbon} origin-top rotate-12`} />
+      </div>
+      <div className={`relative mt-[4.5cqh] shrink-0 ${tall ? "w-[11cqh] h-[11cqh]" : "w-[9cqh] h-[9cqh]"} rounded-full bg-gradient-to-br ${MEDALS[place].medal} border-4 border-white/50 shadow-[0_0_40px_rgba(0,0,0,0.5)] flex items-center justify-center`}>
+        <span className={`font-title font-black text-black/70 ${tall ? "text-[5.5cqh]" : "text-[4.5cqh]"}`}>{team.displayRank}</span>
+      </div>
+      <div className="mt-auto flex flex-col items-center w-full min-h-0">
+        <TeamAvatar team={team} className={`${tall ? "w-[14cqh] h-[14cqh]" : "w-[10cqh] h-[10cqh]"} rounded-full border-4 border-white/30 mb-[1.2cqh] shadow-2xl`} textClass="text-[3.5cqh]" />
+        <div className={`w-full text-center truncate font-title font-black uppercase text-white ${tall ? "text-[3.6cqh]" : "text-[2.8cqh]"}`}>{team.name}</div>
+        <div className={`font-mono font-black text-primary-300 ${tall ? "text-[4cqh]" : "text-[3.2cqh]"}`}>{team.currentScore}</div>
+      </div>
+    </motion.div>
+  );
+  return (
+    <div className="h-full flex flex-col">
+      <div className="flex-1 min-h-0 flex items-end justify-center gap-[2.5cqw] pt-[2cqh]" style={{ perspective: "1200px" }}>
+        {card(second, 2, false, 0.5)}
+        {card(first, 1, true, 1)}
+        {card(third, 3, false, 0)}
+      </div>
+      <RestList teams={teams.slice(3)} delay={1.8} />
     </div>
   );
 }

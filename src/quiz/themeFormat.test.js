@@ -186,6 +186,8 @@ describe("theme upgrades", () => {
     expect(theme.celebration).toEqual({ type: "fireworks" });
     expect(theme.sounds).toEqual({ pack: null });
     expect(theme.scenes).toEqual({ leaderboard: { layout: "podium" } });
+    const more = normalizeTheme(base({ scenes: { leaderboard: { layout: "medals" }, dashboard: { layout: "timeline" } } })).theme;
+    expect(more.scenes).toEqual({ leaderboard: { layout: "medals" }, dashboard: { layout: "timeline" } });
     expect(problems).toEqual(expect.arrayContaining([{ code: "style", detail: "wood" }, { code: "sounds", detail: "dubstep" }]));
   });
 

@@ -68,6 +68,9 @@
   "scenes": {
     "leaderboard": {
       "layout": "race"
+    },
+    "dashboard": {
+      "layout": "tiles"
     }
   },
   "style": {
