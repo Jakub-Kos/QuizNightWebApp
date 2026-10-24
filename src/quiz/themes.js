@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { THEME_FORMAT, THEME_VERSION } from "./themeFormat";
+import { THEME_FORMAT, THEME_VERSION, STYLE_OPTIONS } from "./themeFormat";
 
 // The look of a quiz's show, in the theme file format (themeFormat.js). The scenes use named colours
 // (Tailwind tokens in index.css): primary-50…950 (the main colour, blue by default), accent-50…950
@@ -141,6 +141,12 @@ export function themeStyle(theme) {
   if (title) style["--theme-title-font"] = `"${title}", var(--theme-font, "League Spartan")`;
   return style;
 }
+
+// The classes for the theme's style controls (theme.style, index.css); the first option of each is
+// Classic's and adds none
+export const styleClasses = (theme) => Object.entries(STYLE_OPTIONS)
+  .filter(([key, options]) => theme.style?.[key] && theme.style[key] !== options[0])
+  .map(([key]) => `qn-${key}-${theme.style[key]}`).join(" ");
 
 // The theme being shown, with imageUrl: its background picture resolved to a URL
 export const ThemeContext = createContext({ ...THEMES[0], imageUrl: null });

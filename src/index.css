@@ -42,6 +42,26 @@
 .font-show { font-family: var(--theme-font, "League Spartan"); font-variant-numeric: lining-nums; }
 .font-title { font-family: var(--theme-title-font, inherit); }
 
+/* Theme style controls (theme.style, styleClasses in quiz/themes.js); Classic adds none of them */
+.qn-corners-sharp [class*="rounded"]:not([class*="rounded-full"]) { border-radius: 0.2rem !important; }
+.qn-corners-round {
+  --radius-sm: 0.5rem; --radius-md: 0.75rem; --radius-lg: 1.1rem; --radius-xl: 1.6rem; --radius-2xl: 2.2rem; --radius-3xl: 3rem;
+}
+.qn-cards-glass [class*="bg-panel"] {
+  background-color: color-mix(in oklab, var(--color-panel) 50%, transparent) !important;
+  backdrop-filter: blur(14px);
+  border-color: rgb(255 255 255 / 0.18) !important;
+}
+.qn-cards-outline [class*="bg-panel"] {
+  background-color: transparent !important;
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--color-primary-500) 50%, transparent);
+}
+.qn-headings-plain .font-title { text-transform: none !important; letter-spacing: 0 !important; }
+.qn-effects-neon .font-title { text-shadow: 0 0 0.35em var(--color-primary-400), 0 0 1em var(--color-primary-600); }
+.qn-effects-neon [class*="bg-panel"] { box-shadow: 0 0 2rem -0.5rem var(--color-primary-500), inset 0 0 0 1px color-mix(in oklab, var(--color-primary-400) 60%, transparent) !important; }
+.qn-effects-flat * { box-shadow: none !important; text-shadow: none !important; }
+.qn-effects-flat [class*="drop-shadow"] { filter: none !important; }
+
 /* Theme decorations (ThemeDecorations, SceneBackdrop) */
 @media (prefers-reduced-motion: reduce) {
   .theme-anim { animation: none !important; }

@@ -40,6 +40,7 @@ function Fireworks({ width, height, colors, duration }) {
     const ctx = canvas.current.getContext("2d");
     const rockets = [];
     const sparks = [];
+    const flashes = [];
     const start = performance.now();
     let last = start;
     let nextLaunch = start;
@@ -58,10 +59,11 @@ function Fireworks({ width, height, colors, duration }) {
         const r = rockets[i];
         r.y += r.vy * dt;
         ctx.fillStyle = r.color;
-        ctx.fillRect(r.x - 2, r.y, 4, 18);
+        ctx.fillRect(r.x - 3, r.y, 6, 26);
         if (r.y <= r.top) {
           rockets.splice(i, 1);
-          const count = 60 + Math.floor(Math.random() * 40);
+          flashes.push({ x: r.x, y: r.y, life: 1, color: r.color });
+          const count = 80 + Math.floor(Math.random() * 50);
           const speed = height * (0.25 + Math.random() * 0.2);
           for (let k = 0; k < count; k++) {
             const angle = (k / count) * Math.PI * 2;
@@ -85,11 +87,31 @@ function Fireworks({ width, height, colors, duration }) {
         }
         ctx.globalAlpha = s.life;
         ctx.strokeStyle = s.color;
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 7;
+        ctx.lineCap = "round";
         ctx.beginPath();
         ctx.moveTo(px, py);
         ctx.lineTo(s.x, s.y);
         ctx.stroke();
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // A short flash where a rocket bursts
+      for (let i = flashes.length - 1; i >= 0; i--) {
+        const f = flashes[i];
+        f.life -= dt / 0.35;
+        if (f.life <= 0) {
+          flashes.splice(i, 1);
+          continue;
+        }
+        const glow = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, height * 0.18);
+        glow.addColorStop(0, f.color);
+        glow.addColorStop(1, "transparent");
+        ctx.globalAlpha = f.life * 0.6;
+        ctx.fillStyle = glow;
+        ctx.fillRect(f.x - height * 0.18, f.y - height * 0.18, height * 0.36, height * 0.36);
       }
       ctx.globalAlpha = 1;
       if (now - start < duration + 2500 || sparks.length) frame = requestAnimationFrame(tick);

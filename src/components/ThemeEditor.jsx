@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useRef, useDeferredValue } from "react";
+import { useState, useEffect, useMemo, useRef, useDeferredValue, useCallback } from "react";
 import { MotionConfig } from "framer-motion";
-import { ArrowLeft, Upload, Trash2, Plus, Download, BookmarkPlus, CheckCircle2, AlertTriangle, Loader2, RotateCcw, Share2, X, ExternalLink } from "lucide-react";
+import { ArrowLeft, Upload, Trash2, Plus, Download, BookmarkPlus, CheckCircle2, AlertTriangle, Loader2, RotateCcw, Share2, X, ExternalLink, PartyPopper } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { getQuiz, updateQuiz, listMedia } from "../quiz/storage";
 import { QuizContext } from "../quiz/context";
@@ -11,7 +11,7 @@ import { previewStep } from "../quiz/validate";
 import { fmt } from "../quiz/files";
 import { downloadBlob } from "../quiz/package";
 import { themeForQuiz, themeName, THEMES, CUSTOM_THEME_ID } from "../quiz/themes";
-import { normalizeTheme, readabilityIssues, FONT_GROUPS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
+import { normalizeTheme, readabilityIssues, FONT_GROUPS, STYLE_OPTIONS, CELEBRATIONS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
 import { exportThemePack, themePackName } from "../quiz/themePack";
 import { storeThemeFile, pruneThemeFiles, saveToLibrary, FileError } from "../quiz/themeStore";
 import { driveErrorText } from "../quiz/drive";
@@ -25,6 +25,7 @@ import { useUiLanguage } from "../hooks/useUiLanguage";
 import { inputCls, btnCls } from "./EditorParts";
 import { StageFrame } from "./Stage";
 import ColorPicker from "./ColorPicker";
+import Celebration from "./Celebration";
 import { ThemeDecorations } from "./Theme";
 import WelcomeScreen from "./WelcomeScreen";
 import RulesScreen from "./RulesScreen";
@@ -85,13 +86,16 @@ function copyOf(theme, t) {
 function Editor({ quiz, media, reloadMedia, fresh, t }) {
   const [lang] = useUiLanguage();
   const [display] = useDisplaySettings("main");
-  const [draft, setDraft] = useState(() => (!fresh && quiz.customTheme ? quiz.customTheme : copyOf(themeForQuiz(quiz), t)));
+  // Through the check, so a theme saved by an older version gets the fields added since
+  const [draft, setDraft] = useState(() => normalizeTheme(!fresh && quiz.customTheme ? quiz.customTheme : copyOf(themeForQuiz(quiz), t), { stored: true }).theme);
   const [saveState, setSaveState] = useState("saved");
   const [scene, setScene] = useState("welcome");
   const [notice, setNotice] = useState(null); // { ok, text }
   const [busy, setBusy] = useState(null);
   const [libraryId, setLibraryId] = useState(null);
   const [sharing, setSharing] = useState(false);
+  const [celebrating, setCelebrating] = useState(0); // >0 while the celebration plays in the preview
+  const stopCelebrating = useCallback(() => setCelebrating(0), []);
   const changed = useRef(false);
 
   // Every change is saved shortly after, as the quiz's own theme, chosen for the show
@@ -264,6 +268,24 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
               )}
             </Panel>
 
+            <Panel title={t.te_style} help={t.te_style_help}>
+              {Object.entries(STYLE_OPTIONS).map(([key, options]) => (
+                <Choice key={key} label={t[`te_st_${key}`]} value={draft.style[key] ?? options[0]} options={options} name={(o) => t[`te_st_${key}_${o}`]}
+                  onChange={(v) => change((d) => {
+                    const { [key]: _, ...style } = d.style;
+                    return { ...d, style: v === options[0] ? style : { ...style, [key]: v } };
+                  })} />
+              ))}
+            </Panel>
+
+            <Panel title={t.te_celebration} help={t.te_celebration_help}>
+              <Choice value={draft.celebration.type} options={[null, ...CELEBRATIONS]} name={(o) => t[`te_cb_${o ?? "none"}`]} onChange={(v) => set("celebration.type", v)} />
+              <button type="button" className={btnCls} disabled={!draft.celebration.type}
+                onClick={() => { setScene("leaderboard"); setCelebrating((n) => n + 1); }}>
+                <PartyPopper size={16} /> {t.te_cb_play}
+              </button>
+            </Panel>
+
             <Panel title={t.te_decoration}>
               <Choice value={draft.decoration.type} options={[null, ...DECORATIONS]} name={(o) => t[`te_dc_${o ?? "none"}`]} onChange={(v) => set("decoration.type", v)} />
               <p className="text-xs text-gray-500">{t.te_decoration_help}</p>
@@ -283,6 +305,7 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
               <StageFrame display={display} theme={previewTheme} className="rounded-xl ring-1 ring-white/15">
                 <div key={shown[0]} className="contents">{shown[2]}</div>
                 <ThemeDecorations quiet={QUIET_SCENES.includes(shown[0])} />
+                {celebrating > 0 && <Celebration key={celebrating} type={previewTheme.celebration.type} onDone={stopCelebrating} />}
               </StageFrame>
             </MotionConfig>
             <div className={`rounded-xl border p-3 text-sm ${issues.length ? "border-yellow-500/40 bg-yellow-500/[0.05]" : "border-green-500/20"}`}>

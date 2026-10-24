@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useId } from "react";
-import { ThemeContext, THEMES, themeStyle, loadThemeFonts, useTheme } from "../quiz/themes";
+import { ThemeContext, THEMES, themeStyle, styleClasses, loadThemeFonts, useTheme } from "../quiz/themes";
 
 // The theme's colours and fonts for everything inside (see quiz/themes.js). resolveAsset(name) gives
 // a URL for the theme's files (stored with the quiz's media).
@@ -8,7 +8,7 @@ export function ThemeScope({ theme = THEMES[0], resolveAsset, className = "", ch
   const value = useMemo(() => ({ ...theme, imageUrl: theme.background?.image ? resolveAsset?.(theme.background.image) ?? null : null }), [theme, resolveAsset]);
   return (
     <ThemeContext.Provider value={value}>
-      <div className={className} style={themeStyle(theme)}>{children}</div>
+      <div className={`${className} ${styleClasses(theme)}`} style={themeStyle(theme)}>{children}</div>
     </ThemeContext.Provider>
   );
 }
