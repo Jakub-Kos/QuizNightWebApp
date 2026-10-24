@@ -28,6 +28,7 @@ import FullscreenHint from "./FullscreenHint";
 import TourGuide from "./TourGuide";
 import { ThemeScope, ThemeDecorations } from "./Theme";
 import { themeForQuiz } from "../quiz/themes";
+import { SoundContext, soundPlayer, notePresenter } from "../quiz/sounds";
 
 const SCENES = {
   WELCOME: "welcome",
@@ -50,9 +51,13 @@ export default function QuizShow({ bundle, isPresenter }) {
   const [isCalibrating, setIsCalibrating] = useState(false);
   const [display, setDisplay] = useDisplaySettings(isPresenter ? "presenter" : "main");
 
+  // Scene, round and settings are shared with the other window (see below)
+  const appChannel = useMemo(() => new BroadcastChannel('quiz-app-sync'), []);
   const [config, setConfig] = useState(quiz.settings);
   const updateConfig = (next) => {
     setConfig(next);
+    // The other window takes the change at once (theme, sound volume…)
+    appChannel.postMessage({ type: 'CONFIG', sender: isPresenter ? 'presenter' : 'main', payload: next });
     // The built-in demo is read-only; its settings only last for this session
     if (!quiz.builtin) updateQuiz(quiz.id, (q) => ({ ...q, settings: next }));
   };
@@ -74,7 +79,6 @@ export default function QuizShow({ bundle, isPresenter }) {
   const activeRound = useMemo(() => rounds.find(r => r.id === activeRoundId) || null, [rounds, activeRoundId]);
 
   // Only local changes are broadcast (see QuestionScreen): lastSyncedRef holds the state at mount or last received
-  const appChannel = useMemo(() => new BroadcastChannel('quiz-app-sync'), []);
   const syncKey = JSON.stringify([scene, activeRoundId, playMode]);
   const lastSyncedRef = useRef(syncKey);
 
@@ -90,6 +94,20 @@ export default function QuizShow({ bundle, isPresenter }) {
 
   useEffect(() => { appChannel.postMessage({ type: 'REQUEST_STATE', sender: isPresenter ? 'presenter' : 'main' }); }, [appChannel, isPresenter]);
 
+  // The presenter window tells the TV window it is open, so only it plays the sounds (quiz/sounds.js)
+  useEffect(() => {
+    if (!isPresenter) return;
+    const here = () => appChannel.postMessage({ type: 'PRESENTER_HERE', sender: 'presenter' });
+    const gone = () => appChannel.postMessage({ type: 'PRESENTER_GONE', sender: 'presenter' });
+    here();
+    const interval = setInterval(here, 10000);
+    window.addEventListener('pagehide', gone);
+    return () => { clearInterval(interval); window.removeEventListener('pagehide', gone); };
+  }, [appChannel, isPresenter]);
+  const theme = themeForQuiz(quiz, config);
+  const playSound = useMemo(() => soundPlayer({ pack: theme.sounds?.pack, volume: config.soundVolume ?? 0.6, enabled: config.sounds !== false, isPresenter }),
+    [theme.sounds?.pack, config.soundVolume, config.sounds, isPresenter]);
+
   useEffect(() => {
     if (syncKey === lastSyncedRef.current) return;
     lastSyncedRef.current = syncKey;
@@ -102,7 +120,9 @@ export default function QuizShow({ bundle, isPresenter }) {
       const myRole = isPresenter ? 'presenter' : 'main';
       if (sender === myRole) return;
 
-      if (type === 'STATE_UPDATE') {
+      if (sender === 'presenter') notePresenter(type !== 'PRESENTER_GONE');
+      if (type === 'CONFIG') setConfig(payload);
+      else if (type === 'STATE_UPDATE') {
           lastSyncedRef.current = JSON.stringify([payload.scene, payload.activeRoundId, payload.playMode]);
           setScene(payload.scene); setActiveRoundId(payload.activeRoundId); setPlayMode(payload.playMode);
       } else if (type === 'REQUEST_STATE') {
@@ -117,9 +137,10 @@ export default function QuizShow({ bundle, isPresenter }) {
 
   return (
     <QuizContext.Provider value={quizContext}>
+    <SoundContext.Provider value={playSound}>
     {/* Presenter control panels use the full window; everything else renders on the scaled stage */}
     <Stage display={display} bypass={isPresenter && !isCalibrating && [SCENES.GAME, SCENES.LEADERBOARD, SCENES.PAUSE].includes(scene)}>
-    <ThemeScope theme={themeForQuiz(quiz, config)} resolveAsset={resolveMedia} className="bg-ground h-full w-full font-show overflow-hidden relative selection:bg-accent-500/30 text-white">
+    <ThemeScope theme={theme} resolveAsset={resolveMedia} className="bg-ground h-full w-full font-show overflow-hidden relative selection:bg-accent-500/30 text-white">
       {!isPresenter && (
           <div className="absolute top-0 w-full p-6 flex justify-between z-50 pointer-events-none">
             <div className="pointer-events-auto flex gap-2">
@@ -152,6 +173,7 @@ export default function QuizShow({ bundle, isPresenter }) {
               authNeeded={liveLeaderboard.authNeeded}
               onSignIn={renewSignIn}
               isPresenter={isPresenter}
+              celebrate={config.celebration !== false}
               onClose={() => setScene(SCENES.DASHBOARD)}
               t={t}
           />
@@ -226,6 +248,7 @@ export default function QuizShow({ bundle, isPresenter }) {
         )}
       </div>
     )}
+    </SoundContext.Provider>
     </QuizContext.Provider>
   );
 }

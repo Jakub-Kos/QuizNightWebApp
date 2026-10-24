@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { THEME_FORMAT, THEME_VERSION } from "./themeFormat";
+import { THEME_FORMAT, THEME_VERSION, STYLE_OPTIONS } from "./themeFormat";
 
 // The look of a quiz's show, in the theme file format (themeFormat.js). The scenes use named colours
 // (Tailwind tokens in index.css): primary-50…950 (the main colour, blue by default), accent-50…950
@@ -15,12 +15,12 @@ export const CUSTOM_THEME_ID = "custom";
 
 const builtin = (fields) => ({
   format: THEME_FORMAT, version: THEME_VERSION, author: "Quiz Night", description: {}, tags: [],
-  colors: {}, fonts: {}, decoration: { type: null }, scenes: {}, ...fields,
+  colors: {}, fonts: {}, decoration: { type: null }, style: {}, celebration: { type: null }, sounds: { pack: null }, scenes: {}, ...fields,
   background: { image: null, imageOpacity: 0.5, imageBlur: 0, glows: [], ornament: null, ...fields.background },
 });
 
 export const THEMES = [
-  builtin({ id: "default", name: { en: "Classic", cs: "Klasický", sk: "Klasszikus" } }),
+  builtin({ id: "default", name: { en: "Classic", cs: "Klasický", sk: "Klasszikus" }, celebration: { type: "confetti" } }),
   builtin({
     id: "halloween",
     name: { en: "Halloween", cs: "Halloween", sk: "Halloween" },
@@ -36,6 +36,8 @@ export const THEMES = [
       ornament: "graveyard",
     },
     decoration: { type: "bats" },
+    celebration: { type: "decoration" },
+    sounds: { pack: "spooky" },
   }),
   builtin({
     id: "christmas",
@@ -51,6 +53,8 @@ export const THEMES = [
       ornament: "lights",
     },
     decoration: { type: "snow" },
+    celebration: { type: "decoration" },
+    sounds: { pack: "festive" },
   }),
 ];
 
@@ -137,6 +141,12 @@ export function themeStyle(theme) {
   if (title) style["--theme-title-font"] = `"${title}", var(--theme-font, "League Spartan")`;
   return style;
 }
+
+// The classes for the theme's style controls (theme.style, index.css); the first option of each is
+// Classic's and adds none
+export const styleClasses = (theme) => Object.entries(STYLE_OPTIONS)
+  .filter(([key, options]) => theme.style?.[key] && theme.style[key] !== options[0])
+  .map(([key]) => `qn-${key}-${theme.style[key]}`).join(" ");
 
 // The theme being shown, with imageUrl: its background picture resolved to a URL
 export const ThemeContext = createContext({ ...THEMES[0], imageUrl: null });

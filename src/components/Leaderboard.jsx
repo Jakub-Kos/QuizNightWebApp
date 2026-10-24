@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Minus as MinusIcon, Trophy, Crown, CheckCircle, HelpCircle, Shuffle, Database, Flame, RefreshCw, AlertTriangle, Info, Loader2, LogIn } from "lucide-react";
 import { useQuiz } from "../quiz/context";
@@ -7,6 +7,9 @@ import VenueMap from "./VenueMap";
 import TeamAvatar from "./TeamAvatar";
 import { fmt } from "../quiz/files";
 import { SceneBackdrop } from "./Theme";
+import Celebration from "./Celebration";
+import { useTheme } from "../quiz/themes";
+import { useSound } from "../quiz/sounds";
 
 // The scores the reveal works on, without the poll time, so equal scores compare equal
 const toSnapshot = (scores) => ({ teams: scores?.teams || [], rounds: scores?.rounds || [] });
@@ -14,8 +17,9 @@ const sameScores = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 // The latest round anyone has points in
 const defaultRound = (snap) => [...snap.rounds].reverse().find(r => snap.teams.some(t => t.scores[r] > 0)) ?? snap.rounds[0] ?? "";
 
-// preview: { step } renders one fixed frame of the reveal (the quiz map): no keys and no sync
-export default function Leaderboard({ isPresenter, data, availableRounds, lastSync, onReload, authNeeded, onSignIn, onClose, t, preview = null }) {
+// preview: { step } renders one fixed frame of the reveal (the quiz map): no keys and no sync.
+// celebrate: the TV window celebrates the final standings with the theme's celebration.
+export default function Leaderboard({ isPresenter, data, availableRounds, lastSync, onReload, authNeeded, onSignIn, onClose, t, preview = null, celebrate = false }) {
   const tr = t;
   const { quiz, teams } = useQuiz();
   const role = isPresenter ? 'presenter' : 'main';
@@ -169,6 +173,32 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
   const maxStep = scoreGroups.length * 2 + 1;
   const revealStep = isPreview ? Math.min(preview.step, maxStep) : stepState;
   const isShuffled = revealStep === maxStep;
+  // The theme's layout for the scores: the table, racing bars, or a podium for the final standings
+  const layout = useTheme().scenes?.leaderboard?.layout || "table";
+
+  // Reaching the final standings (stepping forward onto them, in this window or the other) celebrates
+  // once on the TV; stepping back stops it
+  const [celebrating, setCelebrating] = useState(false);
+  const [seenStep, setSeenStep] = useState(stepState);
+  if (seenStep !== stepState) {
+      setSeenStep(stepState);
+      if (stepState === maxStep && stepState > seenStep && celebrate && !isPresenter && !isPreview && frozenData.length > 0) setCelebrating(true);
+      else if (stepState < maxStep) setCelebrating(false);
+  }
+  const endCelebration = useCallback(() => setCelebrating(false), []);
+
+  // The theme's sounds: a group card, and the final standings (stepping forward only); only one
+  // window plays (quiz/sounds.js)
+  const playSound = useSound();
+  const heardStepRef = useRef(stepState);
+  useEffect(() => {
+      if (isPreview) return;
+      const before = heardStepRef.current;
+      heardStepRef.current = stepState;
+      if (stepState <= before || frozenData.length === 0) return;
+      if (stepState === maxStep) playSound("winner");
+      else if (stepState % 2 === 1) playSound("reveal");
+  }, [stepState, maxStep, isPreview, playSound, frozenData.length]);
   const maxPointsThisRound = scoreGroups.length > 0 ? scoreGroups[scoreGroups.length - 1].points : 0;
 
   useEffect(() => {
@@ -394,6 +424,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
         `}} />
 
         <SceneBackdrop quiet />
+        {celebrating && <Celebration onDone={endCelebration} />}
         <div className="absolute top-0 right-0 w-[1200px] h-[1200px] bg-primary-900/10 blur-[250px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-accent-900/5 blur-[200px] rounded-full pointer-events-none" />
 
@@ -432,6 +463,9 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                         )}
                     </div>
                 )}
+                {layout === "race" ? <RaceView teams={activeTeamsList} isShuffled={isShuffled} t={t} />
+                  : layout === "podium" && isShuffled ? <PodiumView teams={activeTeamsList} />
+                  : (
                 <div className="grid grid-cols-2 grid-flow-row gap-x-16 gap-y-5 w-full content-start">
 
                     {activeTeamsList.map((team) => {
@@ -517,6 +551,7 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                         )
                     })}
                 </div>
+                )}
             </div>
 
             {/* Run from this window (no presenter window): how to step, until the reveal starts */}
@@ -580,6 +615,100 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
                 )}
             </AnimatePresence>
         </div>
+    </div>
+  );
+}
+// Racing bars: each team's bar grows with its points as the groups are revealed; the order changes
+// only at the final step, like the table. Two columns when there are many teams.
+function RaceView({ teams, isShuffled, t }) {
+  // Bars start from a baseline a little below the lowest score, so close scores still differ visibly
+  const top = Math.max(1, ...teams.map((team) => team.total));
+  const low = Math.min(top, ...teams.map((team) => team.previousTotal));
+  const base = Math.max(0, low - (top - low) * 0.25);
+  const width = (score) => Math.max(3, ((score - base) / Math.max(1, top - base)) * 100);
+  const columns = teams.length > 12 ? 2 : 1;
+  const rows = Math.ceil(teams.length / columns) || 1;
+  const height = Math.min(7.5, 68 / rows - 0.8);
+  return (
+    <div className="grid gap-x-12 gap-y-[0.8cqh] content-start" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
+      {teams.map((team) => {
+        const isWinner = isShuffled && team.displayRank === 1;
+        const nameCls = `truncate font-black uppercase tracking-wide ${isWinner ? "text-yellow-400" : "text-white"} ${team.isRevealed ? "" : "opacity-60"}`;
+        const scoreCls = `shrink-0 text-right font-mono font-black ${isWinner ? "text-yellow-400" : team.isRevealed ? "text-primary-300" : "text-white/40"}`;
+        const bar = (
+          <div className={`relative rounded-full bg-white/5 overflow-hidden ${columns > 1 ? "h-[1.7cqh]" : "flex-1 h-[62%]"}`}>
+            <div className={`absolute inset-y-0 left-0 rounded-full transition-[width] duration-1000 ease-out ${isWinner ? "bg-gradient-to-r from-yellow-600 to-yellow-300" : team.isRevealed ? "bg-gradient-to-r from-primary-700 to-primary-400" : "bg-white/15"}`}
+              style={{ width: `${width(team.currentScore)}%` }} />
+            {team.isRevealed && !isShuffled && columns === 1 && (
+              <span className="absolute right-[1cqw] inset-y-0 flex items-center font-bold text-[1.6cqh] text-green-400">+{team.roundPoints} {t.lb_round_short}</span>
+            )}
+          </div>
+        );
+        return (
+          <motion.div layout transition={{ type: "spring", bounce: 0.25, duration: 1.2 }} key={team.name}
+            className="flex items-center gap-[1.2cqw]" style={{ height: `${height}cqh` }}>
+            <span className={`w-[3cqw] shrink-0 text-center font-mono font-black text-[2.4cqh] ${isWinner ? "text-yellow-400" : "text-white/70"}`}>{team.displayRank}</span>
+            <TeamAvatar team={team} className="h-[80%] aspect-square rounded-full border border-white/20 shrink-0" textClass="text-[1.4cqh]" />
+            {columns > 1 ? (
+              // Two columns: the name and score above a full-width bar
+              <div className="flex-1 min-w-0 flex flex-col justify-center gap-[0.5cqh]">
+                <div className="flex items-baseline gap-3">
+                  <span className={`flex-1 text-[1.9cqh] ${nameCls}`}>{team.name}</span>
+                  {team.isRevealed && !isShuffled && <span className="shrink-0 font-bold text-[1.5cqh] text-green-400">+{team.roundPoints}</span>}
+                  <span className={`text-[2.3cqh] ${scoreCls}`}>{team.currentScore}</span>
+                </div>
+                {bar}
+              </div>
+            ) : (
+              <>
+                <span className={`w-[26%] shrink-0 text-[2.2cqh] ${nameCls}`}>{team.name}</span>
+                {bar}
+                <span className={`w-[6cqw] text-[2.6cqh] ${scoreCls}`}>{team.currentScore}</span>
+              </>
+            )}
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+// The final standings on a podium: the top three rise onto gold, silver and bronze blocks (second,
+// first, third from the left), everyone else in a compact list below
+function PodiumView({ teams }) {
+  const [first, second, third] = teams;
+  const rest = teams.slice(3);
+  const block = (team, height, color, delay) => team && (
+    <motion.div key={team.name} initial={{ y: "35%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay, type: "spring", bounce: 0.3, duration: 1.1 }}
+      className="flex flex-col items-center justify-end w-[22%] min-w-0">
+      <TeamAvatar team={team} className="w-[11cqh] h-[11cqh] rounded-full border-4 border-white/30 mb-[1.2cqh] shadow-2xl" textClass="text-[3.5cqh]" />
+      <div className="w-full text-center truncate font-black uppercase tracking-wider text-[2.6cqh] text-white">{team.name}</div>
+      <div className="font-mono font-black text-[3.4cqh] text-primary-300 mb-[1cqh]">{team.currentScore}</div>
+      <div className={`w-full rounded-t-2xl flex items-start justify-center pt-[1.2cqh] shadow-[0_0_40px_rgba(0,0,0,0.5)] ${color}`} style={{ height }}>
+        <span className="font-title font-black text-[6cqh] leading-none text-black/60">{team.displayRank}</span>
+      </div>
+    </motion.div>
+  );
+  return (
+    <div className="h-full flex flex-col">
+      <div className="flex-1 min-h-0 flex items-end justify-center gap-[2cqw]">
+        {block(second, "18cqh", "bg-gradient-to-b from-slate-200 to-slate-400", 0.6)}
+        {block(first, "25cqh", "bg-gradient-to-b from-yellow-300 to-yellow-500", 1.2)}
+        {block(third, "12cqh", "bg-gradient-to-b from-orange-300 to-orange-600", 0)}
+      </div>
+      {rest.length > 0 && (
+        <div className="grid grid-cols-3 gap-x-6 gap-y-[0.8cqh] mt-[2.5cqh] shrink-0">
+          {rest.map((team, i) => (
+            <motion.div key={team.name} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.6 + i * 0.04 }}
+              className="flex items-center gap-3 h-[4cqh] px-3 rounded-lg bg-black/40 border border-white/10">
+              <span className="w-[2.5cqw] font-mono font-black text-[1.8cqh] text-white/60">{team.displayRank}</span>
+              <TeamAvatar team={team} className="h-[70%] aspect-square rounded-full border border-white/20 shrink-0" textClass="text-[1.1cqh]" />
+              <span className="flex-1 truncate font-bold uppercase tracking-wider text-[1.7cqh] text-white">{team.name}</span>
+              <span className="font-mono font-black text-[2cqh] text-primary-300">{team.currentScore}</span>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

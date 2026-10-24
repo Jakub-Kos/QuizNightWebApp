@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useId } from "react";
-import { ThemeContext, THEMES, themeStyle, loadThemeFonts, useTheme } from "../quiz/themes";
+import { ThemeContext, THEMES, themeStyle, styleClasses, loadThemeFonts, useTheme } from "../quiz/themes";
 
 // The theme's colours and fonts for everything inside (see quiz/themes.js). resolveAsset(name) gives
 // a URL for the theme's files (stored with the quiz's media).
@@ -8,7 +8,7 @@ export function ThemeScope({ theme = THEMES[0], resolveAsset, className = "", ch
   const value = useMemo(() => ({ ...theme, imageUrl: theme.background?.image ? resolveAsset?.(theme.background.image) ?? null : null }), [theme, resolveAsset]);
   return (
     <ThemeContext.Provider value={value}>
-      <div className={className} style={themeStyle(theme)}>{children}</div>
+      <div className={`${className} ${styleClasses(theme)}`} style={themeStyle(theme)}>{children}</div>
     </ThemeContext.Provider>
   );
 }
@@ -271,15 +271,16 @@ export function SceneBackdrop({ quiet = false }) {
   );
 }
 
-function Snow() {
+function Snow({ density = 1 }) {
   const flakes = useMemo(() => {
     const rand = seeded(7);
-    return Array.from({ length: 70 }, () => {
-      const depth = rand();
+    const storm = density > 1; // the celebration: bigger, brighter and faster
+    return Array.from({ length: Math.round(70 * density) }, () => {
+      const depth = storm ? 0.4 + rand() * 0.6 : rand();
       return {
         left: rand() * 100,
-        size: 0.35 + depth * 0.9,
-        duration: 22 - depth * 12,
+        size: (0.35 + depth * 0.9) * (storm ? 1.45 : 1),
+        duration: (22 - depth * 12) * (storm ? 0.55 : 1),
         delay: -rand() * 22,
         sway: (rand() - 0.5) * 4,
         swayTime: 3 + rand() * 4,
@@ -287,7 +288,7 @@ function Snow() {
         blur: depth < 0.3 ? 0.15 : 0,
       };
     });
-  }, []);
+  }, [density]);
   return flakes.map((f, i) => (
     <span key={i} className="theme-anim absolute top-0 will-change-transform"
       style={{ left: `${f.left}%`, "--drift": `${f.sway}cqw`, animation: `theme-fall ${f.duration}s linear ${f.delay}s infinite` }}>
@@ -298,17 +299,17 @@ function Snow() {
 }
 
 const BAT = "M50 14 L52.5 8.5 L53.6 15 C56 14 57 16 58 18 C64 9 76 7 92 11 C83 15 81 21 83 27 C77 23 70 25 68 31 C64 27 58 27 56 31 C54 29 52 31 50 35 C48 31 46 29 44 31 C42 27 36 27 32 31 C30 25 23 23 17 27 C19 21 17 15 8 11 C24 7 36 9 42 18 C43 16 44 14 46.4 15 L47.5 8.5 Z";
-function Bats() {
+function Bats({ density = 1 }) {
   const bats = useMemo(() => {
     const rand = seeded(13);
-    return Array.from({ length: 7 }, () => ({
+    return Array.from({ length: Math.round(7 * density) }, () => ({
       top: 6 + rand() * 40,
       scale: 0.55 + rand() * 0.7,
       duration: 16 + rand() * 14,
       delay: -rand() * 30,
       flap: 0.22 + rand() * 0.12,
     }));
-  }, []);
+  }, [density]);
   return bats.map((b, i) => (
     <span key={i} className="theme-anim absolute left-0 will-change-transform"
       style={{ top: `${b.top}cqh`, "--scale": b.scale, animation: `theme-fly ${b.duration}s ease-in-out ${b.delay}s infinite` }}>
@@ -321,10 +322,10 @@ function Bats() {
 }
 
 // Glowing embers rising from below and fading, a few of them ghostly green
-function Embers() {
+function Embers({ density = 1 }) {
   const embers = useMemo(() => {
     const rand = seeded(29);
-    return Array.from({ length: 16 }, () => ({
+    return Array.from({ length: Math.round(16 * density) }, () => ({
       left: rand() * 100,
       size: 0.4 + rand() * 0.5,
       duration: 9 + rand() * 9,
@@ -332,7 +333,7 @@ function Embers() {
       drift: (rand() - 0.5) * 8,
       color: rand() < 0.2 ? "#7dffb8" : "#ffab45",
     }));
-  }, []);
+  }, [density]);
   return embers.map((e, i) => (
     <span key={i} className="theme-anim absolute bottom-0 rounded-full will-change-transform"
       style={{ left: `${e.left}%`, width: `${e.size}cqh`, height: `${e.size}cqh`, background: e.color, boxShadow: `0 0 1.2cqh ${e.color}`, "--drift": `${e.drift}cqw`, animation: `theme-rise ${e.duration}s ease-out ${e.delay}s infinite` }} />
@@ -340,19 +341,19 @@ function Embers() {
 }
 
 // Things falling and tumbling: leaves, petals, confetti (shape(i) draws one; colors cycle)
-function Falling({ count, seed, size, duration, colors, shape }) {
+function Falling({ count, seed, size, duration, colors, shape, scale = 1 }) {
   const items = useMemo(() => {
     const rand = seeded(seed);
     return Array.from({ length: count }, (_, i) => ({
       left: rand() * 100,
-      size: size[0] + rand() * (size[1] - size[0]),
+      size: (size[0] + rand() * (size[1] - size[0])) * scale,
       duration: duration[0] + rand() * (duration[1] - duration[0]),
       delay: -rand() * duration[1],
       drift: (rand() - 0.5) * 10,
       spin: 3 + rand() * 5,
       color: colors[i % colors.length],
     }));
-  }, [count, seed, size, duration, colors]);
+  }, [count, seed, size, duration, colors, scale]);
   return items.map((it, i) => (
     <span key={i} className="theme-anim absolute top-0 will-change-transform"
       style={{ left: `${it.left}%`, "--drift": `${it.drift}cqw`, animation: `theme-fall ${it.duration}s linear ${it.delay}s infinite` }}>
@@ -402,11 +403,11 @@ const bubble = () => (
 );
 
 // A starry sky over the top part of the screen, twinkling, with a shooting star now and then
-function Stars() {
+function Stars({ density = 1 }) {
   const stars = useMemo(() => {
     const rand = seeded(67);
-    return Array.from({ length: 80 }, () => ({ left: rand() * 100, top: rand() * 70, size: 0.15 + rand() * 0.35, delay: -rand() * 4, time: 2 + rand() * 4 }));
-  }, []);
+    return Array.from({ length: Math.round(80 * density) }, () => ({ left: rand() * 100, top: rand() * 70, size: 0.15 + rand() * 0.35, delay: -rand() * 4, time: 2 + rand() * 4 }));
+  }, [density]);
   return (
     <>
       {stars.map((st, i) => (
@@ -422,20 +423,21 @@ function Stars() {
 }
 
 // The theme's decoration over every scene, nearly hidden (quiet) over questions and the leaderboard
-export function ThemeDecorations({ quiet = false }) {
+// density: more of everything (the celebration's storm)
+export function ThemeDecorations({ quiet = false, density = 1 }) {
   const theme = useTheme();
   const type = theme.decoration?.type;
   if (!type) return null;
   return (
     <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden transition-opacity duration-1000" style={{ opacity: quiet ? 0.15 : 1 }}>
-      {type === "snow" && <Snow />}
-      {type === "bats" && <><Embers /><Bats /></>}
-      {type === "leaves" && <Falling count={30} seed={71} size={[2.4, 4.2]} duration={[14, 24]} colors={LEAF_COLORS} shape={leaf} />}
-      {type === "petals" && <Falling count={34} seed={73} size={[0.8, 1.6]} duration={[12, 22]} colors={PETAL_COLORS} shape={petal} />}
-      {type === "confetti" && <Falling count={90} seed={79} size={[1.1, 1.9]} duration={[8, 16]} colors={CONFETTI_COLORS} shape={confetto} />}
-      {type === "hearts" && <Rising count={16} seed={83} size={[1.6, 3.4]} duration={[12, 22]} render={heart} />}
-      {type === "bubbles" && <Rising count={22} seed={89} size={[0.8, 3.2]} duration={[10, 20]} render={bubble} />}
-      {type === "stars" && <Stars />}
+      {type === "snow" && <Snow density={density} />}
+      {type === "bats" && <><Embers density={density} /><Bats density={density} /></>}
+      {type === "leaves" && <Falling count={30 * density} seed={71} size={[2.4, 4.2]} duration={[14, 24]} colors={LEAF_COLORS} shape={leaf} scale={density > 1 ? 1.4 : 1} />}
+      {type === "petals" && <Falling count={34 * density} seed={73} size={[0.8, 1.6]} duration={[12, 22]} colors={PETAL_COLORS} shape={petal} scale={density > 1 ? 1.4 : 1} />}
+      {type === "confetti" && <Falling count={90 * density} seed={79} size={[1.1, 1.9]} duration={[8, 16]} colors={CONFETTI_COLORS} shape={confetto} scale={density > 1 ? 1.4 : 1} />}
+      {type === "hearts" && <Rising count={16 * density} seed={83} size={[1.6, 3.4]} duration={[12, 22]} render={heart} />}
+      {type === "bubbles" && <Rising count={22 * density} seed={89} size={[0.8, 3.2]} duration={[10, 20]} render={bubble} />}
+      {type === "stars" && <Stars density={density} />}
     </div>
   );
 }

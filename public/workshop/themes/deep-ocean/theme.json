@@ -58,5 +58,18 @@
   "decoration": {
     "type": "bubbles"
   },
-  "scenes": {}
+  "scenes": {
+    "leaderboard": {
+      "layout": "podium"
+    }
+  },
+  "style": {
+    "cards": "glass"
+  },
+  "celebration": {
+    "type": "decoration"
+  },
+  "sounds": {
+    "pack": "chimes"
+  }
 }
