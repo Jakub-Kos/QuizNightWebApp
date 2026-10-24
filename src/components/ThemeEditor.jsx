@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useDeferredValue, useCallback } from "react";
 import { MotionConfig } from "framer-motion";
-import { ArrowLeft, Upload, Trash2, Plus, Download, BookmarkPlus, CheckCircle2, AlertTriangle, Loader2, RotateCcw, Share2, X, ExternalLink, PartyPopper } from "lucide-react";
+import { ArrowLeft, Upload, Trash2, Plus, Download, BookmarkPlus, CheckCircle2, AlertTriangle, Loader2, RotateCcw, Share2, X, ExternalLink, PartyPopper, Volume2 } from "lucide-react";
 import { TRANSLATIONS } from "../data/translations";
 import { getQuiz, updateQuiz, listMedia } from "../quiz/storage";
 import { QuizContext } from "../quiz/context";
@@ -11,7 +11,7 @@ import { previewStep } from "../quiz/validate";
 import { fmt } from "../quiz/files";
 import { downloadBlob } from "../quiz/package";
 import { themeForQuiz, themeName, THEMES, CUSTOM_THEME_ID } from "../quiz/themes";
-import { normalizeTheme, readabilityIssues, FONT_GROUPS, STYLE_OPTIONS, CELEBRATIONS, LEADERBOARD_LAYOUTS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
+import { normalizeTheme, readabilityIssues, FONT_GROUPS, STYLE_OPTIONS, CELEBRATIONS, LEADERBOARD_LAYOUTS, SOUND_PACKS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
 import { exportThemePack, themePackName } from "../quiz/themePack";
 import { storeThemeFile, pruneThemeFiles, saveToLibrary, FileError } from "../quiz/themeStore";
 import { driveErrorText } from "../quiz/drive";
@@ -26,6 +26,7 @@ import { inputCls, btnCls } from "./EditorParts";
 import { StageFrame } from "./Stage";
 import ColorPicker from "./ColorPicker";
 import Celebration from "./Celebration";
+import { playPack, SOUND_EVENTS } from "../quiz/sounds";
 import { ThemeDecorations } from "./Theme";
 import WelcomeScreen from "./WelcomeScreen";
 import RulesScreen from "./RulesScreen";
@@ -288,6 +289,20 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
                 onClick={() => { setScene("leaderboard"); setCelebrating((n) => n + 1); }}>
                 <PartyPopper size={16} /> {t.te_cb_play}
               </button>
+            </Panel>
+
+            <Panel title={t.te_sounds} help={t.te_sounds_help}>
+              <Choice value={draft.sounds.pack} options={[null, ...SOUND_PACKS]} name={(o) => t[`te_sd_${o ?? "none"}`]}
+                onChange={(v) => { set("sounds.pack", v); if (v) playPack(v, "answer"); }} />
+              {draft.sounds.pack && (
+                <div className="flex flex-wrap gap-2">
+                  {SOUND_EVENTS.map((event) => (
+                    <button key={event} type="button" className={`${btnCls} py-2`} onClick={() => playPack(draft.sounds.pack, event)}>
+                      <Volume2 size={16} /> {t[`te_sd_ev_${event}`]}
+                    </button>
+                  ))}
+                </div>
+              )}
             </Panel>
 
             <Panel title={t.te_decoration}>

@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { X, Save, Clock, Zap, Maximize, Globe, ChevronUp, ChevronDown, Library } from "lucide-react";
-import { themeChoices, themeName, DEFAULT_THEME_ID } from "../quiz/themes";
+import { themeChoices, themeName, themeForQuiz, DEFAULT_THEME_ID } from "../quiz/themes";
+import { playPack } from "../quiz/sounds";
 
 export default function SettingsModal({ onClose, onOpenCalibration, onExit, config, customTheme, onUpdate, t }) {
+  const soundPack = themeForQuiz({ customTheme }, config).sounds?.pack;
   const handleChange = (key, value) => {
     onUpdate({ ...config, [key]: value });
   };
@@ -137,6 +139,30 @@ export default function SettingsModal({ onClose, onOpenCalibration, onExit, conf
                 />
               </div>
             )}
+
+            {/* The theme's sounds (quiz/sounds.js), played by one window */}
+            <div className="bg-black/20 p-4 rounded-xl border border-white/5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-200 font-medium">{t.set_sounds}</span>
+                <button
+                  onClick={() => handleChange("sounds", config.sounds === false)}
+                  className={`w-14 h-8 rounded-full p-1 transition-all duration-300 ${config.sounds !== false ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.4)]" : "bg-gray-700"}`}
+                >
+                  <div className={`w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 ${config.sounds !== false ? "translate-x-6" : "translate-x-0"}`} />
+                </button>
+              </div>
+              {soundPack ? (
+                config.sounds !== false && (
+                  <div className="flex items-center gap-3">
+                    <input type="range" min="0" max="1" step="0.05" value={config.soundVolume ?? 0.6} aria-label={t.set_volume}
+                      onChange={(e) => handleChange("soundVolume", Number(e.target.value))}
+                      className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500" />
+                    <span className="font-mono text-green-400 text-sm w-10 text-right">{Math.round((config.soundVolume ?? 0.6) * 100)}%</span>
+                    <button onClick={() => playPack(soundPack, "answer", config.soundVolume ?? 0.6)} className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-sm">{t.set_sound_test}</button>
+                  </div>
+                )
+              ) : <p className="text-xs text-gray-500">{t.set_sounds_none}</p>}
+            </div>
 
             {/* The theme's celebration when the final standings appear */}
             <div className="flex items-center justify-between bg-black/20 p-4 rounded-xl border border-white/5">

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useSound } from "../quiz/sounds";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, X, Edit3, Hash, Clock, ListOrdered, Maximize2, Minimize2 } from "lucide-react";
 import { useStageSize } from "../hooks/useDisplay";
@@ -114,6 +115,21 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     );
 
     const question = qIndex >= 0 ? processedQuestions[qIndex] : null;
+
+    // The theme's sounds: the round's title card, and each answer as it is revealed (stepping forward
+    // only, so a window that joins mid-round stays quiet); only one window plays (quiz/sounds.js)
+    const playSound = useSound();
+    const heardRef = useRef(null);
+    useEffect(() => {
+        if (isPreview) return;
+        const key = `${qIndex}:${step}`;
+        const before = heardRef.current;
+        heardRef.current = key;
+        if (before === key) return;
+        if (qIndex === -1 && before === null) playSound("round");
+        const revealAt = question && (question.type === "PImage" || question.type === "PVideo") ? 3 : 2;
+        if (before !== null && question && !isQuestionsOnly && step === revealAt) playSound("answer");
+    }, [qIndex, step, question, isPreview, isQuestionsOnly, playSound]);
     const hasImage = Boolean(question?.source) && !question.type.includes("Video") && question.type !== "Audio";
     // A handout's reveal swaps in the answer picture, which is then the one to enlarge
     const isHandout = question?.type === "Handout";

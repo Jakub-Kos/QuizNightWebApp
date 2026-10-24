@@ -9,6 +9,7 @@ import { fmt } from "../quiz/files";
 import { SceneBackdrop } from "./Theme";
 import Celebration from "./Celebration";
 import { useTheme } from "../quiz/themes";
+import { useSound } from "../quiz/sounds";
 
 // The scores the reveal works on, without the poll time, so equal scores compare equal
 const toSnapshot = (scores) => ({ teams: scores?.teams || [], rounds: scores?.rounds || [] });
@@ -185,6 +186,19 @@ export default function Leaderboard({ isPresenter, data, availableRounds, lastSy
       else if (stepState < maxStep) setCelebrating(false);
   }
   const endCelebration = useCallback(() => setCelebrating(false), []);
+
+  // The theme's sounds: a group card, and the final standings (stepping forward only); only one
+  // window plays (quiz/sounds.js)
+  const playSound = useSound();
+  const heardStepRef = useRef(stepState);
+  useEffect(() => {
+      if (isPreview) return;
+      const before = heardStepRef.current;
+      heardStepRef.current = stepState;
+      if (stepState <= before || frozenData.length === 0) return;
+      if (stepState === maxStep) playSound("winner");
+      else if (stepState % 2 === 1) playSound("reveal");
+  }, [stepState, maxStep, isPreview, playSound, frozenData.length]);
   const maxPointsThisRound = scoreGroups.length > 0 ? scoreGroups[scoreGroups.length - 1].points : 0;
 
   useEffect(() => {
