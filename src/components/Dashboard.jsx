@@ -5,11 +5,15 @@ import { isRoundHidden } from "../quiz/parse";
 import { useQuiz } from "../quiz/context";
 import { useCompletedRounds } from "../hooks/useCompletedRounds";
 import { SceneBackdrop } from "./Theme";
+import { TilesView, TimelineView } from "./DashboardLayouts";
+import { useTheme } from "../quiz/themes";
 
 export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, onOpenPause, t }) { // ADDED onOpenPause
   const [hoveredRound, setHoveredRound] = useState(null);
 
   const { quiz } = useQuiz();
+  // The theme's layout for the rounds: columns that open on hover, tiles, or a timeline
+  const layout = useTheme().scenes?.dashboard?.layout || "columns";
   const [completedRounds, setCompletedRounds] = useCompletedRounds(quiz.id);
 
   const toggleCompleted = (e, roundId) => {
@@ -107,6 +111,10 @@ export default function Dashboard({ rounds, onSelectRound, onOpenLeaderboard, on
             <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-4">
                 <p className="font-mono tracking-widest uppercase">{t.ed_no_questions}</p>
             </div>
+          ) : layout === "tiles" ? (
+            <TilesView rounds={visibleRounds} completed={completedRounds} onToggle={toggleCompleted} onSelectRound={onSelectRound} t={t} />
+          ) : layout === "timeline" ? (
+            <TimelineView rounds={visibleRounds} completed={completedRounds} onToggle={toggleCompleted} onSelectRound={onSelectRound} t={t} />
           ) : (
             <div className="flex w-full max-w-[1600px] h-[70cqh] gap-4" onMouseLeave={() => setHoveredRound(null)}>
                 {visibleRounds.map((round, index) => {

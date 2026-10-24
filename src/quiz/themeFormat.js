@@ -23,7 +23,10 @@
 //   },
 //   "celebration": { "type": "confetti" | "fireworks" | "decoration" | null },   when the final standings appear
 //   "sounds": { "pack": "chimes" | "spooky" | "festive" | "arcade" | null },     sounds the app makes itself
-//   "scenes": { "leaderboard": { "layout": "table" | "podium" | "race" } }      per-scene looks
+//   "scenes": {                                  per-scene looks
+//     "leaderboard": { "layout": "table" | "podium" | "race" | "spotlight" | "medals" },
+//     "dashboard": { "layout": "columns" | "tiles" | "timeline" }
+//   }
 // }
 // Missing colours keep the Classic ones; files are paths inside the theme pack (themePack.js).
 
@@ -47,7 +50,8 @@ export const STYLE_OPTIONS = {
 };
 export const CELEBRATIONS = ["confetti", "fireworks", "decoration"];
 export const SOUND_PACKS = ["chimes", "spooky", "festive", "arcade"];
-export const LEADERBOARD_LAYOUTS = ["table", "podium", "race"];
+export const LEADERBOARD_LAYOUTS = ["table", "podium", "race", "spotlight", "medals"];
+export const DASHBOARD_LAYOUTS = ["columns", "tiles", "timeline"];
 export const COLOR_KEYS = ["primary", "accent", "groundTop", "ground", "groundBottom", "panel"];
 export const LANGS = ["en", "cs", "sk"];
 
@@ -184,6 +188,8 @@ export function normalizeTheme(raw, { assets = [], stored = false } = {}) {
   theme.sounds.pack = pick(isObject(raw.sounds) ? raw.sounds.pack : null, SOUND_PACKS, "sounds") ?? null;
   const layout = pick(isObject(raw.scenes) && isObject(raw.scenes.leaderboard) ? raw.scenes.leaderboard.layout : null, LEADERBOARD_LAYOUTS, "layout");
   if (layout) theme.scenes.leaderboard = { layout };
+  const board = pick(isObject(raw.scenes) && isObject(raw.scenes.dashboard) ? raw.scenes.dashboard.layout : null, DASHBOARD_LAYOUTS, "layout");
+  if (board) theme.scenes.dashboard = { layout: board };
 
   if (!stored) for (const a of assets) if (!used.has(a.name)) problem("unused_file", a.name);
   return { theme, problems };

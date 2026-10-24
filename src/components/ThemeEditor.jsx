@@ -11,7 +11,7 @@ import { previewStep } from "../quiz/validate";
 import { fmt } from "../quiz/files";
 import { downloadBlob } from "../quiz/package";
 import { themeForQuiz, themeName, THEMES, CUSTOM_THEME_ID } from "../quiz/themes";
-import { normalizeTheme, readabilityIssues, FONT_GROUPS, STYLE_OPTIONS, CELEBRATIONS, LEADERBOARD_LAYOUTS, SOUND_PACKS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
+import { normalizeTheme, readabilityIssues, FONT_GROUPS, STYLE_OPTIONS, CELEBRATIONS, LEADERBOARD_LAYOUTS, DASHBOARD_LAYOUTS, SOUND_PACKS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
 import { exportThemePack, themePackName } from "../quiz/themePack";
 import { storeThemeFile, pruneThemeFiles, saveToLibrary, FileError } from "../quiz/themeStore";
 import { driveErrorText } from "../quiz/drive";
@@ -277,6 +277,11 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
                     return { ...d, style: v === options[0] ? style : { ...style, [key]: v } };
                   })} />
               ))}
+            </Panel>
+
+            <Panel title={t.te_s_dashboard}>
+              <Choice label={t.te_lb_layout} value={draft.scenes.dashboard?.layout ?? "columns"} options={DASHBOARD_LAYOUTS} name={(o) => t[`te_db_${o}`]}
+                onChange={(v) => { setScene("dashboard"); change((d) => ({ ...d, scenes: { ...d.scenes, dashboard: { layout: v } } })); }} />
             </Panel>
 
             <Panel title={t.te_leaderboard}>

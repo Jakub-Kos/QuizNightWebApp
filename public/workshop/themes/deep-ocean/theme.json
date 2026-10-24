@@ -60,7 +60,10 @@
   },
   "scenes": {
     "leaderboard": {
-      "layout": "podium"
+      "layout": "spotlight"
+    },
+    "dashboard": {
+      "layout": "tiles"
     }
   },
   "style": {
