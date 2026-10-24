@@ -64,14 +64,20 @@
         "decoration": {
           "type": "bubbles"
         },
-        "style": {},
+        "style": {
+          "cards": "glass"
+        },
         "celebration": {
-          "type": null
+          "type": "decoration"
         },
         "sounds": {
-          "pack": null
+          "pack": "chimes"
         },
-        "scenes": {}
+        "scenes": {
+          "leaderboard": {
+            "layout": "podium"
+          }
+        }
       }
     },
     {
@@ -144,14 +150,21 @@
         "decoration": {
           "type": "stars"
         },
-        "style": {},
+        "style": {
+          "corners": "sharp",
+          "effects": "neon"
+        },
         "celebration": {
-          "type": null
+          "type": "fireworks"
         },
         "sounds": {
-          "pack": null
+          "pack": "arcade"
         },
-        "scenes": {}
+        "scenes": {
+          "leaderboard": {
+            "layout": "race"
+          }
+        }
       }
     },
     {
@@ -217,14 +230,21 @@
         "decoration": {
           "type": "petals"
         },
-        "style": {},
+        "style": {
+          "corners": "round",
+          "headings": "plain"
+        },
         "celebration": {
-          "type": null
+          "type": "confetti"
         },
         "sounds": {
-          "pack": null
+          "pack": "chimes"
         },
-        "scenes": {}
+        "scenes": {
+          "leaderboard": {
+            "layout": "podium"
+          }
+        }
       }
     }
   ]

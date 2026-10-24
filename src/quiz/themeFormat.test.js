@@ -173,3 +173,25 @@ describe("the workshop", () => {
     }
   });
 });
+
+describe("theme upgrades", () => {
+  it("keeps known style, celebration, sounds and layout values and drops unknown ones", () => {
+    const { theme, problems } = normalizeTheme(base({
+      style: { corners: "sharp", cards: "wood", headings: "plain", effects: "neon", extra: "x" },
+      celebration: { type: "fireworks" },
+      sounds: { pack: "dubstep" },
+      scenes: { leaderboard: { layout: "podium" }, question: { layout: "fancy" } },
+    }));
+    expect(theme.style).toEqual({ corners: "sharp", headings: "plain", effects: "neon" });
+    expect(theme.celebration).toEqual({ type: "fireworks" });
+    expect(theme.sounds).toEqual({ pack: null });
+    expect(theme.scenes).toEqual({ leaderboard: { layout: "podium" } });
+    expect(problems).toEqual(expect.arrayContaining([{ code: "style", detail: "wood" }, { code: "sounds", detail: "dubstep" }]));
+  });
+
+  it("gives a theme from an older version the new fields with nothing chosen", () => {
+    const { theme, problems } = normalizeTheme(base({}));
+    expect(problems).toEqual([]);
+    expect(theme).toMatchObject({ style: {}, celebration: { type: null }, sounds: { pack: null }, scenes: {} });
+  });
+});

@@ -58,5 +58,19 @@
   "decoration": {
     "type": "petals"
   },
-  "scenes": {}
+  "scenes": {
+    "leaderboard": {
+      "layout": "podium"
+    }
+  },
+  "style": {
+    "corners": "round",
+    "headings": "plain"
+  },
+  "celebration": {
+    "type": "confetti"
+  },
+  "sounds": {
+    "pack": "chimes"
+  }
 }

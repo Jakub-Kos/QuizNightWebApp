@@ -65,5 +65,19 @@
   "decoration": {
     "type": "stars"
   },
-  "scenes": {}
+  "scenes": {
+    "leaderboard": {
+      "layout": "race"
+    }
+  },
+  "style": {
+    "corners": "sharp",
+    "effects": "neon"
+  },
+  "celebration": {
+    "type": "fireworks"
+  },
+  "sounds": {
+    "pack": "arcade"
+  }
 }
