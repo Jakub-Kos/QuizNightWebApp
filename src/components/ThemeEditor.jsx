@@ -11,7 +11,7 @@ import { previewStep } from "../quiz/validate";
 import { fmt } from "../quiz/files";
 import { downloadBlob } from "../quiz/package";
 import { themeForQuiz, themeName, THEMES, CUSTOM_THEME_ID } from "../quiz/themes";
-import { normalizeTheme, readabilityIssues, FONT_GROUPS, STYLE_OPTIONS, CELEBRATIONS, LEADERBOARD_LAYOUTS, DASHBOARD_LAYOUTS, SOUND_PACKS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
+import { normalizeTheme, readabilityIssues, FONT_GROUPS, STYLE_OPTIONS, CELEBRATIONS, LEADERBOARD_LAYOUTS, DASHBOARD_LAYOUTS, ROUND_LAYOUTS, WELCOME_INTROS, SOUND_PACKS, ORNAMENTS, DECORATIONS, COLOR_KEYS, LANGS, LIMITS, slug } from "../quiz/themeFormat";
 import { exportThemePack, themePackName } from "../quiz/themePack";
 import { storeThemeFile, pruneThemeFiles, saveToLibrary, FileError } from "../quiz/themeStore";
 import { driveErrorText } from "../quiz/drive";
@@ -96,6 +96,8 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
   const [libraryId, setLibraryId] = useState(null);
   const [sharing, setSharing] = useState(false);
   const [celebrating, setCelebrating] = useState(0); // >0 while the celebration plays in the preview
+  const [wallPreview, setWallPreview] = useState(false); // the welcome preview shows the team wall (its intros)
+  const [replay, setReplay] = useState(0); // remounts the round title preview so its entrance plays again
   const stopCelebrating = useCallback(() => setCelebrating(0), []);
   const changed = useRef(false);
 
@@ -125,7 +127,8 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
   const byKey = useMemo(() => new Map(media.map((m) => [mediaKey(m.name), m])), [media]);
   const resolveMedia = useMemo(() => (name) => (name ? byKey.get(mediaKey(name))?.url ?? null : null), [byKey]);
   const rounds = useMemo(() => parseQuestionsCsv(quiz.questionsCsv), [quiz.questionsCsv]);
-  const teams = useMemo(() => resolveTeams(quiz.teams, resolveMedia), [quiz.teams, resolveMedia]);
+  // A quiz without teams yet previews the welcome screen with the demo's
+  const teams = useMemo(() => resolveTeams(quiz.teams?.some((team) => team.name) ? quiz.teams : DEMO_TEAMS, resolveMedia), [quiz.teams, resolveMedia]);
   const context = useMemo(() => ({ quiz, rounds, teams, resolveMedia }), [quiz, rounds, teams, resolveMedia]);
   const liveScores = useScores(quiz, rounds, showT.round);
   // Without points yet, the leaderboard and half-time screens get sample points, so they can be judged
@@ -164,11 +167,12 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
   const rules = rulesFor(quiz, showT);
   const prizes = prizesFor(quiz);
   const screens = [
-    ["welcome", t.mp_welcome, <WelcomeScreen onStart={noop} startTime={quiz.settings.startTime} showTime={quiz.settings.showTime} config={quiz.settings} t={showT} />],
+    ["welcome", t.mp_welcome, <WelcomeScreen key={wallPreview ? "wall" : "quiz"} onStart={noop} startTime={quiz.settings.startTime} showTime={quiz.settings.showTime}
+      config={wallPreview ? { ...quiz.settings, welcomeLayout: "wall", introPause: 1200 } : quiz.settings} t={showT} />],
     rules && ["rules", t.mp_rules, <RulesScreen rules={rules} onNext={noop} t={showT} />],
     prizes && ["prizes", t.mp_prizes, <PrizesScreen prizes={prizes} onNext={noop} t={showT} />],
     ["dashboard", t.te_s_dashboard, <Dashboard rounds={rounds} onSelectRound={noop} onOpenLeaderboard={noop} onOpenPause={noop} t={showT} />],
-    firstRound && ["round", t.te_s_round, <QuestionScreen roundData={firstRound} mode="with_answers" onBack={noop} isPresenter={false} t={showT} preview={{ qIndex: -1, step: 0 }} />],
+    firstRound && ["round", t.te_s_round, <QuestionScreen key={replay} roundData={firstRound} mode="with_answers" onBack={noop} isPresenter={false} t={showT} preview={{ qIndex: -1, step: 0 }} />],
     firstRound && ["question", t.te_s_question, <QuestionScreen roundData={firstRound} mode="with_answers" onBack={noop} isPresenter={false} t={showT} preview={{ qIndex: 0, step: previewStep(firstRound.questions[0].type, "question") }} />],
     firstRound && ["answer", t.te_s_answer, <QuestionScreen roundData={firstRound} mode="with_answers" onBack={noop} isPresenter={false} t={showT} preview={{ qIndex: 0, step: previewStep(firstRound.questions[0].type, "answer") }} />],
     ["leaderboard", t.te_s_leaderboard, <Leaderboard data={scores.teams} availableRounds={scores.rounds} onClose={noop} isPresenter={false} t={showT} preview={{ step: 99 }} />],
@@ -277,6 +281,17 @@ function Editor({ quiz, media, reloadMedia, fresh, t }) {
                     return { ...d, style: v === options[0] ? style : { ...style, [key]: v } };
                   })} />
               ))}
+            </Panel>
+
+            <Panel title={t.te_s_welcome}>
+              <Choice label={t.te_wl_intro} value={draft.scenes.welcome?.intro ?? "flip"} options={WELCOME_INTROS} name={(o) => t[`te_wl_${o}`]}
+                onChange={(v) => { setScene("welcome"); setWallPreview(true); change((d) => ({ ...d, scenes: { ...d.scenes, welcome: { intro: v } } })); }} />
+              <p className="text-xs text-gray-500">{t.te_wl_help}</p>
+            </Panel>
+
+            <Panel title={t.te_s_round}>
+              <Choice label={t.te_rd_layout} value={draft.scenes.round?.layout ?? "classic"} options={ROUND_LAYOUTS} name={(o) => t[`te_rd_${o}`]}
+                onChange={(v) => { setScene("round"); setReplay((n) => n + 1); change((d) => ({ ...d, scenes: { ...d.scenes, round: { layout: v } } })); }} />
             </Panel>
 
             <Panel title={t.te_s_dashboard}>

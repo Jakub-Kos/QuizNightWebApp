@@ -4,6 +4,7 @@ import { User, Users } from "lucide-react";
 import { fmt } from "../quiz/files";
 import { teamHex } from "../quiz/model";
 import TeamAvatar from "./TeamAvatar";
+import WallIntro, { FULL_SCREEN } from "./WallIntros";
 
 // Welcome screen for teams known only by name and number of players: every team at once in a grid
 // sized to the screen. The tiles float over a drifting colour aurora with a passing shimmer, and every
@@ -64,7 +65,7 @@ export default function TeamWall({ teams, introMs = 4700, pauseMs = 2600, t }) {
 
         <Shimmer />
         <AnimatePresence onExitComplete={onIntroGone}>
-          {featured !== null && teams[featured] && <IntroCard key={teams[featured].id} team={teams[featured]} t={t} />}
+          {featured !== null && teams[featured] && <WallIntro key={teams[featured].id} team={teams[featured]} t={t} />}
         </AnimatePresence>
       </div>
     </div>
@@ -122,10 +123,6 @@ function Tile({ team, size, font }) {
   );
 }
 
-// Layers below reach far past the wall in every direction: the welcome screen clips them at the
-// screen edge, so they never show the outline of the wall's box.
-const FULL_SCREEN = "absolute -inset-x-[45%] -inset-y-[70%] pointer-events-none";
-
 const AURORA_PATHS = [
   { x: ["10%", "40%", "25%", "10%"], y: ["15%", "35%", "55%", "15%"] },
   { x: ["55%", "30%", "60%", "55%"], y: ["45%", "20%", "30%", "45%"] },
@@ -156,37 +153,5 @@ function Shimmer() {
         initial={{ left: "-15%" }} animate={{ left: "105%" }}
         transition={{ duration: 5.6, repeat: Infinity, repeatDelay: 5, ease: "linear", delay: 2 }} />
     </div>
-  );
-}
-
-// The featured team, flipped forward over the darkened screen
-function IntroCard({ team, t }) {
-  const nameLength = Math.max(6, Math.min(Array.from(team.name).length, 18));
-  return (
-    <>
-      <motion.div className={`${FULL_SCREEN} bg-black/55 z-20`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} />
-      <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none" style={{ perspective: "2000px" }}>
-        <motion.div
-          initial={{ rotateY: -95, scale: 0.55, opacity: 0 }}
-          animate={{ rotateY: 0, scale: 1, opacity: 1 }}
-          exit={{ rotateY: 95, scale: 0.55, opacity: 0 }}
-          transition={{ type: "spring", bounce: 0.25, duration: 0.9 }}
-          className={`w-[58%] h-[86%] rounded-[3rem] bg-gradient-to-br ${team.color} p-3 shadow-[0_0_120px_rgba(0,0,0,0.7)]`}
-        >
-          <div className="w-full h-full rounded-[2.5rem] bg-black/80 backdrop-blur-md flex items-center gap-12 px-14 relative overflow-hidden" style={{ containerType: "size" }}>
-            <TeamAvatar team={team} className="w-[min(34cqw,80cqh)] h-[min(34cqw,80cqh)] rounded-[2rem] border border-white/20 shadow-2xl" textClass="text-[min(12cqw,28cqh)]" />
-            <div className="flex-1 min-w-0 flex flex-col gap-6">
-              <h2 className="font-black text-white leading-[1.05] break-words" style={{ fontSize: `min(6rem, ${(110 / nameLength).toFixed(1)}cqw)` }}>{team.name}</h2>
-              {team.quote && <p className="text-4xl text-white/60 italic leading-snug line-clamp-3">"{team.quote}"</p>}
-              {team.players > 0 && (
-                <span className="self-start px-6 py-3 bg-white/10 rounded-full flex items-center gap-3 text-4xl font-bold uppercase tracking-wider border border-white/10">
-                  <Users size={44} /> {team.players} {t.players}
-                </span>
-              )}
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </>
   );
 }

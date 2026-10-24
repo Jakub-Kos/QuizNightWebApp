@@ -7,6 +7,7 @@ import { useQuiz } from "../quiz/context";
 import { fmt } from "../quiz/files";
 import { sortLayout } from "../quiz/sort";
 import SortItems from "./SortItems";
+import RoundIntro from "./RoundIntro";
 import { SceneBackdrop } from "./Theme";
 
 // A top list of more than five answers is split into two columns, of more than ten into three, filled
@@ -374,25 +375,8 @@ export default function QuestionScreen({ roundData, mode, onBack, isPresenter, t
     // Update options check to include our custom Top5 render
     const showOptions = showQuestion && (question?.type === "ABCD" || question?.type === "Yes/No" || question?.type === "Sort" || question?.type === "Top5");
 
-    // 1. ROUND INTRO
-    if (qIndex === -1) {
-        const displayTitle = `${t.round} ${roundData.number}`;
-        // parse.js already took "Round N -" off the title, so hyphens left are part of it
-        const themeName = roundData.title;
-
-        return (
-            <div onClick={next} className="h-full w-full bg-ground flex flex-col items-center justify-center font-show cursor-pointer relative overflow-hidden">
-                <SceneBackdrop />
-                <motion.div initial={{opacity:0, scale: 0.9}} animate={{opacity:1, scale: 1}} className="text-center z-10 flex flex-col items-center max-w-6xl px-8">
-                    <h2 className="text-primary-500 font-bold tracking-[0.5em] text-4xl mb-6 uppercase drop-shadow-lg">{displayTitle}</h2>
-                    <div className="h-2 w-40 bg-primary-500 mx-auto mb-12 rounded-full shadow-[0_0_20px_rgb(var(--glow-primary)/0.8)]" />
-                    <h1 className="font-title text-[120px] font-black text-white uppercase tracking-tight drop-shadow-2xl leading-none text-center">
-                        {themeName}
-                    </h1>
-                </motion.div>
-            </div>
-        );
-    }
+    // 1. ROUND INTRO (parse.js already took "Round N -" off the title, so hyphens left are part of it)
+    if (qIndex === -1) return <RoundIntro label={`${t.round} ${roundData.number}`} title={roundData.title} onClick={next} />;
 
     return (
         <div className="h-full w-full bg-ground relative overflow-hidden flex flex-col font-show">

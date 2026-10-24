@@ -25,7 +25,9 @@
 //   "sounds": { "pack": "chimes" | "spooky" | "festive" | "arcade" | null },     sounds the app makes itself
 //   "scenes": {                                  per-scene looks
 //     "leaderboard": { "layout": "table" | "podium" | "race" | "spotlight" | "medals" },
-//     "dashboard": { "layout": "columns" | "tiles" | "timeline" }
+//     "dashboard": { "layout": "columns" | "tiles" | "timeline" },
+//     "round": { "layout": "classic" | "curtain" | "slam" | "marquee" },        a round's title card
+//     "welcome": { "intro": "flip" | "broadcast" | "spotlight" | "polaroid" }  the team wall's intros
 //   }
 // }
 // Missing colours keep the Classic ones; files are paths inside the theme pack (themePack.js).
@@ -52,6 +54,8 @@ export const CELEBRATIONS = ["confetti", "fireworks", "decoration"];
 export const SOUND_PACKS = ["chimes", "spooky", "festive", "arcade"];
 export const LEADERBOARD_LAYOUTS = ["table", "podium", "race", "spotlight", "medals"];
 export const DASHBOARD_LAYOUTS = ["columns", "tiles", "timeline"];
+export const ROUND_LAYOUTS = ["classic", "curtain", "slam", "marquee"];
+export const WELCOME_INTROS = ["flip", "broadcast", "spotlight", "polaroid"];
 export const COLOR_KEYS = ["primary", "accent", "groundTop", "ground", "groundBottom", "panel"];
 export const LANGS = ["en", "cs", "sk"];
 
@@ -190,6 +194,10 @@ export function normalizeTheme(raw, { assets = [], stored = false } = {}) {
   if (layout) theme.scenes.leaderboard = { layout };
   const board = pick(isObject(raw.scenes) && isObject(raw.scenes.dashboard) ? raw.scenes.dashboard.layout : null, DASHBOARD_LAYOUTS, "layout");
   if (board) theme.scenes.dashboard = { layout: board };
+  const title = pick(isObject(raw.scenes) && isObject(raw.scenes.round) ? raw.scenes.round.layout : null, ROUND_LAYOUTS, "layout");
+  if (title) theme.scenes.round = { layout: title };
+  const intro = pick(isObject(raw.scenes) && isObject(raw.scenes.welcome) ? raw.scenes.welcome.intro : null, WELCOME_INTROS, "layout");
+  if (intro) theme.scenes.welcome = { intro };
 
   if (!stored) for (const a of assets) if (!used.has(a.name)) problem("unused_file", a.name);
   return { theme, problems };

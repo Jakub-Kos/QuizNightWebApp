@@ -186,8 +186,11 @@ describe("theme upgrades", () => {
     expect(theme.celebration).toEqual({ type: "fireworks" });
     expect(theme.sounds).toEqual({ pack: null });
     expect(theme.scenes).toEqual({ leaderboard: { layout: "podium" } });
-    const more = normalizeTheme(base({ scenes: { leaderboard: { layout: "medals" }, dashboard: { layout: "timeline" } } })).theme;
-    expect(more.scenes).toEqual({ leaderboard: { layout: "medals" }, dashboard: { layout: "timeline" } });
+    const more = normalizeTheme(base({ scenes: { leaderboard: { layout: "medals" }, dashboard: { layout: "timeline" }, round: { layout: "curtain" }, welcome: { intro: "polaroid" } } })).theme;
+    expect(more.scenes).toEqual({ leaderboard: { layout: "medals" }, dashboard: { layout: "timeline" }, round: { layout: "curtain" }, welcome: { intro: "polaroid" } });
+    const bad = normalizeTheme(base({ scenes: { round: { layout: "explode" }, welcome: { intro: 3 } } }));
+    expect(bad.theme.scenes).toEqual({});
+    expect(bad.problems.map((p) => p.code)).toEqual(["layout", "layout"]);
     expect(problems).toEqual(expect.arrayContaining([{ code: "style", detail: "wood" }, { code: "sounds", detail: "dubstep" }]));
   });
 

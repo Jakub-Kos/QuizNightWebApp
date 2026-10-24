@@ -64,6 +64,12 @@
     },
     "dashboard": {
       "layout": "tiles"
+    },
+    "round": {
+      "layout": "curtain"
+    },
+    "welcome": {
+      "intro": "spotlight"
     }
   },
   "style": {
