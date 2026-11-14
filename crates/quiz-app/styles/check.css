@@ -1,0 +1,13 @@
+/* check */
+.check-thumbnail { box-shadow: 0 0 0 1px rgb(255 255 255 / .1); }
+.check-thumbnail.check-warning { box-shadow: 0 0 0 2px #eab308; }
+.check-thumbnail.check-error { box-shadow: 0 0 0 2px #ef4444; }
+.check-modal { max-width: min(1600px, calc((100dvh - 220px) * 16 / 9)); max-height: calc(100dvh - 32px); overflow-y: auto; }
+.map-trunk { border-left: 1px solid rgb(255 255 255 / .15); }
+.map-branch > h3 { border-top: 1px solid rgb(255 255 255 / .15); padding-top: 12px; }
+.check-page header, .map-page header { top: env(safe-area-inset-top, 0px); }
+
+.check-badge { background: #eab308; color: #000; }
+.check-error .check-badge { background: #dc2626; color: #fff; }
+.check-thumbnail:hover, .group:focus-visible .check-thumbnail { outline: 2px solid rgb(255 255 255 / .6); }
+.map-page .check-modal { max-width: min(1600px, calc((100dvh - 140px) * 16 / 9)); }

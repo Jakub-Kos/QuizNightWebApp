@@ -1,7 +1,7 @@
 # Checks a theme submitted to the workshop (an issue labelled "theme", from the Share a theme form) and
 # comments the result: whether it passes the same check as the app, what it contains, and the command
 # to add it. The comment is updated when the issue is edited, for example after a new file is attached.
-# Nothing from the submission is run: the .zip is only unpacked and read (scripts/workshop.mjs check).
+# Nothing from the submission is run: the .zip is only unpacked and read (quiz-cli check).
 name: Check theme submission
 
 on:
@@ -24,19 +24,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Set up Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --omit=dev --ignore-scripts
-
       - name: Check the attached theme
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
-        run: node scripts/workshop.mjs check --from-issue > report.md
+        run: cargo run -q --locked -p quiz-cli -- check --from-issue > report.md
 
       - name: Comment the result
         env:

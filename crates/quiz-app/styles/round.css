@@ -1,0 +1,39 @@
+/* RoundIntro.jsx. Springs come from round_intro.rs; all lengths use the scaled stage. */
+@keyframes round-classic { from { transform: scale(.9); } }
+@keyframes round-curtain { from { transform: scaleX(1); } to { transform: scaleX(.16); } }
+@keyframes round-light { from { opacity: 0; } to { opacity: 1; } }
+@keyframes round-title { from { opacity: 0; transform: translateY(30px) scale(.92); } to { opacity: 1; transform: none; } }
+@keyframes round-shake { 0%,100% { transform: none; } 20% { transform: translate(-24px,14px); } 40% { transform: translate(20px,-10px); } 60% { transform: translate(-12px,6px); } 80% { transform: translate(8px,-3px); } }
+@keyframes round-hollow { from { opacity: 0; transform: scale(1.4); } }
+@keyframes round-ring { from { opacity: .9; transform: scale(.3); } to { opacity: 0; transform: scale(var(--ring-scale)); } }
+@keyframes round-streak { 0% { opacity: 0; transform: rotate(var(--angle)) translateX(4cqw) scaleX(0); } 50% { opacity: 1; transform: rotate(var(--angle)) translateX(8cqw) scaleX(1); } 100% { opacity: 0; transform: rotate(var(--angle)) translateX(22cqw) scaleX(1); } }
+@keyframes round-flash { 0%,100% { opacity: 0; } 50% { opacity: .5; } }
+@keyframes round-label { from { opacity: 0; transform: translateY(-40px) skewX(-12deg); } to { opacity: 1; transform: skewX(-12deg); } }
+@keyframes round-slam { from { opacity: 0; transform: scale(3.5) rotate(-6deg); } to { opacity: 1; transform: rotate(-2deg); } }
+@keyframes round-marquee { from { opacity: 0; transform: translateY(-60px); } to { opacity: 1; transform: none; } }
+@keyframes round-bulb { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+@keyframes round-sign { 0% { opacity: 0; letter-spacing: .4em; } 33% { opacity: 1; } 67% { opacity: .4; } 100% { opacity: 1; letter-spacing: .02em; } }
+.round-classic { animation: round-classic var(--round-scale-time) var(--round-scale) both, round-light .3s cubic-bezier(.25,.1,.35,1) both; }
+.round-cloth { background-color: var(--color-primary-800); background-image: repeating-linear-gradient(90deg,rgba(0,0,0,.45) 0,rgba(255,255,255,.08) 3.5%,rgba(0,0,0,.45) 7%); }
+.round-curtain-left, .round-curtain-right { animation: round-curtain 1.6s .35s cubic-bezier(.65,0,.35,1) both; }
+.round-curtain-left { transform-origin: left; } .round-curtain-right { transform-origin: right; }
+.round-valance { background-color: var(--color-primary-900); }
+.round-scallop { background-image: radial-gradient(circle at 50% 0,var(--color-primary-900) 3cqh,transparent calc(3cqh + 1px)); background-size: 6cqh 3cqh; }
+.round-light { background: radial-gradient(ellipse 45% 60% at 50% 45%,rgb(var(--glow-accent)/.22),transparent 70%); animation: round-light 1.2s .8s both; }
+.round-curtain-title { animation: round-title .9s 1.1s var(--round-curtain) both; }
+.round-shake { animation: round-shake .5s .45s; }
+.round-hollow { -webkit-text-stroke: .4cqh rgb(var(--glow-primary)/.25); animation: round-hollow .6s both; }
+.round-ring { width: 30cqh; height: 30cqh; border-width: .8cqh; opacity: 0; animation: round-ring 1.1s calc(.45s + var(--i)*.12s) ease-out; }
+.round-streak { left: 50%; top: 50%; opacity: 0; animation: round-streak .7s .45s ease-out; }
+.round-flash { opacity: 0; animation: round-flash .35s .45s; }
+.round-slam-label { animation: round-label .8s .7s var(--round-label) both; }
+.round-slam-title { animation: round-slam .45s cubic-bezier(.5,0,.9,.4) both; }
+.round-marquee { animation: round-marquee 1s var(--round-marquee) both; }
+.round-bulb { box-shadow: 0 0 1.4cqh .4cqh rgb(var(--glow-accent)/.9); animation: round-bulb .9s calc(var(--i)*.3s) infinite; }
+.round-sign { animation: round-sign 1.2s .5s both; }
+@media (prefers-reduced-motion: reduce) {
+  .round-intro *, .round-intro *::before, .round-intro *::after { animation: none !important; }
+  .round-curtain-left, .round-curtain-right { transform: scaleX(.16); }
+  .round-ring, .round-streak, .round-flash { display: none; }
+  .round-slam-title { transform: rotate(-2deg); }
+}

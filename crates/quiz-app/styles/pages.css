@@ -1,0 +1,4 @@
+/* pages */
+@keyframes library-enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.library-enter { animation: library-enter .3s ease-out; }
+@media (prefers-reduced-motion: reduce) { .library-enter { animation: none; } }

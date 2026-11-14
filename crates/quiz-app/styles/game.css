@@ -1,0 +1,104 @@
+/* The question screen (src/scenes/game.rs, sort_items.rs): QuestionScreen.jsx's and SortItems.jsx's
+   Framer Motion animations. game.rs sets the springs as custom properties on the screen:
+   --spring-move (Framer's default for x and y: stiffness 500, damping 25), --spring-scale (its
+   default for scale: 550, 30), --spring-number ({ duration: .8, bounce: .2 }), --spring-answer
+   ({ bounce: .4 }), each with a --spring-…-time duration. Opacity without a transition is Framer's
+   default tween: .3s cubic-bezier(.25, .1, .35, 1). */
+
+@keyframes game-fade-in { from { opacity: 0; } }
+@keyframes game-fade-out { to { opacity: 0; } }
+/* Transform from --from to none, on its own spring */
+@keyframes game-from { from { transform: var(--from); } }
+@keyframes game-to { to { transform: var(--to); } }
+
+/* RoundIntro classic: opacity 0 → 1, scale .9 → 1 */
+.game-intro {
+  --from: scale(.9);
+  animation: game-fade-in .3s cubic-bezier(.25, .1, .35, 1) both,
+    game-from var(--spring-scale-time) var(--spring-scale) both;
+}
+
+/* Big number: { scale: 1, y: 30% of the stage } on step 0, else { scale: .4, y: 0 };
+   initial={false}, so only changes animate */
+.game-number {
+  transform: translateY(0) scale(.4);
+  transition: transform var(--spring-number-time) var(--spring-number);
+}
+.game-number-big { transform: translateY(30cqh) scale(1); }
+
+/* PImage / PVideo before the question: in opacity 0 → 1, scale .95 → 1; out to opacity 0, scale 1.05 */
+.game-pre-enter {
+  --from: scale(.95);
+  animation: game-fade-in .3s cubic-bezier(.25, .1, .35, 1) both,
+    game-from var(--spring-scale-time) var(--spring-scale) both;
+}
+.game-pre-exit {
+  --to: scale(1.05);
+  animation: game-fade-out .3s cubic-bezier(.25, .1, .35, 1) both,
+    game-to var(--spring-scale-time) var(--spring-scale) both;
+  pointer-events: none;
+}
+
+/* The question: opacity 0 → 1, y 50 → 0 (no exit animation) */
+.game-content {
+  --from: translateY(50px);
+  animation: game-fade-in .3s cubic-bezier(.25, .1, .35, 1) both,
+    game-from var(--spring-move-time) var(--spring-move) both;
+}
+
+/* The answer card: rotateX -90 → 0, opacity 0 → 1, both on the { bounce: .4 } spring */
+.game-answer { animation: game-reveal var(--spring-answer-time) var(--spring-answer) both; }
+@keyframes game-reveal { from { opacity: 0; transform: rotateX(-90deg); } }
+
+/* Handout: the "correct answer" label pops in (opacity 0 → 1, scale .8 → 1) */
+.game-pop {
+  --from: scale(.8);
+  animation: game-fade-in .3s cubic-bezier(.25, .1, .35, 1) both,
+    game-from var(--spring-scale-time) var(--spring-scale) both;
+}
+/* …and the sheet and the answer sheet cross-fade in .6s (Framer's default easeInOut) */
+.game-handout { transition: opacity .6s cubic-bezier(.42, 0, .58, 1); }
+.game-handout-hidden { opacity: 0; pointer-events: none; }
+
+/* Enlarged picture: opacity 0 ↔ 1 in .25s (easeInOut) */
+.game-zoom-enter { animation: game-fade-in .25s cubic-bezier(.42, 0, .58, 1) both; }
+.game-zoom-exit { animation: game-fade-out .25s cubic-bezier(.42, 0, .58, 1) both; pointer-events: none; }
+
+/* Sort items as they mount: one after another from below (y 20 → 0, .06s apart) on the question,
+   from the left (x -30 → 0, .25s apart) when the answer is already up */
+.sort-appear {
+  --from: translateY(20px);
+  animation: game-fade-in .3s cubic-bezier(.25, .1, .35, 1) both,
+    game-from var(--spring-move-time) var(--spring-move) both;
+  animation-delay: calc(var(--i) * .06s);
+}
+.sort-appear-revealed {
+  --from: translateX(-30px);
+  animation-delay: calc(var(--i) * .25s);
+}
+/* The correct order: opacity 0 → 1, y 20 → 0 after all the items (--delay) */
+.sort-answer-in {
+  --from: translateY(20px);
+  animation: game-fade-in .3s cubic-bezier(.25, .1, .35, 1) both,
+    game-from var(--spring-move-time) var(--spring-move) both;
+  animation-delay: var(--delay);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-intro, .game-pre-enter, .game-pre-exit, .game-content, .game-answer, .game-pop,
+  .game-zoom-enter, .game-zoom-exit, .sort-appear, .sort-answer-in { animation: none; }
+  .game-number, .game-handout { transition: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-screen .animate-pulse { animation: none; }
+  .game-screen .transition-all, .game-screen .transition-colors { transition: none; }
+}
+
+/* Each preview owns a TV canvas; container units still refer to the unscaled stage. */
+.question-preview { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #000; }
+.question-preview-canvas { position: absolute; left: 0; top: 0; width: 2400px; height: 1350px; transform-origin: top left; container-type: size; pointer-events: none; }
+.question-preview *, .question-preview *::before, .question-preview *::after { animation: none !important; transition: none !important; }
+.question-preview .round-curtain-left, .question-preview .round-curtain-right { transform: scaleX(.16); }
+.question-preview .round-ring, .question-preview .round-streak, .question-preview .round-flash { display: none; }
+.question-preview .round-slam-title { transform: rotate(-2deg); }

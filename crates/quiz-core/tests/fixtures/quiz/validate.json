@@ -1,0 +1,2185 @@
+[
+  {
+    "quiz": {
+      "teams": [
+        {
+          "name": ""
+        },
+        {
+          "name": "A",
+          "image": "missing.jpg"
+        },
+        {
+          "name": " a "
+        }
+      ],
+      "builtin": false
+    },
+    "rounds": [],
+    "files": [
+      "song.mp3"
+    ],
+    "output": [
+      {
+        "level": "error",
+        "code": "no_rounds",
+        "params": {},
+        "roundIndex": -1,
+        "qIndex": -1
+      },
+      {
+        "level": "info",
+        "code": "no_scores",
+        "params": {},
+        "roundIndex": -1,
+        "qIndex": -1
+      },
+      {
+        "level": "warning",
+        "code": "team_no_name",
+        "params": {},
+        "roundIndex": -1,
+        "qIndex": -1
+      },
+      {
+        "level": "warning",
+        "code": "team_duplicate",
+        "params": {
+          "team": " a "
+        },
+        "roundIndex": -1,
+        "qIndex": -1
+      },
+      {
+        "level": "error",
+        "code": "team_image_missing",
+        "params": {
+          "team": "A",
+          "file": "missing.jpg"
+        },
+        "roundIndex": -1,
+        "qIndex": -1
+      }
+    ]
+  },
+  {
+    "quiz": {
+      "teams": [
+        {
+          "name": ""
+        },
+        {
+          "name": "A",
+          "image": "missing.jpg"
+        },
+        {
+          "name": " a "
+        }
+      ],
+      "builtin": false
+    },
+    "rounds": [
+      {
+        "id": "round-1",
+        "number": "1",
+        "title": "TEST",
+        "rows": [
+          [
+            "Round 1 - TEST",
+            "1",
+            "",
+            "ABCD",
+            "",
+            "",
+            "",
+            "",
+            "X",
+            ""
+          ],
+          [
+            "",
+            "1",
+            "",
+            "Yes/No",
+            "",
+            "",
+            "",
+            "",
+            "maybe",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "",
+            "Numeric",
+            "",
+            "",
+            "",
+            "",
+            "foo",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "",
+            "Handout",
+            "",
+            "",
+            "",
+            "",
+            "song.mp3",
+            ""
+          ],
+          [
+            "",
+            "6",
+            "",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "song.mp3"
+          ],
+          [
+            "",
+            "7",
+            "",
+            "Top3",
+            "",
+            "",
+            "",
+            "",
+            "one",
+            ""
+          ],
+          [
+            "",
+            "8",
+            "",
+            "Sort",
+            "",
+            "",
+            "",
+            "",
+            "item",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "",
+            "type": "ABCD",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "X",
+            "media": null
+          },
+          {
+            "id": "1",
+            "text": "",
+            "type": "Yes/No",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "maybe",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "",
+            "type": "Numeric",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "foo",
+            "media": null
+          },
+          {
+            "id": "5",
+            "text": "",
+            "type": "Handout",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "song.mp3",
+            "media": null
+          },
+          {
+            "id": "6",
+            "text": "",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "",
+            "media": "song.mp3"
+          },
+          {
+            "id": "7",
+            "text": "",
+            "type": "Top5",
+            "options": {},
+            "answer": [
+              "one"
+            ],
+            "media": null,
+            "declared": 3
+          },
+          {
+            "id": "8",
+            "text": "",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "item",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "0",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "1",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "2",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "3",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "4",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "5",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "6",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 6",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "7",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 6",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 7",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "8",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 6",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 7",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 8",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "9",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 6",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 7",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 8",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 9",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "0",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "1",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "B",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "2",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "C",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "B",
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "3",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "D",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "C",
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": "B",
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "4",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "E",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "D",
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": "C",
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": "B",
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "5",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "F",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "E",
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": "D",
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": "C",
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": "B",
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "6",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "G",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "F",
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": "E",
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": "D",
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": "C",
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": "B",
+                "media": null
+              },
+              {
+                "text": "Item 6",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "7",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "H",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "G",
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": "F",
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": "E",
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": "D",
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": "C",
+                "media": null
+              },
+              {
+                "text": "Item 6",
+                "letter": "B",
+                "media": null
+              },
+              {
+                "text": "Item 7",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "8",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "I",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "H",
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": "G",
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": "F",
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": "E",
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": "D",
+                "media": null
+              },
+              {
+                "text": "Item 6",
+                "letter": "C",
+                "media": null
+              },
+              {
+                "text": "Item 7",
+                "letter": "B",
+                "media": null
+              },
+              {
+                "text": "Item 8",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "9",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "J",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "I",
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": "H",
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": "G",
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": "F",
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": "E",
+                "media": null
+              },
+              {
+                "text": "Item 6",
+                "letter": "D",
+                "media": null
+              },
+              {
+                "text": "Item 7",
+                "letter": "C",
+                "media": null
+              },
+              {
+                "text": "Item 8",
+                "letter": "B",
+                "media": null
+              },
+              {
+                "text": "Item 9",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "long",
+            "text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "type": "Written",
+            "options": {},
+            "answer": "",
+            "media": null
+          }
+        ]
+      }
+    ],
+    "files": [
+      "song.mp3"
+    ],
+    "output": [
+      {
+        "level": "info",
+        "code": "no_scores",
+        "params": {},
+        "roundIndex": -1,
+        "qIndex": -1
+      },
+      {
+        "level": "warning",
+        "code": "team_no_name",
+        "params": {},
+        "roundIndex": -1,
+        "qIndex": -1
+      },
+      {
+        "level": "warning",
+        "code": "team_duplicate",
+        "params": {
+          "team": " a "
+        },
+        "roundIndex": -1,
+        "qIndex": -1
+      },
+      {
+        "level": "warning",
+        "code": "round_hidden",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": -1
+      },
+      {
+        "level": "warning",
+        "code": "no_text",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 0
+      },
+      {
+        "level": "error",
+        "code": "abcd_options",
+        "params": {
+          "missing": "A, B, C, D"
+        },
+        "roundIndex": 0,
+        "qIndex": 0
+      },
+      {
+        "level": "error",
+        "code": "abcd_answer",
+        "params": {
+          "answer": "X"
+        },
+        "roundIndex": 0,
+        "qIndex": 0
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "1"
+        },
+        "roundIndex": 0,
+        "qIndex": 1
+      },
+      {
+        "level": "warning",
+        "code": "no_text",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 1
+      },
+      {
+        "level": "error",
+        "code": "yesno_answer",
+        "params": {
+          "answer": "maybe"
+        },
+        "roundIndex": 0,
+        "qIndex": 1
+      },
+      {
+        "level": "warning",
+        "code": "no_text",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 2
+      },
+      {
+        "level": "warning",
+        "code": "numeric_answer",
+        "params": {
+          "answer": "foo"
+        },
+        "roundIndex": 0,
+        "qIndex": 2
+      },
+      {
+        "level": "warning",
+        "code": "media_kind",
+        "params": {
+          "file": "song.mp3",
+          "type": "Handout"
+        },
+        "roundIndex": 0,
+        "qIndex": 3
+      },
+      {
+        "level": "error",
+        "code": "media_required",
+        "params": {
+          "type": "Handout"
+        },
+        "roundIndex": 0,
+        "qIndex": 3
+      },
+      {
+        "level": "warning",
+        "code": "no_text",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 4
+      },
+      {
+        "level": "warning",
+        "code": "no_answer",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 4
+      },
+      {
+        "level": "warning",
+        "code": "media_kind",
+        "params": {
+          "file": "song.mp3",
+          "type": "Image"
+        },
+        "roundIndex": 0,
+        "qIndex": 4
+      },
+      {
+        "level": "warning",
+        "code": "no_text",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 5
+      },
+      {
+        "level": "warning",
+        "code": "top5_count",
+        "params": {
+          "count": 1
+        },
+        "roundIndex": 0,
+        "qIndex": 5
+      },
+      {
+        "level": "warning",
+        "code": "no_text",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 6
+      },
+      {
+        "level": "error",
+        "code": "sort_count_low",
+        "params": {
+          "count": 1
+        },
+        "roundIndex": 0,
+        "qIndex": 6
+      },
+      {
+        "level": "error",
+        "code": "sort_count_low",
+        "params": {
+          "count": 1
+        },
+        "roundIndex": 0,
+        "qIndex": 7
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "1"
+        },
+        "roundIndex": 0,
+        "qIndex": 8
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "B, A"
+        },
+        "roundIndex": 0,
+        "qIndex": 8
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "B, C, A"
+        },
+        "roundIndex": 0,
+        "qIndex": 9
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "3"
+        },
+        "roundIndex": 0,
+        "qIndex": 10
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "D, C, A, B"
+        },
+        "roundIndex": 0,
+        "qIndex": 10
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "D, C, E, A, B"
+        },
+        "roundIndex": 0,
+        "qIndex": 11
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "5"
+        },
+        "roundIndex": 0,
+        "qIndex": 12
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "A, E, D, F, C, B"
+        },
+        "roundIndex": 0,
+        "qIndex": 12
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "6"
+        },
+        "roundIndex": 0,
+        "qIndex": 13
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "B, F, C, A, G, E, D"
+        },
+        "roundIndex": 0,
+        "qIndex": 13
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "7"
+        },
+        "roundIndex": 0,
+        "qIndex": 14
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "H, E, G, D, C, A, F, B"
+        },
+        "roundIndex": 0,
+        "qIndex": 14
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "8"
+        },
+        "roundIndex": 0,
+        "qIndex": 15
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "A, I, F, C, B, D, H, G, E"
+        },
+        "roundIndex": 0,
+        "qIndex": 15
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "F, D, C, B, G, I, A, E, H, J"
+        },
+        "roundIndex": 0,
+        "qIndex": 16
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "0"
+        },
+        "roundIndex": 0,
+        "qIndex": 17
+      },
+      {
+        "level": "error",
+        "code": "sort_count_low",
+        "params": {
+          "count": 1
+        },
+        "roundIndex": 0,
+        "qIndex": 17
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "1"
+        },
+        "roundIndex": 0,
+        "qIndex": 18
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "2"
+        },
+        "roundIndex": 0,
+        "qIndex": 19
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "3"
+        },
+        "roundIndex": 0,
+        "qIndex": 20
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "4"
+        },
+        "roundIndex": 0,
+        "qIndex": 21
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "5"
+        },
+        "roundIndex": 0,
+        "qIndex": 22
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "6"
+        },
+        "roundIndex": 0,
+        "qIndex": 23
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "7"
+        },
+        "roundIndex": 0,
+        "qIndex": 24
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "8"
+        },
+        "roundIndex": 0,
+        "qIndex": 25
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "9"
+        },
+        "roundIndex": 0,
+        "qIndex": 26
+      },
+      {
+        "level": "warning",
+        "code": "long_text",
+        "params": {
+          "length": 251
+        },
+        "roundIndex": 0,
+        "qIndex": 27
+      },
+      {
+        "level": "warning",
+        "code": "no_answer",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 27
+      },
+      {
+        "level": "error",
+        "code": "team_image_missing",
+        "params": {
+          "team": "A",
+          "file": "missing.jpg"
+        },
+        "roundIndex": -1,
+        "qIndex": -1
+      }
+    ]
+  },
+  {
+    "quiz": {
+      "teams": [],
+      "builtin": true
+    },
+    "rounds": [
+      {
+        "id": "round-1",
+        "number": "2",
+        "title": "Quoted",
+        "rows": [
+          [
+            "Round 2 - Quoted",
+            "1",
+            "A, B\nC \"quote\"",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "answer",
+            ""
+          ],
+          [
+            "",
+            "1",
+            "Text",
+            "Written",
+            "A",
+            "B",
+            "C",
+            "D",
+            "",
+            ""
+          ],
+          [
+            "",
+            "2",
+            "Text",
+            "Numeric",
+            "A",
+            "B",
+            "C",
+            "D",
+            "1",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "Text",
+            "ABCD",
+            "A",
+            "B",
+            "C",
+            "D",
+            "A",
+            ""
+          ],
+          [
+            "",
+            "4",
+            "Text",
+            "Yes/No",
+            "A",
+            "B",
+            "C",
+            "D",
+            "yes",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "Text",
+            "Top5",
+            "A",
+            "B",
+            "C",
+            "D",
+            "one",
+            ""
+          ],
+          [
+            "",
+            "99",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "two",
+            ""
+          ],
+          [
+            "",
+            "100",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "three",
+            ""
+          ],
+          [
+            "",
+            "6",
+            "Text",
+            "Top3",
+            "A",
+            "B",
+            "C",
+            "D",
+            "one",
+            ""
+          ],
+          [
+            "",
+            "7",
+            "Text",
+            "Handout",
+            "A",
+            "B",
+            "C",
+            "D",
+            "",
+            ""
+          ],
+          [
+            "",
+            "8",
+            "Text",
+            "PImage",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "9",
+            "Text",
+            "PVideo",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "10",
+            "Text",
+            "Audio",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "11",
+            "Text",
+            "Image",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "12",
+            "Text",
+            "Video",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "13",
+            "Text",
+            "Odd",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "A, B\nC \"quote\"",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "answer",
+            "media": null
+          },
+          {
+            "id": "1",
+            "text": "Text",
+            "type": "Written",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "",
+            "media": null
+          },
+          {
+            "id": "2",
+            "text": "Text",
+            "type": "Numeric",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "1",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "Text",
+            "type": "ABCD",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "A",
+            "media": null
+          },
+          {
+            "id": "4",
+            "text": "Text",
+            "type": "Yes/No",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "yes",
+            "media": null
+          },
+          {
+            "id": "5",
+            "text": "Text",
+            "type": "Top5",
+            "options": {},
+            "answer": [
+              "one",
+              "two",
+              "three"
+            ],
+            "media": null,
+            "declared": null
+          },
+          {
+            "id": "6",
+            "text": "Text",
+            "type": "Top5",
+            "options": {},
+            "answer": [
+              "one"
+            ],
+            "media": null,
+            "declared": 3
+          },
+          {
+            "id": "7",
+            "text": "Text",
+            "type": "Handout",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "",
+            "media": null
+          },
+          {
+            "id": "8",
+            "text": "Text",
+            "type": "PImage",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "9",
+            "text": "Text",
+            "type": "PVideo",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "10",
+            "text": "Text",
+            "type": "Audio",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "11",
+            "text": "Text",
+            "type": "Image",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "12",
+            "text": "Text",
+            "type": "Video",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "13",
+            "text": "Text",
+            "type": "Odd",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "sortbad",
+            "text": "Bad",
+            "type": "Sort",
+            "answer": "",
+            "options": {},
+            "media": null,
+            "items": [
+              {
+                "text": "one",
+                "letter": "A",
+                "media": "song.mp3"
+              },
+              {
+                "text": "two",
+                "letter": "A",
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "high",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 2",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 3",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 4",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 5",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 6",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 7",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 8",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "Item 9",
+                "letter": null,
+                "media": null
+              },
+              {
+                "text": "extra",
+                "letter": null,
+                "media": null
+              }
+            ]
+          },
+          {
+            "id": "empty",
+            "text": "",
+            "type": "Sort",
+            "answer": "",
+            "options": {},
+            "media": null,
+            "items": []
+          },
+          {
+            "id": "declared",
+            "text": "List",
+            "type": "Top5",
+            "answer": [
+              "a",
+              "b",
+              "c"
+            ],
+            "declared": 4,
+            "options": {},
+            "media": null
+          },
+          {
+            "id": "1",
+            "text": "Čau 😀",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Item 0",
+                "letter": "A",
+                "media": null
+              },
+              {
+                "text": "Item 1",
+                "letter": "B",
+                "media": null
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "files": [
+      "song.mp3"
+    ],
+    "output": [
+      {
+        "level": "info",
+        "code": "no_teams",
+        "params": {},
+        "roundIndex": -1,
+        "qIndex": -1
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "1"
+        },
+        "roundIndex": 0,
+        "qIndex": 1
+      },
+      {
+        "level": "warning",
+        "code": "no_answer",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 1
+      },
+      {
+        "level": "warning",
+        "code": "top5_count",
+        "params": {
+          "count": 1
+        },
+        "roundIndex": 0,
+        "qIndex": 6
+      },
+      {
+        "level": "warning",
+        "code": "handout_no_answer",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 7
+      },
+      {
+        "level": "error",
+        "code": "media_required",
+        "params": {
+          "type": "Handout"
+        },
+        "roundIndex": 0,
+        "qIndex": 7
+      },
+      {
+        "level": "error",
+        "code": "media_required",
+        "params": {
+          "type": "PImage"
+        },
+        "roundIndex": 0,
+        "qIndex": 8
+      },
+      {
+        "level": "error",
+        "code": "media_required",
+        "params": {
+          "type": "PVideo"
+        },
+        "roundIndex": 0,
+        "qIndex": 9
+      },
+      {
+        "level": "error",
+        "code": "media_required",
+        "params": {
+          "type": "Audio"
+        },
+        "roundIndex": 0,
+        "qIndex": 10
+      },
+      {
+        "level": "error",
+        "code": "media_required",
+        "params": {
+          "type": "Image"
+        },
+        "roundIndex": 0,
+        "qIndex": 11
+      },
+      {
+        "level": "error",
+        "code": "media_required",
+        "params": {
+          "type": "Video"
+        },
+        "roundIndex": 0,
+        "qIndex": 12
+      },
+      {
+        "level": "warning",
+        "code": "type_unknown",
+        "params": {
+          "type": "Odd"
+        },
+        "roundIndex": 0,
+        "qIndex": 13
+      },
+      {
+        "level": "error",
+        "code": "sort_bad_letters",
+        "params": {
+          "letters": "A, A",
+          "max": "B"
+        },
+        "roundIndex": 0,
+        "qIndex": 14
+      },
+      {
+        "level": "warning",
+        "code": "sort_some_pictures",
+        "params": {
+          "count": 1,
+          "total": 2
+        },
+        "roundIndex": 0,
+        "qIndex": 14
+      },
+      {
+        "level": "warning",
+        "code": "media_kind",
+        "params": {
+          "file": "song.mp3",
+          "type": "Sort"
+        },
+        "roundIndex": 0,
+        "qIndex": 14
+      },
+      {
+        "level": "warning",
+        "code": "sort_count_high",
+        "params": {
+          "count": 11,
+          "max": 10
+        },
+        "roundIndex": 0,
+        "qIndex": 15
+      },
+      {
+        "level": "warning",
+        "code": "sort_no_letters",
+        "params": {
+          "letters": "A, H, B, I, K, E, C, G, F, D, J"
+        },
+        "roundIndex": 0,
+        "qIndex": 15
+      },
+      {
+        "level": "warning",
+        "code": "no_text",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 16
+      },
+      {
+        "level": "error",
+        "code": "sort_count_low",
+        "params": {
+          "count": 0
+        },
+        "roundIndex": 0,
+        "qIndex": 16
+      },
+      {
+        "level": "warning",
+        "code": "top5_declared",
+        "params": {
+          "declared": 4,
+          "count": 3
+        },
+        "roundIndex": 0,
+        "qIndex": 17
+      },
+      {
+        "level": "warning",
+        "code": "duplicate_number",
+        "params": {
+          "number": "1"
+        },
+        "roundIndex": 0,
+        "qIndex": 18
+      },
+      {
+        "level": "warning",
+        "code": "sort_in_order",
+        "params": {},
+        "roundIndex": 0,
+        "qIndex": 18
+      }
+    ]
+  }
+]

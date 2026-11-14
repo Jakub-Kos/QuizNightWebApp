@@ -1,0 +1,13 @@
+/* The stage: a fixed virtual canvas scaled to fit the window (see src/stage.rs). */
+body { margin: 0; background: #000; color: #fff; }
+.stage-viewport { position: fixed; inset: 0; overflow: hidden; background: #000; }
+.stage { position: absolute; left: 50%; top: 50%; transform-origin: center; container-type: size; }
+
+/* Switcher between the spike's demos, outside the stage so it does not scale. */
+.demo-nav { position: fixed; top: 8px; right: 8px; z-index: 100; display: flex; gap: 6px; font: 13px system-ui, sans-serif; }
+.demo-link { padding: 5px 10px; border-radius: 999px; background: rgb(255 255 255 / 0.12); color: #fff; text-decoration: none; }
+.demo-link:hover { background: rgb(255 255 255 / 0.25); }
+.demo-link-current { background: #eab308; color: #000; }
+
+/* The wrapper Presence puts around its children: it fills its parent so that scenes can use h-full. */
+.presence { width: 100%; height: 100%; }

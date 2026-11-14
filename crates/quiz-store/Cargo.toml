@@ -1,0 +1,44 @@
+[package]
+name = "quiz-store"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+quiz-core = { version = "0.1.0", path = "../quiz-core" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+zip = { version = "9.5.1", default-features = false, features = ["deflate"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+js-sys = "0.3.107"
+wasm-bindgen = "0.2.130"
+wasm-bindgen-futures = "0.4.80"
+web-sys = { version = "0.3.107", features = [
+    "Blob",
+    "BlobPropertyBag",
+    "DomException",
+    "DomStringList",
+    "Event",
+    "EventTarget",
+    "File",
+    "IdbCursor",
+    "IdbCursorWithValue",
+    "IdbDatabase",
+    "IdbFactory",
+    "IdbIndex",
+    "IdbKeyRange",
+    "IdbObjectStore",
+    "IdbObjectStoreParameters",
+    "IdbOpenDbRequest",
+    "IdbRequest",
+    "IdbTransaction",
+    "IdbTransactionMode",
+    "IdbVersionChangeEvent",
+    "Url",
+    "Window",
+] }
+
+[dev-dependencies]
+pretty_assertions = "1.4.1"

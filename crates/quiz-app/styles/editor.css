@@ -1,0 +1,23 @@
+/* Quiz setup: keep shared Tailwind styling and a small amount of native-control polish. */
+.quiz-editor [hidden] { display: none !important; }
+.quiz-editor { color-scheme: dark; }
+.quiz-editor button, .quiz-editor summary { cursor: pointer; }
+.quiz-editor button:disabled { cursor: wait; }
+.quiz-editor :is(button, a, summary, input, textarea, select):focus-visible { outline: 2px solid #eab308; outline-offset: 3px; }
+.editor-section { animation: editor-enter 180ms ease-out both; }
+.editor-section-body { animation: editor-enter 150ms ease-out; }
+.editor-folded { display: inline-block; transform: rotate(-90deg); }
+.editor-invalid { border-color: rgb(239 68 68 / .6); }
+.editor-over { border-color: #facc15; background: rgb(250 204 21 / .1); }
+.editor-theme-preview { min-height: 115px; overflow: hidden; }
+.editor-toggle { appearance: none; width: 3.5rem; height: 2rem; border-radius: 999px; background: #374151; padding: 4px; flex-shrink: 0; cursor: pointer; transition: background 150ms; }
+.editor-toggle::before { content: ''; display: block; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: white; transition: transform 150ms; }
+.editor-toggle:checked { background: #22c55e; }
+.editor-toggle:checked::before { transform: translateX(1.5rem); }
+@keyframes editor-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .quiz-editor *, .quiz-editor *::before { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+.quiz-editor .editor-launcher:focus { outline: none; }
+.quiz-editor [role="status"] { overflow-wrap: anywhere; }
+.quiz-editor .editor-drop { transition: border-color 150ms, background-color 150ms; }
+.quiz-editor [role="button"]:focus-visible { outline: 2px solid #eab308; outline-offset: 3px; }
+.editor-theme-canvas { position: absolute; top: 0; left: 0; width: 2400px; height: 1350px; container-type: size; transform-origin: top left; }

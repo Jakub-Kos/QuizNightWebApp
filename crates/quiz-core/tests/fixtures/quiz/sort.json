@@ -1,0 +1,2292 @@
+[
+  {
+    "input": {
+      "id": "0",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 0",
+          "letter": "A",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "A",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "answer": "A",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "1",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 1",
+          "letter": "A",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "B",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "B",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "A",
+          "media": null,
+          "place": 2
+        }
+      ],
+      "answer": "B A",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "2",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 2",
+          "letter": "A",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 0",
+          "letter": "B",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "C",
+          "media": null,
+          "place": 2
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "B",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "C",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "A",
+          "media": null,
+          "place": 3
+        }
+      ],
+      "answer": "B C A",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "3",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 2",
+          "letter": "A",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "B",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 1",
+          "letter": "C",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "D",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "D",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "C",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "A",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "B",
+          "media": null,
+          "place": 4
+        }
+      ],
+      "answer": "D C A B",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "4",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 3",
+          "letter": "A",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "B",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 1",
+          "letter": "C",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "D",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 2",
+          "letter": "E",
+          "media": null,
+          "place": 3
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "D",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "C",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "E",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "A",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "B",
+          "media": null,
+          "place": 5
+        }
+      ],
+      "answer": "D C E A B",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "5",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 0",
+          "letter": "A",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 5",
+          "letter": "B",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 4",
+          "letter": "C",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 2",
+          "letter": "D",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "E",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 3",
+          "letter": "F",
+          "media": null,
+          "place": 4
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "A",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "E",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "D",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "F",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "C",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "B",
+          "media": null,
+          "place": 6
+        }
+      ],
+      "answer": "A E D F C B",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "6",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 6",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 3",
+          "letter": "A",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 0",
+          "letter": "B",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 2",
+          "letter": "C",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 6",
+          "letter": "D",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 5",
+          "letter": "E",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 1",
+          "letter": "F",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 4",
+          "letter": "G",
+          "media": null,
+          "place": 5
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "B",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "F",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "C",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "A",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "G",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "E",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 6",
+          "letter": "D",
+          "media": null,
+          "place": 7
+        }
+      ],
+      "answer": "B F C A G E D",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "7",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 6",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 7",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 5",
+          "letter": "A",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 7",
+          "letter": "B",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 4",
+          "letter": "C",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 3",
+          "letter": "D",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 1",
+          "letter": "E",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 6",
+          "letter": "F",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 2",
+          "letter": "G",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 0",
+          "letter": "H",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "H",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "E",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "G",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "D",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "C",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "A",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 6",
+          "letter": "F",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 7",
+          "letter": "B",
+          "media": null,
+          "place": 8
+        }
+      ],
+      "answer": "H E G D C A F B",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "8",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 6",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 7",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 8",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 0",
+          "letter": "A",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 4",
+          "letter": "B",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 3",
+          "letter": "C",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 5",
+          "letter": "D",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 8",
+          "letter": "E",
+          "media": null,
+          "place": 9
+        },
+        {
+          "text": "Item 2",
+          "letter": "F",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 7",
+          "letter": "G",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 6",
+          "letter": "H",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 1",
+          "letter": "I",
+          "media": null,
+          "place": 2
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "A",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "I",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "F",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "C",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "B",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "D",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 6",
+          "letter": "H",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 7",
+          "letter": "G",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 8",
+          "letter": "E",
+          "media": null,
+          "place": 9
+        }
+      ],
+      "answer": "A I F C B D H G E",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "9",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 6",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 7",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 8",
+          "letter": null,
+          "media": null
+        },
+        {
+          "text": "Item 9",
+          "letter": null,
+          "media": null
+        }
+      ]
+    },
+    "letters": "none",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 6",
+          "letter": "A",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 3",
+          "letter": "B",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 2",
+          "letter": "C",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "D",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 7",
+          "letter": "E",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 0",
+          "letter": "F",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 4",
+          "letter": "G",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 8",
+          "letter": "H",
+          "media": null,
+          "place": 9
+        },
+        {
+          "text": "Item 5",
+          "letter": "I",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 9",
+          "letter": "J",
+          "media": null,
+          "place": 10
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "F",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "D",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "C",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "B",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "G",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "I",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 6",
+          "letter": "A",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 7",
+          "letter": "E",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 8",
+          "letter": "H",
+          "media": null,
+          "place": 9
+        },
+        {
+          "text": "Item 9",
+          "letter": "J",
+          "media": null,
+          "place": 10
+        }
+      ],
+      "answer": "F D C B G I A E H J",
+      "fromSheet": false
+    }
+  },
+  {
+    "input": {
+      "id": "0",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 0",
+          "letter": "A",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "A",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "answer": "A",
+      "fromSheet": true
+    }
+  },
+  {
+    "input": {
+      "id": "1",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "B",
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 1",
+          "letter": "A",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "B",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "B",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "A",
+          "media": null,
+          "place": 2
+        }
+      ],
+      "answer": "B A",
+      "fromSheet": true
+    }
+  },
+  {
+    "input": {
+      "id": "2",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "C",
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": "B",
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 2",
+          "letter": "A",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "B",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "C",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "C",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "B",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "A",
+          "media": null,
+          "place": 3
+        }
+      ],
+      "answer": "C B A",
+      "fromSheet": true
+    }
+  },
+  {
+    "input": {
+      "id": "3",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "D",
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": "C",
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": "B",
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 3",
+          "letter": "A",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 2",
+          "letter": "B",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "C",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "D",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "D",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "C",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "B",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "A",
+          "media": null,
+          "place": 4
+        }
+      ],
+      "answer": "D C B A",
+      "fromSheet": true
+    }
+  },
+  {
+    "input": {
+      "id": "4",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "E",
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": "D",
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": "C",
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": "B",
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 4",
+          "letter": "A",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 3",
+          "letter": "B",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 2",
+          "letter": "C",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "D",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "E",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "E",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "D",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "C",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "B",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "A",
+          "media": null,
+          "place": 5
+        }
+      ],
+      "answer": "E D C B A",
+      "fromSheet": true
+    }
+  },
+  {
+    "input": {
+      "id": "5",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "F",
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": "E",
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": "D",
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": "C",
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": "B",
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 5",
+          "letter": "A",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 4",
+          "letter": "B",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 3",
+          "letter": "C",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 2",
+          "letter": "D",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "E",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "F",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "F",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "E",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "D",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "C",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "B",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "A",
+          "media": null,
+          "place": 6
+        }
+      ],
+      "answer": "F E D C B A",
+      "fromSheet": true
+    }
+  },
+  {
+    "input": {
+      "id": "6",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "G",
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": "F",
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": "E",
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": "D",
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": "C",
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": "B",
+          "media": null
+        },
+        {
+          "text": "Item 6",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 6",
+          "letter": "A",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 5",
+          "letter": "B",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 4",
+          "letter": "C",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 3",
+          "letter": "D",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 2",
+          "letter": "E",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "F",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "G",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "G",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "F",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "E",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "D",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "C",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "B",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 6",
+          "letter": "A",
+          "media": null,
+          "place": 7
+        }
+      ],
+      "answer": "G F E D C B A",
+      "fromSheet": true
+    }
+  },
+  {
+    "input": {
+      "id": "7",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "H",
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": "G",
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": "F",
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": "E",
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": "D",
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": "C",
+          "media": null
+        },
+        {
+          "text": "Item 6",
+          "letter": "B",
+          "media": null
+        },
+        {
+          "text": "Item 7",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 7",
+          "letter": "A",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 6",
+          "letter": "B",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 5",
+          "letter": "C",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 4",
+          "letter": "D",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 3",
+          "letter": "E",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 2",
+          "letter": "F",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "G",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "H",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "H",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "G",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "F",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "E",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "D",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "C",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 6",
+          "letter": "B",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 7",
+          "letter": "A",
+          "media": null,
+          "place": 8
+        }
+      ],
+      "answer": "H G F E D C B A",
+      "fromSheet": true
+    }
+  },
+  {
+    "input": {
+      "id": "8",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "I",
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": "H",
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": "G",
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": "F",
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": "E",
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": "D",
+          "media": null
+        },
+        {
+          "text": "Item 6",
+          "letter": "C",
+          "media": null
+        },
+        {
+          "text": "Item 7",
+          "letter": "B",
+          "media": null
+        },
+        {
+          "text": "Item 8",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 8",
+          "letter": "A",
+          "media": null,
+          "place": 9
+        },
+        {
+          "text": "Item 7",
+          "letter": "B",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 6",
+          "letter": "C",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 5",
+          "letter": "D",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 4",
+          "letter": "E",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 3",
+          "letter": "F",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 2",
+          "letter": "G",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "H",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "I",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "I",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "H",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "G",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "F",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "E",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "D",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 6",
+          "letter": "C",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 7",
+          "letter": "B",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 8",
+          "letter": "A",
+          "media": null,
+          "place": 9
+        }
+      ],
+      "answer": "I H G F E D C B A",
+      "fromSheet": true
+    }
+  },
+  {
+    "input": {
+      "id": "9",
+      "text": "Čau 😀",
+      "type": "Sort",
+      "options": {},
+      "answer": "",
+      "media": null,
+      "items": [
+        {
+          "text": "Item 0",
+          "letter": "J",
+          "media": null
+        },
+        {
+          "text": "Item 1",
+          "letter": "I",
+          "media": null
+        },
+        {
+          "text": "Item 2",
+          "letter": "H",
+          "media": null
+        },
+        {
+          "text": "Item 3",
+          "letter": "G",
+          "media": null
+        },
+        {
+          "text": "Item 4",
+          "letter": "F",
+          "media": null
+        },
+        {
+          "text": "Item 5",
+          "letter": "E",
+          "media": null
+        },
+        {
+          "text": "Item 6",
+          "letter": "D",
+          "media": null
+        },
+        {
+          "text": "Item 7",
+          "letter": "C",
+          "media": null
+        },
+        {
+          "text": "Item 8",
+          "letter": "B",
+          "media": null
+        },
+        {
+          "text": "Item 9",
+          "letter": "A",
+          "media": null
+        }
+      ]
+    },
+    "letters": "ok",
+    "output": {
+      "shown": [
+        {
+          "text": "Item 9",
+          "letter": "A",
+          "media": null,
+          "place": 10
+        },
+        {
+          "text": "Item 8",
+          "letter": "B",
+          "media": null,
+          "place": 9
+        },
+        {
+          "text": "Item 7",
+          "letter": "C",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 6",
+          "letter": "D",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 5",
+          "letter": "E",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 4",
+          "letter": "F",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 3",
+          "letter": "G",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 2",
+          "letter": "H",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 1",
+          "letter": "I",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 0",
+          "letter": "J",
+          "media": null,
+          "place": 1
+        }
+      ],
+      "correct": [
+        {
+          "text": "Item 0",
+          "letter": "J",
+          "media": null,
+          "place": 1
+        },
+        {
+          "text": "Item 1",
+          "letter": "I",
+          "media": null,
+          "place": 2
+        },
+        {
+          "text": "Item 2",
+          "letter": "H",
+          "media": null,
+          "place": 3
+        },
+        {
+          "text": "Item 3",
+          "letter": "G",
+          "media": null,
+          "place": 4
+        },
+        {
+          "text": "Item 4",
+          "letter": "F",
+          "media": null,
+          "place": 5
+        },
+        {
+          "text": "Item 5",
+          "letter": "E",
+          "media": null,
+          "place": 6
+        },
+        {
+          "text": "Item 6",
+          "letter": "D",
+          "media": null,
+          "place": 7
+        },
+        {
+          "text": "Item 7",
+          "letter": "C",
+          "media": null,
+          "place": 8
+        },
+        {
+          "text": "Item 8",
+          "letter": "B",
+          "media": null,
+          "place": 9
+        },
+        {
+          "text": "Item 9",
+          "letter": "A",
+          "media": null,
+          "place": 10
+        }
+      ],
+      "answer": "J I H G F E D C B A",
+      "fromSheet": true
+    }
+  }
+]

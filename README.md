@@ -4,138 +4,71 @@
 
 **Turn your pub quiz into a TV game show.**
 
-Write the questions in a Google Sheet, drop in your pictures and teams, and run the whole night from your laptop:<br>
+Write the questions, drop in your pictures and teams, and run the whole night from your laptop:<br>
 the TV shows the show, a second window gives the host the answers and the controls.
 
 ### [▶ Open the app](https://jakub-kos.github.io/QuizNightWebApp/)
 
 Free, nothing to install, no account. Your quizzes stay in your own browser.
 
-![React](https://img.shields.io/badge/React_19-20232A?style=flat-square&logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
-![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-
-<br>
-
-<img src="docs/screenshots/welcome.jpg" alt="Welcome screen introducing a team with its past results" width="100%">
-
 </div>
 
-## How a quiz night looks
+## Documentation
 
-<table>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/team-wall.jpg" alt="Team wall"><br><b>Every team gets an introduction.</b> Teams with photos and history get big cards; teams known only by name get a living team wall.</td>
-    <td width="50%"><img src="docs/screenshots/dashboard.jpg" alt="Rounds dashboard"><br><b>The rounds at a glance.</b> Finished rounds reveal their names, the bar shows how far the night is.</td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/question-abcd.jpg" alt="ABCD question with the answer revealed"><br><b>Questions, then answers.</b> Play a round with answers, or questions only with a timer and reveal them later.</td>
-    <td><img src="docs/screenshots/question-sort.jpg" alt="Sort question with pictures"><br><b>Eleven question types</b>, from ABCD and Top 5 to pictures, audio, video and putting things in order.</td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/leaderboard.jpg" alt="Leaderboard during the reveal"><br><b>A real reveal.</b> The standings hold until the host reveals the round's points group by group, from the lowest score up.</td>
-    <td><img src="docs/screenshots/pause.jpg" alt="Half-time screen"><br><b>Half-time</b> with a countdown, the teams in the spotlight and the live standings ticker.</td>
-  </tr>
-</table>
+- **How to use the app:** [English](docs/USAGE.md) · [Čeština](docs/USAGE.cs.md) · [Slovenčina](docs/USAGE.sk.md)
+- **[Rust rewrite notes](docs/RUST_REWRITE.md)**: what is done, what is left.
+- The app's own **Help** page (linked from the quiz library) shows every question type with a live preview.
 
-<details>
-<summary><b>More screens:</b> rules, prizes, picture and Top 5 questions</summary>
-<br>
-<table>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/rules.jpg" alt="Rules screen"></td>
-    <td width="50%"><img src="docs/screenshots/prizes.jpg" alt="Prizes screen"></td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/question-image.jpg" alt="Picture question"></td>
-    <td><img src="docs/screenshots/question-top5.jpg" alt="Top 5 question with the answers revealed"></td>
-  </tr>
-</table>
-</details>
+## What it does
 
-## What the host sees
-
-Press `Shift + P` and a second window opens on the laptop. It runs the show: the TV follows every click, with no server in between.
-
-<table>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/host-question.jpg" alt="Host window during a question"><br><b>The answer before anyone else.</b> The current question, the correct answer and what the next click will do.</td>
-    <td width="50%"><img src="docs/screenshots/host-leaderboard.jpg" alt="Host window during the leaderboard reveal"><br><b>Which way to look.</b> During the reveal the seating map shows where the announced teams sit.</td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/attendance.jpg" alt="Attendance page with the seating map"><br><b>Attendance.</b> Tick off who came, fix the number of players, and place each team on the map of the room.</td>
-    <td><img src="docs/screenshots/check.jpg" alt="Quiz check page"><br><b>Check before the show.</b> Every question as the TV will show it, plus a list of what is missing or wrong.</td>
-  </tr>
-</table>
-
-## Make your own quiz
-
-<table>
-  <tr>
-    <td width="33%"><img src="docs/screenshots/library.jpg" alt="Quiz library"></td>
-    <td width="33%"><img src="docs/screenshots/editor.jpg" alt="Quiz setup page"></td>
-    <td width="33%"><img src="docs/screenshots/help.jpg" alt="Help page showing the sheet rows for a question type"></td>
-  </tr>
-</table>
-
-1. **Open the [app](https://jakub-kos.github.io/QuizNightWebApp/)** and click **New quiz**, or start from the built-in demo.
-2. **Questions:** copy the Google Sheet template (Help → Templates), fill it in, share it as *anyone with the link can view* and paste the link. Help → Question types shows the exact rows for every type and what they look like on screen.
-3. **Media:** drag in your pictures, audio and video. A whole folder works.
-4. **Scores:** paste the link of your scores Sheet, or type the points into the app during the show.
-5. **Teams:** type them in, import a CSV, or load the names from the scores Sheet.
-6. **Check**, fix what it finds, and **Start show**.
-
-Export a quiz as one `.zip` to back it up or move it to the laptop you will use on the night.
-
-## On the night
-
-1. Connect the laptop to the TV, open the quiz with **Start show**, drag the window to the TV and press `F11`.
-2. Press `Shift + P` and keep the host window on the laptop.
-3. If the TV cuts off the edges, press `Shift + C` on the TV window to shrink the picture.
-
-| Key | Does |
-| --- | --- |
-| `Shift + P` | Open the host window |
-| `→` / `←` | Next / previous step |
-| `Z` | Enlarge the question's picture |
-| `Esc` | Close the picture, or leave the current screen |
-| `Shift + D` | Jump back to the rounds dashboard |
-| `Shift + C` | Adjust the picture size for the TV |
-
-The app is in **English, Czech and Hungarian**. It works best in Chrome or Edge.
-
-## Themes
-
-Every quiz picks a look in its setup: Classic, Halloween, Christmas, or its own theme made in the theme editor (colours, fonts, a background picture, glows, scenery and decorations, with a live preview of every screen and a readability check). Themes can be exported, imported and kept in **My themes** for other quizzes.
-
-The **theme workshop** (`#/themes`, linked from the library) shows themes other hosts shared. Anyone can submit one from the theme editor (**Share to the workshop** opens a GitHub form); it appears after review.
+- Twelve question types: multiple choice, yes or no, number, written answer, top list, put in order,
+  printed handout, and questions with a picture, sound or video.
+- Team introductions, rules and prizes screens, a rounds dashboard, a half-time screen.
+- A leaderboard that reveals the round's points group by group, from the lowest score up.
+- A host window with the answers, the next step and a seating map of the room.
+- Themes: Classic, Halloween, Christmas, your own in the theme editor, or one from the theme workshop.
+- English, Czech and Slovak. Works best in Chrome or Edge.
 
 ## For developers
 
-React 19 + Vite, Tailwind CSS v4, Framer Motion, Lucide icons, PapaParse and fflate. There is no backend: quizzes and media live in IndexedDB, the two windows talk over `BroadcastChannel`, and Google Sheets are read as CSV.
+Written in Rust: [Leptos](https://leptos.dev/) compiled to WebAssembly, built with
+[Trunk](https://trunkrs.dev/), styled with Tailwind CSS v4.
+
+There is no backend: quizzes and media live in the browser's IndexedDB, the TV and host windows talk
+over `BroadcastChannel`, and Google Sheets are read as CSV.
 
 ```bash
-git clone git@github.com:Jakub-Kos/QuizNightWebApp.git
-cd QuizNightWebApp
-npm install
-npm run dev     # development server
-npm run lint    # ESLint
-npm run build   # production build in dist/ (checks the workshop themes first)
-npm test        # Vitest
+rustup target add wasm32-unknown-unknown
+cargo install trunk
+
+cargo test --workspace          # logic, store, CLI and app tests
+
+cd crates/quiz-app
+trunk serve --port 8097         # http://localhost:8097/
+trunk build --release           # production build in crates/quiz-app/dist/
 ```
 
-Every push to `main` deploys to GitHub Pages.
+Every push to `main` tests, builds and deploys to GitHub Pages.
 
-### Reviewing a workshop submission
+| Path | Contents |
+| --- | --- |
+| `crates/quiz-core` | Model, CSV parsing, validation, scores, themes, show state machine. No web dependencies. |
+| `crates/quiz-store` | Storage traits, IndexedDB and in-memory stores, quiz zip import and export. |
+| `crates/quiz-app` | The user interface: show, host window, editors, help. |
+| `crates/quiz-cli` | Theme workshop command: check, add, index. |
+| `public/` | Demo quiz media, Sheet templates and the workshop themes, copied into the build. |
 
-Submissions arrive as issues labelled `theme`, with the theme's `.zip` attached. A workflow (`.github/workflows/theme-check.yml`) checks the attached file and comments the result on the issue: whether it passes, what it contains, readability, and the exact command to add it. It updates that comment when the issue is edited.
+### Reviewing a workshop theme
 
-1. Look at it: download the zip and import it in any quiz's setup (Look → Import theme), then click through the show.
-2. Add it: `npm run workshop:add <URL of the attached .zip>` (or a downloaded file). It runs the same check as the app and refuses a theme that would lose anything; `--replace` updates a theme with the same id.
+Submissions arrive as issues labelled `theme`, with the theme's `.zip` attached. A workflow
+(`.github/workflows/theme-check.yml`) checks the file and comments the result on the issue.
+
+1. Look at it: download the zip, import it in any quiz's setup (Look → Import theme) and click through the show.
+2. Add it: `cargo run -p quiz-cli -- add <URL or path of the .zip>`. It refuses a theme that would lose
+   anything; `--replace` updates a theme with the same id.
 3. Commit `public/workshop/` and push. Close the issue.
 
-Themes are plain data (colours, fonts, pictures and built-in effects, never CSS or code); the format is described at the top of `src/quiz/themeFormat.js`.
+Themes are plain data (colours, fonts, pictures and built-in effects, never CSS or code).
 
 ## License
 

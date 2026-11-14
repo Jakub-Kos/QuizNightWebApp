@@ -1,0 +1,100 @@
+/* WelcomeScreen.jsx's Framer Motion animations. The springs are linear() easings in custom
+   properties set on the scene (spring_vars in src/scenes/welcome.rs):
+   --wl-card   type "spring", bounce .2, duration .8
+   --wl-panel  type "spring", bounce .3, duration .8
+   --wl-snap   Framer's default spring for x/y (stiffness 500, damping 25), lasting --wl-snap-d
+   --wl-scale  Framer's default spring for scale (stiffness 550, damping 30), lasting --wl-scale-d
+   --wl-pop    type "spring" with no options (stiffness 100, damping 10), lasting --wl-pop-d
+   Where an element keeps its final pose, that pose is its own style and the keyframes only give the
+   start ("from"), so the pose holds when animations are off. */
+
+/* Presence wrappers of the card stack and the header fill their box, overlap while one leaves and
+   another comes, and are stacked like the motion.divs they wrap. */
+.welcome-stack > .presence,
+.welcome-header > .presence { position: absolute; inset: 0; }
+
+/* The whole screen slides up when the show starts: y: "-100%", duration .8, easeInOut */
+.welcome-leave { animation: welcome-leave .8s cubic-bezier(.42, 0, .58, 1) forwards; }
+@keyframes welcome-leave { to { transform: translateY(-100%); } }
+
+/* RotatingHeaderItem: rotateX -90, y 50, opacity 0 -> pose -> rotateX 90, y -50, opacity 0
+   (AnimatePresence mode "wait": the next item comes once the last one has gone) */
+/* Keep exactly one transformed plane. Nested backface-hidden layers can cull themed
+   glyphs after the parent animation is removed; the resting plane stays explicit. */
+.welcome-header { flex-shrink: 0; isolation: isolate; perspective: 1000px; }
+.welcome-header > .presence {
+  transform: translateY(0) rotateX(0deg);
+  transform-origin: 50% 50% -20px; backface-visibility: hidden; will-change: transform, opacity;
+}
+.welcome-flip-enter { animation: welcome-flip-in .8s var(--wl-panel) both; }
+.welcome-flip-exit { animation: welcome-flip-out .8s var(--wl-panel) both; }
+@keyframes welcome-flip-in { from { opacity: 0; transform: translateY(50px) rotateX(-90deg); } to { opacity: 1; transform: translateY(0) rotateX(0deg); } }
+@keyframes welcome-flip-out { to { opacity: 0; transform: translateY(-50px) rotateX(90deg); } }
+
+/* The two cards behind the current one: appear from opacity 0, scale .8, y 50, and glide to their
+   next place with Framer's default transitions (springs for position and scale, a .3s ease for opacity). */
+.welcome-stack-card {
+  transition: translate var(--wl-snap-d) var(--wl-snap), scale var(--wl-scale-d) var(--wl-scale),
+    opacity .3s cubic-bezier(.25, .1, .35, 1);
+  animation: welcome-stack-move var(--wl-snap-d) var(--wl-snap) backwards,
+    welcome-stack-grow var(--wl-scale-d) var(--wl-scale) backwards,
+    welcome-fade .3s cubic-bezier(.25, .1, .35, 1) backwards;
+}
+@keyframes welcome-stack-move { from { translate: 0 50px; } }
+@keyframes welcome-stack-grow { from { scale: .8; } }
+@keyframes welcome-fade { from { opacity: 0; } }
+
+/* The current card: scale .95, opacity 0 -> pose (spring bounce .2, .8s); leaves upwards:
+   y -1200, rotate -5, opacity 0, zIndex 30 -> 100 in .5s backIn. backIn first dips below its start,
+   so the leaving card first sinks behind the new one, as in React. */
+.welcome-card-enter { z-index: 30; animation: welcome-card-in .8s var(--wl-card) both; }
+.welcome-card-exit { animation: welcome-card-out .5s cubic-bezier(.31, .01, .67, -.53) both; }
+@keyframes welcome-card-in { from { opacity: 0; transform: scale(.95); } }
+@keyframes welcome-card-out {
+  from { z-index: 30; }
+  to { opacity: 0; transform: translateY(-1200px) rotate(-5deg); z-index: 100; }
+}
+
+/* The details panel (at x 620 by its own style): slides out from behind the card,
+   x 0, opacity 0, zIndex -1 -> x 620, opacity 1, zIndex 10; leaves to x 200, opacity 0 */
+.welcome-details-enter { animation: welcome-details-in .8s var(--wl-panel) both; }
+.welcome-details-exit { z-index: 10; animation: welcome-details-out .8s var(--wl-panel) both; }
+@keyframes welcome-details-in {
+  from { opacity: 0; transform: translateX(-620px); z-index: -1; }
+  to { opacity: 1; transform: none; z-index: 10; }
+}
+@keyframes welcome-details-out { to { opacity: 0; transform: translateX(-420px); } }
+
+/* Presence introduces a stacking context while animating; keep the same order at rest.
+   The details must stay behind the main card, but above the faded stack. */
+.welcome-stack > .presence:has(.welcome-main-card) { z-index: 30; }
+.welcome-stack > .presence.welcome-card-exit { z-index: 100; pointer-events: none; }
+.welcome-stack > .presence:has(.welcome-team-details) { z-index: 10; pointer-events: none; }
+.welcome-stack > .presence:has(.welcome-team-details) > .welcome-team-details { pointer-events: auto; }
+
+/* RecentFormBadges: each badge fades in (.4s), its slot machine spins for 2.5s from
+   0.2 + k * 0.15s (delay in --delay) and a winner's crown pops in as the spin stops */
+.welcome-badge { animation: welcome-fade .4s cubic-bezier(.42, 0, .58, 1) backwards; }
+.welcome-slot { animation: welcome-slot 2.5s cubic-bezier(.15, .85, .2, 1) var(--delay, 0s) backwards; }
+@keyframes welcome-slot { from { transform: translateY(0); } }
+.welcome-crown { animation: welcome-pop var(--wl-pop-d) var(--wl-pop) var(--delay, 0s) backwards; }
+@keyframes welcome-pop { from { opacity: 0; transform: scale(0); } }
+
+/* The ring around the current team in the roster: opacity .5 -> 1 -> .5, 1.5s, forever */
+.welcome-ring { animation: welcome-ring 1.5s cubic-bezier(.42, 0, .58, 1) infinite; }
+@keyframes welcome-ring { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+
+.welcome-start:focus-visible { outline: 2px solid var(--color-accent-500); border-radius: 1rem; }
+.welcome-start:focus-visible > span { color: var(--color-accent-400); }
+
+/* The start control's play icon: initial opacity 0, y -10; whileHover opacity 1, y 5 */
+.welcome-play {
+  opacity: 0; translate: 0 -10px;
+  transition: opacity .3s cubic-bezier(.25, .1, .35, 1), translate var(--wl-snap-d) var(--wl-snap);
+}
+.group:hover > .welcome-play, .group:focus-visible > .welcome-play { opacity: 1; translate: 0 5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-screen, .welcome-screen * { animation: none !important; transition: none !important; }
+  .welcome-leave { transform: translateY(-100%); }
+}

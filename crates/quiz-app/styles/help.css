@@ -1,0 +1,45 @@
+/* HelpPage / HelpTypes. The guide itself has no animated entrances in React. */
+.help-page .help-icon {
+  flex-shrink: 0;
+}
+.help-page .help-sheet :is(th, td) {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  padding: 0.25rem 0.375rem;
+  white-space: nowrap;
+}
+.help-page .help-preview-button {
+  width: 100%;
+  min-width: 0;
+}
+.help-page .help-preview-placeholder {
+  display: flex;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  color: #d1d5db;
+  background: linear-gradient(#111, #050505);
+  border: 1px dashed rgb(255 255 255 / 0.15);
+}
+.help-page .help-modal {
+  max-width: min(1600px, calc((100dvh - 120px) * 16 / 9));
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+}
+.help-page :is(a, button):focus-visible {
+  outline: 2px solid #facc15;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .help-page *,
+  .help-page *::before,
+  .help-page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

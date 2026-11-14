@@ -1,0 +1,10 @@
+/* Dashboard alternatives. Columns keep their existing styles. */
+.layout-tile { animation:layout-tile-enter .3s ease-out calc(var(--i) * .05s) both; }
+.layout-next-node { animation:layout-node-pulse 2.4s ease-in-out infinite; }
+.layout-timeline-progress { animation:layout-progress-in 1s var(--layout-spring) both; transition:width 1s var(--layout-spring); transform-origin:left; }
+@keyframes layout-tile-enter { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+@keyframes layout-node-pulse { 0%,100% { scale:1; } 50% { scale:1.06; } }
+@keyframes layout-progress-in { from { scale:0 1; } to { scale:1; } }
+@media(prefers-reduced-motion:reduce) {
+ .layout-tile,.layout-next-node,.layout-timeline-progress { animation:none; transition:none; }
+}

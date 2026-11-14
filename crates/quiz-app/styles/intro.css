@@ -1,0 +1,107 @@
+/* opacity: 0, scale: 0.95 -> final pose;
+  duration: 0.8, ease: "circOut" */
+.intro-rules-0 { animation: intro-rules-0 0.8s cubic-bezier(0, .55, .45, 1) 0s both;
+  }
+@keyframes intro-rules-0 {
+ from { opacity: 0;
+  transform: translate(0px, 0px) scale(0.95);
+  }
+ to { opacity: 1;
+  transform: none;
+  } }
+/* y: -50, opacity: 0 -> final pose;
+  delay: 0.2, type: "spring" */
+.intro-rules-1 { animation: intro-rules-1 .3s var(--intro-ease, ease-out) 0.2s both;
+  }
+@keyframes intro-rules-1 {
+ from { opacity: 0;
+  transform: translate(0px, -50px) scale(1);
+  }
+ to { opacity: 1;
+  transform: none;
+  } }
+/* width: 0 -> final pose;
+  delay: 0.5, duration: 0.8 */
+.intro-rules-2 { animation: intro-rules-2 0.8s var(--intro-ease, ease-out) 0.5s both;
+  }
+@keyframes intro-rules-2 {
+ from { width: 0;
+  }
+ to { width: 200px;
+  } }
+/* opacity: 0, x: i % 2 === 0 ? -30 : 30, y: 20 -> final pose;
+  delay: 0.4 + (i * 0.1), type: "spring", bounce: 0.2 */
+.intro-rules-3 { animation: intro-rules-3 .3s var(--intro-ease, ease-out) var(--delay) both;
+  }
+@keyframes intro-rules-3 {
+ from { opacity: 0;
+  transform: translate(var(--x, 20px), 20px) scale(1);
+  }
+ to { opacity: 1;
+  transform: none;
+  } }
+/* opacity: 0, y: 30 -> final pose;
+  delay: 1 */
+.intro-rules-4 { animation: intro-rules-4 .3s var(--intro-ease, ease-out) 1s both;
+  }
+@keyframes intro-rules-4 {
+ from { opacity: 0;
+  transform: translate(0px, 30px) scale(1);
+  }
+ to { opacity: 1;
+  transform: none;
+  } }
+/* opacity: 0, y: -50 -> final pose;
+   */
+.intro-prizes-0 { animation: intro-prizes-0 .3s var(--intro-ease, ease-out) 0s both;
+  }
+@keyframes intro-prizes-0 {
+ from { opacity: 0;
+  transform: translate(0px, -50px) scale(1);
+  }
+ to { opacity: 1;
+  transform: none;
+  } }
+/* opacity: 0, y: 200, scale: 0.8 -> final pose;
+  delay: p.delay,
+                    duration: 0.8,
+                    type: "spring",
+                    bounce: 0.3 */
+.intro-prizes-1 { animation: intro-prizes-1 0.8s var(--intro-ease, ease-out) var(--delay) both;
+  }
+@keyframes intro-prizes-1 {
+ from { opacity: 0;
+  transform: translate(0px, 200px) scale(0.8);
+  }
+ to { opacity: 1;
+  transform: none;
+  } }
+/* opacity: 0, y: 20 -> final pose;
+  delay: 0.9 */
+.intro-prizes-2 { animation: intro-prizes-2 .3s var(--intro-ease, ease-out) 0.9s both;
+  }
+@keyframes intro-prizes-2 {
+ from { opacity: 0;
+  transform: translate(0px, 20px) scale(1);
+  }
+ to { opacity: 1;
+  transform: none;
+  } }
+/* opacity: 0 -> final pose;
+  delay: 1.2 */
+.intro-prizes-3 { animation: intro-prizes-3 .3s var(--intro-ease, ease-out) 1.2s both;
+  }
+@keyframes intro-prizes-3 {
+ from { opacity: 0;
+  transform: translate(0px, 0px) scale(1);
+  }
+ to { opacity: 1;
+  transform: none;
+  } }
+
+@media (prefers-reduced-motion: reduce) {
+ [class*="intro-"] { animation: none !important;
+  }
+ .intro-rules-2 { width: 200px;
+  }
+}

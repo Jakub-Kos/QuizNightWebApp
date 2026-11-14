@@ -1,0 +1,19 @@
+/* Operator overlays retain window pixels rather than virtual stage pixels. */
+.presence.settings-overlay { width: auto; height: auto; }
+.settings-enter { animation: settings-backdrop-in 180ms ease-out both; }
+.settings-exit { animation: settings-backdrop-in 150ms ease-in reverse both; }
+.settings-enter .settings-panel { animation: settings-panel-in 180ms ease-out both; }
+.settings-exit .settings-panel { animation: settings-panel-in 150ms ease-in reverse both; }
+@keyframes settings-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes settings-panel-in { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.presence.fullscreen-hint { width: max-content; height: auto; max-width: calc(100vw - 2rem); transform: translateX(-50%); }
+.fullscreen-enter { animation: fullscreen-hint-in 200ms ease-out both; }
+.fullscreen-exit { animation: fullscreen-hint-in 150ms ease-in reverse both; }
+@keyframes fullscreen-hint-in { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.settings-time { -moz-appearance: textfield; }
+.settings-time::-webkit-inner-spin-button, .settings-time::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .settings-enter, .settings-exit, .settings-enter .settings-panel, .settings-exit .settings-panel,
+  .fullscreen-enter, .fullscreen-exit { animation: none; }
+  .settings-panel *, .fullscreen-hint * { transition: none !important; animation: none !important; }
+}

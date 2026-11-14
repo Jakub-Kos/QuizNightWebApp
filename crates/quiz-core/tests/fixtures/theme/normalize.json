@@ -1,0 +1,2991 @@
+[
+  {
+    "name": "deep-ocean",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "id": "deep-ocean",
+      "name": {
+        "en": "Deep ocean",
+        "cs": "Hlubina oceánu",
+        "sk": "Mély óceán"
+      },
+      "author": "Quiz Night",
+      "description": {
+        "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+        "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+        "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+      },
+      "tags": [
+        "calm",
+        "blue"
+      ],
+      "colors": {
+        "primary": "#0284c7",
+        "accent": "#5eead4",
+        "groundTop": "#062a3d",
+        "ground": "#031621",
+        "groundBottom": "#01080d",
+        "panel": "#05202e"
+      },
+      "fonts": {
+        "title": {
+          "family": "Oswald"
+        },
+        "body": {
+          "family": "Nunito"
+        }
+      },
+      "background": {
+        "image": null,
+        "imageOpacity": 0.5,
+        "imageBlur": 0,
+        "glows": [
+          {
+            "color": "#14b8a6",
+            "x": 30,
+            "y": 100,
+            "size": 80,
+            "opacity": 0.2
+          },
+          {
+            "color": "#0ea5e9",
+            "x": 95,
+            "y": 20,
+            "size": 50,
+            "opacity": 0.1
+          }
+        ],
+        "ornament": "waves"
+      },
+      "decoration": {
+        "type": "bubbles"
+      },
+      "scenes": {
+        "leaderboard": {
+          "layout": "spotlight"
+        },
+        "dashboard": {
+          "layout": "tiles"
+        },
+        "round": {
+          "layout": "curtain"
+        },
+        "welcome": {
+          "intro": "spotlight"
+        }
+      },
+      "style": {
+        "cards": "glass"
+      },
+      "celebration": {
+        "type": "decoration"
+      },
+      "sounds": {
+        "pack": "chimes"
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "deep-ocean",
+        "name": {
+          "en": "Deep ocean",
+          "cs": "Hlubina oceánu",
+          "sk": "Mély óceán"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+          "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+          "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+        },
+        "tags": [
+          "calm",
+          "blue"
+        ],
+        "colors": {
+          "primary": "#0284c7",
+          "accent": "#5eead4",
+          "groundTop": "#062a3d",
+          "ground": "#031621",
+          "groundBottom": "#01080d",
+          "panel": "#05202e"
+        },
+        "fonts": {
+          "title": {
+            "family": "Oswald"
+          },
+          "body": {
+            "family": "Nunito"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#14b8a6",
+              "x": 30,
+              "y": 100,
+              "size": 80,
+              "opacity": 0.2
+            },
+            {
+              "color": "#0ea5e9",
+              "x": 95,
+              "y": 20,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": "waves"
+        },
+        "decoration": {
+          "type": "bubbles"
+        },
+        "style": {
+          "cards": "glass"
+        },
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "chimes"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "spotlight"
+          },
+          "dashboard": {
+            "layout": "tiles"
+          },
+          "round": {
+            "layout": "curtain"
+          },
+          "welcome": {
+            "intro": "spotlight"
+          }
+        }
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "neon-arcade",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "id": "neon-arcade",
+      "name": {
+        "en": "Neon arcade",
+        "cs": "Neonová herna",
+        "sk": "Neon játékterem"
+      },
+      "author": "Quiz Night",
+      "description": {
+        "en": "Hot pink and cyan glowing in the dark, for a loud party quiz.",
+        "cs": "Zářivě růžová a azurová ve tmě, pro hlučný párty kvíz.",
+        "sk": "Rikító rózsaszín és cián a sötétben, egy hangos parti kvízhez."
+      },
+      "tags": [
+        "party",
+        "neon"
+      ],
+      "colors": {
+        "primary": "#e81cc4",
+        "accent": "#22e5ff",
+        "groundTop": "#1a0533",
+        "ground": "#0a0118",
+        "groundBottom": "#030008",
+        "panel": "#12041f"
+      },
+      "fonts": {
+        "title": {
+          "family": "Monoton"
+        },
+        "body": {
+          "family": "Montserrat"
+        }
+      },
+      "background": {
+        "image": null,
+        "imageOpacity": 0.5,
+        "imageBlur": 0,
+        "glows": [
+          {
+            "color": "#ff2bd6",
+            "x": 0,
+            "y": 100,
+            "size": 70,
+            "opacity": 0.25
+          },
+          {
+            "color": "#22e5ff",
+            "x": 100,
+            "y": 0,
+            "size": 60,
+            "opacity": 0.18
+          },
+          {
+            "color": "#7c3aed",
+            "x": 50,
+            "y": 50,
+            "size": 90,
+            "opacity": 0.08
+          }
+        ],
+        "ornament": "skyline"
+      },
+      "decoration": {
+        "type": "stars"
+      },
+      "scenes": {
+        "leaderboard": {
+          "layout": "race"
+        },
+        "dashboard": {
+          "layout": "tiles"
+        },
+        "round": {
+          "layout": "marquee"
+        },
+        "welcome": {
+          "intro": "broadcast"
+        }
+      },
+      "style": {
+        "corners": "sharp",
+        "effects": "neon"
+      },
+      "celebration": {
+        "type": "fireworks"
+      },
+      "sounds": {
+        "pack": "arcade"
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "neon-arcade",
+        "name": {
+          "en": "Neon arcade",
+          "cs": "Neonová herna",
+          "sk": "Neon játékterem"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Hot pink and cyan glowing in the dark, for a loud party quiz.",
+          "cs": "Zářivě růžová a azurová ve tmě, pro hlučný párty kvíz.",
+          "sk": "Rikító rózsaszín és cián a sötétben, egy hangos parti kvízhez."
+        },
+        "tags": [
+          "party",
+          "neon"
+        ],
+        "colors": {
+          "primary": "#e81cc4",
+          "accent": "#22e5ff",
+          "groundTop": "#1a0533",
+          "ground": "#0a0118",
+          "groundBottom": "#030008",
+          "panel": "#12041f"
+        },
+        "fonts": {
+          "title": {
+            "family": "Monoton"
+          },
+          "body": {
+            "family": "Montserrat"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ff2bd6",
+              "x": 0,
+              "y": 100,
+              "size": 70,
+              "opacity": 0.25
+            },
+            {
+              "color": "#22e5ff",
+              "x": 100,
+              "y": 0,
+              "size": 60,
+              "opacity": 0.18
+            },
+            {
+              "color": "#7c3aed",
+              "x": 50,
+              "y": 50,
+              "size": 90,
+              "opacity": 0.08
+            }
+          ],
+          "ornament": "skyline"
+        },
+        "decoration": {
+          "type": "stars"
+        },
+        "style": {
+          "corners": "sharp",
+          "effects": "neon"
+        },
+        "celebration": {
+          "type": "fireworks"
+        },
+        "sounds": {
+          "pack": "arcade"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "race"
+          },
+          "dashboard": {
+            "layout": "tiles"
+          },
+          "round": {
+            "layout": "marquee"
+          },
+          "welcome": {
+            "intro": "broadcast"
+          }
+        }
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "spring-garden",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "id": "spring-garden",
+      "name": {
+        "en": "Spring garden",
+        "cs": "Jarní zahrada",
+        "sk": "Tavaszi kert"
+      },
+      "author": "Quiz Night",
+      "description": {
+        "en": "Fresh green with blossom pink and elegant headings, for spring and Easter quizzes.",
+        "cs": "Svěží zelená s květinově růžovou a elegantními nadpisy, pro jarní a velikonoční kvízy.",
+        "sk": "Friss zöld virágrózsaszínnel és elegáns címekkel, tavaszi és húsvéti kvízekhez."
+      },
+      "tags": [
+        "spring",
+        "easter"
+      ],
+      "colors": {
+        "primary": "#16a34a",
+        "accent": "#f9a8d4",
+        "groundTop": "#0d2414",
+        "ground": "#07150b",
+        "groundBottom": "#020703",
+        "panel": "#0b1d10"
+      },
+      "fonts": {
+        "title": {
+          "family": "Pacifico"
+        },
+        "body": {
+          "family": "Nunito"
+        }
+      },
+      "background": {
+        "image": null,
+        "imageOpacity": 0.5,
+        "imageBlur": 0,
+        "glows": [
+          {
+            "color": "#f472b6",
+            "x": 100,
+            "y": 100,
+            "size": 60,
+            "opacity": 0.14
+          },
+          {
+            "color": "#22c55e",
+            "x": 0,
+            "y": 0,
+            "size": 60,
+            "opacity": 0.12
+          }
+        ],
+        "ornament": "meadow"
+      },
+      "decoration": {
+        "type": "petals"
+      },
+      "scenes": {
+        "leaderboard": {
+          "layout": "medals"
+        },
+        "dashboard": {
+          "layout": "timeline"
+        },
+        "round": {
+          "layout": "slam"
+        },
+        "welcome": {
+          "intro": "polaroid"
+        }
+      },
+      "style": {
+        "corners": "round",
+        "headings": "plain"
+      },
+      "celebration": {
+        "type": "confetti"
+      },
+      "sounds": {
+        "pack": "chimes"
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "spring-garden",
+        "name": {
+          "en": "Spring garden",
+          "cs": "Jarní zahrada",
+          "sk": "Tavaszi kert"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Fresh green with blossom pink and elegant headings, for spring and Easter quizzes.",
+          "cs": "Svěží zelená s květinově růžovou a elegantními nadpisy, pro jarní a velikonoční kvízy.",
+          "sk": "Friss zöld virágrózsaszínnel és elegáns címekkel, tavaszi és húsvéti kvízekhez."
+        },
+        "tags": [
+          "spring",
+          "easter"
+        ],
+        "colors": {
+          "primary": "#16a34a",
+          "accent": "#f9a8d4",
+          "groundTop": "#0d2414",
+          "ground": "#07150b",
+          "groundBottom": "#020703",
+          "panel": "#0b1d10"
+        },
+        "fonts": {
+          "title": {
+            "family": "Pacifico"
+          },
+          "body": {
+            "family": "Nunito"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#f472b6",
+              "x": 100,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#22c55e",
+              "x": 0,
+              "y": 0,
+              "size": 60,
+              "opacity": 0.12
+            }
+          ],
+          "ornament": "meadow"
+        },
+        "decoration": {
+          "type": "petals"
+        },
+        "style": {
+          "corners": "round",
+          "headings": "plain"
+        },
+        "celebration": {
+          "type": "confetti"
+        },
+        "sounds": {
+          "pack": "chimes"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "medals"
+          },
+          "dashboard": {
+            "layout": "timeline"
+          },
+          "round": {
+            "layout": "slam"
+          },
+          "welcome": {
+            "intro": "polaroid"
+          }
+        }
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "minimal",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-0",
+    "input": null,
+    "options": {},
+    "output": {
+      "theme": null,
+      "problems": [
+        {
+          "code": "format",
+          "detail": ""
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-1",
+    "input": [],
+    "options": {},
+    "output": {
+      "theme": null,
+      "problems": [
+        {
+          "code": "format",
+          "detail": ""
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-2",
+    "input": 42,
+    "options": {},
+    "output": {
+      "theme": null,
+      "problems": [
+        {
+          "code": "format",
+          "detail": ""
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-3",
+    "input": "theme",
+    "options": {},
+    "output": {
+      "theme": null,
+      "problems": [
+        {
+          "code": "format",
+          "detail": ""
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-4",
+    "input": {},
+    "options": {},
+    "output": {
+      "theme": null,
+      "problems": [
+        {
+          "code": "format",
+          "detail": ""
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-5",
+    "input": {
+      "format": "bad"
+    },
+    "options": {},
+    "output": {
+      "theme": null,
+      "problems": [
+        {
+          "code": "format",
+          "detail": ""
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-6",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 99
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "version",
+          "detail": "99"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-7",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "id": "../Strašidelná Noc!",
+      "name": " Strašidelná noc "
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "strasidelna-noc",
+        "name": {
+          "en": "Strašidelná noc",
+          "cs": "Strašidelná noc",
+          "sk": "Strašidelná noc"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-8",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": {
+        "en": "Hello",
+        "de": "bad",
+        "cs": 7
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "hello",
+        "name": {
+          "en": "Hello",
+          "cs": "7"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-9",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "author": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "description": {
+          "en": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "cs": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sk": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-10",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "tags": [
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag",
+        "tag"
+      ]
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [
+          "tag",
+          "tag",
+          "tag",
+          "tag",
+          "tag",
+          "tag",
+          "tag",
+          "tag"
+        ],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-11",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "tags": []
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-12",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "colors": {
+        "primary": "#F80",
+        "accent": "orange",
+        "panel": "#ABCDEF",
+        "ground": "#12"
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {
+          "primary": "#ff8800",
+          "panel": "#abcdef"
+        },
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "accent"
+        },
+        {
+          "code": "color",
+          "detail": "ground"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [
+      "text_panel"
+    ],
+    "contrast": 21
+  },
+  {
+    "name": "edge-13",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "background": {
+        "glows": [
+          {
+            "color": "#fff",
+            "x": 500,
+            "opacity": -1
+          },
+          {
+            "color": "#fff",
+            "x": 500,
+            "opacity": -1
+          },
+          {
+            "color": "#fff",
+            "x": 500,
+            "opacity": -1
+          },
+          {
+            "color": "#fff",
+            "x": 500,
+            "opacity": -1
+          },
+          {
+            "color": "#fff",
+            "x": 500,
+            "opacity": -1
+          },
+          {
+            "color": "#fff",
+            "x": 500,
+            "opacity": -1
+          },
+          {
+            "color": "#fff",
+            "x": 500,
+            "opacity": -1
+          },
+          {
+            "color": "#fff",
+            "x": 500,
+            "opacity": -1
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 100,
+              "y": 50,
+              "size": 50,
+              "opacity": 0
+            },
+            {
+              "color": "#ffffff",
+              "x": 100,
+              "y": 50,
+              "size": 50,
+              "opacity": 0
+            },
+            {
+              "color": "#ffffff",
+              "x": 100,
+              "y": 50,
+              "size": 50,
+              "opacity": 0
+            },
+            {
+              "color": "#ffffff",
+              "x": 100,
+              "y": 50,
+              "size": 50,
+              "opacity": 0
+            },
+            {
+              "color": "#ffffff",
+              "x": 100,
+              "y": 50,
+              "size": 50,
+              "opacity": 0
+            },
+            {
+              "color": "#ffffff",
+              "x": 100,
+              "y": 50,
+              "size": 50,
+              "opacity": 0
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "glows",
+          "detail": "8"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-14",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "background": {
+        "glows": [
+          null,
+          3,
+          {},
+          {
+            "color": "red"
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "glow"
+        },
+        {
+          "code": "color",
+          "detail": "glow"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-15",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "fonts": {
+        "title": {
+          "family": "comic sans"
+        },
+        "body": {
+          "family": "grenze"
+        }
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {
+          "body": {
+            "family": "Grenze"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "font",
+          "detail": "comic sans"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-16",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "background": {
+        "image": "../bg.jpg"
+      },
+      "fonts": {
+        "title": {
+          "file": "/font.woff2"
+        }
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "missing_file",
+          "detail": "/font.woff2"
+        },
+        {
+          "code": "missing_file",
+          "detail": "../bg.jpg"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-17",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "style": {
+        "corners": "sharp",
+        "cards": "wood",
+        "headings": "plain",
+        "effects": "neon"
+      },
+      "sounds": {
+        "pack": "dubstep"
+      },
+      "celebration": {
+        "type": "fireworks"
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {
+          "corners": "sharp",
+          "headings": "plain",
+          "effects": "neon"
+        },
+        "celebration": {
+          "type": "fireworks"
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "style",
+          "detail": "wood"
+        },
+        {
+          "code": "sounds",
+          "detail": "dubstep"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-18",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "scenes": {
+        "leaderboard": {
+          "layout": "medals"
+        },
+        "dashboard": {
+          "layout": "timeline"
+        },
+        "round": {
+          "layout": "curtain"
+        },
+        "welcome": {
+          "intro": "polaroid"
+        }
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "medals"
+          },
+          "dashboard": {
+            "layout": "timeline"
+          },
+          "round": {
+            "layout": "curtain"
+          },
+          "welcome": {
+            "intro": "polaroid"
+          }
+        }
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-19",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "scenes": {
+        "round": {
+          "layout": "explode"
+        },
+        "welcome": {
+          "intro": 3
+        }
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "layout",
+          "detail": "explode"
+        },
+        {
+          "code": "layout",
+          "detail": "3"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-20",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "background": {
+        "ornament": "volcano"
+      },
+      "decoration": {
+        "type": "script"
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "ornament",
+          "detail": "volcano"
+        },
+        {
+          "code": "decoration",
+          "detail": "script"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-21",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "unknown": true,
+      "colors": {
+        "css": "x"
+      },
+      "fonts": {
+        "unknown": {}
+      },
+      "background": {
+        "extra": 1
+      },
+      "style": {
+        "extra": 1
+      },
+      "scenes": {
+        "extra": {}
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": []
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-22",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": false,
+      "author": false,
+      "description": false,
+      "tags": [
+        false
+      ],
+      "colors": {
+        "primary": false
+      },
+      "fonts": {
+        "title": {
+          "family": false
+        }
+      },
+      "background": {
+        "imageOpacity": false,
+        "imageBlur": false,
+        "glows": [
+          {
+            "color": "#fff",
+            "x": false,
+            "y": false,
+            "size": false,
+            "opacity": false
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "false",
+        "description": {},
+        "tags": [
+          "false"
+        ],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 0,
+              "y": 0,
+              "size": 5,
+              "opacity": 0
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "primary"
+        },
+        {
+          "code": "font",
+          "detail": "false"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-23",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": 0,
+      "author": 0,
+      "description": 0,
+      "tags": [
+        0
+      ],
+      "colors": {
+        "primary": 0
+      },
+      "fonts": {
+        "title": {
+          "family": 0
+        }
+      },
+      "background": {
+        "imageOpacity": 0,
+        "imageBlur": 0,
+        "glows": [
+          {
+            "color": "#fff",
+            "x": 0,
+            "y": 0,
+            "size": 0,
+            "opacity": 0
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "0",
+        "description": {},
+        "tags": [
+          "0"
+        ],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 0,
+              "y": 0,
+              "size": 5,
+              "opacity": 0
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "primary"
+        },
+        {
+          "code": "font",
+          "detail": "0"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-24",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": "NaN",
+      "author": "NaN",
+      "description": "NaN",
+      "tags": [
+        "NaN"
+      ],
+      "colors": {
+        "primary": "NaN"
+      },
+      "fonts": {
+        "title": {
+          "family": "NaN"
+        }
+      },
+      "background": {
+        "imageOpacity": "NaN",
+        "imageBlur": "NaN",
+        "glows": [
+          {
+            "color": "#fff",
+            "x": "NaN",
+            "y": "NaN",
+            "size": "NaN",
+            "opacity": "NaN"
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "nan",
+        "name": {
+          "en": "NaN",
+          "cs": "NaN",
+          "sk": "NaN"
+        },
+        "author": "NaN",
+        "description": {
+          "en": "NaN",
+          "cs": "NaN",
+          "sk": "NaN"
+        },
+        "tags": [
+          "nan"
+        ],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 50,
+              "y": 50,
+              "size": 50,
+              "opacity": 0.2
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "primary"
+        },
+        {
+          "code": "font",
+          "detail": "NaN"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-25",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": "Infinity",
+      "author": "Infinity",
+      "description": "Infinity",
+      "tags": [
+        "Infinity"
+      ],
+      "colors": {
+        "primary": "Infinity"
+      },
+      "fonts": {
+        "title": {
+          "family": "Infinity"
+        }
+      },
+      "background": {
+        "imageOpacity": "Infinity",
+        "imageBlur": "Infinity",
+        "glows": [
+          {
+            "color": "#fff",
+            "x": "Infinity",
+            "y": "Infinity",
+            "size": "Infinity",
+            "opacity": "Infinity"
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "infinity",
+        "name": {
+          "en": "Infinity",
+          "cs": "Infinity",
+          "sk": "Infinity"
+        },
+        "author": "Infinity",
+        "description": {
+          "en": "Infinity",
+          "cs": "Infinity",
+          "sk": "Infinity"
+        },
+        "tags": [
+          "infinity"
+        ],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 50,
+              "y": 50,
+              "size": 50,
+              "opacity": 0.2
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "primary"
+        },
+        {
+          "code": "font",
+          "detail": "Infinity"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-26",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": [],
+      "author": [],
+      "description": [],
+      "tags": [
+        []
+      ],
+      "colors": {
+        "primary": []
+      },
+      "fonts": {
+        "title": {
+          "family": []
+        }
+      },
+      "background": {
+        "imageOpacity": [],
+        "imageBlur": [],
+        "glows": [
+          {
+            "color": "#fff",
+            "x": [],
+            "y": [],
+            "size": [],
+            "opacity": []
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 0,
+              "y": 0,
+              "size": 5,
+              "opacity": 0
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "primary"
+        },
+        {
+          "code": "font",
+          "detail": ""
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-27",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": {},
+      "author": {},
+      "description": {},
+      "tags": [
+        {}
+      ],
+      "colors": {
+        "primary": {}
+      },
+      "fonts": {
+        "title": {
+          "family": {}
+        }
+      },
+      "background": {
+        "imageOpacity": {},
+        "imageBlur": {},
+        "glows": [
+          {
+            "color": "#fff",
+            "x": {},
+            "y": {},
+            "size": {},
+            "opacity": {}
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "[object Object]",
+        "description": {},
+        "tags": [
+          "object-object"
+        ],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 50,
+              "y": 50,
+              "size": 50,
+              "opacity": 0.2
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "primary"
+        },
+        {
+          "code": "font",
+          "detail": "[object Object]"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-28",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": "0x10",
+      "author": "0x10",
+      "description": "0x10",
+      "tags": [
+        "0x10"
+      ],
+      "colors": {
+        "primary": "0x10"
+      },
+      "fonts": {
+        "title": {
+          "family": "0x10"
+        }
+      },
+      "background": {
+        "imageOpacity": "0x10",
+        "imageBlur": "0x10",
+        "glows": [
+          {
+            "color": "#fff",
+            "x": "0x10",
+            "y": "0x10",
+            "size": "0x10",
+            "opacity": "0x10"
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "0x10",
+        "name": {
+          "en": "0x10",
+          "cs": "0x10",
+          "sk": "0x10"
+        },
+        "author": "0x10",
+        "description": {
+          "en": "0x10",
+          "cs": "0x10",
+          "sk": "0x10"
+        },
+        "tags": [
+          "0x10"
+        ],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 1,
+          "imageBlur": 16,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 16,
+              "y": 16,
+              "size": 16,
+              "opacity": 1
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "primary"
+        },
+        {
+          "code": "font",
+          "detail": "0x10"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-29",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": -100,
+      "author": -100,
+      "description": -100,
+      "tags": [
+        -100
+      ],
+      "colors": {
+        "primary": -100
+      },
+      "fonts": {
+        "title": {
+          "family": -100
+        }
+      },
+      "background": {
+        "imageOpacity": -100,
+        "imageBlur": -100,
+        "glows": [
+          {
+            "color": "#fff",
+            "x": -100,
+            "y": -100,
+            "size": -100,
+            "opacity": -100
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "-100",
+        "description": {},
+        "tags": [
+          "100"
+        ],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 0,
+              "y": 0,
+              "size": 5,
+              "opacity": 0
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "primary"
+        },
+        {
+          "code": "font",
+          "detail": "-100"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "edge-30",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "name": 999,
+      "author": 999,
+      "description": 999,
+      "tags": [
+        999
+      ],
+      "colors": {
+        "primary": 999
+      },
+      "fonts": {
+        "title": {
+          "family": 999
+        }
+      },
+      "background": {
+        "imageOpacity": 999,
+        "imageBlur": 999,
+        "glows": [
+          {
+            "color": "#fff",
+            "x": 999,
+            "y": 999,
+            "size": 999,
+            "opacity": 999
+          }
+        ]
+      }
+    },
+    "options": {},
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "999",
+        "description": {},
+        "tags": [
+          "999"
+        ],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 1,
+          "imageBlur": 20,
+          "glows": [
+            {
+              "color": "#ffffff",
+              "x": 100,
+              "y": 100,
+              "size": 150,
+              "opacity": 1
+            }
+          ],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "color",
+          "detail": "primary"
+        },
+        {
+          "code": "font",
+          "detail": "999"
+        }
+      ]
+    },
+    "files": [],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "assets/BG.jpg",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "background": {
+        "image": "assets/BG.jpg"
+      },
+      "fonts": {
+        "title": {
+          "file": "assets/f.woff2"
+        },
+        "body": {
+          "file": "missing.woff2"
+        }
+      }
+    },
+    "options": {
+      "assets": [
+        {
+          "name": "assets/bg.jpg",
+          "size": 1000
+        },
+        {
+          "name": "assets/huge.png",
+          "size": 9000000
+        },
+        {
+          "name": "assets/f.woff2",
+          "size": 100
+        },
+        {
+          "name": "assets/notes.txt",
+          "size": 5
+        }
+      ]
+    },
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {
+          "title": {
+            "file": "assets/f.woff2"
+          }
+        },
+        "background": {
+          "image": "assets/bg.jpg",
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "missing_file",
+          "detail": "missing.woff2"
+        },
+        {
+          "code": "unused_file",
+          "detail": "assets/huge.png"
+        },
+        {
+          "code": "unused_file",
+          "detail": "assets/notes.txt"
+        }
+      ]
+    },
+    "files": [
+      "assets/f.woff2",
+      "assets/bg.jpg"
+    ],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "assets/huge.png",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "background": {
+        "image": "assets/huge.png"
+      },
+      "fonts": {
+        "title": {
+          "file": "assets/f.woff2"
+        },
+        "body": {
+          "file": "missing.woff2"
+        }
+      }
+    },
+    "options": {
+      "assets": [
+        {
+          "name": "assets/bg.jpg",
+          "size": 1000
+        },
+        {
+          "name": "assets/huge.png",
+          "size": 9000000
+        },
+        {
+          "name": "assets/f.woff2",
+          "size": 100
+        },
+        {
+          "name": "assets/notes.txt",
+          "size": 5
+        }
+      ]
+    },
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {
+          "title": {
+            "file": "assets/f.woff2"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "missing_file",
+          "detail": "missing.woff2"
+        },
+        {
+          "code": "file_size",
+          "detail": "assets/huge.png"
+        },
+        {
+          "code": "unused_file",
+          "detail": "assets/bg.jpg"
+        },
+        {
+          "code": "unused_file",
+          "detail": "assets/huge.png"
+        },
+        {
+          "code": "unused_file",
+          "detail": "assets/notes.txt"
+        }
+      ]
+    },
+    "files": [
+      "assets/f.woff2"
+    ],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "assets/notes.txt",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "background": {
+        "image": "assets/notes.txt"
+      },
+      "fonts": {
+        "title": {
+          "file": "assets/f.woff2"
+        },
+        "body": {
+          "file": "missing.woff2"
+        }
+      }
+    },
+    "options": {
+      "assets": [
+        {
+          "name": "assets/bg.jpg",
+          "size": 1000
+        },
+        {
+          "name": "assets/huge.png",
+          "size": 9000000
+        },
+        {
+          "name": "assets/f.woff2",
+          "size": 100
+        },
+        {
+          "name": "assets/notes.txt",
+          "size": 5
+        }
+      ]
+    },
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {
+          "title": {
+            "file": "assets/f.woff2"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [
+        {
+          "code": "missing_file",
+          "detail": "missing.woff2"
+        },
+        {
+          "code": "file_type",
+          "detail": "assets/notes.txt"
+        },
+        {
+          "code": "unused_file",
+          "detail": "assets/bg.jpg"
+        },
+        {
+          "code": "unused_file",
+          "detail": "assets/huge.png"
+        },
+        {
+          "code": "unused_file",
+          "detail": "assets/notes.txt"
+        }
+      ]
+    },
+    "files": [
+      "assets/f.woff2"
+    ],
+    "readability": [],
+    "contrast": 21
+  },
+  {
+    "name": "stored traversal",
+    "input": {
+      "format": "quiznight-theme",
+      "version": 1,
+      "background": {
+        "image": "../x.jpg",
+        "imageOpacity": 0.9,
+        "imageBlur": 0
+      },
+      "fonts": {
+        "body": {
+          "file": "/f.woff2"
+        }
+      }
+    },
+    "options": {
+      "stored": true
+    },
+    "output": {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "theme",
+        "name": {
+          "en": "Theme",
+          "cs": "Motiv",
+          "sk": "Téma"
+        },
+        "author": "",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {
+          "body": {
+            "file": "/f.woff2"
+          }
+        },
+        "background": {
+          "image": "../x.jpg",
+          "imageOpacity": 0.9,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": null
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": []
+    },
+    "files": [
+      "/f.woff2",
+      "../x.jpg"
+    ],
+    "readability": [
+      "image"
+    ],
+    "contrast": 21
+  }
+]

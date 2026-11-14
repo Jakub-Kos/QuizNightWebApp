@@ -1,0 +1,118 @@
+[package]
+name = "quiz-app"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+console_error_panic_hook = "0.1.7"
+gloo-net = "0.7.0"
+gloo-timers = { version = "0.4.0", features = ["futures"] }
+js-sys = "0.3.107"
+leptos = { version = "0.8.23", features = ["csr"] }
+lucide-leptos = "3.63.0"
+quiz-core = { version = "0.1.0", path = "../quiz-core" }
+quiz-store = { version = "0.1.0", path = "../quiz-store" }
+serde.workspace = true
+serde_json.workspace = true
+wasm-bindgen = "0.2.130"
+wasm-bindgen-futures = "0.4.80"
+web-sys = { version = "0.3.107", features = [
+    "HtmlScriptElement",
+    "HtmlHeadElement",
+    "StorageEvent",
+    "RequestCache",
+    "XmlHttpRequest",
+    "XmlHttpRequestUpload",
+    "XmlHttpRequestEventTarget",
+    "ProgressEvent",
+    "Animation",
+    "AnimationEvent",
+    "AudioContext",
+    "BiquadFilterType",
+    "BiquadFilterNode",
+    "AudioScheduledSourceNode",
+    "AudioContextState",
+    "AudioBufferSourceNode",
+    "AudioBuffer",
+    "AudioDestinationNode",
+    "AudioNode",
+    "AudioParam",
+    "BaseAudioContext",
+    "Blob",
+    "BlobPropertyBag",
+    "File",
+    "FileList",
+    "DragEvent",
+    "DataTransfer",
+    "HtmlAnchorElement",
+    "BroadcastChannel",
+    "CanvasRenderingContext2d",
+    "CssStyleDeclaration",
+    "CssStyleSheet",
+    "Document",
+    "DocumentFragment",
+    "DomRect",
+    "DomRectReadOnly",
+    "DomStringMap",
+    "DomTokenList",
+    "Element",
+    "Event",
+    "EventTarget",
+    "FillMode",
+    "FocusEvent",
+    "FontFace",
+    "FontFaceSet",
+    "GainNode",
+    "HashChangeEvent",
+    "Headers",
+    "History",
+    "HtmlAudioElement",
+    "HtmlCanvasElement",
+    "HtmlCollection",
+    "HtmlDivElement",
+    "HtmlElement",
+    "HtmlImageElement",
+    "HtmlInputElement",
+    "HtmlMediaElement",
+    "HtmlSelectElement",
+    "HtmlStyleElement",
+    "HtmlVideoElement",
+    "InputEvent",
+    "KeyboardEvent",
+    "KeyframeAnimationOptions",
+    "KeyframeEffectOptions",
+    "Location",
+    "MediaQueryList",
+    "MessageEvent",
+    "MouseEvent",
+    "Navigator",
+    "Node",
+    "NodeList",
+    "OscillatorNode",
+    "OscillatorType",
+    "PageTransitionEvent",
+    "Performance",
+    "PointerEvent",
+    "Request",
+    "RequestInit",
+    "ResizeObserver",
+    "ResizeObserverEntry",
+    "Response",
+    "ReadableStream",
+    "Screen",
+    "ScrollIntoViewOptions",
+    "Storage",
+    "StyleSheet",
+    "Text",
+    "TransitionEvent",
+    "Url",
+    "UrlSearchParams",
+    "VisibilityState",
+    "WheelEvent",
+    "Window",
+    "console",
+] }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.80"

@@ -1,0 +1,123 @@
+{
+  "packs": [
+    {
+      "name": "minimal",
+      "source": "minimal.zip",
+      "zipBase64": "UEsDBBQAAAAIAEOLbV0Na62DSgAAAFEAAAAKAAAAdGhlbWUuanNvbiWKOw6AIAyG7/LPOLiyGU/SKEoTKbEWB413twnj93ixVS1kiDgbP8J7tsFyKgkBd9KLqyCOAbz6stBR3At5jpg7UbNc1XkSwfcDUEsBAhQAFAAAAAgAQ4ttXQ1rrYNKAAAAUQAAAAoAAAAAAAAAAAAAAAAAAAAAAHRoZW1lLmpzb25QSwUGAAAAAAEAAQA4AAAAcgAAAAAA",
+      "report": "<!-- workshop-check -->\n### Theme check\n\n✅ **Passes the check.**\n\n| | |\n| --- | --- |\n| Name | Calm (en), Calm (cs), Calm (sk) |\n| Author | Ann |\n| Id | `calm` |\n| Tags | — |\n| Fonts | Classic |\n| Scenery, decoration | —, — |\n| Files | — |\n\nTo review it, download the file and import it in a quiz (Look → Import theme). To add it:\n\n```\ncargo run -p quiz-cli -- add minimal.zip\n```"
+    },
+    {
+      "name": "assets",
+      "source": "assets.zip",
+      "zipBase64": "UEsDBBQAAAAIAEOLbV19jpVWdQAAAJQAAAAKAAAAdGhlbWUuanNvbiWNSw7CMAxE7+J1QIJldoiTuG0+hsaGNAG1Ve5eR11Zz/NGs4OXnLCAhW+ljSnEcinRJQcGfi4vJAz2ZoAmVUack/4ZNbbwPAlriZKVH8yKA47vkKWyFnaghKG7eH19AjSjc1yWngwyrf16mk/hL97fobV2AFBLAwQUAAAACABDi21dRPTJAhAAAADQBwAABQAAAGEuanBnYxgFo2AUjIJRMApGwZAHAFBLAwQUAAAACABDi21djZvVDwQAAAAUAAAABwAAAGEud29mZjJjwAIAUEsBAhQAFAAAAAgAQ4ttXX2OlVZ1AAAAlAAAAAoAAAAAAAAAAAAAAAAAAAAAAHRoZW1lLmpzb25QSwECFAAUAAAACABDi21dRPTJAhAAAADQBwAABQAAAAAAAAAAAAAAAACdAAAAYS5qcGdQSwECFAAUAAAACABDi21djZvVDwQAAAAUAAAABwAAAAAAAAAAAAAAAADQAAAAYS53b2ZmMlBLBQYAAAAAAwADAKAAAAD5AAAAAAA=",
+      "report": "<!-- workshop-check -->\n### Theme check\n\n✅ **Passes the check.**\n\n| | |\n| --- | --- |\n| Name | Calm (en), Calm (cs), Calm (sk) |\n| Author | Ann |\n| Id | `calm` |\n| Tags | — |\n| Fonts | body: file a.woff2 |\n| Scenery, decoration | —, — |\n| Files | a.jpg (2 KB), a.woff2 (1 KB) |\n\nTo review it, download the file and import it in a quiz (Look → Import theme). To add it:\n\n```\ncargo run -p quiz-cli -- add assets.zip\n```"
+    },
+    {
+      "name": "dropped",
+      "source": "dropped.zip",
+      "zipBase64": "UEsDBBQAAAAIAEOLbV1xiawRfQAAANMAAAAKAAAAdGhlbWUuanNvbp2MQQ4CIRAE/9JnPHjlZnyG8cCyyBJhJg6giYS/O6s/MJlLTXfXwI2luAaLR09vSnFrh7aFEmDwDFITE+zRIK1a8S4X/ZPT2OL8I9fbxqJ8IlL0nFkq7IDzPtBulrBiGizO36NwJ1UNsOyab75w7FWnMfNLl5cxzb93nfMDUEsBAhQAFAAAAAgAQ4ttXXGJrBF9AAAA0wAAAAoAAAAAAAAAAAAAAAAAAAAAAHRoZW1lLmpzb25QSwUGAAAAAAEAAQA4AAAApQAAAAAA",
+      "report": "<!-- workshop-check -->\n### Theme check\n\n❌ **Does not pass.** These parts would be left out:\n\n- `color`: accent\n- `glows`: 20\n- `color`: glow\n- `color`: glow\n- `color`: glow\n- `color`: glow\n- `color`: glow\n- `color`: glow\n- `ornament`: bogus\n\n| | |\n| --- | --- |\n| Name | Calm (en), Calm (cs), Calm (sk) |\n| Author | Ann |\n| Id | `calm` |\n| Tags | — |\n| Fonts | Classic |\n| Scenery, decoration | —, — |\n| Files | — |\n"
+    },
+    {
+      "name": "readability",
+      "source": "readability.zip",
+      "zipBase64": "UEsDBBQAAAAIAEOLbV3nBxfxXwAAAHMAAAAKAAAAdGhlbWUuanNvbiWLMRKEMAwD/6JrueLadDe8xIRAMhB7MAkFDH/HgLqVtAcG0UwFDktNO6cxlm+JIQc02IKuSRju1yD1dvE0Z+uZbHZoX6Jaoqjxn9nQyyy6wh3oyE+jSuVb/QxPcJ4XUEsBAhQAFAAAAAgAQ4ttXecHF/FfAAAAcwAAAAoAAAAAAAAAAAAAAAAAAAAAAHRoZW1lLmpzb25QSwUGAAAAAAEAAQA4AAAAhwAAAAAA",
+      "report": "<!-- workshop-check -->\n### Theme check\n\n✅ **Passes the check.**\n\n| | |\n| --- | --- |\n| Name | Calm (en), Calm (cs), Calm (sk) |\n| Author | Ann |\n| Id | `calm` |\n| Tags | — |\n| Fonts | Classic |\n| Scenery, decoration | —, — |\n| Files | — |\n\nTo review it, download the file and import it in a quiz (Look → Import theme). To add it:\n\n```\ncargo run -p quiz-cli -- add readability.zip\n```"
+    },
+    {
+      "name": "hostile",
+      "source": "hostile.zip",
+      "zipBase64": "UEsDBBQAAAAIAEOLbV0GwR7yWwAAAHYAAAAKAAAAdGhlbWUuanNvbqtWSssvyk0sUbJSKizNrMrLTM8o0S3JSM1NVdJRKkstKs7Mz1OyMtRRykwBKklOzMkFiuclAqWtlBxSgQoq8/NSFWyS7BRqFLQUEhSiY4HyiaUlGflFuFXUAgBQSwECFAAUAAAACABDi21dBsEe8lsAAAB2AAAACgAAAAAAAAAAAAAAAAAAAAAAdGhlbWUuanNvblBLBQYAAAAAAQABADgAAACDAAAAAAA=",
+      "report": "<!-- workshop-check -->\n### Theme check\n\n✅ **Passes the check.**\n\n| | |\n| --- | --- |\n| Name | @​everyone \\<b\\> \\| \\* \\` \\[\\] (en), @​everyone \\<b\\> \\| \\* \\` \\[\\] (cs), @​everyone \\<b\\> \\| \\* \\` \\[\\] (sk) |\n| Author | @​everyone \\<b\\> \\| \\* \\` \\[\\] |\n| Id | `calm` |\n| Tags | — |\n| Fonts | Classic |\n| Scenery, decoration | —, — |\n| Files | — |\n\nTo review it, download the file and import it in a quiz (Look → Import theme). To add it:\n\n```\ncargo run -p quiz-cli -- add hostile.zip\n```"
+    },
+    {
+      "name": "unused",
+      "source": "unused.zip",
+      "zipBase64": "UEsDBBQAAAAIAEOLbV0Na62DSgAAAFEAAAAKAAAAdGhlbWUuanNvbiWKOw6AIAyG7/LPOLiyGU/SKEoTKbEWB413twnj93ixVS1kiDgbP8J7tsFyKgkBd9KLqyCOAbz6stBR3At5jpg7UbNc1XkSwfcDUEsDBBQAAAAIAEOLbV2GphA2BwAAAAUAAAAKAAAAdW51c2VkLnR4dMtIzcnJBwBQSwECFAAUAAAACABDi21dDWutg0oAAABRAAAACgAAAAAAAAAAAAAAAAAAAAAAdGhlbWUuanNvblBLAQIUABQAAAAIAEOLbV2GphA2BwAAAAUAAAAKAAAAAAAAAAAAAAAAAHIAAAB1bnVzZWQudHh0UEsFBgAAAAACAAIAcAAAAKEAAAAAAA==",
+      "report": "<!-- workshop-check -->\n### Theme check\n\n✅ **Passes the check.**\n\n| | |\n| --- | --- |\n| Name | Calm (en), Calm (cs), Calm (sk) |\n| Author | Ann |\n| Id | `calm` |\n| Tags | — |\n| Fonts | Classic |\n| Scenery, decoration | —, — |\n| Files | — |\n\nNot used by the theme (left out when added): unused.txt.\n\nTo review it, download the file and import it in a quiz (Look → Import theme). To add it:\n\n```\ncargo run -p quiz-cli -- add unused.zip\n```"
+    },
+    {
+      "name": "folder",
+      "source": "folder.zip",
+      "zipBase64": "UEsDBBQAAAAIAEOLbV0Na62DSgAAAFEAAAARAAAAZm9sZGVyL3RoZW1lLmpzb24lijsOgCAMhu/yzzi4shlP0ihKEymxFgeNd7cJ4/d4sVUtZIg4Gz/Ce7bBcioJAXfSi6sgjgG8+rLQUdwLeY6YO1GzXNV5EsH3A1BLAQIUABQAAAAIAEOLbV0Na62DSgAAAFEAAAARAAAAAAAAAAAAAAAAAAAAAABmb2xkZXIvdGhlbWUuanNvblBLBQYAAAAAAQABAD8AAAB5AAAAAAA=",
+      "report": "<!-- workshop-check -->\n### Theme check\n\n✅ **Passes the check.**\n\n| | |\n| --- | --- |\n| Name | Calm (en), Calm (cs), Calm (sk) |\n| Author | Ann |\n| Id | `calm` |\n| Tags | — |\n| Fonts | Classic |\n| Scenery, decoration | —, — |\n| Files | — |\n\nTo review it, download the file and import it in a quiz (Look → Import theme). To add it:\n\n```\ncargo run -p quiz-cli -- add folder.zip\n```"
+    }
+  ],
+  "errors": [
+    {
+      "name": "random",
+      "zipBase64": "AQID",
+      "error": "this is not a .zip file"
+    },
+    {
+      "name": "missing",
+      "zipBase64": "UEsDBBQAAAAIAEOLbV2DFtyMAwAAAAEAAAAFAAAAYS50eHSrAABQSwECFAAUAAAACABDi21dgxbcjAMAAAABAAAABQAAAAAAAAAAAAAAAAAAAAAAYS50eHRQSwUGAAAAAAEAAQAzAAAAJgAAAAAA",
+      "error": "the pack has no theme.json"
+    },
+    {
+      "name": "not-theme",
+      "zipBase64": "UEsDBBQAAAAIAEOLbV1Dv6ajBAAAAAIAAAAKAAAAdGhlbWUuanNvbquuBQBQSwECFAAUAAAACABDi21dQ7+mowQAAAACAAAACgAAAAAAAAAAAAAAAAAAAAAAdGhlbWUuanNvblBLBQYAAAAAAQABADgAAAAsAAAAAAA=",
+      "error": "theme.json is not a theme"
+    }
+  ],
+  "md": [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "hello",
+      "output": "hello"
+    },
+    {
+      "input": "@everyone",
+      "output": "@​everyone"
+    },
+    {
+      "input": "<b>",
+      "output": "\\<b\\>"
+    },
+    {
+      "input": "|",
+      "output": "\\|"
+    },
+    {
+      "input": "*`[]",
+      "output": "\\*\\`\\[\\]"
+    },
+    {
+      "input": "a\n b",
+      "output": "a b"
+    },
+    {
+      "input": "\\#~",
+      "output": "\\\\\\#\\~"
+    }
+  ],
+  "urls": [
+    {
+      "input": "",
+      "output": null
+    },
+    {
+      "input": "https://evil.example/x.zip",
+      "output": null
+    },
+    {
+      "input": "https://github.com/user-attachments/files/1/a.zip",
+      "output": "https://github.com/user-attachments/files/1/a.zip"
+    },
+    {
+      "input": "https://githubusercontent.com/a.zip",
+      "output": "https://githubusercontent.com/a.zip"
+    },
+    {
+      "input": "https://raw.githubusercontent.com/a.zip",
+      "output": "https://raw.githubusercontent.com/a.zip"
+    },
+    {
+      "input": "[x](https://github.com/user-attachments/files/2/b.zip)",
+      "output": "https://github.com/user-attachments/files/2/b.zip"
+    }
+  ]
+}

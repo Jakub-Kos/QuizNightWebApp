@@ -1,0 +1,20 @@
+/* PauseScreen.jsx: overlapping two-second colour fades and wait-mode spotlight cards. */
+.pause-background > .presence { position: absolute; inset: 0; opacity: .15; }
+.pause-background > .pause-bg-enter { animation: pause-bg-in 2s ease forwards; }
+.pause-background > .pause-bg-exit { animation: pause-bg-out 2s ease forwards; }
+.pause-spotlight > .presence { display: flex; align-items: center; justify-content: center; }
+.pause-card-enter { animation: pause-card-in .8s ease-in-out both; }
+.pause-card-exit { animation: pause-card-out .8s ease-in-out both; }
+.pause-ticker { flex-shrink: 0; width: max-content; animation: pause-ticker var(--pause-ticker-duration) linear infinite; }
+.pause-mask { mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); }
+@keyframes pause-bg-in { from { opacity: 0; } to { opacity: .15; } }
+@keyframes pause-bg-out { from { opacity: .15; } to { opacity: 0; } }
+@keyframes pause-card-in { from { opacity: 0; transform: translateY(30px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes pause-card-out { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-20px) scale(1.02); } }
+@keyframes pause-ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .pause-background > .pause-bg-enter, .pause-background > .pause-bg-exit,
+  .pause-card-enter, .pause-card-exit { animation-duration: .001ms; }
+  .pause-ticker, .pause-screen .animate-pulse { animation: none; }
+  .pause-screen .transition-colors { transition: none; }
+}

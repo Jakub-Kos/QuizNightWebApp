@@ -1,0 +1,17 @@
+/* Keep show typography and container units on a scaled virtual canvas. */
+.theme-preview { aspect-ratio: 16 / 9; position: relative; width: 100%; isolation: isolate; }
+.theme-preview-canvas { position: absolute; inset: 0 auto auto 0; width: 2400px; height: 1350px; container-type: size; transform-origin: top left; }
+.theme-preview .question-preview { width: 100%; height: 100%; aspect-ratio: 16 / 9; }
+.theme-preview-image { z-index: 1; }
+.theme-preview .font-title { font-family: var(--theme-title-font, var(--theme-font, "League Spartan")); }
+.theme-preview nav { pointer-events: none; }
+.theme-color-swatches { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+.theme-color-swatches button { aspect-ratio: 1; border-radius: 5px; border: 1px solid #ffffff40; }
+.theme-dialog { animation: theme-dialog-enter 160ms ease-out both; }
+@keyframes theme-dialog-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .theme-dialog { animation: none; } }
+
+.color-saturation{height:170px;position:relative;touch-action:none;border-radius:8px;background-image:linear-gradient(to top,#000,transparent),linear-gradient(to right,#fff,transparent)}
+.color-cursor{position:absolute;width:14px;height:14px;border:2px solid white;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 2px #000;pointer-events:none}
+.color-hue{appearance:none;height:14px;border-radius:8px;background:linear-gradient(to right,red,#ff0,#0f0,#0ff,#00f,#f0f,red)}
+.theme-color-swatches button[aria-pressed=true]{outline:2px solid #eab308;outline-offset:2px}
