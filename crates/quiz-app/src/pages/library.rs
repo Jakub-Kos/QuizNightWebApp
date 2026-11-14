@@ -1,4 +1,4 @@
-//! Local quiz library. No Drive integration.
+//! Local quiz library and invited Google Drive entry points.
 use crate::{
     router::{Route, navigate},
     store,
@@ -89,7 +89,19 @@ async fn import_files(files: Vec<web_sys::File>, store: store::Store) -> Result<
 }
 
 #[component]
-pub fn Page() -> impl IntoView {
+pub fn Page(
+    #[prop(default = false)] open_drive: bool,
+    #[prop(default=None)] drive_link: Option<String>,
+) -> impl IntoView {
+    let invited_route = open_drive;
+    if invited_route && crate::google::auth::google_enabled() {
+        crate::google::auth::accept_drive_invite();
+    }
+    let account = crate::google::auth::use_google_account();
+    let drive_open = RwSignal::new(
+        open_drive && crate::google::auth::has_drive_invite() && drive_link.is_none(),
+    );
+    let drive_link = StoredValue::new(drive_link);
     let store = store::use_store();
     let persistent = store.is_persistent();
     let revision = store.revision();
@@ -173,11 +185,17 @@ pub fn Page() -> impl IntoView {
                 <section class="rounded-2xl bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/30 p-6 space-y-5">
                     <button class=BUTTON on:click=move |_| { dismissed.set(true); if let Ok(Some(s)) = window().local_storage() { let _ = s.set_item("quiznight.welcomeDismissed", "1"); } }>{move || t.get("chk_close")}</button>
                     <h2 class="text-2xl font-bold">{move || t.get("wl_title")}</h2><p>{move || t.get("wl_text")}</p>
-                    <button class=PRIMARY on:click=move |_| launching.set(Some("demo".into()))>{move || t.get("wl_demo_button")}</button>
-                    <button class=PRIMARY on:click=move |_| crate::tour::start_tour("demo")>{move || t.get("tr_start")}</button>
+                    <div class="grid md:grid-cols-3 gap-3">
+                        <div class="rounded-xl bg-black/30 border border-white/10 p-5 flex flex-col gap-3"><h3 class="font-bold text-lg">{move ||t.get("wl_demo_title")}</h3><p class="text-sm text-gray-400 flex-1">{move ||t.get("wl_demo_text")}</p><button class=PRIMARY on:click=move |_|crate::tour::start_tour("demo")>{move ||t.get("tr_start")}</button><button class=BUTTON on:click=move |_|launching.set(Some("demo".into()))>{move ||t.get("wl_demo_button")}</button></div>
+                        <div class="rounded-xl bg-black/30 border border-white/10 p-5 flex flex-col gap-3"><h3 class="font-bold text-lg">{move ||t.get("wl_new_title")}</h3><p class="text-sm text-gray-400 flex-1">{move ||t.get("wl_new_text")}</p><button class=BUTTON disabled=move ||busy.get() on:click=create><Icon/>{move ||t.get("lib_new")}</button></div>
+                        <div class="rounded-xl bg-black/30 border border-white/10 p-5 flex flex-col gap-3"><h3 class="font-bold text-lg">{move ||t.get("wl_import_title")}</h3><p class="text-sm text-gray-400 flex-1">{move ||t.get("wl_import_text")}</p></div>
+                    </div>
                     <a class=BUTTON href="#/help/start">{move || t.get("wl_help")}</a>
                 </section>
             </Show>
+            <Show when=move || { account.session.get(); crate::google::auth::has_drive_invite() }><button class=BUTTON on:click=move |_| drive_open.update(|v|*v=!*v)><super::drive_parts::DriveIcon/>{move ||t.get("gd_open")}<super::drive_parts::BetaBadge/></button></Show>
+            <Show when=move || drive_open.get()><DriveOpen/></Show>
+            {drive_link.get_value().filter(|_|crate::google::auth::google_enabled()).map(|link|view!{<InviteScreen link/>})}
             <section class="grid md:grid-cols-[1fr_2fr] gap-4">
                 <button disabled=move || busy.get() on:click=create class="flex items-center justify-center gap-3 p-8 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-lg"><Icon/>{move || t.get("lib_new")}</button>
                 <label class="rounded-2xl border-2 border-dashed border-white/15 flex flex-col items-center justify-center gap-3 text-gray-300 p-10 cursor-pointer"
@@ -210,6 +228,7 @@ pub fn Page() -> impl IntoView {
             }>{move || t.get("lib_template")}</button>
             <section class="space-y-4">
                 <h2 class="font-['League_Spartan'] text-2xl font-bold uppercase tracking-widest text-gray-400">{move || t.get("lib_title")}</h2>
+                <Show when=move ||quizzes.get().is_some_and(|r|r.is_ok_and(|list|list.iter().all(|q|q.builtin)))><p class="text-gray-500">{move ||t.get("lib_empty")}</p></Show>
                 {move || quizzes.get().map(|result| match result {
                     Err(e) => view! { <p role="alert">{e.clone()}</p> }.into_any(),
                     Ok(list) => view! { <div class="grid md:grid-cols-2 gap-4">
@@ -233,15 +252,17 @@ fn QuizCard(
     let quiz = StoredValue::new(quiz);
     let confirm = RwSignal::new(false);
     let rounds = parse_questions_csv(&quiz.get_value().questions_csv);
-    let summary = format!(
-        "{} {} · {} {} · {} {}",
-        rounds.len(),
-        t.get("lib_rounds"),
-        rounds.iter().map(|r| r.questions.len()).sum::<usize>(),
-        t.get("lib_questions"),
-        quiz.get_value().teams.len(),
-        t.get("lib_teams")
-    );
+    let summary = move || {
+        format!(
+            "{} {} · {} {} · {} {}",
+            rounds.len(),
+            t.get("lib_rounds"),
+            rounds.iter().map(|r| r.questions.len()).sum::<usize>(),
+            t.get("lib_questions"),
+            quiz.get_value().teams.len(),
+            t.get("lib_teams")
+        )
+    };
     let action = Callback::new(move |kind: &'static str| {
         if busy.get_untracked() {
             return;
@@ -279,11 +300,12 @@ fn QuizCard(
         <div><h3 class="text-xl font-bold truncate">{if quiz.get_value().title.is_empty() { t.get("ed_untitled") } else { quiz.get_value().title }}</h3>
             <p class="text-sm text-gray-400 mt-1">{summary}</p>
             {(!quiz.get_value().builtin).then(|| view! { <p class="text-xs text-gray-500 mt-1">{format!("{} {}", t.get("lib_updated"), js_sys::Date::new(&wasm_bindgen::JsValue::from_f64(quiz.get_value().updated_at as f64)).to_locale_string("default", &js_sys::Object::new()).as_string().unwrap_or_default())}</p> })}
+            {quiz.get_value().drive.is_some().then(||view!{<span class="inline-flex items-center gap-1 text-xs text-green-300"><super::drive_parts::DriveIcon/>{t.get("gd_badge")}</span>})}
             {quiz.get_value().builtin.then(|| view! { <span class="text-xs text-blue-300">{t.get("lib_demo_badge")}</span> })}
         </div>
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2" hidden=move ||confirm.get()>
             <button class=PRIMARY on:click=move |_| launching.set(Some(quiz.get_value().id))>{move || t.get("lib_open")}</button>
-            {[("edit", "lib_edit"), ("questions", "ed_questions"), ("theme", "ed_theme"), ("check", "chk_open"), ("map", "mp_title"), ("attendance", "att_title"), ("scores", "sc_title")].into_iter().map(|(suffix,key)| {
+            {[("edit", "lib_edit"), ("check", "chk_open")].into_iter().filter(move |(suffix,_)| *suffix != "edit" || !quiz.get_value().builtin).map(|(suffix,key)| {
                 let hash = format!("{}/{suffix}", Route::Show(quiz.get_value().id).hash());
                 view! { <a class=BUTTON href=hash>{move || t.get(key)}</a> }
             }).collect_view()}
@@ -446,4 +468,157 @@ fn dropped_files(data: web_sys::DataTransfer) -> Result<js_sys::Promise, String>
         .call1(&wasm_bindgen::JsValue::NULL, &data)
         .map_err(|e| format!("{e:?}"))?;
     Ok(js_sys::Promise::resolve(&result))
+}
+
+async fn open_drive_quiz(
+    store: store::Store,
+    link: &str,
+    language: &str,
+) -> crate::google::Result<()> {
+    use quiz_core::quiz::drive::{merge_drive, same_drive_quiz};
+    let fields = crate::google::drive::read_drive_quiz(link).await?;
+    let existing = store.list_quizzes().await?.into_iter().find(|q| {
+        q.drive
+            .as_ref()
+            .is_some_and(|d| same_drive_quiz(d, &fields["drive"]))
+    });
+    let quiz = if let Some(existing) = existing {
+        store
+            .update_quiz_source(
+                &existing.id,
+                move |q| merge_drive(q, &fields, &serde_json::json!({})),
+                "drive",
+            )
+            .await?
+            .ok_or_else(|| crate::google::Error::Other("Quiz removed".into()))?
+    } else {
+        let mut q = Quiz::new(store::new_id(), store::now_ms());
+        q.settings.language = language.into();
+        q.title = fields["drive"]["folderName"]
+            .as_str()
+            .unwrap_or_default()
+            .into();
+        merge_drive(&mut q, &fields, &serde_json::json!({}));
+        // New records must be persisted before the Google write guard can trust their folder.
+        store.put_quiz(&q).await?
+    };
+    navigate(Route::Edit(quiz.id));
+    Ok(())
+}
+#[component]
+fn DriveOpen() -> impl IntoView {
+    use super::drive_parts::{BetaBadge, GoogleAccountBar, error_text};
+    use crate::google::{auth, config, drive};
+    let t = crate::i18n::use_t();
+    let signed = auth::use_google_account().signed_in;
+    let mode = RwSignal::new(false);
+    let link = RwSignal::new(String::new());
+    let title = RwSignal::new(String::new());
+    let parent = RwSignal::new(String::new());
+    let busy = RwSignal::new(false);
+    let error = RwSignal::new(None::<String>);
+    let store = StoredValue::new_local(store::use_store());
+    let submit = move |ev: web_sys::SubmitEvent| {
+        ev.prevent_default();
+        busy.set(true);
+        error.set(None);
+        let create = mode.get_untracked();
+        let link = link.get_untracked();
+        let title = title.get_untracked();
+        let parent = parent.get_untracked();
+        let lang = t.lang().code();
+        leptos::task::spawn_local(async move {
+            let result = async {
+                let link = if create {
+                    let id = drive::create_drive_quiz(
+                        &title,
+                        Some(&parent),
+                        config::GOOGLE_SHEET_TEMPLATE,
+                    )
+                    .await?;
+                    config::folder_url(&id)
+                } else {
+                    link
+                };
+                open_drive_quiz(store.get_value(), &link, lang).await
+            }
+            .await;
+            if let Err(e) = result {
+                error.try_set(error_text(&e, t));
+            }
+            busy.try_set(false);
+        });
+    };
+    view! {<section class="rounded-2xl bg-white/[0.04] border border-white/10 p-6 space-y-4"><h2 class="flex items-center gap-2 font-bold text-xl">{move ||t.get("gd_open")}<BetaBadge/></h2><p class="text-sm text-gray-400">{move ||t.get("gd_open_help")}</p><p class="text-xs text-gray-500">{move ||t.get("gd_beta_note")}</p><GoogleAccountBar on_error=Callback::new(move |s|error.set(s))/>
+    <Show when=move ||signed.get()><div class="flex gap-2">{[false,true].into_iter().map(|create|view!{<button class=move ||if mode.get()==create { "px-3 py-1.5 rounded-lg bg-yellow-500 text-black font-bold" } else { "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white" } on:click=move |_|{mode.set(create);error.set(None);}>{move ||t.get(if create{"gd_mode_create"}else{"gd_mode_open"})}</button>}).collect_view()}</div><form on:submit=submit class="space-y-3"><div hidden=move ||mode.get()><input class=super::drive_parts::INPUT placeholder=move ||t.get("gd_link") prop:value=move ||link.get() on:input=move |e|link.set(event_target_value(&e))/></div><div hidden=move ||!mode.get() class="space-y-2"><input class=super::drive_parts::INPUT placeholder=move ||t.get("gd_new_title") prop:value=move ||title.get() on:input=move |e|title.set(event_target_value(&e))/><input class=super::drive_parts::INPUT placeholder=move ||t.get("gd_new_parent") prop:value=move ||parent.get() on:input=move |e|parent.set(event_target_value(&e))/><p class="text-xs text-gray-500">{move ||t.get("gd_create_help")}</p></div><button type="submit" class=PRIMARY disabled=move ||busy.get()||if mode.get(){title.get().trim().is_empty()}else{link.get().trim().is_empty()}>{move ||t.get(if mode.get(){"gd_create"}else{"gd_connect"})}</button></form></Show>{move ||error.get().map(|s|view!{<p role="alert" class="text-red-300">{s}</p>})}</section>}
+}
+#[component]
+fn InviteScreen(link: String) -> impl IntoView {
+    use super::drive_parts::error_text;
+    use crate::google::auth;
+    let t = crate::i18n::use_t();
+    let account = auth::use_google_account();
+    let signed = account.signed_in;
+    let session = account.session;
+    let link = StoredValue::new(link);
+    let phase = RwSignal::new("signin");
+    let error = RwSignal::new(None::<String>);
+    let signing = RwSignal::new(false);
+    let started = RwSignal::new(false);
+    let store = StoredValue::new_local(store::use_store());
+    let open = Callback::new(move |()| {
+        started.set(true);
+        phase.set("opening");
+        error.set(None);
+        let lang = t.lang().code();
+        leptos::task::spawn_local(async move {
+            if let Err(e) = open_drive_quiz(store.get_value(), &link.get_value(), lang).await {
+                error.try_set(error_text(&e, t));
+                phase.try_set("error");
+            }
+        });
+    });
+    Effect::new(move |_| {
+        let signed = signed.get();
+        if started.get_untracked() {
+            return;
+        }
+        let store = store.get_value();
+        let link = link.get_value();
+        leptos::task::spawn_local(async move {
+            if let Ok(list) = store.list_quizzes().await
+                && let Some(q) = list
+                    .iter()
+                    .find(|q| q.drive.as_ref().is_some_and(|d| d["folderId"] == link))
+            {
+                started.try_set(true);
+                navigate(Route::Edit(q.id.clone()));
+                return;
+            }
+            if signed && started.try_get_untracked() == Some(false) {
+                open.run(());
+            }
+        });
+    });
+    let sign = move |choose| {
+        signing.set(true);
+        error.set(None);
+        leptos::task::spawn_local(async move {
+            match auth::sign_in(choose).await {
+                Ok(_) => {
+                    if phase.get_untracked() == "error" {
+                        open.run(());
+                    }
+                }
+                Err(e) => {
+                    if let Some(s) = error_text(&e, t) {
+                        error.try_set(Some(s));
+                        phase.try_set("error");
+                    }
+                }
+            }
+            signing.try_set(false);
+        });
+    };
+    view! {<div class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4"><section class="w-full max-w-md rounded-3xl bg-[#0f0f0f] border border-white/10 p-8 space-y-6 text-center"><h2 class="text-3xl font-black uppercase">{move ||t.get("inv_title")}</h2><p class="text-gray-300">{move ||t.get(if phase.get()=="opening"{"inv_opening_text"}else{"inv_text"})}</p><Show when=move ||phase.get()=="opening"><p role="status">{move ||t.get("inv_opening")}</p></Show><Show when=move ||phase.get()=="signin"><button class=PRIMARY disabled=move ||signing.get() on:click=move |_|sign(false)>{move ||t.get("gd_sign_in")}</button></Show><Show when=move ||phase.get()=="error">{move ||error.get().map(|s|view!{<p class="text-red-300" role="alert">{s}</p>})}{move ||session.get().map(|s|view!{<p class="text-sm text-gray-400">{t.fmt("inv_signed_as",&[("email",&s.user.email)])}</p>})}<button class=BUTTON disabled=move ||signing.get() on:click=move |_|sign(true)>{move ||t.get("inv_other_account")}</button><Show when=move ||signed.get()><button class=BUTTON on:click=move |_|open.run(())>{move ||t.get("inv_retry")}</button></Show></Show><p class="text-xs text-gray-500">{move ||t.get("inv_note")}</p><a href="#/" class="text-sm text-gray-400">{move ||t.get("inv_close")}</a></section></div>}
 }

@@ -39,3 +39,24 @@ pub fn to_csv_url(url: &str) -> String {
     }
     u.into()
 }
+/// Papa-compatible CSV: CRLF rows, necessary quoting, and no final newline.
+pub fn rows_to_csv(rows: &[Vec<String>]) -> String {
+    rows.iter()
+        .map(|row| {
+            row.iter()
+                .map(|s| {
+                    if s.contains([',', '"', '\r', '\n', '\u{feff}'])
+                        || s.starts_with(' ')
+                        || s.ends_with(' ')
+                    {
+                        format!("\"{}\"", s.replace('"', "\"\""))
+                    } else {
+                        s.clone()
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join(",")
+        })
+        .collect::<Vec<_>>()
+        .join("\r\n")
+}

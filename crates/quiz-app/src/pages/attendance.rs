@@ -19,11 +19,13 @@ enum Edit {
     Image(usize, String),
     Add(Team),
     Arc(f64),
+    Confirm(usize),
 }
 impl Edit {
     fn index(&self) -> Option<usize> {
         match self {
-            Self::Present(i, _)
+            Self::Confirm(i)
+            | Self::Present(i, _)
             | Self::Name(i, _)
             | Self::Players(i, _)
             | Self::Quote(i, _)
@@ -44,6 +46,11 @@ fn apply(q: &mut Quiz, edit: &Edit, index: Option<usize>) {
         edit => {
             if let Some(team) = index.and_then(|i| q.teams.get_mut(i)) {
                 match edit {
+                    Edit::Confirm(_) => {
+                        if !team.name.trim().is_empty() {
+                            team.fields.remove("draft");
+                        }
+                    }
                     Edit::Present(_, v) => team.present = Some(*v),
                     Edit::Name(_, v) => team.name = v.clone(),
                     Edit::Players(_, v) => team.players = Some((*v).max(0)),
@@ -122,7 +129,6 @@ pub fn Page(id: String) -> impl IntoView {
 
 #[component]
 fn Attendance(quiz: Quiz) -> impl IntoView {
-    // TODO(auth): Google sign-in and Drive team synchronization/write-back.
     let t = use_t();
     let id = StoredValue::new(quiz.id.clone());
     let title = quiz.title.clone();
@@ -132,6 +138,35 @@ fn Attendance(quiz: Quiz) -> impl IntoView {
     let error = RwSignal::new(None::<String>);
     let pending = RwSignal::new(0_usize);
     let placing = RwSignal::new(None::<usize>);
+    let drive = quiz.get_untracked().drive.is_some();
+    let account = crate::google::auth::use_google_account();
+    let refresh = Callback::new(move |()| {
+        if !drive || !account.signed_in.get_untracked() || pending.get_untracked() != 0 {
+            return;
+        }
+        leptos::task::spawn_local(async move {
+            if let Ok(Some(q)) = crate::google::sync::sync_drive_config(&id.get_value()).await {
+                if pending.get_untracked() == 0 {
+                    quiz.try_set(q);
+                }
+            }
+        });
+    });
+    Effect::new(move |_| {
+        if account.signed_in.get() {
+            refresh.run(());
+        }
+    });
+    let timer = StoredValue::new_local(Some(gloo_timers::callback::Interval::new(
+        15_000,
+        move || refresh.run(()),
+    )));
+    on_cleanup(move || {
+        timer.update_value(|t| {
+            t.take();
+        })
+    });
+
     leptos::task::spawn_local(async move {
         match store::media_urls(&store.get_value(), &id.get_value()).await {
             Ok(urls) => media.set(Arc::new(urls)),
@@ -172,6 +207,34 @@ fn Attendance(quiz: Quiz) -> impl IntoView {
         pending.update(|n| *n += 1);
         leptos::task::spawn_local(async move {
             let result: Result<(), String> = async {
+                let q = quiz.get_untracked();
+                if q.drive.is_some() {
+                    let name = team_image_name(&team, &file.name());
+                    let path = crate::google::drive::upload_quiz_media(
+                        &q,
+                        &file,
+                        &name,
+                        None,
+                        Some(std::rc::Rc::new(move |name| {
+                            js_sys::Promise::resolve(&wasm_bindgen::JsValue::from_bool(
+                                window()
+                                    .confirm_with_message(
+                                        &t.fmt("qe_upload_replace", &[("file", &name)]),
+                                    )
+                                    .unwrap_or(false),
+                            ))
+                        })),
+                    )
+                    .await
+                    .map_err(|e| super::drive_parts::error_text(&e, t).unwrap_or_default())?;
+                    if let Some(path) = path {
+                        media.set(Arc::new(
+                            store::media_urls(&store.get_value(), &id.get_value()).await?,
+                        ));
+                        change.run(Edit::Image(i, path));
+                    }
+                    return Ok(());
+                }
                 let bytes = wasm_bindgen_futures::JsFuture::from(file.array_buffer())
                     .await
                     .map_err(|e| format!("{e:?}"))?;
@@ -242,6 +305,7 @@ fn Attendance(quiz: Quiz) -> impl IntoView {
             <span class="text-lg font-bold text-yellow-400">{move ||quiz.with(|q|{let present:Vec<_>=q.teams.iter().filter(|t|t.present==Some(true)).collect();let players:i64=present.iter().map(|t|t.players.unwrap_or(0)).sum();t.fmt("att_summary",&[("present",&present.len().to_string()),("total",&q.teams.len().to_string()),("players",&players.to_string())])})}</span>
             <span class="ml-auto text-xs text-gray-500" role="status">{move ||t.get(if pending.get()>0 {"ed_saving"} else if error.get().is_some() {"lib_action_failed"} else {"ed_saved"})}</span>
         </header>
+        <Show when=move ||drive && !account.signed_in.get()><div class="px-6 py-3"><super::drive_parts::GoogleAccountBar on_error=Callback::new(move |e|error.set(e))/></div></Show>
         <Show when=move ||error.get().is_some()><p role="alert" class="px-6 text-red-300">{move ||error.get()}</p></Show>
         <div class="flex-1 min-h-0 overflow-y-auto px-6 py-4 space-y-3"><p class="text-sm text-gray-400">{move ||t.get("att_help")}</p>
             <input node_ref=photo type="file" accept="image/*" hidden on:change=on_photo/>
@@ -250,7 +314,7 @@ fn Attendance(quiz: Quiz) -> impl IntoView {
                 let choose_photo=Callback::new(move |()|{photo_for.set(Some(i));if let Some(input)=photo.get(){input.click();}});
                 view! {<AttendanceTeam index=i team=team quiz=quiz media=media placing=placing change=change photo=choose_photo/>}
             }/>
-                <li><button on:click=move |_|{let mut team=new_team(store::new_id());team.present=Some(true);team.color=Some(TeamColor::Palette(quiz.with_untracked(|q|q.teams.len())%8));change.run(Edit::Add(team));} class="w-full h-full min-h-14 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-white/15 hover:bg-white/5 text-sm"><Icon name="plus"/>{move ||t.get("tm_add")}</button></li>
+                <li><button on:click=move |_|{let mut team=new_team(store::new_id());if quiz.get_untracked().drive.as_ref().is_some_and(|d|d["scoresTab"].is_string()) {team.fields.insert("draft".into(),serde_json::json!(true));}team.present=Some(true);team.color=Some(TeamColor::Palette(quiz.with_untracked(|q|q.teams.len())%8));change.run(Edit::Add(team));} class="w-full h-full min-h-14 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-white/15 hover:bg-white/5 text-sm"><Icon name="plus"/>{move ||t.get("tm_add")}</button></li>
             </ul>
         </div>
         <div class="h-[50vh] shrink-0 flex flex-col border-t border-white/10 bg-white/[0.03]">
@@ -373,7 +437,7 @@ fn AttendanceTeam(
             <span class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 group-focus:opacity-100 flex items-center justify-center transition-opacity"><Icon name="camera"/></span>
         </button>
         <div class="flex-1 min-w-[180px] space-y-2"><div class="flex gap-2">
-            <input aria-label=move ||t.get("tm_name") placeholder=move ||t.get("tm_name") prop:value=move ||team.get().name class=format!("{FIELD} flex-1 min-w-0 font-bold") on:input=move |e|change.run(Edit::Name(index,event_target_value(&e)))/>
+            <input aria-label=move ||t.get("tm_name") placeholder=move ||t.get("tm_name") prop:value=move ||team.get().name class=format!("{FIELD} flex-1 min-w-0 font-bold") on:blur=move |_|change.run(Edit::Confirm(index)) on:keydown=move |e:web_sys::KeyboardEvent|{if e.key()=="Enter"{change.run(Edit::Confirm(index));}} on:input=move |e|change.run(Edit::Name(index,event_target_value(&e)))/>
             <label class="flex items-center gap-1 text-xs text-gray-400" title=move ||t.get("tm_players")><Icon name="players"/><input aria-label=move ||t.get("tm_players") type="number" min="0" prop:value=move ||team.get().players.filter(|n|*n!=0).map(|n|n.to_string()).unwrap_or_default() class=format!("{FIELD} w-16") on:input=move |e|change.run(Edit::Players(index,event_target_value(&e).parse().unwrap_or(0)))/></label>
         </div><input aria-label=move ||t.get("tm_quote") placeholder=move ||t.get("tm_quote") prop:value=move ||team.get().quote.unwrap_or_default() class=format!("{FIELD} w-full italic") on:input=move |e|change.run(Edit::Quote(index,event_target_value(&e)))/></div>
         <button class=move ||if placing.get()==Some(index){"flex items-center gap-2 px-3 py-2 rounded-lg text-sm whitespace-nowrap bg-yellow-500 text-black font-bold"}else if team.get().seat.is_some(){"flex items-center gap-2 px-3 py-2 rounded-lg text-sm whitespace-nowrap bg-white/10 hover:bg-white/20"}else{"flex items-center gap-2 px-3 py-2 rounded-lg text-sm whitespace-nowrap bg-white/5 text-gray-400 hover:bg-white/10"} on:click=move |_|placing.update(|p|*p=if *p==Some(index){None}else{Some(index)})><Icon/>{move ||team.get().seat.as_ref().map(|s|{let d=seat_direction(s);t.fmt(d.message_key(),&[("deg",&d.deg.to_string())])}).unwrap_or_else(||t.get("att_place"))}</button>

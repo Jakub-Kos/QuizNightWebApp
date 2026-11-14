@@ -211,7 +211,6 @@ const NO_TEAM_COLOR: &str = "from-purple-600 to-indigo-900";
 pub fn Welcome() -> impl IntoView {
     let q = use_quiz();
     let s = use_show();
-    let t = use_t();
     let settings = crate::settings::use_settings().settings;
     // QuizShow.jsx renders the same WelcomeScreen for both roles, on the scaled stage.
     let presenter = s.role == quiz_core::show::Role::Presenter;
@@ -359,7 +358,6 @@ pub fn Welcome() -> impl IntoView {
             .ok(),
         );
     };
-    let handle_start = move |_| start();
     let manual_select = move |index: usize| {
         active.set(index);
         paused.set(true); // Stop auto-rotation
@@ -415,6 +413,70 @@ pub fn Welcome() -> impl IntoView {
         }
     });
 
+    view! { <WelcomeView teams=teams.get_value() title=q.quiz.title.clone()
+    active detail_for exiting paused header_state countdown_now
+    layout=layout.into() cycle_duration=cycle_duration.into() intro_pause=intro_pause.into()
+    show_time=show_time.into() start_time=start_time.into()
+    presenter start=Callback::new(move |_| start()) select=Callback::new(manual_select)/> }
+}
+
+/// A fixed audience welcome frame using quiz/settings contexts, with no global keys, auto-advance
+/// timers or sound. `team_index` selects the card; `details` unfolds its stats. `wall` forces the
+/// wall and previews that team’s themed introduction; an auto-selected wall shows the whole grid.
+#[component]
+pub fn WelcomePreview(
+    #[prop(default = 0)] team_index: usize,
+    #[prop(default = true)] details: bool,
+    #[prop(optional)] wall: bool,
+) -> impl IntoView {
+    let q = use_quiz();
+    let teams = q
+        .teams
+        .iter()
+        .filter(|t| t.team.present != Some(false))
+        .cloned()
+        .collect::<Vec<_>>();
+    let active = team_index.min(teams.len().saturating_sub(1));
+    let settings = &q.quiz.settings;
+    let layout = if wall {
+        Layout::Wall
+    } else {
+        choose_layout(&teams, &settings.welcome_layout)
+    };
+    view! { <div class="h-full w-full pointer-events-none" inert=true><WelcomeView teams title=q.quiz.title.clone()
+    active=RwSignal::new(active) detail_for=RwSignal::new(details.then_some(active))
+    exiting=RwSignal::new(false) paused=RwSignal::new(false) header_state=RwSignal::new(0)
+    countdown_now=RwSignal::new(Countdown::Unset) layout=Signal::stored(layout)
+    cycle_duration=Signal::stored(settings.cycle_duration) intro_pause=Signal::stored(settings.intro_pause)
+    show_time=Signal::stored(false) start_time=Signal::stored(settings.start_time.clone())
+    presenter=false preview=true wall_team_index=wall.then_some(active) start=Callback::new(|_| ()) select=Callback::new(|_| ())/></div> }
+}
+
+#[component]
+fn WelcomeView(
+    teams: Vec<ResolvedTeam>,
+    title: String,
+    active: RwSignal<usize>,
+    detail_for: RwSignal<Option<usize>>,
+    exiting: RwSignal<bool>,
+    paused: RwSignal<bool>,
+    header_state: RwSignal<u64>,
+    countdown_now: RwSignal<Countdown>,
+    layout: Signal<Layout>,
+    cycle_duration: Signal<u64>,
+    intro_pause: Signal<u64>,
+    show_time: Signal<bool>,
+    start_time: Signal<String>,
+    presenter: bool,
+    start: Callback<()>,
+    select: Callback<usize>,
+    #[prop(optional)] preview: bool,
+    #[prop(default = None)] wall_team_index: Option<usize>,
+) -> impl IntoView {
+    let t = use_t();
+    let count = teams.len();
+    let has_teams = count > 0;
+    let teams = StoredValue::new(teams);
     let active_color = move || {
         if layout.get() == Layout::Wall {
             return NO_TEAM_COLOR;
@@ -433,7 +495,6 @@ pub fn Welcome() -> impl IntoView {
         }),
         _ => 0,
     };
-    let title = q.quiz.title.clone();
 
     view! {
         <div class=move || format!(
@@ -497,9 +558,9 @@ pub fn Welcome() -> impl IntoView {
                         <h1 class="font-title w-full pr-32 text-center text-8xl font-black uppercase tracking-widest text-white/90">{title}</h1>
                     })}
                     <Show when=move || has_teams && layout.get() == Layout::Wall>
-                        <div class="absolute inset-0"><TeamWall teams=teams.get_value()
+                        <div class="absolute inset-0">{if preview { view! { <super::team_wall::TeamWallPreview teams=teams.get_value() team_index=wall_team_index/> }.into_any() } else { view! { <TeamWall teams=teams.get_value()
                             intro_ms=Signal::derive(move || wall_intro_duration(cycle_duration.get()))
-                            pause_ms=Signal::derive(move || intro_pause.get())/></div>
+                            pause_ms=Signal::derive(move || intro_pause.get())/> }.into_any() }}</div>
                     </Show>
                     <Show when=move || has_teams && layout.get() == Layout::Cards>
                         <div class="relative w-[600px] h-[800px] z-20 welcome-stack">
@@ -547,7 +608,7 @@ pub fn Welcome() -> impl IntoView {
                                     let is_active = move || active.get() == i;
                                     let is_past = move || i < active.get();
                                     view! {
-                                        <button type="button" aria-label=label aria-pressed=is_active on:click=move |_| manual_select(i)
+                                        <button type="button" aria-label=label aria-pressed=is_active on:click=move |_| select.run(i)
                                             class=move || format!(
                                                 "aspect-square rounded-xl border relative overflow-hidden transition-all duration-300 group cursor-pointer {} {}",
                                                 if is_active() { "border-accent-500 scale-110 shadow-[0_0_15px_rgb(var(--glow-accent)/0.6)] z-20 bg-white/20" } else { "border-white/10 bg-white/5" },
@@ -571,7 +632,7 @@ pub fn Welcome() -> impl IntoView {
                 // 3. FOOTER
                 <div class="h-[15cqh] w-full flex items-center justify-center z-[100] relative">
                     <Show when=move || !exiting.get()>
-                        <button data-tour="start" aria-keyshortcuts="Enter" on:click=handle_start
+                        <button data-tour="start" aria-keyshortcuts="Enter" on:click=move |_| start.run(())
                             class="welcome-start group relative flex flex-col items-center justify-center p-10 outline-none">
                             // The main text: starts ghosted, glows on hover
                             <span class="text-4xl font-black uppercase tracking-[0.2em] text-white/20 transition-all duration-500 group-hover:text-accent-400 group-hover:tracking-[0.4em] group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgb(var(--glow-accent)/0.8)]">

@@ -173,16 +173,6 @@ pub fn highlight(r: Rect) -> Rect {
         height: r.height + 16.0,
     }
 }
-/// React uses right-4 bottom-14, not target-relative placement or collision avoidance.
-pub fn bubble_rect(viewport: (f64, f64), height: f64) -> Rect {
-    let width = 380.0_f64.min((viewport.0 - 32.0).max(0.0));
-    Rect {
-        left: viewport.0 - 16.0 - width,
-        top: viewport.1 - 56.0 - height,
-        width,
-        height,
-    }
-}
 pub fn read_tour() -> Option<Tour> {
     let raw = window()
         .local_storage()
@@ -716,24 +706,5 @@ mod tests {
                 height: 56.
             }
         );
-        assert_eq!(
-            bubble_rect((1920., 1080.), 200.),
-            Rect {
-                left: 1524.,
-                top: 824.,
-                width: 380.,
-                height: 200.
-            }
-        );
-        assert_eq!(
-            bubble_rect((320., 600.), 200.),
-            Rect {
-                left: 16.,
-                top: 344.,
-                width: 288.,
-                height: 200.
-            }
-        );
-        assert_eq!(bubble_rect((320., 100.), 200.).top, -156.); // JS has no vertical clamp.
     }
 }

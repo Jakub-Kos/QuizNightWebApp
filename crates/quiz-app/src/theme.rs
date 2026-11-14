@@ -8,6 +8,10 @@ use quiz_core::theme::{
 };
 use std::collections::BTreeMap;
 
+/// Optional asset resolver owned by the loaded show. Editor previews draw their own image.
+#[derive(Clone, Copy)]
+pub struct ThemeAssets(pub Callback<String, Option<String>>);
+
 /// Serialize CSS variables deterministically without changing quoted font names.
 fn inline_style(variables: &BTreeMap<String, String>) -> String {
     variables
@@ -24,7 +28,7 @@ pub fn ThemeScope(
     children: Children,
 ) -> impl IntoView {
     provide_context(theme);
-    // TODO: Load Font::File fonts from theme packs and resolve the background image asset URL.
+    // LoadedShow installs pack fonts; SceneBackdrop resolves the background through quiz media.
     view! {
         <div class=move || format!("{} {}", class, style_classes(&theme.get()))
             style=move || inline_style(&theme_style(&theme.get()))>

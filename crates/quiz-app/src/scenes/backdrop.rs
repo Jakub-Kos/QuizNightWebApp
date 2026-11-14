@@ -278,12 +278,6 @@ fn piece_view(p: Piece) -> AnyView {
     }
 }
 
-/// URLs will come from the theme pack's media resolver, never from a pack filename directly.
-fn resolved_image_url(_theme: &Theme) -> Option<String> {
-    // TODO(theme-assets): resolve theme.background.image through the quiz's media store.
-    None
-}
-
 fn image_style(url: &str, theme: &Theme, quiet: bool) -> String {
     // CSS string escaping keeps quotes/control characters in asset URLs inside url(...).
     let escaped: String = url
@@ -308,6 +302,7 @@ fn image_style(url: &str, theme: &Theme, quiet: bool) -> String {
 #[component]
 pub fn SceneBackdrop(#[prop(optional)] quiet: bool) -> impl IntoView {
     let theme = crate::theme::use_theme();
+    let assets = use_context::<crate::theme::ThemeAssets>();
     static NEXT_ID: AtomicUsize = AtomicUsize::new(0);
     let glow_id = format!(
         "theme-pumpkin-glow-{}",
@@ -318,7 +313,7 @@ pub fn SceneBackdrop(#[prop(optional)] quiet: bool) -> impl IntoView {
             <div class="absolute inset-0 bg-gradient-to-b from-ground-top to-ground-bottom"/>
             {move || {
                 let t = theme.get();
-                resolved_image_url(&t).map(|url| view! { <div class="absolute inset-0 bg-cover bg-center" style=image_style(&url, &t, quiet)/> })
+                t.background.image.as_deref().and_then(|name| assets?.0.run(name.into())).map(|url| view! { <div class="absolute inset-0 bg-cover bg-center" style=image_style(&url, &t, quiet)/> })
             }}
             {move || theme.get().background.glows.into_iter().map(|g| view! {
                 <div class="absolute rounded-full -translate-x-1/2 -translate-y-1/2" style=format!("left:{}%;top:{}%;width:{}cqw;height:{}cqw;opacity:{};background:radial-gradient(circle, {} 0%, transparent 70%)", g.x, g.y, g.size, g.size, g.opacity, g.color)/>
@@ -741,7 +736,7 @@ mod tests {
                 ornament_markup(theme, false, "test")
             );
             assert!(ornament_markup(theme, true, "test").is_empty());
-            assert!(resolved_image_url(theme).is_none());
+            assert!(theme.background.image.is_none());
         }
         assert!(decoration_pieces(theme_by_id("default"), 1.).is_empty());
     }

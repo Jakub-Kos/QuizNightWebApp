@@ -1,4 +1,3 @@
-// TODO(sounds): remove once the scenes call play()
 //! Web Audio renderer for quiz-core's scores. No audio files are used by the JS engine.
 use leptos::prelude::*;
 use quiz_core::{

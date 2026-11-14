@@ -37,11 +37,11 @@ pub fn Celebration(on_done: Callback<()>) -> impl IntoView {
             trigger.set(1);
         }
     });
-    // TODO(particles): ParticleCanvas currently has a fixed palette; expose a theme palette input.
+    let palette = Signal::stored(crate::particles::theme_palette(&theme));
     view! {
         <div class="absolute inset-0 z-[45] pointer-events-none transition-opacity duration-1000 standings-celebration" style:opacity=move || if fading.get() {"0"} else {"1"} aria-hidden="true">
             {matches!(kind,Some(Kind::Confetti|Kind::Fireworks)).then(|| view! {
-                <ParticleCanvas active=active trigger=trigger fireworks=fireworks multiplier=multiplier count=count frame_ms=frame_ms/>
+                <ParticleCanvas active=active trigger=trigger fireworks=fireworks multiplier=multiplier count=count frame_ms=frame_ms palette=palette/>
             })}
             {(kind==Some(Kind::Decoration)).then(|| view! {<ThemeDecorations density=3.0/>})}
         </div>

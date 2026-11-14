@@ -6,6 +6,7 @@
 
 mod calibration;
 mod demos;
+mod google;
 mod i18n;
 mod pages;
 mod particles;
@@ -70,6 +71,7 @@ fn Spike() -> impl IntoView {
 
 #[component]
 fn Shell() -> impl IntoView {
+    google::auth::provide_google_account();
     let route = router::current_route();
     let lang = RwSignal::new(i18n::Lang::from_code(
         &window()
@@ -93,7 +95,8 @@ fn Shell() -> impl IntoView {
         match route {
             router::Route::Show(id) => view! { <show::ShowApp id=id/> }.into_any(),
             router::Route::Presenter(id) => view! { <show::ShowApp id=id presenter=true/> }.into_any(),
-            router::Route::Library | router::Route::Drive(_) => view! { <pages::library::Page/> }.into_any(),
+            router::Route::Library => view! { <pages::library::Page/> }.into_any(),
+            router::Route::Drive(link) => view! { <pages::library::Page open_drive=true drive_link=link/> }.into_any(),
             router::Route::Help(section) => view! { <pages::help::Page section=section/> }.into_any(),
             router::Route::Themes => view! { <pages::workshop::Page/> }.into_any(),
             router::Route::Edit(id) => view! { <pages::quiz_editor::Page id=id/> }.into_any(),
@@ -110,6 +113,7 @@ fn Shell() -> impl IntoView {
 fn App() -> impl IntoView {
     let store = LocalResource::new(store::open);
     view! { {move || store.get().map(|store| {
+        google::fetch::configure_store(store.clone());
         store::provide_store(store.clone());
         view! { <Shell/> }
     })} }

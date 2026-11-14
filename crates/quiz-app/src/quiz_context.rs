@@ -15,25 +15,30 @@ pub struct QuizContext {
 }
 impl QuizContext {
     pub fn resolve_media(&self, name: &str) -> Option<String> {
-        let trimmed = name.trim();
-        if trimmed.is_empty() {
-            return None;
-        }
-        if trimmed.to_ascii_lowercase().starts_with("https://")
-            || trimmed.to_ascii_lowercase().starts_with("http://")
-        {
-            return Some(trimmed.into());
-        }
-        if self.quiz.builtin {
-            media(name)
-        } else {
-            self.media_urls
-                .0
-                .get(&quiz_core::quiz::parse::media_key(name))
-                .cloned()
-        }
+        resolve_media(name, self.quiz.builtin, &self.media_urls.0)
     }
 }
+fn resolve_media(
+    name: &str,
+    builtin: bool,
+    urls: &std::collections::BTreeMap<String, String>,
+) -> Option<String> {
+    let trimmed = name.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+    urls.get(&quiz_core::quiz::parse::media_key(trimmed))
+        .cloned()
+        .or_else(|| {
+            let lower = trimmed.to_ascii_lowercase();
+            if builtin || lower.starts_with("https://") || lower.starts_with("http://") {
+                media(trimmed)
+            } else {
+                None
+            }
+        })
+}
+
 fn media(name: &str) -> Option<String> {
     if name.is_empty() {
         return None;
@@ -102,14 +107,12 @@ pub async fn load_stored(store: crate::store::Store, id: String) -> Result<QuizC
         .await
         .map_err(|e| e.to_string())?
         .ok_or_else(|| "Quiz not found".to_string())?;
-    if !quiz.questions_sheet_url.trim().is_empty() {
-        let url = quiz_core::quiz::sheets::to_csv_url(&quiz.questions_sheet_url);
-        if let Ok(response) = gloo_net::http::Request::get(&url).send().await
-            && response.ok()
-            && let Ok(csv) = response.text().await
-        {
-            quiz.questions_csv = csv;
-        }
+    // Goes through the Google session when there is one (private Sheets, Drive quizzes) and
+    // falls back to the public CSV export; on failure the stored copy is used.
+    if !quiz.questions_sheet_url.trim().is_empty()
+        && let Ok(csv) = crate::google::sheets::fetch_sheet_csv(&quiz.questions_sheet_url).await
+    {
+        quiz.questions_csv = csv;
     }
     let urls = Arc::new(crate::store::media_urls(&store, &id).await?);
     let mut context = QuizContext {
@@ -122,4 +125,37 @@ pub async fn load_stored(store: crate::store::Store, id: String) -> Result<QuizC
         context.resolve_media(name)
     }));
     Ok(context)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn theme_assets_use_quiz_media_before_builtin_fallback() {
+        let urls = [(
+            quiz_core::quiz::parse::media_key("theme-background.jpg"),
+            "blob:theme".into(),
+        )]
+        .into_iter()
+        .collect();
+        assert_eq!(
+            resolve_media("theme-background.jpg", false, &urls).as_deref(),
+            Some("blob:theme")
+        );
+        assert_eq!(
+            resolve_media("theme-background.jpg", true, &urls).as_deref(),
+            Some("blob:theme")
+        );
+        assert_eq!(resolve_media("missing.jpg", false, &urls), None);
+        assert_eq!(
+            resolve_media("picture.jpg", true, &urls).as_deref(),
+            Some("source/picture.jpg")
+        );
+        assert_eq!(
+            resolve_media(" HTTPS://example.org/image.jpg ", false, &urls).as_deref(),
+            Some("HTTPS://example.org/image.jpg")
+        );
+        assert_eq!(resolve_media("  ", true, &urls), None);
+    }
 }

@@ -52,6 +52,7 @@ pub fn ShowApp(
         Err(error) => view! { <div class="min-h-screen bg-[#050505] text-white p-12"><p role="alert">{error.clone()}</p><a href="#/" class="text-yellow-400">"← Library"</a></div> }.into_any(),
     }).unwrap_or_else(|| view! { <p>"Loading quiz…"</p> }.into_any())} }
 }
+// Keep the bundle's offline fallback while routing Sheet reads through the Google session.
 /// What QuizShow.jsx puts on its ThemeScope.
 const SCOPE_CLASS: &str = concat!(
     "bg-ground h-full w-full font-show overflow-hidden relative ",
@@ -132,6 +133,11 @@ fn LoadedShow(quiz: crate::quiz_context::QuizContext, presenter: bool) -> impl I
     provide_context(ui);
     let ui = use_show_ui();
     crate::scores::provide_scores(quiz.clone());
+    let live_scores = crate::scores::use_scores();
+    let asset_quiz = quiz.clone();
+    provide_context(crate::theme::ThemeAssets(Callback::new(
+        move |name: String| asset_quiz.resolve_media(&name),
+    )));
     provide_context(quiz);
     let state = RwSignal::new(reducer.with_value(|r| r.state().clone()));
     let channel = StoredValue::new_local(
@@ -169,8 +175,7 @@ fn LoadedShow(quiz: crate::quiz_context::QuizContext, presenter: bool) -> impl I
             });
         }
     });
-    // TODO(settings-consumers): scenes that snapshot quiz.settings must consume this
-    // signal (or settings::use_settings().settings) for live CONFIG changes.
+    // Scene settings consumers must read SettingsContext for live CONFIG changes.
     provide_context(settings);
     provide_context(crate::settings::SettingsContext { settings, update });
     let incoming =
@@ -331,6 +336,12 @@ fn LoadedShow(quiz: crate::quiz_context::QuizContext, presenter: bool) -> impl I
         <Show when=move || ui.calibrating.get()><crate::calibration::CalibrationPattern/></Show>
         </crate::theme::ThemeScope>
     </crate::stage::Stage>
+    <Show when=move || role == Role::Presenter && !builtin>
+        <div class="fixed bottom-4 left-4 z-[150] flex gap-2 font-sans">
+            <Show when=move || live_scores.auth_needed.get()><button title=move ||t.get("lb_signin_needed") on:click=move |_|crate::scores::renew_sign_in() class="px-4 py-3 rounded-xl bg-amber-500 text-black font-bold">{move ||t.get("lb_signin")}</button></Show>
+            <Show when=move || !live_scores.auth_needed.get() && live_scores.sign_in_ending.get().is_some()><button on:click=move |_|crate::scores::renew_sign_in() class="px-4 py-3 rounded-xl bg-amber-500/15 border border-amber-500/50 text-amber-200 font-bold">{move ||t.fmt("lb_signin_ending",&[("n", &live_scores.sign_in_ending.get().unwrap_or(1).to_string())])}</button></Show>
+        </div>
+    </Show>
     <crate::settings::SettingsModal/>
     <Show when=move || ui.calibrating.get()><crate::calibration::CalibrationControls display=display/></Show>
     <Show when=move || role == Role::Main><crate::calibration::FullscreenHint/></Show>

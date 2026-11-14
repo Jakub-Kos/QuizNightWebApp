@@ -667,6 +667,11 @@ fn QuestionContent(
         let answer = answer_text(&q);
         let (icon, expected) = match kind.as_str() {
             "Numeric" => ("hash", t.get("type_numeric")),
+            "Top5" => {
+                let n = top_answers(&q).len();
+                let n = if n == 0 { 5 } else { n }.to_string();
+                ("pen_line", t.fmt("type_top5", &[("n", &n)]))
+            }
             _ => ("pen_line", t.get("type_written")),
         };
         view! {

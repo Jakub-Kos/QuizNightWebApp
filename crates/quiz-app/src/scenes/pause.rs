@@ -217,9 +217,9 @@ pub fn Pause() -> impl IntoView {
             r.take();
         });
     });
-    // TODO(sounds)
+    // React PauseScreen has no sound cues: starting, stopping and finishing stay silent.
     if presenter {
-        // TODO(pause-presenter-layout): outer Stage must honor Show::uses_full_window.
+        // Show::uses_full_window includes presenter Pause; Stage bypass fills the viewport.
         return view! {
             <div class="h-full w-full bg-panel text-white p-10 font-sans flex flex-col items-center justify-center relative">
                 <button on:click=move |_| show.dispatch.run(Action::BackToDashboard) class="absolute top-10 left-10 flex items-center gap-3 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all font-bold">
@@ -239,6 +239,32 @@ pub fn Pause() -> impl IntoView {
             </div>
         }.into_any();
     }
+    view! { <PauseView teams time_left spotlight/> }.into_any()
+}
+
+/// Fixed audience pause frame: supplied scores and metadata, seconds remaining and spotlight.
+/// Zero seconds renders “back soon”; <=60 renders the red countdown. No sync, ticking or sound.
+#[component]
+pub fn PausePreview(
+    scores: ParsedScores,
+    teams: Vec<ResolvedTeam>,
+    #[prop(default = 1800)] seconds: u32,
+    #[prop(default = 0)] spotlight_index: usize,
+) -> impl IntoView {
+    let rows = spotlight_teams(&scores, &teams);
+    view! { <div class="h-full w-full pointer-events-none" inert=true><PauseView
+    teams=Memo::new(move |_| rows.clone()) time_left=RwSignal::new(seconds)
+    spotlight=RwSignal::new(spotlight_index as u64)/></div> }
+}
+
+#[component]
+fn PauseView(
+    teams: Memo<Vec<SpotlightTeam>>,
+    time_left: RwSignal<u32>,
+    spotlight: RwSignal<u64>,
+) -> impl IntoView {
+    let t = use_t();
+    let count = Signal::derive(move || teams.with(Vec::len));
     view! {
         <div class="pause-screen h-full w-full bg-ground relative overflow-hidden flex flex-col font-show selection:bg-primary-500/30">
             <div class="absolute inset-0 bg-ground-bottom z-0 pointer-events-none"/>

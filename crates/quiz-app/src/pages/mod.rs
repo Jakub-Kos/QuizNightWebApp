@@ -8,3 +8,7 @@ pub mod theme_editor;
 pub mod quiz_check;
 pub mod quiz_map;
 pub mod workshop;
+pub mod color_picker;
+
+pub mod drive_parts;
+pub mod drive_people;

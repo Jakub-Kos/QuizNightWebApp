@@ -30,6 +30,25 @@ impl Drop for Inner {
 #[derive(Clone)]
 pub struct Store(Rc<Inner>);
 impl Store {
+    pub async fn update_quiz_source<F: FnOnce(&mut Quiz)>(
+        &self,
+        id: &str,
+        change: F,
+        source: &str,
+    ) -> Result<Option<Quiz>> {
+        let result = match &self.0.backend {
+            #[cfg(target_arch = "wasm32")]
+            Backend::Indexed(s) => s.update_quiz(id, change).await,
+            Backend::Memory(s) => s.update_quiz(id, change).await,
+        };
+        if let Ok(Some(quiz)) = &result {
+            crate::google::sync::notify_quiz_saved(quiz, source);
+        }
+        if result.is_ok() {
+            self.changed();
+        }
+        result
+    }
     pub fn is_persistent(&self) -> bool {
         !matches!(self.0.backend, Backend::Memory(_))
     }
@@ -148,21 +167,16 @@ impl QuizStore for Store {
             Backend::Indexed(s) => s.put_quiz(quiz).await,
             Backend::Memory(s) => s.put_quiz(quiz).await,
         };
+        if let Ok(quiz) = &result {
+            crate::google::sync::notify_quiz_saved(quiz, "local");
+        }
         if result.is_ok() {
             self.changed();
         }
         result
     }
     async fn update_quiz<F: FnOnce(&mut Quiz)>(&self, id: &str, change: F) -> Result<Option<Quiz>> {
-        let result = match &self.0.backend {
-            #[cfg(target_arch = "wasm32")]
-            Backend::Indexed(s) => s.update_quiz(id, change).await,
-            Backend::Memory(s) => s.update_quiz(id, change).await,
-        };
-        if result.is_ok() {
-            self.changed();
-        }
-        result
+        self.update_quiz_source(id, change, "local").await
     }
     async fn delete_quiz(&self, id: &str) -> Result<()> {
         let result = match &self.0.backend {

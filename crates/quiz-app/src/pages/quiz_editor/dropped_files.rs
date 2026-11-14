@@ -53,6 +53,13 @@ pub(super) async fn collect(captured: DropFiles) -> Result<Vec<web_sys::File>, S
                 .map_err(|e| format!("{e:?}"))?
                 .dyn_into::<web_sys::File>()
                 .map_err(|e| format!("{e:?}"))?;
+            if let Some(path) = property(&entry, "fullPath").as_string() {
+                let _ = js_sys::Reflect::set(
+                    &file,
+                    &"relativePath".into(),
+                    &path.trim_start_matches('/').into(),
+                );
+            }
             files.push(file);
         } else if property(&entry, "isDirectory").as_bool() == Some(true) {
             let reader = call(&entry, "createReader").map_err(|e| format!("{e:?}"))?;

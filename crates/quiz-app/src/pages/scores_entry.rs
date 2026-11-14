@@ -50,6 +50,33 @@ fn patch_score(q: &mut Quiz, team: &str, round: &str, value: &str) {
         }
     }
 }
+fn adopt_scores(q: &mut Quiz, scores: &quiz_core::quiz::parse::ParsedScores) {
+    for team in &q.teams {
+        let id = team_key(&team.id);
+        let rows = scores
+            .teams
+            .iter()
+            .filter(|row| {
+                row.id.as_deref() == Some(&id)
+                    || (row.id.is_none() && row.name.trim() == team.name.trim())
+            })
+            .collect::<Vec<_>>();
+        if rows.len() != 1 {
+            continue;
+        }
+        let points = rows[0]
+            .scores
+            .iter()
+            .filter_map(|(heading, score)| {
+                let round = heading
+                    .split(|c: char| !c.is_ascii_digit() && c != '.')
+                    .find(|s| !s.is_empty())?;
+                Some((round.to_owned(), *score))
+            })
+            .collect();
+        q.manual_scores.insert(id, points);
+    }
+}
 fn totals(q: &Quiz) -> BTreeMap<String, f64> {
     let rounds = parse_questions_csv(&q.questions_csv);
     let board = manual_leaderboard(&q.teams, &rounds, &q.manual_scores, None);
@@ -98,10 +125,29 @@ fn back(id: &str) {
 pub fn Page(id: String) -> impl IntoView {
     let t = use_t();
     let store = store::use_store();
+    let account = crate::google::auth::use_google_account();
     let quiz = LocalResource::new(move || {
+        let signed = account.signed_in.get();
         let store = store.clone();
         let id = id.clone();
-        async move { store.get_quiz(&id).await.map_err(|e| e.to_string()) }
+        async move {
+            let mut q = store.get_quiz(&id).await.map_err(|e| e.to_string())?;
+            if signed && q.as_ref().is_some_and(|q| q.drive.is_some()) {
+                if let Ok(Some(fresh)) = crate::google::sync::sync_drive_config(&id).await {
+                    q = Some(fresh);
+                }
+                if let Some(q) = q.as_mut() {
+                    if let Ok(csv) =
+                        crate::google::sheets::fetch_sheet_csv(&q.scores_sheet_url).await
+                    {
+                        if let Some(scores) = quiz_core::quiz::parse::parse_scores_csv(&csv) {
+                            adopt_scores(q, &scores);
+                        }
+                    }
+                }
+            }
+            Ok::<_, String>(q)
+        }
     });
     view! { <main class="min-h-screen bg-[#050505] text-white font-sans">{move || quiz.get().map(|result| match result {
         Ok(Some(q)) => view! { <Scores quiz=q/> }.into_any(),
@@ -112,7 +158,6 @@ pub fn Page(id: String) -> impl IntoView {
 
 #[component]
 fn Scores(quiz: Quiz) -> impl IntoView {
-    // TODO(auth): private Sheets and score write-back to Google Sheets.
     let t = use_t();
     let id = StoredValue::new(quiz.id.clone());
     let rounds = parse_questions_csv(&quiz.questions_csv);
@@ -140,6 +185,50 @@ fn Scores(quiz: Quiz) -> impl IntoView {
     let pending = RwSignal::new(0_usize);
     let error = RwSignal::new(None::<String>);
     let store = StoredValue::new_local(store::use_store());
+    let drive = quiz.get_untracked().drive.is_some() && linked;
+    let account = crate::google::auth::use_google_account();
+    // Keep writes ordered and coalesce cells changed while an earlier request is in flight.
+    let queue = std::rc::Rc::new(std::cell::RefCell::new(Drafts::new()));
+    let running = std::rc::Rc::new(std::cell::Cell::new(false));
+    let writer = StoredValue::new_local((queue, running));
+    let write_remote = Callback::new(move |(team, round, value): (String, String, String)| {
+        if !drive {
+            return;
+        }
+        let (queue, running) = writer.get_value();
+        queue.borrow_mut().insert((team, round), value);
+        if running.replace(true) {
+            return;
+        }
+        let queue = queue.clone();
+        let running = running.clone();
+        let data = store.get_value();
+        let id = id.get_value();
+        pending.update(|n| *n += 1);
+        leptos::task::spawn_local(async move {
+            loop {
+                let next = queue.borrow_mut().pop_first();
+                let Some(((team, round), value)) = next else {
+                    break;
+                };
+                let result = async {
+                    let q = data
+                        .get_quiz(&id)
+                        .await?
+                        .ok_or_else(|| crate::google::Error::Other("Quiz not found".into()))?;
+                    crate::google::sync::write_score_cell(&q, &team, &round, &value).await
+                }
+                .await;
+                if let Err(e) = result {
+                    error.try_set(Some(
+                        super::drive_parts::error_text(&e, t).unwrap_or_default(),
+                    ));
+                }
+            }
+            running.set(false);
+            pending.try_update(|n| *n -= 1);
+        });
+    });
     let change = Callback::new(move |(team, round, value): (String, String, String)| {
         drafts.update(|d| {
             d.insert((team.clone(), round.clone()), value.clone());
@@ -147,6 +236,7 @@ fn Scores(quiz: Quiz) -> impl IntoView {
         quiz.update(|q| patch_score(q, &team, &round, &value));
         pending.update(|n| *n += 1);
         leptos::task::spawn_local(async move {
+            let remote = (team.clone(), round.clone(), value.clone());
             let result = store
                 .get_value()
                 .update_quiz(&id.get_value(), move |q| {
@@ -154,7 +244,10 @@ fn Scores(quiz: Quiz) -> impl IntoView {
                 })
                 .await;
             error.set(match result {
-                Ok(Some(_)) => None,
+                Ok(Some(_)) => {
+                    write_remote.run(remote);
+                    None
+                }
                 Ok(None) => Some(t.get("ed_not_found")),
                 Err(e) => Some(e.to_string()),
             });
@@ -170,7 +263,8 @@ fn Scores(quiz: Quiz) -> impl IntoView {
             <span class="ml-auto text-xs text-gray-500" role="status">{move || t.get(if pending.get()>0 {"ed_saving"} else if error.get().is_some() {"lib_action_failed"} else {"ed_saved"})}</span>
         </header>
         <Show when=move || error.get().is_some()><p role="alert" class="text-red-300">{move || error.get()}</p></Show>
-        <Show when=move || linked><p class="flex items-start gap-2 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 text-sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0 mt-0.5" aria-hidden="true"><path d="m12 3 10 18H2z M12 9v4 M12 17h.01"/></svg>{move || t.get("sc_sheet_linked")}</p></Show>
+        <Show when=move || drive && !account.signed_in.get()><super::drive_parts::GoogleAccountBar on_error=Callback::new(move |e|error.set(e))/></Show>
+        <Show when=move || linked && !drive><p class="flex items-start gap-2 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 text-sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0 mt-0.5" aria-hidden="true"><path d="m12 3 10 18H2z M12 9v4 M12 17h.01"/></svg>{move || t.get("sc_sheet_linked")}</p></Show>
         <p class="text-sm text-gray-400">{move || t.get("sc_help")}</p>
         {if empty {view! { <p class="text-gray-400">{move || t.get(if no_teams {"sc_no_teams"} else {"ed_no_questions"})}" "<a class="text-yellow-400 underline" href=Route::Edit(id.get_value()).hash()>{move || t.get("lib_edit")}</a></p> }.into_any()} else {
             view! { <div class="overflow-x-auto rounded-2xl border border-white/10"><table class="w-full text-sm">
@@ -200,6 +294,20 @@ fn Scores(quiz: Quiz) -> impl IntoView {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn drive_scores_follow_ids_after_rename_and_use_round_numbers() {
+        let mut q = Quiz::default();
+        let mut team = quiz_core::quiz::teams::new_team("t1");
+        team.name = "New name".into();
+        q.teams.push(team);
+        let scores = quiz_core::quiz::parse::parse_scores_csv(
+            "Team name,Round 1,Kolo 2,quiznight-id\nOld name,3.5,-2,t1",
+        )
+        .unwrap();
+        adopt_scores(&mut q, &scores);
+        assert_eq!(q.manual_scores["t1"]["1"], 3.5);
+        assert_eq!(q.manual_scores["t1"]["2"], -2.);
+    }
     #[test]
     fn decimal_drafts_and_invalid_input() {
         assert_eq!(round_heading("ROUND", "3"), "Round 3");

@@ -5,7 +5,6 @@ use quiz_core::quiz::{
     model::{Quiz, ResolvedTeam, resolve_teams},
     parse::{ParsedScores, parse_scores_csv},
     scores::manual_leaderboard,
-    sheets::to_csv_url,
 };
 use quiz_store::QuizStore;
 use std::sync::{
@@ -24,6 +23,8 @@ pub struct ScoresContext {
     pub loading: ReadSignal<bool>,
     pub error: ReadSignal<Option<String>>,
     pub last_loaded: ReadSignal<Option<f64>>,
+    pub auth_needed: ReadSignal<bool>,
+    pub sign_in_ending: Memo<Option<u32>>,
     reload: Callback<()>,
 }
 
@@ -56,26 +57,34 @@ fn scores_url(quiz: &Quiz, override_url: Option<String>) -> Option<String> {
     })
 }
 
-fn request_url(url: &str, timestamp: u64) -> String {
-    let csv = to_csv_url(url);
-    // Fragments are not sent to the server; put the cache buster before them.
-    let csv = csv.split('#').next().unwrap_or(&csv);
-    let separator = if csv.contains('?') { '&' } else { '?' };
-    format!("{csv}{separator}_cb={timestamp}")
+async fn fetch_scores(url: &str, t: crate::i18n::T) -> Result<ParsedScores, String> {
+    let csv = crate::google::sheets::fetch_sheet_csv(url)
+        .await
+        .map_err(|e| {
+            crate::google::sheets::sheet_error_text(&e, &crate::pages::drive_parts::translations(t))
+        })?;
+    parse_scores_csv(&csv).ok_or_else(|| t.get("ed_err_format"))
 }
 
-async fn fetch_scores(url: &str) -> Result<ParsedScores, String> {
-    // TODO(auth): use the Google session/private Sheets transport once ported.
-    let response = gloo_net::http::Request::get(&request_url(url, js_sys::Date::now() as u64))
-        .cache(web_sys::RequestCache::NoStore)
-        .send()
-        .await
-        .map_err(|error| error.to_string())?;
-    if !response.ok() {
-        return Err(format!("HTTP {}", response.status()));
-    }
-    let csv = response.text().await.map_err(|error| error.to_string())?;
-    parse_scores_csv(&csv).ok_or_else(|| "Invalid scores CSV (the sheet may not be shared)".into())
+/// React's usesGoogle excludes published Sheets and anonymous public links.
+fn uses_google(url: Option<&str>, private: bool, enabled: bool, known_user: bool) -> bool {
+    enabled
+        && (private || known_user)
+        && url.is_some_and(|u| {
+            u.split("docs.google.com/spreadsheets/d/")
+                .nth(1)
+                .is_some_and(|id| !id.starts_with("e/"))
+        })
+}
+fn ending_minutes(expires: f64, now: f64, valid: bool) -> Option<u32> {
+    let minutes = ((expires - now) / 60_000.).ceil();
+    (valid && minutes <= 10.).then_some(minutes.max(1.) as u32)
+}
+
+pub fn renew_sign_in() {
+    leptos::task::spawn_local(async {
+        let _ = crate::google::auth::sign_in(false).await;
+    });
 }
 
 fn venue_arc(quiz: &Quiz) -> f64 {
@@ -106,6 +115,39 @@ pub fn provide_scores(quiz: QuizContext) {
     let quiz = StoredValue::new(quiz);
     let t = crate::i18n::use_t();
     let manual = url.is_none();
+    let private = quiz.with_value(|q| q.quiz.drive.is_some());
+    let account = crate::google::auth::use_google_account();
+    let google_url = StoredValue::new(url.clone());
+    let (auth_needed, set_auth_needed) = signal(false);
+    let now = RwSignal::new(js_sys::Date::now());
+    let google = Memo::new(move |_| {
+        google_url.with_value(|u| {
+            uses_google(
+                u.as_deref(),
+                private,
+                crate::google::auth::google_enabled(),
+                account.session.get().is_some(),
+            )
+        })
+    });
+    let sign_in_ending = Memo::new(move |_| {
+        if !google.get() {
+            return None;
+        }
+        account
+            .session
+            .get()
+            .and_then(|s| ending_minutes(s.expires, now.get(), account.signed_in.get()))
+    });
+    let clock = StoredValue::new_local(Some(gloo_timers::callback::Interval::new(
+        30_000,
+        move || now.set(js_sys::Date::now()),
+    )));
+    on_cleanup(move || {
+        clock.update_value(|c| {
+            c.take();
+        });
+    });
     let url = Arc::new(url);
     let cancelled = Arc::new(AtomicBool::new(false));
     let in_flight = Arc::new(AtomicBool::new(false));
@@ -156,7 +198,7 @@ pub fn provide_scores(quiz: QuizContext) {
                 }
             }
             let result = if let Some(url) = url.as_ref() {
-                fetch_scores(url).await
+                fetch_scores(url, t).await
             } else {
                 fresh.map(|fresh| manual_scores(&fresh, &round_word))
             };
@@ -166,12 +208,18 @@ pub fn provide_scores(quiz: QuizContext) {
             }
             match result {
                 Ok(next) => {
+                    set_auth_needed.set(false);
                     set_scores.set(next);
                     set_error.set(None);
                     set_last_loaded.set(Some(js_sys::Date::now()));
                 }
                 // Retain the last successful scores on network or parse failure.
-                Err(error) => set_error.set(Some(error)),
+                Err(error) => {
+                    if google.get_untracked() && crate::google::auth::current_token().is_none() {
+                        set_auth_needed.set(true);
+                    }
+                    set_error.set(Some(error));
+                }
             }
             if pending.swap(false, Ordering::Relaxed) {
                 // A forced reload during an in-flight request must finish its queued
@@ -189,10 +237,14 @@ pub fn provide_scores(quiz: QuizContext) {
         loading,
         error,
         last_loaded,
+        auth_needed,
+        sign_in_ending,
         reload: load,
     });
     Effect::new(move |_| {
         reload_tick.get();
+        account.session.get();
+        account.signed_in.get();
         revision.get();
         if manual {
             t.lang();
@@ -263,18 +315,21 @@ mod tests {
     }
 
     #[test]
-    fn csv_requests_convert_sheet_links_and_bypass_cached_results() {
-        assert_eq!(request_url("scores.csv", 42), "scores.csv?_cb=42");
-        assert_eq!(
-            request_url("scores.csv?x=1#fragment", 43),
-            "scores.csv?x=1&_cb=43"
-        );
-        assert_eq!(
-            request_url(
-                "https://docs.google.com/spreadsheets/d/example/edit#gid=123",
-                44
-            ),
-            "https://docs.google.com/spreadsheets/d/example/export?format=csv&gid=123&_cb=44"
-        );
+    fn google_notices_preserve_public_and_expiry_conditions() {
+        let url = Some("https://docs.google.com/spreadsheets/d/private/edit");
+        assert!(uses_google(url, true, true, false));
+        assert!(uses_google(url, false, true, true));
+        assert!(!uses_google(url, false, true, false));
+        assert!(!uses_google(
+            Some("https://docs.google.com/spreadsheets/d/e/published/pub"),
+            true,
+            true,
+            true
+        ));
+        assert!(!uses_google(url, true, false, true));
+        assert_eq!(ending_minutes(660_001., 0., true), None);
+        assert_eq!(ending_minutes(600_000., 0., true), Some(10));
+        assert_eq!(ending_minutes(60_001., 0., true), Some(2));
+        assert_eq!(ending_minutes(10_000., 0., false), None);
     }
 }

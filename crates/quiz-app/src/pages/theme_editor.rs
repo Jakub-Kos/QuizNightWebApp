@@ -5,9 +5,8 @@ use quiz_core::theme::{builtin::*, format::*, pack::*};
 use quiz_store::{LibraryTheme, Media, MediaStore, QuizStore, ThemeStore};
 use serde_json::{Value, json};
 use wasm_bindgen::JsCast;
-mod color;
+
 mod preview;
-mod standings;
 
 pub(super) const BUTTON: &str = "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm disabled:opacity-40";
 const INPUT: &str = "w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-yellow-500";
@@ -587,6 +586,44 @@ fn Slider(
     }
 }
 #[component]
+fn ColorField(
+    draft: Draft,
+    path: String,
+    label: String,
+    fallback: &'static str,
+    #[prop(optional)] dark: bool,
+) -> impl IntoView {
+    let t = use_t();
+    let path = StoredValue::new(path);
+    let value = Signal::derive(move || {
+        path.with_value(|p| {
+            value_at(
+                &serde_json::to_value(normalized(&draft.raw.get())).unwrap(),
+                p,
+            )
+            .as_str()
+            .unwrap_or(fallback)
+            .to_owned()
+        })
+    });
+    let own =
+        move || path.with_value(|p| value_at(&draft.raw.get(), p).as_str().map(str::to_owned));
+    let colors = Signal::derive(move || {
+        let theme = normalized(&draft.raw.get());
+        theme
+            .colors
+            .values()
+            .cloned()
+            .chain(theme.background.glows.into_iter().map(|g| g.color))
+            .collect::<Vec<_>>()
+    });
+    view! { <div class="flex items-center gap-3">
+        <super::color_picker::ColorPicker value=value on_change=Callback::new(move |c| path.with_value(|p| draft.set(p,json!(c)))) label=label.clone() theme_colors=colors dark=dark/>
+        <span class="text-sm flex-1">{label}</span><span class="text-xs font-mono text-gray-400 uppercase">{move || own().unwrap_or_else(||t.get("te_classic_color"))}</span>
+        <button type="button" class=BUTTON disabled=move ||own().is_none() title=t.get("te_reset_color") aria-label=t.get("te_reset_color") on:click=move |_| path.with_value(|p| draft.set(p,Value::Null))>"↺"</button>
+    </div> }
+}
+#[component]
 fn Upload(
     draft: Draft,
     id: String,
@@ -599,6 +636,27 @@ fn Upload(
     let t = use_t();
     let store = store::use_store();
     let busy = RwSignal::new(false);
+    let picker = NodeRef::<leptos::html::Input>::new();
+    let image_path = StoredValue::new(path.clone());
+    let image = move || {
+        image_path.with_value(|p| value_at(&draft.raw.get(), p).as_str().map(str::to_owned))
+    };
+    let image_url = Memo::new(move |_| {
+        let name = image()?;
+        let file = files
+            .get()
+            .into_iter()
+            .find(|f| f.name.eq_ignore_ascii_case(&name))?;
+        let blob = store::blob(&file.bytes, &file.content_type).ok()?;
+        web_sys::Url::create_object_url_with_blob(&blob).ok()
+    });
+    Effect::new(move |_| {
+        if let Some(url) = image_url.get() {
+            on_cleanup(move || {
+                let _ = web_sys::Url::revoke_object_url(&url);
+            });
+        }
+    });
     let upload = move |ev| {
         let input = event_target::<web_sys::HtmlInputElement>(&ev);
         let Some(file) = input.files().and_then(|files| files.get(0)) else {
@@ -693,20 +751,19 @@ fn Upload(
             busy.set(false);
         });
     };
-    let label = t.get(if pack {
-        "thm_import"
-    } else if font {
-        "te_f_upload"
-    } else {
-        "te_bg_upload"
-    });
     view! {
-        <label class="block text-sm text-gray-400">
-            {label}
-            <input class="block w-full text-sm mt-2" type="file" disabled=move || busy.get()
-                accept=if pack { ".zip,.json" } else if font { ".woff2,.woff,.ttf,.otf" } else { ".jpg,.jpeg,.png,.webp,.avif" }
-                on:change=upload/>
-        </label>
+        <div class="space-y-2">
+            <span class="text-sm text-gray-400">{t.get(if pack {"thm_import"} else if font {"te_f_upload"} else {"te_bg_image"})}</span>
+            {move || (!pack && !font).then(||image_url.get()).flatten().map(|url|view! {<img src=url alt="" class="w-full aspect-video object-cover rounded-lg border border-white/10"/>})}
+            <div class="flex gap-2">
+                <button type="button" class=BUTTON disabled=move ||busy.get() on:click=move |_|if let Some(i)=picker.get(){i.click();}>
+                    <Show when=move ||busy.get()><span class="animate-spin" aria-hidden="true">"◌"</span></Show>
+                    {move || t.get(if pack {"thm_import"} else if font {"te_f_upload"} else if image().is_some(){"te_bg_replace"}else{"te_bg_upload"})}
+                </button>
+                <Show when=move || !pack && !font && image().is_some()><button type="button" class=BUTTON disabled=move ||busy.get() on:click=move |_|image_path.with_value(|p|draft.set(p,Value::Null))>{t.get("te_remove")}</button></Show>
+            </div>
+            <input node_ref=picker type="file" hidden disabled=move ||busy.get() accept=if pack {".zip,.json"}else if font{".woff2,.woff,.ttf,.otf"}else{".jpg,.jpeg,.png,.webp,.avif"} on:change=upload/>
+        </div>
     }
 }
 #[component]
@@ -850,7 +907,7 @@ fn Editor(
     });
     let colors = COLOR_KEYS.iter().zip(["#3b82f6", "#eab308", "#111111", "#050505", "#000000", "#0a0a0a"])
         .map(|(&key, fallback)| view! {
-            <color::ColorField draft=draft path=format!("colors.{key}") label=t.get(&format!("te_c_{key}"))
+            <ColorField draft=draft path=format!("colors.{key}") label=t.get(&format!("te_c_{key}"))
                 fallback=fallback dark=!["primary", "accent"].contains(&key)/>
         }).collect_view();
     let styles = STYLE_OPTIONS.iter().map(|(key, options)| view! {
@@ -892,6 +949,7 @@ fn Editor(
             <Panel title=t.get(title)>
                 <Choice draft=draft path=path.into() label=t.get(label) options=strings(options)
                     prefix=prefix.into() default=options[0].into()/>
+                <p class="text-xs text-gray-500">{t.get(match path {"scenes.welcome.intro"=>"te_wl_help","scenes.leaderboard.layout"=>"te_lb_help",_=>""})}</p>
             </Panel>
         }
     });
@@ -955,7 +1013,6 @@ fn Editor(
                 <Panel title=t.get("te_fonts")>{fonts}</Panel>
                 <Panel title=t.get("te_background")>
                     <Upload draft=draft id=id.get_value() path="background.image".into() files=files notice=notice/>
-                    <button type="button" class=BUTTON on:click=move |_| draft.set("background.image", Value::Null)>{t.get("te_remove")}</button>
                     <Slider draft=draft path="background.imageOpacity".into() label=t.get("te_bg_opacity") min=0. max=1. step=0.05/>
                     <Slider draft=draft path="background.imageBlur".into() label=t.get("te_bg_blur") min=0. max=20. step=1./>
                     <Choice draft=draft path="background.ornament".into() label=t.get("te_scenery") options=strings(ORNAMENTS) prefix="te_sc_".into() nullable=true/>
@@ -1121,7 +1178,7 @@ fn Glows(draft: Draft) -> impl IntoView {
         <For each={move || (0..count()).collect::<Vec<_>>()} key=|i| *i let:i>
             <div class="rounded-xl border border-white/10 p-3 space-y-2">
                 <p class="text-sm text-gray-400">{t.fmt("te_glow_n", &[("n", &(i + 1).to_string())])}</p>
-                <color::ColorField draft=draft path=format!("background.glows.{i}.color") label=t.get("te_glow_color") fallback="#3b82f6"/>
+                <ColorField draft=draft path=format!("background.glows.{i}.color") label=t.get("te_glow_color") fallback="#3b82f6"/>
                 {[("x", 0., 100., 1.), ("y", 0., 100., 1.), ("size", 5., 150., 1.), ("opacity", 0., 1., 0.01)]
                     .map(|(key, min, max, step)| view! {
                         <Slider draft=draft path=format!("background.glows.{i}.{key}") label=t.get(&format!("te_glow_{key}")) min=min max=max step=step/>

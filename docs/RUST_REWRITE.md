@@ -45,18 +45,25 @@ night with it, watched it on a real TV, or heard the sounds.
   data will be read by the Rust app on the first deploy.
 - Both GitHub workflows (`deploy.yml`, `theme-check.yml`).
 
+### Google (sign-in, Drive, Sheets)
+
+Ported the way the React app did it on GitHub Pages: browser-only sign-in with the same client ID,
+storage keys and Drive folder layout. The code is in `crates/quiz-app/src/google/` (its README lists
+the API, the differences from React and a manual test script) and in the library, quiz editor,
+questions editor, attendance, scores and show.
+
+None of it has run against Google: it needs a real sign-in from an origin registered for the client
+ID. Seen in the browser only: signed out, the app looks as before; `#/drive` sets the invite flag and
+the library then shows the Google Drive block. Most likely to be wrong: the sign-in popup, large
+media uploads (cross-origin rules), picking the tab of a private Sheet, presence cleanup when a tab
+closes, and score writes at the same time as team-row changes. A failed score write to the Sheet is
+reported but not retried.
+
 ### Known gaps against the React app
 
-- No Google sign-in, so no private Sheets, no write-back to Sheets and no Drive sync (`TODO(auth)`).
-  Public Sheet links still work.
-- The map page and the theme editor show simplified still frames for welcome, standings and pause
-  instead of the real scenes.
-- A theme's own background picture is not drawn in the show (`TODO(theme-assets)`).
-- Confetti uses a fixed palette, not the theme's colours (`TODO(particles)`).
-- The team introduction and pause sounds are not hooked up (`TODO(sounds)`).
-- Some scenes read the quiz settings once and do not follow live changes (`TODO(settings-consumers)`).
-- The colour picker is the browser's native one.
-- The host pause view does not use the full window (`TODO(pause-presenter-layout)`).
+- The questions editor edits local quizzes too; React only edited Drive quizzes there.
+- The colour picker, map page and theme editor were brought closer to React in the last round, but
+  nobody has compared them side by side.
 
 ### Other open items
 
@@ -121,5 +128,5 @@ Moving from GitHub Pages to Cloudflare changes the origin, so users would migrat
 
 ## Open decisions
 
-- **Google Drive sync:** proposed to drop it for good; SQL replaces it. It is not in the Rust app.
+- **Google Drive sync:** ported as it was for GitHub Pages. Whether to keep it once there is a backend, and what to do for local use, is undecided.
 - **Auth:** proposed Google sign-in, with anonymous local-only use still working.

@@ -258,9 +258,9 @@ fn race_geometry(teams: &[Standing]) -> (usize, f64, f64, f64) {
 #[component]
 pub fn Leaderboard() -> impl IntoView {
     let show = use_show();
-    let t = use_t();
     let quiz = use_quiz();
     let metadata = use_scores().teams;
+    let auth_needed = use_scores().auth_needed;
     let theme = use_theme();
     let presenter = show.role == Role::Presenter;
     let round_chosen = RwSignal::new(false);
@@ -270,8 +270,9 @@ pub fn Leaderboard() -> impl IntoView {
         reveal_step: 0,
     });
     let live = use_scores().scores;
-    let board =
-        Memo::new(move |_| reveal.with(|r| build_board(&r.snapshot, &r.selected_round, &metadata.get())));
+    let board = Memo::new(move |_| {
+        reveal.with(|r| build_board(&r.snapshot, &r.selected_round, &metadata.get()))
+    });
     let step = Signal::derive(move || reveal.with(|r| r.reveal_step.min(max_step(&board.get()))));
     let final_step = Signal::derive(move || step.get() == max_step(&board.get()));
     // Leaderboard.jsx: a cue when stepping forwards, the winner's at the final standings.
@@ -471,6 +472,48 @@ pub fn Leaderboard() -> impl IntoView {
     if presenter {
         return view! {<PresenterLeaderboard reveal=reveal board=board step=step round_chosen=round_chosen/>}.into_any();
     }
+    view! { <LeaderboardView board step final_step rows layout celebrating auth_needed=Signal::derive(move ||auth_needed.get())
+    selected_round=Signal::derive(move || reveal.get().selected_round)
+    hint=Signal::derive(move || !presenter_open.get())/> }
+    .into_any()
+}
+
+/// Fixed audience standings/reveal. `step`: 0 table, 1 group card, 2 added points, etc.;
+/// `usize::MAX` selects the final standings. Non-final podium/spotlight/medals use the live table.
+/// All data is supplied; no score polling, channels, keys, sounds or celebration are mounted.
+#[component]
+pub fn LeaderboardPreview(
+    scores: ParsedScores,
+    teams: Vec<ResolvedTeam>,
+    step: usize,
+    layout: LeaderboardLayout,
+    #[prop(optional)] round: Option<String>,
+) -> impl IntoView {
+    let selected = round.unwrap_or_else(|| default_round(&scores));
+    let fixed = build_board(&scores, &selected, &teams);
+    let step = step.min(max_step(&fixed));
+    let board = Memo::new(move |_| fixed.clone());
+    let step = Signal::stored(step);
+    let final_step = Signal::derive(move || step.get() == max_step(&board.get()));
+    let rows = Memo::new(move |_| active_teams(&board.get(), step.get()));
+    view! { <div class="h-full w-full pointer-events-none" inert=true><LeaderboardView
+    board step final_step rows layout=Signal::derive(move || shown_layout(layout, final_step.get()))
+    selected_round=Signal::stored(selected) celebrating=RwSignal::new(false) hint=Signal::stored(false)/></div> }
+}
+
+#[component]
+fn LeaderboardView(
+    board: Memo<Board>,
+    step: Signal<usize>,
+    final_step: Signal<bool>,
+    rows: Memo<Vec<Standing>>,
+    layout: Signal<LeaderboardLayout>,
+    selected_round: Signal<String>,
+    celebrating: RwSignal<bool>,
+    hint: Signal<bool>,
+    #[prop(default = Signal::stored(false))] auth_needed: Signal<bool>,
+) -> impl IntoView {
+    let t = use_t();
     let overlay =
         Signal::derive(move || active_group(step.get(), max_step(&board.get())).is_some());
     let last_group = RwSignal::new(0_usize);
@@ -489,7 +532,7 @@ pub fn Leaderboard() -> impl IntoView {
                 <div class="flex items-center justify-between border-b border-white/10 pb-6 mb-8 shrink-0">
                     <div class="flex items-center gap-6"><IntroIcon name="trophy" size=48 class="text-yellow-500"/>
                         <div><h1 class="font-title text-5xl font-black uppercase tracking-[0.2em] text-white leading-none">{move || t.get("lb_title")}</h1>
-                        <h2 class="text-primary-400 font-bold tracking-[0.4em] text-sm uppercase mt-2">{move || if final_step.get() {t.get("lb_final")} else {t.fmt("lb_round_reveal", &[("round", &reveal.get().selected_round)])}}</h2></div>
+                        <h2 class="text-primary-400 font-bold tracking-[0.4em] text-sm uppercase mt-2">{move || if final_step.get() {t.get("lb_final")} else {t.fmt("lb_round_reveal", &[("round", &selected_round.get())])}}</h2></div>
                     </div>
                     <div class="flex flex-col items-end"><span class="text-white/40 font-bold tracking-widest uppercase text-xs mb-2">{move || t.get("lb_progress")}</span>
                         <div class="flex gap-1.5">{move || board.get().groups.iter().enumerate().map(|(i,_)| view! {
@@ -499,7 +542,7 @@ pub fn Leaderboard() -> impl IntoView {
                 </div>
                 <div class="flex-1 w-full overflow-hidden relative">
                     <Show when=move || board.get().teams.is_empty()>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center gap-6 text-center"><IntroIcon name="trophy" size=96 class="text-white/10"/><h2 class="text-5xl font-black uppercase tracking-[0.2em] text-white/60">{move || t.get("lb_empty_title")}</h2></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center gap-6 text-center"><IntroIcon name="trophy" size=96 class="text-white/10"/><h2 class="text-5xl font-black uppercase tracking-[0.2em] text-white/60">{move || t.get("lb_empty_title")}</h2><Show when=move ||auth_needed.get()><button on:click=move |_|crate::scores::renew_sign_in() class="px-8 py-4 rounded-xl bg-amber-500 text-black font-bold">{move ||t.get("lb_signin")}</button></Show></div>
                     </Show>
                     <Show when=move || layout.get() == LeaderboardLayout::Table>
                         <div class="grid grid-cols-2 grid-flow-row gap-x-16 gap-y-5 w-full content-start">
@@ -511,7 +554,7 @@ pub fn Leaderboard() -> impl IntoView {
                         {move || view! {<FinalView teams=rows.get() layout=layout.get()/>}}
                     </Show>
                 </div>
-                <Presence when=Signal::derive(move || !presenter && !presenter_open.get() && step.get() == 0 && !board.get().teams.is_empty()) enter="standings-fade-in" exit="standings-fade-out" class="standings-hint absolute bottom-[3.5cqh] inset-x-0 pointer-events-none">
+                <Presence when=Signal::derive(move || hint.get() && step.get() == 0 && !board.get().teams.is_empty()) enter="standings-fade-in" exit="standings-fade-out" class="standings-hint absolute bottom-[3.5cqh] inset-x-0 pointer-events-none">
                     <p class="text-center text-white/40 font-sans text-xl tracking-wide">{move || t.get("lb_keys_hint")}</p>
                 </Presence>
                 <Presence when=overlay enter="standings-overlay-in" exit="standings-overlay-out" class="absolute inset-0 z-50">
@@ -604,12 +647,24 @@ fn PresenterLeaderboard(
     let live = scores.scores;
     let reloading = scores.loading;
     let reload_failed = Signal::derive(move || scores.error.get().is_some());
-    let last_sync = Signal::derive(move || scores.last_loaded.get().map(|time| {
-        let date = js_sys::Date::new(&wasm_bindgen::JsValue::from_f64(time));
-        format!("{:02}:{:02}:{:02}", date.get_hours(), date.get_minutes(), date.get_seconds())
-    }).unwrap_or_else(|| "—".into()));
+    let last_sync = Signal::derive(move || {
+        scores
+            .last_loaded
+            .get()
+            .map(|time| {
+                let date = js_sys::Date::new(&wasm_bindgen::JsValue::from_f64(time));
+                format!(
+                    "{:02}:{:02}:{:02}",
+                    date.get_hours(),
+                    date.get_minutes(),
+                    date.get_seconds()
+                )
+            })
+            .unwrap_or_else(|| "—".into())
+    });
     let has_sheet = crate::quiz_context::query_param("scores").is_some()
-        || !quiz.quiz.scores_sheet_url.is_empty() || quiz.quiz.builtin;
+        || !quiz.quiz.scores_sheet_url.is_empty()
+        || quiz.quiz.builtin;
     let reload_requested = RwSignal::new(false);
     let reload = move |_| {
         reload_requested.set(true);
@@ -620,7 +675,9 @@ fn PresenterLeaderboard(
             reload_requested.set(false);
             if scores.error.get_untracked().is_none() {
                 reveal.update(|r| {
-                    if !round_chosen.get_untracked() { r.selected_round.clear(); }
+                    if !round_chosen.get_untracked() {
+                        r.selected_round.clear();
+                    }
                     r.adopt(live.get_untracked());
                     r.reveal_step = 0;
                 });
@@ -641,9 +698,15 @@ fn PresenterLeaderboard(
         step.get() > 0 && !live.get().teams.is_empty() && live.get() != reveal.get().snapshot
     };
     let focus = Memo::new(move |_| focus_rows(&board.get(), step.get()));
-    let map_teams = Signal::derive(move || scores.teams.with(|teams| teams.iter()
-        .filter(|r| r.team.seat.is_some() && quiz_core::quiz::teams::is_present(&r.team))
-        .map(|r| r.team.clone()).collect::<Vec<_>>()));
+    let map_teams = Signal::derive(move || {
+        scores.teams.with(|teams| {
+            teams
+                .iter()
+                .filter(|r| r.team.seat.is_some() && quiz_core::quiz::teams::is_present(&r.team))
+                .map(|r| r.team.clone())
+                .collect::<Vec<_>>()
+        })
+    });
     let has_seated = move || map_teams.with(|teams| !teams.is_empty());
     let highlight = Signal::derive(move || {
         let focus = focus.get();
@@ -661,7 +724,6 @@ fn PresenterLeaderboard(
                 .collect::<Vec<_>>()
         })
     });
-    // TODO(auth): private Google Sheets sign-in and authentication notices.
     view! {
         <div class="h-full w-full bg-panel text-white p-10 font-sans flex flex-col relative">
             <div class="flex justify-between items-start border-b border-white/10 pb-6 mb-8">
@@ -686,12 +748,13 @@ fn PresenterLeaderboard(
                 </div>
             </div>
             <div class="space-y-2 mb-6 -mt-2" role="status">
+                <Show when=move ||scores.auth_needed.get()><div class="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/40"><p class="flex-1 text-amber-200">{move ||t.get("lb_signin_needed")}</p><button on:click=move |_|crate::scores::renew_sign_in() class="px-5 py-3 rounded-xl bg-amber-500 text-black font-bold">{move ||t.get("lb_signin")}</button></div></Show>
                 <Show when=move || reload_failed.get() || scores.error.get().is_some()><p class="flex items-start gap-2 text-red-300"><PresenterIcon name="alert" size=18 class="shrink-0 mt-0.5"/>{move || t.get("lb_reload_failed")}</p></Show>
                 <Show when=changed><p class="flex items-start gap-2 text-amber-300"><PresenterIcon name="alert" size=18 class="shrink-0 mt-0.5"/>{move || t.get("lb_scores_changed")}</p></Show>
                 <Show when=move || has_scores() && scored_count()<reveal.get().snapshot.teams.len()><p class="flex items-start gap-2 text-yellow-300"><PresenterIcon name="alert" size=18 class="shrink-0 mt-0.5"/>{move || t.fmt("lb_scored_count",&[("n",&scored_count().to_string()),("total",&reveal.get().snapshot.teams.len().to_string()),("round",&reveal.get().selected_round)])}</p></Show>
             </div>
             <Show when=has_scores fallback=move || view! {
-                <div class="flex-1 flex flex-col items-center justify-center gap-4 text-center bg-white/5 rounded-2xl border border-white/10 p-10"><IntroIcon name="trophy" size=48 class="text-white/20"/><h2 class="text-2xl font-black">{move || t.get("lb_empty_title")}</h2><p class="text-white/60 max-w-xl">{move || t.get(if has_sheet {"lb_empty_sheet"} else {"lb_empty_manual"})}</p></div>
+                <div class="flex-1 flex flex-col items-center justify-center gap-4 text-center bg-white/5 rounded-2xl border border-white/10 p-10"><IntroIcon name="trophy" size=48 class="text-white/20"/><h2 class="text-2xl font-black">{move || t.get("lb_empty_title")}</h2><p class="text-white/60 max-w-xl">{move || t.get(if scores.auth_needed.get() {"lb_signin_needed"} else if has_sheet {"lb_empty_sheet"} else {"lb_empty_manual"})}</p></div>
             }>
                 <div class="flex gap-6 mb-3">
                     <button on:click=move |_| reveal.update(|r| r.reveal_step=r.reveal_step.saturating_sub(1)) disabled=move || step.get()==0 class="px-8 py-6 bg-white/5 hover:bg-white/10 disabled:opacity-20 rounded-2xl font-bold flex flex-col items-center justify-center transition-all border border-white/10"><PresenterIcon name="back" size=32 class="mb-2"/>{move || t.get("lb_prev_step")}</button>

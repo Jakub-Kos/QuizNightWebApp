@@ -1,5 +1,6 @@
 //! Local quiz setup, including media and theme packs.
-// TODO(auth): Google sign-in, Drive sync and Google Sheets write-back.
+// Drive teams are reconciled with the scores tab through the shared config sync.
+mod drive_ui;
 mod dropped_files;
 mod launcher;
 mod preview;
@@ -16,7 +17,7 @@ use quiz_core::{
         intro,
         model::{Quiz, TEAM_HEX, Team, TeamColor},
         parse::{ParsedScores, is_url, media_key, parse_questions_csv, parse_scores_csv},
-        sheets, teams,
+        teams,
         validate::{self, Level, ValidationInput, ValidationTeam},
     },
     theme::{builtin, format::Theme, pack},
@@ -96,8 +97,11 @@ struct Editor {
     status: RwSignal<Option<(bool, String)>>,
     busy: RwSignal<bool>,
     opened: RwSignal<String>,
+    drive_progress: RwSignal<Option<crate::google::drive::Progress>>,
+    drive_uploading: RwSignal<bool>,
     launcher: RwSignal<bool>,
     scores_sheet_mode: RwSignal<bool>,
+    signed_in: RwSignal<bool>,
     t: T,
 }
 impl Editor {
@@ -234,6 +238,7 @@ impl Editor {
     fn warning(self, key: &str) -> String {
         let q = self.quiz.get();
         match key {
+            "drive" if q.drive.is_some() && !self.signed_in.get() => self.t.get("ed_warn_signin"),
             "questions" if parse_questions_csv(&q.questions_csv).is_empty() => {
                 self.t.get("ed_warn_questions")
             }
@@ -329,20 +334,11 @@ async fn text(file: &web_sys::File) -> Result<String, String> {
     String::from_utf8(bytes(file).await?).map_err(|e| e.to_string())
 }
 async fn sheet(url: &str, t: T) -> Result<String, String> {
-    let url = sheets::to_csv_url(url);
-    let sep = if url.contains('?') { '&' } else { '?' };
-    let response = gloo_net::http::Request::get(&format!("{url}{sep}_cb={}", store::now_ms()))
-        .send()
+    crate::google::sheets::fetch_sheet_csv(url)
         .await
-        .map_err(|_| t.get("ed_err_network"))?;
-    if !response.ok() {
-        return Err(t.get("ed_err_http"));
-    }
-    let text = response.text().await.map_err(|_| t.get("ed_err_network"))?;
-    if text.trim_start().starts_with('<') {
-        return Err(t.get("ed_err_network"));
-    }
-    Ok(text)
+        .map_err(|e| {
+            crate::google::sheets::sheet_error_text(&e, &super::drive_parts::translations(t))
+        })
 }
 fn download(bytes: &[u8], name: &str, mime: &str) -> Result<(), String> {
     let url = web_sys::Url::create_object_url_with_blob(&store::blob(bytes, mime)?)
@@ -477,6 +473,7 @@ fn Loaded(quiz: Quiz, store: store::Store) -> impl IntoView {
     let editor = Editor {
         launcher: RwSignal::new(false),
         scores_sheet_mode,
+        signed_in: crate::google::auth::use_google_account().signed_in,
         data: StoredValue::new_local(Data {
             id: quiz.id.clone(),
             store,
@@ -490,6 +487,8 @@ fn Loaded(quiz: Quiz, store: store::Store) -> impl IntoView {
         status: RwSignal::new(None),
         busy: RwSignal::new(false),
         opened: RwSignal::new(String::new()),
+        drive_progress: RwSignal::new(None),
+        drive_uploading: RwSignal::new(false),
         t: use_t(),
     };
     editor.save.set(editor.t.get("ed_saved"));
@@ -501,12 +500,34 @@ fn Loaded(quiz: Quiz, store: store::Store) -> impl IntoView {
     on_cleanup(move || {
         editor.lease.try_update_value(|v| *v = None);
     });
+    let sync = crate::google::sync::use_drive_sync(&editor.id());
+    let google = crate::google::auth::use_google_account();
+    let signed = google.signed_in;
+    // Pull completed config merges into the editor only while no local edits are pending.
+    let revision = editor.data.with_value(|d| d.store.revision());
+    Effect::new(move |_| {
+        revision.get();
+        editor.save.get();
+        let data = editor.data.get_value();
+        if data.queue.borrow().running || !data.queue.borrow().pending.is_empty() {
+            return;
+        }
+        spawn_local(async move {
+            if let Ok(Some(q)) = data.store.get_quiz(&data.id).await
+                && !data.queue.borrow().running
+                && data.queue.borrow().pending.is_empty()
+            {
+                editor.quiz.try_set(q);
+            }
+        });
+    });
     view! { <div class="max-w-4xl mx-auto px-6 py-10 space-y-6" aria-busy=move || editor.busy.get()>
-        <header class="flex flex-wrap items-center gap-4"><a href="#/" class="flex items-center gap-2 text-gray-400 hover:text-white"><Icon name="back"/>{move || editor.t.get("settings_exit")}</a><a href="#/help" class="flex items-center gap-2 text-gray-400 text-sm"><Icon name="help"/>{move || editor.t.get("lib_help")}</a><button class="ml-auto text-xs text-gray-400" on:click=move |_| editor.start_save() title=move || editor.t.get("ed_refresh") aria-live="polite">{move || editor.save.get()}</button><a class=BUTTON href=editor.link(Route::Map)>{move || editor.t.get("mp_open")}</a><a class=BUTTON href=editor.link(Route::Check)>{move || editor.t.get("chk_open")}</a><button class=PRIMARY on:click=move |_| editor.launcher.set(true)><Icon name="play"/>{move || editor.t.get("sl_title")}</button></header>
+        <header class="flex flex-wrap items-center gap-4"><a href="#/" class="flex items-center gap-2 text-gray-400 hover:text-white"><Icon name="back"/>{move || editor.t.get("settings_exit")}</a><a href="#/help" class="flex items-center gap-2 text-gray-400 text-sm"><Icon name="help"/>{move || editor.t.get("lib_help")}</a><Show when=move ||editor.quiz.with(|q|q.drive.is_none())><button class="ml-auto text-xs text-gray-400" on:click=move |_| editor.start_save() title=move || editor.t.get("ed_refresh") aria-live="polite">{move || editor.save.get()}</button></Show><Show when=move ||editor.quiz.with(|q|q.drive.is_some())><super::drive_parts::SaveStatus saving=Signal::derive(move ||editor.save.get()==editor.t.get("ed_saving")) drive=Signal::derive(move ||editor.quiz.with(|q|q.drive.is_some())) state=sync on_refresh=Callback::new(move |_| { if signed.get_untracked() { spawn_local(async move { if let Err(e)=crate::google::sync::sync_drive_config(&editor.id()).await { editor.message(Err(super::drive_parts::error_text(&e,editor.t).unwrap_or_default())); } }); } })/></Show><a class=BUTTON href=editor.link(Route::Map)>{move || editor.t.get("mp_open")}</a><a class=BUTTON href=editor.link(Route::Check)>{move || editor.t.get("chk_open")}</a><button class=PRIMARY on:click=move |_| editor.launcher.set(true)><Icon name="play"/>{move || editor.t.get("sl_title")}</button></header>
         <input aria-label=move || editor.t.get("ed_untitled") prop:value=move || editor.quiz.with(|q| q.title.clone()) on:input=move |ev| editor.edit(|q| q.title = event_target_value(&ev)) placeholder=move || editor.t.get("ed_untitled") class="w-full bg-transparent font-['League_Spartan'] text-4xl font-black tracking-wide border-b border-white/10 pb-3 focus:outline-none focus:border-yellow-500/60"/>
         <Show when=move || editor.launcher.get()><Launcher editor/></Show>
         <Status editor/>
         <Checklist editor/>
+        <drive_ui::DriveSection editor/>
         <Themes editor/>
         <Questions editor/>
         <MediaSection editor/>
@@ -547,6 +568,7 @@ fn checklist(editor: Editor) -> Vec<Step> {
         ("check", "chk_open"),
     ];
     keys.into_iter()
+        .chain(q.drive.is_some().then_some(("drive", "rd_google")))
         .map(|(key, label)| {
             let todo = if key == "check" {
                 errors > 0
@@ -554,6 +576,11 @@ fn checklist(editor: Editor) -> Vec<Step> {
                 !editor.warning(key).is_empty()
             };
             let status = match key {
+                "drive" => t.get(if todo {
+                    "rd_google_todo"
+                } else {
+                    "rd_google_ok"
+                }),
                 "theme" => {
                     if todo {
                         t.get("rd_theme_todo")
@@ -680,7 +707,11 @@ fn Questions(editor: Editor) -> impl IntoView {
         });
     };
     let upload = move |_| {
-        if let Some(file) = input.get().and_then(|i| files(&i).into_iter().next()) {
+        if let Some(file) = input.get().and_then(|i| {
+            let file = files(&i).into_iter().next();
+            i.set_value("");
+            file
+        }) {
             spawn_local(async move {
                 match text(&file).await {
                     Ok(csv) => {
@@ -736,14 +767,18 @@ fn Questions(editor: Editor) -> impl IntoView {
             editor.busy.try_set(false);
         });
     };
-    view! { <Section editor name="questions" title="ed_questions" help="ed_questions_help"><div class="flex flex-col sm:flex-row gap-2"><input type="url" class=INPUT aria-label=move || editor.t.get("ed_sheet_link") placeholder=move || editor.t.get("ed_sheet_link") prop:value=move || url.get() on:input=move |ev| url.set(event_target_value(&ev))/><button class=BUTTON on:click=load disabled=move || editor.busy.get() || url.get().trim().is_empty()>{move || editor.t.get(if editor.quiz.with(|q| q.questions_sheet_url == url.get() && !q.questions_sheet_url.is_empty()) { "ed_refresh" } else { "ed_load" })}</button><button class=BUTTON on:click=move |_| { if let Some(i) = input.get() { i.click(); } }>{move || editor.t.get("ed_upload_csv")}</button><input node_ref=input type="file" accept=".csv,text/csv" hidden on:change=upload/></div>
-        <p class="text-xs text-gray-500" hidden=move || editor.quiz.with(|q| q.questions_sheet_url.is_empty())>{move || editor.t.get("ed_sheet_auto")}</p>
-        <a class=BUTTON href=editor.link(Route::Questions)>{move || editor.t.get("qe_title")}</a>
-        <details><summary class="text-sm text-gray-400 cursor-pointer">{move || editor.t.get("ed_upload_csv")}" / CSV"</summary><textarea class=INPUT rows="8" aria-label="CSV" prop:value=move || editor.quiz.with(|q| q.questions_csv.clone()) on:input=move |ev| { url.set(String::new()); editor.edit(|q| { q.questions_csv = event_target_value(&ev); q.questions_sheet_url.clear(); }); }/></details>
-        {move || { let rounds = parse_questions_csv(&editor.quiz.get().questions_csv); let count: usize = rounds.iter().map(|r| r.questions.len()).sum(); if rounds.is_empty() { view! { <questions_start::Start editor on_examples=Callback::new(examples)/> }.into_any() } else { view! { <ul class="divide-y divide-white/5 rounded-xl bg-black/30">{rounds.iter().map(|r| view! { <li class="flex justify-between gap-4 px-4 py-2 text-sm"><span><span class="text-gray-500">{r.number.clone()}". "</span>{r.title.clone()}</span><span class="text-gray-500">{r.questions.len()}" "{editor.t.get("lib_questions")}</span></li> }).collect_view()}<li class="flex justify-between px-4 py-2 text-sm font-bold"><span>{rounds.len()}" "{editor.t.get("lib_rounds")}</span><span>{count}" "{editor.t.get("lib_questions")}</span></li></ul> }.into_any() } }}
+    view! { <Section editor name="questions" title="ed_questions" help=if editor.quiz.get_untracked().drive.is_some() { "gd_questions_note" } else { "ed_questions_help" }><div hidden=move ||editor.quiz.with(|q|q.drive.is_some()) class="flex flex-col sm:flex-row gap-2"><input type="url" class=INPUT aria-label=move || editor.t.get("ed_sheet_link") placeholder=move || editor.t.get("ed_sheet_link") prop:value=move || url.get() on:input=move |ev| url.set(event_target_value(&ev))/><button class=BUTTON on:click=load disabled=move || editor.busy.get() || url.get().trim().is_empty()>{move || editor.t.get(if editor.quiz.with(|q| q.questions_sheet_url == url.get() && !q.questions_sheet_url.is_empty()) { "ed_refresh" } else { "ed_load" })}</button><button class=BUTTON on:click=move |_| { if let Some(i) = input.get() { i.click(); } }>{move || editor.t.get("ed_upload_csv")}</button><input node_ref=input type="file" accept=".csv,text/csv" hidden on:change=upload/></div>
+        <p class="text-xs text-gray-500" hidden=move || editor.quiz.with(|q| q.drive.is_some() || q.questions_sheet_url.is_empty())>{move || editor.t.get("ed_sheet_auto")}</p>
+        <a class=BUTTON href=editor.link(Route::Questions)>{move || editor.t.get("qe_open")}</a>
+        <details hidden=move ||editor.quiz.with(|q|q.drive.is_some())><summary class="text-sm text-gray-400 cursor-pointer">{move || editor.t.get("ed_upload_csv")}" / CSV"</summary><textarea class=INPUT rows="8" aria-label="CSV" prop:value=move || editor.quiz.with(|q| q.questions_csv.clone()) on:input=move |ev| { url.set(String::new()); editor.edit(|q| { q.questions_csv = event_target_value(&ev); q.questions_sheet_url.clear(); }); }/></details>
+        {move || { let rounds = parse_questions_csv(&editor.quiz.get().questions_csv); let count: usize = rounds.iter().map(|r| r.questions.len()).sum(); if rounds.is_empty() && editor.quiz.with(|q|q.drive.is_some()) { view! { <p class="text-sm text-gray-500">{editor.t.get("ed_no_questions")}</p> }.into_any() } else if rounds.is_empty() { view! { <questions_start::Start editor on_examples=Callback::new(examples)/> }.into_any() } else { view! { <ul class="divide-y divide-white/5 rounded-xl bg-black/30">{rounds.iter().map(|r| view! { <li class="flex justify-between gap-4 px-4 py-2 text-sm"><span><span class="text-gray-500">{r.number.clone()}". "</span>{r.title.clone()}</span><span class="text-gray-500">{r.questions.len()}" "{editor.t.get("lib_questions")}</span></li> }).collect_view()}<li class="flex justify-between px-4 py-2 text-sm font-bold"><span>{rounds.len()}" "{editor.t.get("lib_rounds")}</span><span>{count}" "{editor.t.get("lib_questions")}</span></li></ul> }.into_any() } }}
     </Section> }
 }
 async fn add_media(editor: Editor, files: Vec<web_sys::File>) -> Result<String, String> {
+    if editor.quiz.get_untracked().drive.is_some() && crate::google::auth::current_token().is_some()
+    {
+        return drive_ui::upload(editor, files).await;
+    }
     let data = editor.data.get_value();
     let old = data
         .store
@@ -803,7 +838,8 @@ fn MediaSection(editor: Editor) -> impl IntoView {
     view! { <Section editor name="media" title="ed_media" help="ed_media_help">
         {move || { let missing = editor.missing(); (!missing.is_empty()).then(|| view! { <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30 space-y-2"><p class="text-red-200 font-bold text-sm">{editor.t.get("ed_missing")}" ("{missing.len()}")"</p><div class="flex flex-wrap gap-2">{missing.into_iter().map(|name| view! { <code class="px-2 py-1 rounded bg-black/40 text-red-200 text-xs">{name}</code> }).collect_view()}</div></div> }) }}
         <p class="text-green-300 text-sm" hidden=move || !editor.missing().is_empty() || quiz_store::package::referenced_media(&editor.quiz.get()).is_empty()>{move || editor.t.get("ed_all_media")}</p>
-        <div class="editor-drop rounded-2xl border-2 border-dashed border-white/15 bg-white/[0.02] p-5 text-center space-y-4" class:editor-over=move || over.get() on:dragover=move |ev| { ev.prevent_default(); over.set(true); } on:dragleave=move |_| over.set(false) on:drop=move |ev| { ev.prevent_default(); over.set(false); if editor.busy.get_untracked() { return; } if let Some(transfer) = ev.data_transfer() { let entries = dropped_files::capture(&transfer); editor.busy.set(true); spawn_local(async move { let result = async { let files = dropped_files::collect(entries).await?; add_media(editor, files).await }.await; editor.message(result); editor.busy.try_set(false); }); } }><div class="flex justify-center text-gray-500"><Icon name="upload"/></div><p class="text-gray-300">{move || editor.t.get("ed_media_drop")}</p><div class="flex flex-wrap justify-center gap-2"><button class=BUTTON disabled=move || editor.busy.get() on:click=move |_| { if let Some(i) = input.get() { i.click(); } }>{move || editor.t.get("lib_import_files")}</button><button class=BUTTON disabled=move || editor.busy.get() on:click=move |_| { if let Some(i) = folder.get() { i.click(); } }>{move || editor.t.get("lib_import_folder")}</button></div><input node_ref=input type="file" multiple accept="image/*,audio/*,video/*" hidden on:change=move |_| { if let Some(i) = input.get() { upload(files(&i)); } }/><input node_ref=folder type="file" multiple hidden on:change=move |_| { if let Some(i) = folder.get() { upload(files(&i)); } }/></div>
+        <div class="editor-drop rounded-2xl border-2 border-dashed border-white/15 bg-white/[0.02] p-5 text-center space-y-4" class:editor-over=move || over.get() on:dragover=move |ev| { ev.prevent_default(); over.set(true); } on:dragleave=move |_| over.set(false) on:drop=move |ev| { ev.prevent_default(); over.set(false); if editor.busy.get_untracked() { return; } if let Some(transfer) = ev.data_transfer() { let entries = dropped_files::capture(&transfer); editor.busy.set(true); spawn_local(async move { let result = async { let files = dropped_files::collect(entries).await?; add_media(editor, files).await }.await; editor.message(result); editor.busy.try_set(false); }); } }><div class="flex justify-center text-gray-500"><Icon name="upload"/></div><p class="text-gray-300">{move || editor.t.get(if editor.quiz.with(|q|q.drive.is_some()) && editor.signed_in.get() { "ed_media_drop_drive" } else { "ed_media_drop" })}</p><div class="flex flex-wrap justify-center gap-2"><button class=BUTTON disabled=move || editor.busy.get() on:click=move |_| { if let Some(i) = input.get() { i.click(); } }>{move || editor.t.get("lib_import_files")}</button><button class=BUTTON disabled=move || editor.busy.get() on:click=move |_| { if let Some(i) = folder.get() { i.click(); } }>{move || editor.t.get("lib_import_folder")}</button></div><input node_ref=input type="file" multiple accept="image/*,audio/*,video/*" hidden on:change=move |_| { if let Some(i) = input.get() { upload(files(&i)); } }/><input node_ref=folder type="file" multiple hidden on:change=move |_| { if let Some(i) = folder.get() { upload(files(&i)); } }/></div>
+        <Show when=move ||editor.drive_uploading.get()><super::drive_parts::DriveProgress progress=editor.drive_progress uploading=true/></Show>
         <p class="text-xs text-gray-500">{move || editor.media.with(|m| format!("{} · {}",m.len(),size(m.iter().map(|m| m.bytes.len()).sum())))}</p>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"><For each=move || editor.media.get() key=|m| (m.name.clone(), m.bytes.len(), m.content_type.clone()) children=move |m| {
             let name = m.name.clone(); let remove_name = name.clone(); let image_name = name.clone(); let used_name = name.clone();
@@ -815,6 +851,16 @@ fn MediaSection(editor: Editor) -> impl IntoView {
 #[component]
 fn Scores(editor: Editor) -> impl IntoView {
     let sheet_mode = editor.scores_sheet_mode;
+    let signed = crate::google::auth::use_google_account().signed_in;
+    let drive_tab = Memo::new(move |_| {
+        editor.quiz.with(|q| {
+            q.drive
+                .as_ref()
+                .and_then(|d| d["scoresTab"].as_str())
+                .unwrap_or_default()
+                .to_string()
+        })
+    });
     let last_url = RwSignal::new(String::new());
     let preview = RwSignal::new(None::<ParsedScores>);
     let status = RwSignal::new(None::<(bool, String)>);
@@ -861,9 +907,16 @@ fn Scores(editor: Editor) -> impl IntoView {
             editor.busy.try_set(false);
         });
     };
-    view! { <Section editor name="scores" title="ed_scores"><div class="flex gap-1 bg-white/5 rounded-xl p-1 w-fit text-sm">{[false,true].into_iter().map(|mode| view! { <button class=move || if sheet_mode.get() == mode { "px-3 py-1.5 rounded-lg bg-yellow-500 text-black font-bold" } else { "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white" } on:click=move |_| { if sheet_mode.get_untracked() == mode { return; } sheet_mode.set(mode); status.set(None); preview.set(None); if mode { let url = last_url.get_untracked(); editor.edit(|q| q.scores_sheet_url = url); } else { last_url.set(editor.quiz.get_untracked().scores_sheet_url); editor.edit(|q| q.scores_sheet_url.clear()); } }>{move || editor.t.get(if mode { "ed_scores_mode_sheet" } else { "ed_scores_mode_manual" })}</button> }).collect_view()}</div>
-        <div hidden=move || !sheet_mode.get() class="space-y-3"><p class="text-sm text-gray-400">{move || editor.t.get("ed_scores_help")}</p><div class="flex flex-col sm:flex-row gap-2"><input class=INPUT type="url" aria-label=move || editor.t.get("ed_sheet_link") placeholder=move || editor.t.get("ed_sheet_link") prop:value=move || editor.quiz.with(|q| q.scores_sheet_url.clone()) on:input=move |ev| { status.set(None); preview.set(None); editor.edit(|q| q.scores_sheet_url = event_target_value(&ev).trim().into()); }/><button class=BUTTON on:click=test disabled=move || editor.busy.get() || editor.quiz.with(|q| q.scores_sheet_url.is_empty())>{move || editor.t.get("ed_test")}</button></div><p class="text-sm text-yellow-200" hidden=move || !editor.quiz.with(|q| q.scores_sheet_url.is_empty())>{move || editor.t.get("ed_warn_scores")}</p></div>
-        <div hidden=move || sheet_mode.get() class="space-y-3"><p class="text-sm text-gray-400">{move || editor.t.get("ed_scores_manual_help")}</p><a class=BUTTON href=editor.link(Route::Scores)>{move || editor.t.get("sc_open")}</a></div>
+    let loaded = RwSignal::new(false);
+    Effect::new(move |_| {
+        if signed.get() && !drive_tab.get().is_empty() && !loaded.get_untracked() {
+            loaded.set(true);
+            test(());
+        }
+    });
+    view! { <Section editor name="scores" title="ed_scores"><Show when=move ||!drive_tab.get().is_empty()><p class="text-sm text-gray-300">{move ||editor.t.fmt("ed_scores_drive",&[("tab",&drive_tab.get())])}</p><button class=BUTTON disabled=move ||!signed.get()||editor.busy.get() on:click=move |_|test(())>{move ||editor.t.get("ed_refresh")}</button></Show><div hidden=move ||!drive_tab.get().is_empty() class="flex gap-1 bg-white/5 rounded-xl p-1 w-fit text-sm">{[false,true].into_iter().map(|mode| view! { <button class=move || if sheet_mode.get() == mode { "px-3 py-1.5 rounded-lg bg-yellow-500 text-black font-bold" } else { "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white" } on:click=move |_| { if sheet_mode.get_untracked() == mode { return; } sheet_mode.set(mode); status.set(None); preview.set(None); if mode { let url = last_url.get_untracked(); editor.edit(|q| q.scores_sheet_url = url); } else { last_url.set(editor.quiz.get_untracked().scores_sheet_url); editor.edit(|q| q.scores_sheet_url.clear()); } }>{move || editor.t.get(if mode { "ed_scores_mode_sheet" } else { "ed_scores_mode_manual" })}</button> }).collect_view()}</div>
+        <div hidden=move || !sheet_mode.get() || !drive_tab.get().is_empty() class="space-y-3"><p class="text-sm text-gray-400">{move || editor.t.get("ed_scores_help")}</p><div class="flex flex-col sm:flex-row gap-2"><input class=INPUT type="url" aria-label=move || editor.t.get("ed_sheet_link") placeholder=move || editor.t.get("ed_sheet_link") prop:value=move || editor.quiz.with(|q| q.scores_sheet_url.clone()) on:input=move |ev| { status.set(None); preview.set(None); editor.edit(|q| q.scores_sheet_url = event_target_value(&ev).trim().into()); }/><button class=BUTTON on:click=move |_|test(()) disabled=move || editor.busy.get() || editor.quiz.with(|q| q.scores_sheet_url.is_empty())>{move || editor.t.get("ed_test")}</button></div><p class="text-sm text-yellow-200" hidden=move || !editor.quiz.with(|q| q.scores_sheet_url.is_empty())>{move || editor.t.get("ed_warn_scores")}</p></div>
+        <div hidden=move || sheet_mode.get() || !drive_tab.get().is_empty() class="space-y-3"><p class="text-sm text-gray-400">{move || editor.t.get("ed_scores_manual_help")}</p><a class=BUTTON href=editor.link(Route::Scores)>{move || editor.t.get("sc_open")}</a></div>
         <div role="status">{move || status.get().map(|(ok,text)| view! { <p class=if ok { "text-sm text-green-300" } else { "text-sm text-red-300" }>{text}</p> })}</div>
         {move || preview.get().map(|scores| { let mut rows = scores.teams; rows.sort_by(|a,b| b.scores.values().sum::<f64>().total_cmp(&a.scores.values().sum::<f64>())); view! { <div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead><tr><th class="p-2">{editor.t.get("tm_name")}</th>{scores.rounds.iter().map(|r| view! { <th class="p-2">{r.clone()}</th> }).collect_view()}<th class="p-2">{editor.t.get("ed_scores_total")}</th></tr></thead><tbody>{rows.iter().map(|row| { let matched = editor.quiz.with(|q| teams::team_for_scores(&q.teams,row).is_some()); view! { <tr class="border-t border-white/10"><td class=if matched { "p-2" } else { "p-2 text-yellow-300" } title=if matched { String::new() } else { editor.t.get("ed_scores_unmatched_one") }>{row.name.clone()}</td>{scores.rounds.iter().map(|r| view! { <td class="p-2 tabular-nums">{row.scores.get(r).map(|n| n.to_string()).unwrap_or_else(|| "–".into())}</td> }).collect_view()}<td class="p-2 font-bold">{row.scores.values().sum::<f64>()}</td></tr> } }).collect_view()}</tbody></table></div> } })}
     </Section> }
@@ -954,10 +1007,10 @@ fn Teams(editor: Editor) -> impl IntoView {
             editor.busy.try_set(false);
         });
     };
-    view! { <Section editor name="teams" title="tm_title" help="tm_help"><div class="flex flex-wrap gap-2"><button class=BUTTON on:click=from_scores disabled=move || editor.busy.get() || editor.quiz.with(|q| q.scores_sheet_url.is_empty()) title=move || editor.t.get("tm_from_scores_need")>{move || editor.t.get("tm_from_scores")}</button><button class=BUTTON on:click=move |_| { if let Some(i) = registrations.get() { i.click(); } }>{move || editor.t.get("tm_import")}</button><button class=BUTTON disabled=move || editor.quiz.with(|q| q.teams.is_empty()) on:click=move |_| { if let Some(i) = history.get() { i.click(); } }>{move || editor.t.get("tm_import_history")}</button></div><input node_ref=registrations type="file" accept=".csv,text/csv" hidden on:change=move |_| { if let Some(file) = registrations.get().and_then(|i| files(&i).into_iter().next()) { read(file,false); } }/><input node_ref=history type="file" accept=".csv,text/csv" hidden on:change=move |_| { if let Some(file) = history.get().and_then(|i| files(&i).into_iter().next()) { read(file,true); } }/>
+    view! { <Section editor name="teams" title="tm_title" help="tm_help">{move ||editor.quiz.with(|q|q.drive.as_ref().and_then(|d|d["scoresTab"].as_str()).map(str::to_owned)).map(|tab|view!{<p class="text-sm text-gray-400">{editor.t.fmt("tm_from_sheet",&[("tab",&tab)])}</p>})}<div class="flex flex-wrap gap-2"><button hidden=move ||editor.quiz.with(|q|q.drive.as_ref().is_some_and(|d|d["scoresTab"].is_string())) class=BUTTON on:click=from_scores disabled=move || editor.busy.get() || editor.quiz.with(|q| q.scores_sheet_url.is_empty()) title=move || editor.t.get("tm_from_scores_need")>{move || editor.t.get("tm_from_scores")}</button><button class=BUTTON on:click=move |_| { if let Some(i) = registrations.get() { i.click(); } }>{move || editor.t.get("tm_import")}</button><button class=BUTTON disabled=move || editor.quiz.with(|q| q.teams.is_empty()) on:click=move |_| { if let Some(i) = history.get() { i.click(); } }>{move || editor.t.get("tm_import_history")}</button></div><input node_ref=registrations type="file" accept=".csv,text/csv" hidden on:change=move |_| { if let Some(file) = registrations.get().and_then(|i| files(&i).into_iter().next()) { read(file,false); } }/><input node_ref=history type="file" accept=".csv,text/csv" hidden on:change=move |_| { if let Some(file) = history.get().and_then(|i| files(&i).into_iter().next()) { read(file,true); } }/>
         <p class="text-sm text-gray-500" hidden=move || editor.quiz.with(|q| !q.teams.is_empty())>{move || editor.t.get("tm_empty")}</p>
         <ul class="space-y-2"><For each={move || editor.quiz.with(|q| q.teams.iter().enumerate().map(|(i,t)| team_key(t,i)).collect::<Vec<_>>())} key=|key| key.clone() children=move |key| view! { <TeamRow editor row_key=key/> }/></ul>
-        <div class="flex flex-col sm:flex-row gap-2"><button class=BUTTON on:click=move |_| editor.edit(|q| { let mut team = teams::new_team(store::new_id()); team.color = Some(TeamColor::Palette(q.teams.len()%8)); q.teams.push(team); })><Icon/>{move || editor.t.get("tm_add")}</button><a class=BUTTON href=editor.link(Route::Attendance)>{move || editor.t.get("att_title")}</a></div>
+        <div class="flex flex-col sm:flex-row gap-2"><button class=BUTTON on:click=move |_| editor.edit(|q| { let mut team = teams::new_team(store::new_id()); team.color = Some(TeamColor::Palette(q.teams.len()%8)); if q.drive.as_ref().is_some_and(|d|d["scoresTab"].is_string()) {team.fields.insert("draft".into(),serde_json::json!(true));} q.teams.push(team); })><Icon/>{move || editor.t.get("tm_add")}</button><a class=BUTTON href=editor.link(Route::Attendance)>{move || editor.t.get("att_title")}</a></div>
     </Section> }
 }
 #[component]
@@ -973,6 +1026,17 @@ fn TeamRow(editor: Editor, row_key: String) -> impl IntoView {
                 let result = async {
                     let name = teams::team_image_name(&team, &file.name());
                     let data = editor.data.get_value();
+                    if editor.quiz.get_untracked().drive.is_some()
+                        && editor.signed_in.get_untracked()
+                    {
+                        if let Some(path) =
+                            drive_ui::upload_team_image(editor, &name, &file).await?
+                        {
+                            editor.edit_team(&key, |t| t.image = Some(path));
+                            editor.reload_media().await?;
+                        }
+                        return Ok(editor.t.get("ed_saved"));
+                    }
                     let media = Media {
                         name: name.clone(),
                         content_type: file.type_(),
@@ -1001,6 +1065,11 @@ fn TeamRow(editor: Editor, row_key: String) -> impl IntoView {
             });
         }
     };
+    let confirm_name = move || {
+        if team().fields.get("draft") == Some(&serde_json::json!(true)) && !team().name.trim().is_empty() {
+            editor.edit_team(&key.get_value(), |t| { t.fields.remove("draft"); });
+        }
+    };
     let duplicate = move || {
         let name = team().name.trim().to_lowercase();
         !name.is_empty()
@@ -1014,10 +1083,11 @@ fn TeamRow(editor: Editor, row_key: String) -> impl IntoView {
     };
     view! { <li class="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-black/30 border border-white/5">
         <button class="relative w-14 h-14 shrink-0 rounded-xl overflow-hidden flex items-center justify-center" style:background=move || team_background(team().color.as_ref().map(|c| c.index(0)).unwrap_or(0)) title=move || editor.t.get("tm_photo") on:click=move |_| { if let Some(i) = photo.get() { i.click(); } }>{move || { let t = team(); if let Some(image) = t.image { view! { <img src=editor.url(&image) alt="" class="w-full h-full object-cover"/> }.into_any() } else { let icon = match t.icon.as_deref() { Some("Rocket") => "Rocket", Some("Zap") => "Zap", Some("Crown") => "Crown", Some("Flame") => "Flame", Some("Shield") => "Shield", Some("Beer") => "Beer", Some("Glasses") => "Glasses", Some("Gavel") => "Gavel", Some("Microscope") => "Microscope", _ => "Brain" }; view! { <Icon name=icon/> }.into_any() } }}</button><input node_ref=photo type="file" accept="image/*" hidden on:change=upload/>
-        <div class="flex-1 min-w-[200px] space-y-2"><div class="flex gap-2"><input class=FIELD aria-label=move || editor.t.get("tm_name") prop:value=move || team().name placeholder=move || editor.t.get("tm_name") class:editor-invalid=move || duplicate() || team().name.trim().is_empty() on:input=move |ev| editor.edit_team(&key.get_value(),|t| t.name = event_target_value(&ev))/><input class="w-20 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm" type="number" min="0" aria-label=move || editor.t.get("tm_players") title=move || editor.t.get("tm_players") prop:value=move || team().players.unwrap_or(0) on:input=move |ev| editor.edit_team(&key.get_value(),|t| t.players = Some(event_target_value(&ev).parse::<i64>().unwrap_or(0).max(0)))/></div><input class=FIELD aria-label=move || editor.t.get("tm_quote") prop:value=move || team().quote.unwrap_or_default() placeholder=move || editor.t.get("tm_quote") on:input=move |ev| editor.edit_team(&key.get_value(),|t| t.quote = Some(event_target_value(&ev)))/><p class="text-xs text-red-300" hidden=move || !duplicate()>{move || editor.t.get("tm_duplicate")}</p><p class="text-xs text-gray-500">{move || { let t = team(); if t.is_new != Some(true) && t.rank_history.as_ref().is_some_and(|r| !r.is_empty()) { format!("#{} · {}% · {}",t.best_rank.unwrap_or(0),t.correct_rate.unwrap_or(0.),t.rank_history.unwrap_or_default().iter().map(|r| match r { quiz_core::quiz::model::Rank::Number(n) => n.to_string(), quiz_core::quiz::model::Rank::Unknown(s) => s.clone() }).collect::<Vec<_>>().join(" · ")) } else { String::new() } }}</p></div>
+        <div class="flex-1 min-w-[200px] space-y-2"><div class="flex gap-2"><input class=FIELD aria-label=move || editor.t.get("tm_name") prop:value=move || team().name placeholder=move || editor.t.get("tm_name") class:editor-invalid=move || duplicate() || team().name.trim().is_empty() on:blur=move |_|confirm_name() on:keydown=move |e: web_sys::KeyboardEvent| {if e.key()=="Enter" {confirm_name();}} autofocus=team().fields.get("draft")==Some(&serde_json::json!(true)) on:input=move |ev| editor.edit_team(&key.get_value(),|t| t.name = event_target_value(&ev))/><input class="w-20 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm" type="number" min="0" aria-label=move || editor.t.get("tm_players") title=move || editor.t.get("tm_players") prop:value=move || team().players.unwrap_or(0) on:input=move |ev| editor.edit_team(&key.get_value(),|t| t.players = Some(event_target_value(&ev).parse::<i64>().unwrap_or(0).max(0)))/></div><input class=FIELD aria-label=move || editor.t.get("tm_quote") prop:value=move || team().quote.unwrap_or_default() placeholder=move || editor.t.get("tm_quote") on:input=move |ev| editor.edit_team(&key.get_value(),|t| t.quote = Some(event_target_value(&ev)))/><p class="text-xs text-red-300" hidden=move || !duplicate()>{move || editor.t.get("tm_duplicate")}</p><p class="text-xs text-gray-500">{move || { let t = team(); if t.is_new != Some(true) && t.rank_history.as_ref().is_some_and(|r| !r.is_empty()) { format!("#{} · {}% · {}",t.best_rank.unwrap_or(0),t.correct_rate.unwrap_or(0.),t.rank_history.unwrap_or_default().iter().map(|r| match r { quiz_core::quiz::model::Rank::Number(n) => n.to_string(), quiz_core::quiz::model::Rank::Unknown(s) => s.clone() }).collect::<Vec<_>>().join(" · ")) } else { String::new() } }}</p></div>
         <select class="bg-black border border-white/10 rounded-lg text-sm p-2" aria-label="Icon" prop:value=move || team().icon.unwrap_or_else(|| "Brain".into()) on:change=move |ev| editor.edit_team(&key.get_value(),|t| t.icon = Some(event_target_value(&ev)))>{["Brain","Rocket","Zap","Crown","Flame","Shield","Beer","Glasses","Gavel","Microscope"].into_iter().map(|icon| view! { <option value=icon>{icon}</option> }).collect_view()}</select>
-        <select class="bg-black border border-white/10 rounded-lg text-sm p-2" aria-label=move || editor.t.get("tm_color") prop:value=move || team().color.as_ref().map(|c| c.index(0)).unwrap_or(0).to_string() on:change=move |ev| editor.edit_team(&key.get_value(),|t| t.color = Some(TeamColor::Palette(event_target_value(&ev).parse().unwrap_or(0))))>{TEAM_HEX.iter().enumerate().map(|(i,hex)| view! { <option value=i.to_string()>{*hex}</option> }).collect_view()}</select>
-        <button class="p-2 rounded-lg text-gray-500 hover:text-red-300" title=move || editor.t.get("lib_delete") aria-label=move || editor.t.get("lib_delete") on:click=move |_| editor.edit(|q| { let key = key.get_value(); let index = q.teams.iter().enumerate().position(|(i,t)| team_key(t,i) == key); if let Some(i) = index { q.teams.remove(i); } })><Icon name="trash"/></button>
+        <button type="button" class="w-8 h-8 rounded-full ring-2 ring-white/10 hover:ring-white/50" title=move ||editor.t.get("tm_color") aria-label=move ||editor.t.get("tm_color") style=move ||format!("background:{}",TEAM_HEX[team().color.as_ref().map(|c|c.index(0)).unwrap_or(0)%TEAM_HEX.len()]) on:click=move |_|editor.edit_team(&key.get_value(),|team| {let i=team.color.as_ref().map(|c|c.index(0)).unwrap_or(0);team.color=Some(TeamColor::Palette((i+1)%TEAM_HEX.len()));})/>
+
+        <button class="p-2 rounded-lg text-gray-500 hover:text-red-300" title=move || editor.t.get("lib_delete") aria-label=move || editor.t.get("lib_delete") on:click=move |_| { let current=team(); if let Some(tab)=editor.quiz.get_untracked().drive.as_ref().and_then(|d|d["scoresTab"].as_str()) { if current.fields.get("draft") != Some(&serde_json::json!(true)) && !window().confirm_with_message(&editor.t.fmt("tm_remove_confirm", &[("name", &current.name),("tab",tab)])).unwrap_or(false) {return;} } editor.edit(|q| { let key = key.get_value(); let index = q.teams.iter().enumerate().position(|(i,t)| team_key(t,i) == key); if let Some(i) = index { q.teams.remove(i); } }); }><Icon name="trash"/></button>
         <button class="text-xs text-gray-400 hover:text-red-300" hidden=move || team().image.is_none() on:click=move |_| editor.edit_team(&key.get_value(),|t| t.image = None)>{move || editor.t.get("lib_delete")}" "{move || editor.t.get("tm_photo")}</button>
     </li> }
 }
@@ -1086,6 +1156,10 @@ async fn apply_theme(editor: Editor, pack: pack::ThemePack) -> Result<String, St
         "thm_applied",
         &[("name", builtin::theme_name(&theme, editor.t.lang().code()))],
     );
+    if !pack.problems.is_empty() {
+        message.push('\n');
+        message.push_str(&editor.t.get("thm_problems"));
+    }
     for problem in pack.problems {
         message.push('\n');
         message.push_str(&editor.t.fmt(
@@ -1142,7 +1216,11 @@ fn Themes(editor: Editor) -> impl IntoView {
         async move { store.list_themes().await.map_err(|e| e.to_string()) }
     });
     let import = move |_| {
-        if let Some(file) = input.get().and_then(|i| files(&i).into_iter().next()) {
+        if let Some(file) = input.get().and_then(|i| {
+            let file = files(&i).into_iter().next();
+            i.set_value("");
+            file
+        }) {
             if !confirm_theme(editor) {
                 return;
             }
@@ -1155,7 +1233,13 @@ fn Themes(editor: Editor) -> impl IntoView {
                         pack::ThemePackError::BadJson => editor.t.get("thm_err_bad_json"),
                         error => error.to_string(),
                     })?;
-                    apply_theme(editor, pack).await
+                    let name = builtin::theme_name(&pack.theme, editor.t.lang().code()).to_owned();
+                    let message = apply_theme(editor, pack).await?;
+                    Ok(message.replacen(
+                        &editor.t.fmt("thm_applied", &[("name", &name)]),
+                        &editor.t.fmt("thm_imported", &[("name", &name)]),
+                        1,
+                    ))
                 }
                 .await;
                 editor.message(result);

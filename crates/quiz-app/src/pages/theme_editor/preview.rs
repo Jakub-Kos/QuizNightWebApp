@@ -62,14 +62,37 @@ pub(super) fn Scenes(
         h: 1350.,
         scale: 1.,
     }));
+    let t = crate::i18n::use_t();
+    let mut scores = quiz_core::quiz::scores::manual_leaderboard(
+        &context.quiz.teams,
+        &context.rounds,
+        &context.quiz.manual_scores,
+        Some(&t.get("round")),
+    );
+    if !quiz_core::quiz::scores::has_points(&scores) {
+        let fallback = context
+            .teams
+            .iter()
+            .map(|team| team.team.name.clone())
+            .collect::<Vec<_>>();
+        scores = quiz_core::quiz::scores::sample_leaderboard(
+            &context.quiz.teams,
+            &scores.rounds,
+            Some(&t.get("round")),
+            &fallback,
+        );
+    }
+    let scores = StoredValue::new(scores);
+    let teams = StoredValue::new(context.teams.as_ref().clone());
+    let theme = crate::theme::use_theme();
     let rounds = StoredValue::new(rounds);
     view! { <div class="h-full w-full pointer-events-none" inert=true>
         {move || match scene.get().as_str() {
             "rules" => view! { <crate::scenes::rules::Rules/> }.into_any(),
             "prizes" => view! { <crate::scenes::prizes::Prizes/> }.into_any(),
             "dashboard" => view! { <crate::scenes::dashboard::Dashboard/> }.into_any(),
-            "leaderboard" => view! { <Standings/> }.into_any(),
-            "pause" => view! { <Standings pause=true/> }.into_any(),
+            "leaderboard" => view! { <crate::scenes::leaderboard::LeaderboardPreview scores=scores.get_value() teams=teams.get_value() step=usize::MAX layout=theme.get().scenes.leaderboard.as_ref().map_or(quiz_core::theme::format::LeaderboardLayout::Table, |s| s.layout)/> }.into_any(),
+            "pause" => view! { <crate::scenes::pause::PausePreview scores=scores.get_value() teams=teams.get_value()/> }.into_any(),
             "round" | "question" | "answer" => {
                 let round = rounds.with_value(|rounds| rounds.iter().find(|r| !is_round_hidden(r) && !r.questions.is_empty()).cloned());
                 round.map(|round| {
@@ -78,7 +101,7 @@ pub(super) fn Scenes(
                     view! { <crate::scenes::game::QuestionPreview round=round question_index=if scene == "round" { None } else { Some(0) } step=step resolve_media=resolve/> }.into_any()
                 }).unwrap_or_else(|| view! { <crate::scenes::dashboard::Dashboard/> }.into_any())
             },
-            _ => view! { <crate::scenes::welcome::Welcome/> }.into_any(),
+            _ => view! { <crate::scenes::welcome::WelcomePreview wall/> }.into_any(),
         }}
     </div> }
 }
@@ -123,73 +146,6 @@ pub(super) fn CelebrationPreview(trigger: RwSignal<u64>) -> impl IntoView {
         <div class="absolute inset-0 z-40 pointer-events-none">
             <crate::particles::ParticleCanvas active=active trigger=fire fireworks=fireworks multiplier=RwSignal::new(1_usize) count=RwSignal::new(0_usize) frame_ms=RwSignal::new(0.)/>
             <Show when=move || decoration.get()><crate::scenes::backdrop::ThemeDecorations density=3./></Show>
-        </div>
-    }
-}
-
-/// A static final result, deliberately separate from the live reveal's BroadcastChannel.
-#[component]
-fn Standings(#[prop(optional)] pause: bool) -> impl IntoView {
-    let t = crate::i18n::use_t();
-    let quiz = crate::quiz_context::use_quiz();
-    let theme = crate::theme::use_theme();
-    let mut board = quiz_core::quiz::scores::manual_leaderboard(
-        &quiz.quiz.teams,
-        &quiz.rounds,
-        &quiz.quiz.manual_scores,
-        Some(&t.get("round")),
-    );
-    if !quiz_core::quiz::scores::has_points(&board) {
-        let fallback = quiz
-            .teams
-            .iter()
-            .map(|team| team.team.name.clone())
-            .collect::<Vec<_>>();
-        board = quiz_core::quiz::scores::sample_leaderboard(
-            &quiz.quiz.teams,
-            &board.rounds,
-            Some(&t.get("round")),
-            &fallback,
-        );
-    }
-    let mut rows = board
-        .teams
-        .into_iter()
-        .map(|team| {
-            let total = team.scores.values().sum::<f64>();
-            (team.name, total)
-        })
-        .collect::<Vec<_>>();
-    rows.sort_by(|a, b| b.1.total_cmp(&a.1));
-    let mut previous = None;
-    let mut rank = 0;
-    let rows = rows
-        .into_iter()
-        .enumerate()
-        .map(|(index, (name, total))| {
-            if previous != Some(total) {
-                rank = index + 1;
-                previous = Some(total);
-            }
-            super::standings::Row { name, total, rank }
-        })
-        .collect::<Vec<_>>();
-    let rows = StoredValue::new(rows);
-
-    view! {
-        <div class="relative h-full w-full bg-ground font-show flex flex-col items-center justify-center p-24">
-            <crate::scenes::backdrop::SceneBackdrop quiet=!pause/>
-            <h1 class="relative z-10 font-title text-8xl font-black uppercase text-white mb-12">{t.get(if pause { "pause_title" } else { "lb_title" })}</h1>
-            {pause.then(|| view! { <p class="relative z-10 text-accent-400 text-8xl font-black mb-10">"10:00"</p> })}
-            {move || {
-                let layout = theme.get().scenes.leaderboard.map(|s| s.layout).unwrap_or(quiz_core::theme::format::LeaderboardLayout::Table);
-                view! {
-                    <div class="relative z-10 w-full flex-1 min-h-0">
-                        <super::standings::Board rows=rows.get_value() layout=if pause { quiz_core::theme::format::LeaderboardLayout::Table } else { layout }/>
-                    </div>
-                }
-
-            }}
         </div>
     }
 }

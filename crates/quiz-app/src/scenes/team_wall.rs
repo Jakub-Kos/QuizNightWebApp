@@ -115,10 +115,7 @@ pub fn TeamWall(
     #[prop(into, default = Signal::stored(4700))] intro_ms: Signal<u64>,
     #[prop(into, default = Signal::stored(2600))] pause_ms: Signal<u64>,
 ) -> impl IntoView {
-    let t = use_t();
     let count = teams.len();
-    let players: i64 = teams.iter().map(|t| t.team.players.unwrap_or(0)).sum();
-    let (rows, cols) = grid(count);
     let phase = RwSignal::new(IntroPhase::Initial);
     let featured = Memo::new(move |_| match phase.get() {
         IntroPhase::Showing(i) => Some(i),
@@ -152,7 +149,31 @@ pub fn TeamWall(
             h.clear();
         }
     });
-    // TODO(sounds): team introduction sound.
+    view! { <TeamWallView teams phase featured/> }
+}
+
+/// Fixed team wall, optionally showing one themed team introduction. No rotation or sound.
+#[component]
+pub fn TeamWallPreview(
+    teams: Vec<ResolvedTeam>,
+    #[prop(default = None)] team_index: Option<usize>,
+) -> impl IntoView {
+    let selected = team_index.filter(|i| *i < teams.len());
+    let phase = RwSignal::new(selected.map_or(IntroPhase::Initial, IntroPhase::Showing));
+    let featured = Memo::new(move |_| selected);
+    view! { <TeamWallView teams phase featured/> }
+}
+
+#[component]
+fn TeamWallView(
+    teams: Vec<ResolvedTeam>,
+    phase: RwSignal<IntroPhase>,
+    featured: Memo<Option<usize>>,
+) -> impl IntoView {
+    let t = use_t();
+    let count = teams.len();
+    let players: i64 = teams.iter().map(|t| t.team.players.unwrap_or(0)).sum();
+    let (rows, cols) = grid(count);
     let spring = Spring::from_duration(0.3, 0.9).to_css_linear();
     let flip_spring = Spring::from_bounce(0.25, 0.9).to_css_linear();
     view! {

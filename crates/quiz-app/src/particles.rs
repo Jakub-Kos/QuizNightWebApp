@@ -5,6 +5,20 @@ use wasm_bindgen::JsCast;
 const COLORS: [&str; 6] = [
     "#eab308", "#3b82f6", "#ffffff", "#facc15", "#ff5d8f", "#4ade80",
 ];
+fn default_palette() -> Vec<String> {
+    COLORS.iter().map(|color| (*color).into()).collect()
+}
+
+pub fn theme_palette(theme: &quiz_core::theme::Theme) -> Vec<String> {
+    let mut colors = default_palette();
+    for (index, key) in [(0, "accent"), (1, "primary")] {
+        if let Some(color) = theme.colors.get(key).filter(|c| !c.is_empty()) {
+            colors[index] = color.clone();
+        }
+    }
+    colors
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Shape {
     Rectangle,
@@ -21,7 +35,7 @@ pub struct Particle {
     pub rotation: f64,
     pub spin: f64,
     pub size: f64,
-    pub colour: &'static str,
+    pub colour: String,
     pub shape: Shape,
     pub life: f64,
 }
@@ -46,6 +60,7 @@ pub struct System {
     next_launch: f64,
     fireworks: bool,
     multiplier: usize,
+    palette: Vec<String>,
 }
 impl System {
     pub fn new(width: f64, height: f64, seed: u64) -> Self {
@@ -58,14 +73,23 @@ impl System {
             next_launch: 0.,
             fireworks: false,
             multiplier: 1,
+            palette: default_palette(),
         }
+    }
+    pub fn set_palette(&mut self, palette: Vec<String>) {
+        self.palette = if palette.is_empty() {
+            default_palette()
+        } else {
+            palette
+        };
     }
     pub fn confetti(&mut self, multiplier: usize) {
         for _ in 0..(self.width / 4.).round() as usize * multiplier {
             let x = self.rng.next() * self.width;
             let y = -self.rng.next() * self.height;
             let vx = (self.rng.next() - 0.5) * 180.;
-            let colour = COLORS[(self.rng.next() * 6.) as usize];
+            let colour =
+                self.palette[(self.rng.next() * self.palette.len() as f64) as usize].clone();
             self.particles.push(Particle {
                 x,
                 y,
@@ -115,7 +139,9 @@ impl System {
                         rotation: 0.,
                         spin: 0.,
                         size: 6.,
-                        colour: COLORS[(self.rng.next() * 6.) as usize],
+                        colour: self.palette
+                            [(self.rng.next() * self.palette.len() as f64) as usize]
+                            .clone(),
                         shape: Shape::Rocket,
                         life: 0.6 + self.rng.next() * 0.25,
                     });
@@ -128,7 +154,7 @@ impl System {
             for p in &mut self.particles {
                 p.life -= dt;
                 if p.shape == Shape::Rocket && p.life <= 0. {
-                    bursts.push((p.x, p.y, p.colour));
+                    bursts.push((p.x, p.y, p.colour.clone()));
                 }
                 if p.shape != Shape::Rocket {
                     p.vx *= (-0.9 * dt).exp();
@@ -161,7 +187,11 @@ impl System {
                         rotation: 0.,
                         spin: 0.,
                         size: 3.5,
-                        colour,
+                        colour: if self.rng.next() < 0.8 {
+                            colour.clone()
+                        } else {
+                            "#ffffff".into()
+                        },
                         shape: Shape::Spark,
                         life: 1.6,
                     });
@@ -179,8 +209,11 @@ pub fn ParticleCanvas(
     multiplier: RwSignal<usize>,
     count: RwSignal<usize>,
     frame_ms: RwSignal<f64>,
+    #[prop(optional, into)] palette: Option<Signal<Vec<String>>>,
 ) -> impl IntoView {
     let layout = expect_context::<Signal<StageLayout>>();
+    let theme = crate::theme::use_theme();
+    let palette = palette.unwrap_or_else(|| Signal::derive(move || theme_palette(&theme.get())));
     let canvas = NodeRef::<leptos::html::Canvas>::new();
     let system = StoredValue::new_local(System::new(2400., 1350., 1));
     let last = StoredValue::new_local(None::<f64>);
@@ -198,6 +231,7 @@ pub fn ParticleCanvas(
         }
         let l = layout.get_untracked();
         system.update_value(|s| {
+            s.set_palette(palette.get_untracked());
             s.width = l.w;
             s.height = l.h;
             if fireworks.get_untracked() {
@@ -236,7 +270,7 @@ pub fn ParticleCanvas(
             for p in &s.particles {
                 ctx.save();
                 ctx.set_global_alpha(p.life.min(1.));
-                ctx.set_fill_style_str(p.colour);
+                ctx.set_fill_style_str(&p.colour);
                 let _ = ctx.translate(p.x, p.y);
                 let _ = ctx.rotate(p.rotation);
                 if p.shape == Shape::Spark {
@@ -248,7 +282,7 @@ pub fn ParticleCanvas(
                     let _ = ctx.arc(0., 0., p.size * 3., 0., std::f64::consts::TAU);
                     ctx.fill();
                     ctx.set_global_alpha(p.life.min(1.));
-                    ctx.set_stroke_style_str(p.colour);
+                    ctx.set_stroke_style_str(&p.colour);
                     ctx.set_line_width(4.);
                     ctx.begin_path();
                     ctx.move_to(-p.vx * 0.025, -p.vy * 0.025);
@@ -310,6 +344,35 @@ mod tests {
         for _ in 0..(seconds * 60.) as usize {
             system.step(1. / 60.);
         }
+    }
+
+    #[test]
+    fn theme_colors_and_classic_fallback() {
+        let mut theme = quiz_core::theme::builtin::theme_by_id("default").clone();
+        theme.colors.clear();
+        assert_eq!(theme_palette(&theme), default_palette());
+        theme.colors.insert("accent".into(), "#123456".into());
+        theme.colors.insert("primary".into(), "#abcdef".into());
+        let palette = theme_palette(&theme);
+        assert_eq!(&palette[..2], &["#123456", "#abcdef"]);
+        let mut system = System::new(2400., 1350., 42);
+        system.set_palette(vec!["#123456".into()]);
+        system.confetti(1);
+        assert!(system.particles.iter().all(|p| p.colour == "#123456"));
+        system.particles.clear();
+        system.fireworks(1);
+        system.step(0.01);
+        assert!(system.particles.iter().all(|p| p.colour == "#123456"));
+        run(&mut system, 1.);
+        assert!(
+            system
+                .particles
+                .iter()
+                .filter(|p| p.shape == Shape::Spark)
+                .all(|p| p.colour == "#123456" || p.colour == "#ffffff")
+        );
+        system.set_palette(vec![]);
+        assert_eq!(system.palette, default_palette());
     }
 
     #[test]

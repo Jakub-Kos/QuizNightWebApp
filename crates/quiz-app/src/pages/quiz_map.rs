@@ -56,9 +56,7 @@ fn TileFrame(tile: Tile, context: QuizContext) -> impl IntoView {
     </PreviewScope> }
 }
 
-/// Only the rules, prizes and dashboard components are side-effect free apart from
-/// dashboard completion persistence. Live welcome/pause/standings own global keys,
-/// channels and timers, so their map frames are rendered below without mounting them.
+/// Mounts audience previews without the live scenes’ keys, score polling or channels.
 #[component]
 fn StaticScene(scene: &'static str) -> impl IntoView {
     provide_context(crate::show::ShowContext {
@@ -70,219 +68,27 @@ fn StaticScene(scene: &'static str) -> impl IntoView {
         }),
         dispatch: Callback::new(|_| ()),
     });
+    let context = crate::quiz_context::use_quiz();
+    let scores = crate::scores::use_scores().scores;
+    let theme = crate::theme::use_theme();
+    let teams = context.teams.as_ref().clone();
     match scene {
         "mp_rules" => view! { <crate::scenes::rules::Rules/> }.into_any(),
         "mp_prizes" => view! { <crate::scenes::prizes::Prizes/> }.into_any(),
         "mp_dashboard" => view! { <crate::scenes::dashboard::Dashboard/> }.into_any(),
-        "mp_welcome" => view! { <WelcomeFrame/> }.into_any(),
-        "mp_pause" => view! { <PauseFrame/> }.into_any(),
-        _ => view! { <StandingsFrame scene/> }.into_any(),
+        "mp_welcome" => view! { <crate::scenes::welcome::WelcomePreview/> }.into_any(),
+        "mp_pause" => view! { {move || view! { <crate::scenes::pause::PausePreview scores=scores.get() teams=teams.clone()/> }} }.into_any(),
+        _ => {
+            let step = match scene {
+                "mp_lb_card" => 1,
+                "mp_lb_added" => 2,
+                "mp_lb_final" => usize::MAX,
+                _ => 0,
+            };
+            view! { {move || view! { <crate::scenes::leaderboard::LeaderboardPreview
+                scores=scores.get() teams=teams.clone() step layout=theme.get().scenes.leaderboard.as_ref().map_or(quiz_core::theme::format::LeaderboardLayout::Table, |s| s.layout)/> }} }.into_any()
+        }
     }
-}
-
-#[component]
-fn WelcomeFrame() -> impl IntoView {
-    let t = use_t();
-    let context = crate::quiz_context::use_quiz();
-    let teams = context
-        .teams
-        .iter()
-        .filter(|team| team.team.present != Some(false))
-        .cloned()
-        .collect::<Vec<_>>();
-    let wall = crate::scenes::welcome::choose_layout(&teams, &context.quiz.settings.welcome_layout)
-        == crate::scenes::welcome::Layout::Wall;
-    view! {
-        <div class="welcome-screen h-full w-full relative overflow-hidden flex flex-col bg-ground font-show">
-            <crate::scenes::backdrop::SceneBackdrop/>
-            <div class="relative h-[20cqh] flex flex-col items-center justify-center z-10">
-                <h1 class="font-title text-[100px] font-black text-white uppercase tracking-tight">{t.get("title")}</h1>
-                <h2 class="text-primary-400 text-3xl font-bold tracking-[0.3em] uppercase">{context.quiz.title.clone()}</h2>
-            </div>
-            <div class="relative flex-1 flex items-center justify-center p-16 z-10">
-                {if wall {
-                    view! { <div class="grid grid-cols-4 gap-8 w-full max-w-[2000px]">{teams.into_iter().map(|team| view! {
-                        <div class="bg-panel border border-white/10 rounded-3xl p-8 flex items-center gap-6"><Avatar team=team.clone()/><h3 class="font-title text-4xl font-black uppercase text-white">{team.team.name}</h3></div>
-                    }).collect_view()}</div> }.into_any()
-                } else {
-                    teams.first().cloned().map(|team| view! {
-                        <div class="w-[900px] h-[650px] bg-panel border border-white/15 rounded-[4rem] p-16 flex flex-col items-center justify-center gap-10 shadow-2xl">
-                            <Avatar team=team.clone() large=true/>
-                            <h2 class="font-title text-7xl font-black text-white uppercase text-center">{team.team.name}</h2>
-                            {team.team.quote.map(|quote| view! { <p class="text-3xl italic text-white/60 text-center">{quote}</p> })}
-                        </div>
-                    }).into_any()
-                }}
-            </div>
-            <div class="relative h-[15cqh] flex justify-center items-center z-10"><button class="px-16 py-6 rounded-full bg-primary-500 text-black font-black text-3xl uppercase tracking-widest">{t.get("start_show")}</button></div>
-        </div>
-    }
-}
-
-#[component]
-fn Avatar(
-    team: quiz_core::quiz::model::ResolvedTeam,
-    #[prop(default = false)] large: bool,
-    #[prop(default = false)] compact: bool,
-) -> impl IntoView {
-    let initials = team.initials.clone();
-    let class = if large {
-        "w-[320px] h-[320px] rounded-3xl overflow-hidden bg-primary-900 border border-white/20 flex items-center justify-center shrink-0 text-[100px] font-black text-white"
-    } else if compact {
-        "w-10 h-10 rounded-full overflow-hidden bg-primary-900 border border-white/20 flex items-center justify-center shrink-0 text-sm font-black text-white"
-    } else {
-        "w-24 h-24 rounded-full overflow-hidden bg-primary-900 border border-white/20 flex items-center justify-center shrink-0 text-3xl font-black text-white"
-    };
-    view! { <div class=class>{match team.image {
-        Some(image) => view! { <img src=image alt="" class="w-full h-full object-cover"/> }.into_any(),
-        None => initials.into_any(),
-    }}</div> }
-}
-
-/// Competition ranks: ties share a rank and consume the following positions.
-fn competition_ranks(scores: &[f64]) -> Vec<usize> {
-    let mut rank = 1;
-    scores
-        .iter()
-        .enumerate()
-        .map(|(index, score)| {
-            if index > 0 && *score != scores[index - 1] {
-                rank = index + 1;
-            }
-            rank
-        })
-        .collect()
-}
-
-#[component]
-fn StandingsFrame(scene: &'static str) -> impl IntoView {
-    let t = use_t();
-    let context = crate::quiz_context::use_quiz();
-    let scores = crate::scores::use_scores().scores.get();
-    let selected = scores
-        .rounds
-        .iter()
-        .rev()
-        .find(|round| {
-            scores
-                .teams
-                .iter()
-                .any(|team| team.scores.get(*round).is_some_and(|points| *points > 0.))
-        })
-        .or_else(|| scores.rounds.first())
-        .cloned()
-        .unwrap_or_default();
-    let round_index = scores
-        .rounds
-        .iter()
-        .position(|round| *round == selected)
-        .unwrap_or(0);
-    let mut rows = scores
-        .teams
-        .iter()
-        .map(|team| {
-            let previous = scores
-                .rounds
-                .iter()
-                .take(round_index)
-                .map(|round| team.scores.get(round).copied().unwrap_or(0.))
-                .sum::<f64>();
-            let points = team.scores.get(&selected).copied().unwrap_or(0.);
-            let avatar = context
-                .teams
-                .iter()
-                .find(|known| known.team.name == team.name)
-                .cloned();
-            (team.name.clone(), previous, points, avatar)
-        })
-        .collect::<Vec<_>>();
-    let mut groups = rows.iter().map(|row| row.2).collect::<Vec<_>>();
-    groups.sort_by(f64::total_cmp);
-    groups.dedup();
-    let first = groups.first().copied().unwrap_or(0.);
-    let final_frame = scene == "mp_lb_final";
-    let overlay = scene == "mp_lb_card";
-    let added = scene == "mp_lb_added";
-    rows.sort_by(|a, b| {
-        let total = |row: &(
-            String,
-            f64,
-            f64,
-            Option<quiz_core::quiz::model::ResolvedTeam>,
-        )| { row.1 + if final_frame { row.2 } else { 0. } };
-        total(b).total_cmp(&total(a))
-    });
-    let ranks = competition_ranks(
-        &rows
-            .iter()
-            .map(|row| row.1 + if final_frame { row.2 } else { 0. })
-            .collect::<Vec<_>>(),
-    );
-    let empty = rows.is_empty();
-    view! {
-        <div class="standings h-full w-full bg-ground relative overflow-hidden flex flex-col font-show">
-            <crate::scenes::backdrop::SceneBackdrop quiet=true/>
-            <div class="relative z-10 flex flex-col h-full w-full max-w-[1920px] mx-auto pt-[6cqh] pb-[6cqh] px-12">
-                <div class="flex items-center justify-between border-b border-white/10 pb-6 mb-8 shrink-0">
-                    <div><h1 class="font-title text-5xl font-black uppercase tracking-[0.2em] text-white">{t.get("lb_title")}</h1>
-                        <h2 class="text-primary-400 font-bold tracking-[0.4em] text-sm uppercase mt-2">{if final_frame {t.get("lb_final")} else {t.fmt("lb_round_reveal", &[("round",&selected)])}}</h2></div>
-                    <div class="flex gap-1.5">{groups.into_iter().enumerate().map(|(index,_)| view! { <div class=if final_frame || (added && index == 0) {"w-6 h-3 rounded-full bg-primary-500"} else {"w-6 h-3 rounded-full bg-white/10"}/> }).collect_view()}<div class=if final_frame {"w-8 h-3 rounded-full bg-green-500"} else {"w-8 h-3 rounded-full bg-white/10"}/></div>
-                </div>
-                {empty.then(|| view! { <div class="flex-1 flex items-center justify-center text-5xl font-black uppercase text-white/60">{t.get("lb_empty_title")}</div> })}
-                <div class="grid grid-cols-2 gap-x-16 gap-y-5 content-start">{rows.iter().enumerate().map(|(index,(name,previous,points,avatar))| {
-                    let revealed = final_frame || (added && *points == first);
-                    let score = previous + if revealed {*points} else {0.};
-                    view! { <div class="h-[74px] flex items-center bg-white/5 border border-white/10 rounded-xl overflow-hidden text-white">
-                        <div class="w-[60px] text-center font-mono font-black text-2xl">{ranks[index]}</div>
-                        <div class="flex-1 flex items-center px-4 gap-4 min-w-0">{avatar.clone().map(|team| view! { <Avatar team compact=true/> })}<span class="font-black text-xl uppercase truncate">{name.clone()}</span></div>
-                        <div class="w-[110px] text-center text-green-400 font-bold">{if revealed {format!("+{points}")} else {"?".into()}}</div>
-                        <div class="w-[100px] text-right px-4 font-mono font-black text-3xl text-primary-400">{score}</div>
-                    </div> }
-                }).collect_view()}</div>
-                {(overlay && !empty).then(|| view! { <div class="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-12 gap-16">
-                    <h2 class="font-title text-7xl font-black uppercase tracking-[0.2em] text-primary-400">{t.fmt("lb_teams_with", &[("points",&first.to_string())])}</h2>
-                    <div class="flex flex-wrap justify-center gap-8">{rows.into_iter().filter(|row| row.2 == first).map(|(name,_,_,avatar)| view! {
-                        <div class="w-[350px] bg-panel border border-white/20 rounded-[3rem] p-10 flex flex-col items-center gap-6">{avatar.map(|team| view! { <Avatar team/> })}<h3 class="text-2xl font-black text-white uppercase text-center">{name}</h3></div>
-                    }).collect_view()}</div>
-                </div> })}
-            </div>
-        </div>
-    }
-}
-
-#[component]
-fn PauseFrame() -> impl IntoView {
-    let t = use_t();
-    let context = crate::quiz_context::use_quiz();
-    let scores = crate::scores::use_scores().scores.get();
-    let mut teams = scores
-        .teams
-        .iter()
-        .map(|team| (team, team.scores.values().sum::<f64>()))
-        .collect::<Vec<_>>();
-    teams.sort_by(|a, b| b.1.total_cmp(&a.1));
-    view! { <div class="pause-screen h-full w-full bg-ground relative overflow-hidden flex flex-col font-show">
-        <crate::scenes::backdrop::SceneBackdrop/>
-        <div class="relative h-[22cqh] flex flex-col items-center justify-center pt-8">
-            <h2 class="font-title text-2xl font-black uppercase tracking-[0.4em] text-primary-500">{t.get("pause_title")}</h2>
-            <div class="text-[120px] font-mono font-black text-white leading-none">"30:00"</div>
-            <div class="text-white/40 font-bold tracking-[0.4em] text-xl uppercase mt-4">{t.get("pause_until")}</div>
-        </div>
-        <div class="relative flex-1 flex items-center justify-center p-12 w-full max-w-[1700px] mx-auto">
-            {teams.first().map(|(team,total)| {
-                let avatar = context.teams.iter().find(|known| known.team.name == team.name).cloned();
-                view! { <div class="w-full bg-black/40 border border-white/10 rounded-[4rem] p-12 flex items-center gap-16 shadow-2xl">
-                    {avatar.map(|team| view! { <Avatar team large=true/> })}
-                    <div class="flex-1"><span class="text-xl font-bold tracking-[0.3em] uppercase text-yellow-500">{t.fmt("pause_rank", &[("rank","1")])}</span><h1 class="text-[70px] font-black text-white uppercase">{team.name.clone()}</h1></div>
-                    <div class="text-right"><div class="text-[110px] font-mono font-black text-primary-400">{*total}</div><span class="text-2xl text-white/30 font-bold">{t.get("total_pts")}</span></div>
-                </div> }
-            })}
-        </div>
-        <div class="relative h-[10cqh] bg-primary-950/20 border-t border-primary-500/20 flex items-center overflow-hidden">
-            <span class="h-full bg-primary-600 px-8 flex items-center text-white font-black tracking-widest uppercase">{t.get("pause_live")}</span>
-            {teams.into_iter().enumerate().map(|(index,(team,total))| view! { <div class="flex items-center gap-6 px-12 border-r border-white/10 whitespace-nowrap"><span class="text-2xl font-black text-yellow-500">{index+1}"."</span><span class="text-3xl font-bold text-white uppercase">{team.name.clone()}</span><span class="text-3xl font-mono text-primary-400">"["{total}" "{t.get("pts")}"]"</span></div> }).collect_view()}
-        </div>
-    </div> }
 }
 
 #[component]
@@ -578,12 +384,6 @@ fn Launcher(id: String, close: Callback<()>) -> impl IntoView {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn tied_standings_keep_competition_ranks() {
-        assert_eq!(competition_ranks(&[20., 10., 10., 0.]), [1, 2, 2, 4]);
-        assert!(competition_ranks(&[]).is_empty());
-    }
-
     #[test]
     fn short_passes_never_duplicate_questions() {
         assert!(shown_questions(0).is_empty());
