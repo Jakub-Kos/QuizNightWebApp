@@ -1,0 +1,22 @@
+.presence-demo{position:absolute;inset:0;color:white;background:var(--color-ground,#101026)}
+.presence-scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#392050, #101026 75%)}
+.classic-card{text-align:center;max-width:80%;display:flex;flex-direction:column;align-items:center;animation:classic-in .65s ease-out both}
+.classic-card>*{animation:stagger-in .55s both;animation-delay:calc(var(--i)*.12s)}
+.classic-card h2{color:var(--color-primary-500,#a855f7);font-size:36px;letter-spacing:.5em;text-transform:uppercase;margin-bottom:24px}
+.round-rule{height:8px;width:160px;background:var(--color-primary-500,#a855f7);border-radius:9px;margin-bottom:48px;box-shadow:0 0 20px #a855f7}
+.classic-card h1{font-size:120px;font-weight:900;text-transform:uppercase;line-height:1;margin:0;text-shadow:0 8px 24px #0008}
+.second-panel{padding:80px;border:2px solid #a855f7;border-radius:32px;background:#201830;text-align:center;font-size:40px}
+.presence-controls{position:absolute;bottom:40px;left:0;right:0;display:flex;justify-content:center;gap:30px;align-items:center;z-index:5;font-size:28px}
+.presence-demo button{padding:18px 30px;background:#7134ad;border-radius:12px;color:white;cursor:pointer}
+.scene-enter{animation:scene-in .65s ease-out both}.scene-exit{animation:scene-out .65s ease-in both;pointer-events:none}
+.modal-enter{position:absolute;inset:0;z-index:10;animation:fade-in .35s both}.modal-exit{position:absolute;inset:0;z-index:10;animation:fade-out .35s both;pointer-events:none}
+.modal-backdrop{position:absolute;inset:0;background:#000a;display:flex;align-items:center;justify-content:center}
+.modal-panel{background:#292038;border:2px solid #a855f7;padding:70px;border-radius:28px;text-align:center;font-size:36px}
+.modal-enter .modal-panel{animation:classic-in .35s both}.modal-exit .modal-panel{animation:panel-out .35s both}
+@keyframes classic-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes stagger-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scene-in{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@keyframes scene-out{from{opacity:1}to{opacity:0;transform:scale(1.04)}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}@keyframes fade-out{from{opacity:1}to{opacity:0}}
+@keyframes panel-out{to{transform:scale(.9)}}
+@media(prefers-reduced-motion:reduce){.presence-demo *{animation:none!important}}

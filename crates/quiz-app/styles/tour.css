@@ -1,0 +1,11 @@
+/* Viewport overlay; mount outside the scaled stage. */
+@keyframes tour-enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tour-exit { from { opacity: 1; } to { opacity: 0; } }
+/* Tailwind animate-pulse, scoped here so reduced motion also stops the ring. */
+@keyframes tour-pulse { 50% { opacity: .5; } }
+.tour-enter { animation: tour-enter 160ms ease-out both; }
+.tour-exit { animation: tour-exit 120ms ease-in both; }
+.tour-highlight { animation: tour-pulse 2s cubic-bezier(.4, 0, .6, 1) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .tour-enter, .tour-exit, .tour-highlight { animation: none !important; }
+}

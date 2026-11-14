@@ -1,0 +1,9 @@
+.particle-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:45}
+.celebration-demo,.calibration{position:absolute;inset:0;text-align:center;padding:100px 80px;color:#fff;background:radial-gradient(ellipse at top,#164967,#061322);font-size:36px}
+.celebration-demo h1,.calibration h1{font-size:100px;color:#facc15;margin:40px 0}
+.demo-controls{position:absolute;bottom:8%;left:10%;right:10%;z-index:50;padding:30px;background:#082b40;border:2px solid #39708c;border-radius:24px;font-size:30px}
+.demo-controls button{padding:18px 28px;margin:8px;border-radius:12px;background:#facc15;color:#081c2c;font-weight:bold;cursor:pointer}
+.demo-controls label{display:block;margin:18px}.demo-controls input{width:500px;margin:0 24px}
+.calibration{border:5px solid #facc15;background-color:#061322;background-image:linear-gradient(#ffffff18 1px,transparent 1px),linear-gradient(90deg,#ffffff18 1px,transparent 1px);background-size:10% 10%}
+.corner{position:absolute;width:100px;height:100px;border:14px solid #facc15}.tl{top:0;left:0;border-right:0;border-bottom:0}.tr{top:0;right:0;border-left:0;border-bottom:0}.bl{bottom:0;left:0;border-right:0;border-top:0}.br{bottom:0;right:0;border-left:0;border-top:0}
+.safe-area{position:absolute;inset:5%;border:2px dashed #ffffff70;pointer-events:none}.calibration-circle{position:absolute;width:400px;height:400px;border:5px solid #60a5fa;border-radius:50%;left:50%;top:45%;transform:translate(-50%,-50%)}

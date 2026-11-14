@@ -1,0 +1,59 @@
+/* Team wall: entry, ambient motion and theme-selected takeovers. */
+.wall-fullscreen { position:absolute; inset:-70% -45%; pointer-events:none; }
+.wall-tile-enter { animation:wall-tile-in .8s var(--wall-spring) var(--delay) both; }
+.wall-tile-focus { transition:opacity .5s, scale .8s var(--wall-spring); }
+.wall-featured { opacity:.15; scale:.92; }
+.wall-float { animation:wall-float 6s ease-in-out infinite; }
+.wall-aurora { animation:wall-aurora-0 22s ease-in-out infinite; }
+.wall-aurora-1 { animation-name:wall-aurora-1; }.wall-aurora-2 { animation-name:wall-aurora-2; }.wall-aurora-3 { animation-name:wall-aurora-3; }
+.wall-shimmer { animation:wall-shimmer 10.6s linear 2s infinite both; }
+.wall-intro-enter { animation:wall-lifetime .9s; }.wall-intro-exit { animation:wall-lifetime .9s; }
+.wall-intro-exit:has(.wall-broadcast) { animation-duration:.5s; }
+.wall-intro-exit:has(.wall-spotlight) { animation-duration:.8s; }
+.wall-dim { background:rgb(0 0 0 / .55); animation:wall-fade .5s both; }
+.wall-broadcast .wall-dim { background:rgb(0 0 0 / .7); }.wall-spotlight .wall-dim { background:rgb(0 0 0 / .9); }.wall-polaroid .wall-dim { background:rgb(0 0 0 / .8); }
+.wall-intro-exit .wall-dim { animation:wall-fade .5s reverse both; }
+.wall-flip-card { animation:wall-flip-in .9s var(--wall-flip-spring) both; }.wall-intro-exit .wall-flip-card { animation:wall-flip-out .9s var(--wall-flip-spring) both; }
+.wall-players { align-self:flex-start; }.wall-spotlight .wall-players { align-self:center; }
+.wall-broadcast-stripe { animation:wall-stripe .45s ease-out both; }
+.wall-broadcast-band { animation:wall-wipe .6s cubic-bezier(.2,.8,.2,1) .2s both; }
+.wall-broadcast-name { animation:wall-name .5s .55s both; }
+.wall-broadcast-meta { animation:wall-meta .4s .9s both; }
+.wall-broadcast .wall-players { padding:0; background:none; border:0; font-size:inherit; }.wall-broadcast .wall-players svg { width:2.4cqw; height:2.4cqw; }
+.wall-broadcast-avatar { animation:wall-pop .8s var(--wall-spring) .45s both; }
+.wall-intro-exit .wall-broadcast-card { animation:wall-broadcast-out .5s ease-in both; }
+.wall-beam { background:linear-gradient(to bottom,rgba(255,250,220,.5),rgba(255,250,220,.08) 85%,transparent); clip-path:polygon(42% 0,58% 0,100% 100%,0 100%); animation:wall-beam .6s ease-out both; }
+.wall-floor { background:radial-gradient(ellipse,rgba(255,250,220,.35),transparent 70%); animation:wall-fade .6s .2s both; }
+.wall-spotlight-content { animation:wall-spotlight .8s .35s both; }.wall-spotlight-name { animation:wall-tracking .9s ease-out .6s both; }
+.wall-intro-exit .wall-beam { animation:wall-beam .6s reverse both; }.wall-intro-exit .wall-floor { animation:wall-fade .6s reverse both; }.wall-intro-exit .wall-spotlight-content { animation:wall-darken .8s both; }
+.wall-photo { rotate:var(--tilt); animation:wall-photo-in .9s var(--wall-spring) both; }.wall-develop { animation:wall-develop 1.4s .5s both; }.wall-photo-meta { animation:wall-photo-meta .5s .6s both; }
+.wall-intro-exit .wall-photo { animation:wall-photo-out .9s var(--wall-spring) both; }.wall-intro-exit .wall-photo-meta { animation:wall-photo-meta .5s reverse both; }
+@keyframes wall-lifetime { from { outline-color:transparent; } to { outline-color:transparent; } }
+@keyframes wall-tile-in { from { opacity:0; transform:translateY(40px) scale(.9); } to { opacity:1; transform:none; } }
+@keyframes wall-float { 0%,100% { transform:translateY(0); } 25% { transform:translateY(-7px); } 75% { transform:translateY(5px); } }
+@keyframes wall-aurora-0 { 0%,100% { left:10%;top:15%; } 33% { left:40%;top:35%; } 66% { left:25%;top:55%; } }
+@keyframes wall-aurora-1 { 0%,100% { left:55%;top:45%; } 33% { left:30%;top:20%; } 66% { left:60%;top:30%; } }
+@keyframes wall-aurora-2 { 0%,100% { left:35%;top:55%; } 33% { left:60%;top:40%; } 66% { left:20%;top:25%; } }
+@keyframes wall-aurora-3 { 0%,100% { left:65%;top:20%; } 33% { left:40%;top:50%; } 66% { left:50%;top:40%; } }
+@keyframes wall-shimmer { 0% { left:-15%; } 53%,100% { left:105%; } }
+@keyframes wall-fade { from { opacity:0; } to { opacity:1; } }
+@keyframes wall-flip-in { from { transform:rotateY(-95deg) scale(.55);opacity:0; } to { transform:none;opacity:1; } }
+@keyframes wall-flip-out { from { transform:none;opacity:1; } to { transform:rotateY(95deg) scale(.55);opacity:0; } }
+@keyframes wall-stripe { from { scale:0 1; } to { scale:1; } }
+@keyframes wall-wipe { from { clip-path:inset(0 100% 0 0); } to { clip-path:inset(0); } }
+@keyframes wall-name { from { transform:translateX(-60px);opacity:0; } to { transform:none;opacity:1; } }
+@keyframes wall-meta { from { transform:translateY(-20px);opacity:0; } to { transform:none;opacity:1; } }
+@keyframes wall-pop { from { scale:0;rotate:-20deg; } to { scale:1;rotate:0deg; } }
+@keyframes wall-broadcast-out { to { transform:translateX(110%);opacity:0; } }
+@keyframes wall-beam { from { opacity:0;scale:.3 1; } to { opacity:1;scale:1; } }
+@keyframes wall-spotlight { from { opacity:0;transform:translateY(40px);filter:brightness(0); } to { opacity:1;transform:none;filter:brightness(1); } }
+@keyframes wall-tracking { from { letter-spacing:.5em;opacity:0; } to { letter-spacing:.02em;opacity:1; } }
+@keyframes wall-darken { to { opacity:0;filter:brightness(0); } }
+@keyframes wall-photo-in { from { transform:translate(-30%,-130%) rotate(-35deg); } to { transform:none; } }
+@keyframes wall-photo-out { to { transform:translate(30%,130%) rotate(25deg);opacity:0; } }
+@keyframes wall-develop { from { filter:brightness(2.2) saturate(0); } to { filter:brightness(1) saturate(1); } }
+@keyframes wall-photo-meta { from { opacity:0;transform:translateX(40px); } to { opacity:1;transform:none; } }
+@media (prefers-reduced-motion:reduce) {
+ .team-wall *, .wall-intro-enter, .wall-intro-exit { animation-duration:.001s !important; animation-delay:0s !important; transition-duration:.001s !important; }
+ .wall-float,.wall-aurora,.wall-shimmer { animation:none !important; }.wall-shimmer { display:none; }
+}

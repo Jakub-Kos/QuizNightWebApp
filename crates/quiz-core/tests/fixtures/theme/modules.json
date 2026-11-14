@@ -1,0 +1,1948 @@
+{
+  "builtin": [
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": "confetti"
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {},
+        "id": "default",
+        "name": {
+          "en": "Classic",
+          "cs": "Klasický",
+          "sk": "Klasszikus"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        }
+      },
+      "names": {
+        "en": "Classic",
+        "cs": "Klasický",
+        "sk": "Klasszikus"
+      },
+      "style": {},
+      "classes": ""
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [
+          "halloween"
+        ],
+        "colors": {
+          "primary": "#8b3dff",
+          "accent": "#ff7a1a",
+          "groundTop": "#1d0c30",
+          "ground": "#0b0614",
+          "groundBottom": "#050208",
+          "panel": "#120a1d"
+        },
+        "fonts": {
+          "title": {
+            "family": "Rubik Wet Paint"
+          },
+          "body": {
+            "family": "Grenze"
+          }
+        },
+        "decoration": {
+          "type": "bats"
+        },
+        "style": {},
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "spooky"
+        },
+        "scenes": {},
+        "id": "halloween",
+        "name": {
+          "en": "Halloween",
+          "cs": "Halloween",
+          "sk": "Halloween"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#7c2bd9",
+              "x": 8,
+              "y": 92,
+              "size": 70,
+              "opacity": 0.24
+            },
+            {
+              "color": "#ff6a00",
+              "x": 70,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#3dd68c",
+              "x": 100,
+              "y": 40,
+              "size": 40,
+              "opacity": 0.05
+            }
+          ],
+          "ornament": "graveyard"
+        }
+      },
+      "names": {
+        "en": "Halloween",
+        "cs": "Halloween",
+        "sk": "Halloween"
+      },
+      "style": {
+        "--color-primary-500": "#8b3dff",
+        "--color-primary-50": "color-mix(in oklab, #8b3dff 10%, white)",
+        "--color-primary-100": "color-mix(in oklab, #8b3dff 20%, white)",
+        "--color-primary-200": "color-mix(in oklab, #8b3dff 36%, white)",
+        "--color-primary-300": "color-mix(in oklab, #8b3dff 56%, white)",
+        "--color-primary-400": "color-mix(in oklab, #8b3dff 78%, white)",
+        "--color-primary-600": "color-mix(in oklab, #8b3dff, black 16%)",
+        "--color-primary-700": "color-mix(in oklab, #8b3dff, black 32%)",
+        "--color-primary-800": "color-mix(in oklab, #8b3dff, black 46%)",
+        "--color-primary-900": "color-mix(in oklab, #8b3dff, black 58%)",
+        "--color-primary-950": "color-mix(in oklab, #8b3dff, black 72%)",
+        "--glow-primary": "139 61 255",
+        "--glow-primary-deep": "63 27 115",
+        "--color-accent-500": "#ff7a1a",
+        "--color-accent-50": "color-mix(in oklab, #ff7a1a 10%, white)",
+        "--color-accent-100": "color-mix(in oklab, #ff7a1a 20%, white)",
+        "--color-accent-200": "color-mix(in oklab, #ff7a1a 36%, white)",
+        "--color-accent-300": "color-mix(in oklab, #ff7a1a 56%, white)",
+        "--color-accent-400": "color-mix(in oklab, #ff7a1a 78%, white)",
+        "--color-accent-600": "color-mix(in oklab, #ff7a1a, black 16%)",
+        "--color-accent-700": "color-mix(in oklab, #ff7a1a, black 32%)",
+        "--color-accent-800": "color-mix(in oklab, #ff7a1a, black 46%)",
+        "--color-accent-900": "color-mix(in oklab, #ff7a1a, black 58%)",
+        "--color-accent-950": "color-mix(in oklab, #ff7a1a, black 72%)",
+        "--glow-accent": "255 122 26",
+        "--color-ground": "#0b0614",
+        "--color-ground-top": "#1d0c30",
+        "--color-ground-bottom": "#050208",
+        "--color-panel": "#120a1d",
+        "--theme-font": "\"Grenze\", \"League Spartan\"",
+        "--theme-title-font": "\"Rubik Wet Paint\", var(--theme-font, \"League Spartan\")"
+      },
+      "classes": ""
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [
+          "christmas"
+        ],
+        "colors": {
+          "primary": "#e0303a",
+          "accent": "#f5c542",
+          "groundTop": "#0f2a1d",
+          "ground": "#06150e",
+          "groundBottom": "#020805",
+          "panel": "#0a1d14"
+        },
+        "fonts": {
+          "title": {
+            "family": "Berkshire Swash"
+          },
+          "body": {
+            "family": "Playfair Display"
+          }
+        },
+        "decoration": {
+          "type": "snow"
+        },
+        "style": {},
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "festive"
+        },
+        "scenes": {},
+        "id": "christmas",
+        "name": {
+          "en": "Christmas",
+          "cs": "Vánoce",
+          "sk": "Karácsony"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#e0303a",
+              "x": 0,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#f5c542",
+              "x": 100,
+              "y": 0,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": "lights"
+        }
+      },
+      "names": {
+        "en": "Christmas",
+        "cs": "Vánoce",
+        "sk": "Karácsony"
+      },
+      "style": {
+        "--color-primary-500": "#e0303a",
+        "--color-primary-50": "color-mix(in oklab, #e0303a 10%, white)",
+        "--color-primary-100": "color-mix(in oklab, #e0303a 20%, white)",
+        "--color-primary-200": "color-mix(in oklab, #e0303a 36%, white)",
+        "--color-primary-300": "color-mix(in oklab, #e0303a 56%, white)",
+        "--color-primary-400": "color-mix(in oklab, #e0303a 78%, white)",
+        "--color-primary-600": "color-mix(in oklab, #e0303a, black 16%)",
+        "--color-primary-700": "color-mix(in oklab, #e0303a, black 32%)",
+        "--color-primary-800": "color-mix(in oklab, #e0303a, black 46%)",
+        "--color-primary-900": "color-mix(in oklab, #e0303a, black 58%)",
+        "--color-primary-950": "color-mix(in oklab, #e0303a, black 72%)",
+        "--glow-primary": "224 48 58",
+        "--glow-primary-deep": "101 22 26",
+        "--color-accent-500": "#f5c542",
+        "--color-accent-50": "color-mix(in oklab, #f5c542 10%, white)",
+        "--color-accent-100": "color-mix(in oklab, #f5c542 20%, white)",
+        "--color-accent-200": "color-mix(in oklab, #f5c542 36%, white)",
+        "--color-accent-300": "color-mix(in oklab, #f5c542 56%, white)",
+        "--color-accent-400": "color-mix(in oklab, #f5c542 78%, white)",
+        "--color-accent-600": "color-mix(in oklab, #f5c542, black 16%)",
+        "--color-accent-700": "color-mix(in oklab, #f5c542, black 32%)",
+        "--color-accent-800": "color-mix(in oklab, #f5c542, black 46%)",
+        "--color-accent-900": "color-mix(in oklab, #f5c542, black 58%)",
+        "--color-accent-950": "color-mix(in oklab, #f5c542, black 72%)",
+        "--glow-accent": "245 197 66",
+        "--color-ground": "#06150e",
+        "--color-ground-top": "#0f2a1d",
+        "--color-ground-bottom": "#020805",
+        "--color-panel": "#0a1d14",
+        "--theme-font": "\"Playfair Display\", \"League Spartan\"",
+        "--theme-title-font": "\"Berkshire Swash\", var(--theme-font, \"League Spartan\")"
+      },
+      "classes": ""
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "deep-ocean",
+        "name": {
+          "en": "Deep ocean",
+          "cs": "Hlubina oceánu",
+          "sk": "Mély óceán"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+          "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+          "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+        },
+        "tags": [
+          "calm",
+          "blue"
+        ],
+        "colors": {
+          "primary": "#0284c7",
+          "accent": "#5eead4",
+          "groundTop": "#062a3d",
+          "ground": "#031621",
+          "groundBottom": "#01080d",
+          "panel": "#05202e"
+        },
+        "fonts": {
+          "title": {
+            "family": "Oswald"
+          },
+          "body": {
+            "family": "Nunito"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#14b8a6",
+              "x": 30,
+              "y": 100,
+              "size": 80,
+              "opacity": 0.2
+            },
+            {
+              "color": "#0ea5e9",
+              "x": 95,
+              "y": 20,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": "waves"
+        },
+        "decoration": {
+          "type": "bubbles"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "spotlight"
+          },
+          "dashboard": {
+            "layout": "tiles"
+          },
+          "round": {
+            "layout": "curtain"
+          },
+          "welcome": {
+            "intro": "spotlight"
+          }
+        },
+        "style": {
+          "cards": "glass"
+        },
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "chimes"
+        }
+      },
+      "names": {
+        "en": "Deep ocean",
+        "cs": "Hlubina oceánu",
+        "sk": "Mély óceán"
+      },
+      "style": {
+        "--color-primary-500": "#0284c7",
+        "--color-primary-50": "color-mix(in oklab, #0284c7 10%, white)",
+        "--color-primary-100": "color-mix(in oklab, #0284c7 20%, white)",
+        "--color-primary-200": "color-mix(in oklab, #0284c7 36%, white)",
+        "--color-primary-300": "color-mix(in oklab, #0284c7 56%, white)",
+        "--color-primary-400": "color-mix(in oklab, #0284c7 78%, white)",
+        "--color-primary-600": "color-mix(in oklab, #0284c7, black 16%)",
+        "--color-primary-700": "color-mix(in oklab, #0284c7, black 32%)",
+        "--color-primary-800": "color-mix(in oklab, #0284c7, black 46%)",
+        "--color-primary-900": "color-mix(in oklab, #0284c7, black 58%)",
+        "--color-primary-950": "color-mix(in oklab, #0284c7, black 72%)",
+        "--glow-primary": "2 132 199",
+        "--glow-primary-deep": "1 59 90",
+        "--color-accent-500": "#5eead4",
+        "--color-accent-50": "color-mix(in oklab, #5eead4 10%, white)",
+        "--color-accent-100": "color-mix(in oklab, #5eead4 20%, white)",
+        "--color-accent-200": "color-mix(in oklab, #5eead4 36%, white)",
+        "--color-accent-300": "color-mix(in oklab, #5eead4 56%, white)",
+        "--color-accent-400": "color-mix(in oklab, #5eead4 78%, white)",
+        "--color-accent-600": "color-mix(in oklab, #5eead4, black 16%)",
+        "--color-accent-700": "color-mix(in oklab, #5eead4, black 32%)",
+        "--color-accent-800": "color-mix(in oklab, #5eead4, black 46%)",
+        "--color-accent-900": "color-mix(in oklab, #5eead4, black 58%)",
+        "--color-accent-950": "color-mix(in oklab, #5eead4, black 72%)",
+        "--glow-accent": "94 234 212",
+        "--color-ground": "#031621",
+        "--color-ground-top": "#062a3d",
+        "--color-ground-bottom": "#01080d",
+        "--color-panel": "#05202e",
+        "--theme-font": "\"Nunito\", \"League Spartan\"",
+        "--theme-title-font": "\"Oswald\", var(--theme-font, \"League Spartan\")"
+      },
+      "classes": "qn-cards-glass"
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "neon-arcade",
+        "name": {
+          "en": "Neon arcade",
+          "cs": "Neonová herna",
+          "sk": "Neon játékterem"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Hot pink and cyan glowing in the dark, for a loud party quiz.",
+          "cs": "Zářivě růžová a azurová ve tmě, pro hlučný párty kvíz.",
+          "sk": "Rikító rózsaszín és cián a sötétben, egy hangos parti kvízhez."
+        },
+        "tags": [
+          "party",
+          "neon"
+        ],
+        "colors": {
+          "primary": "#e81cc4",
+          "accent": "#22e5ff",
+          "groundTop": "#1a0533",
+          "ground": "#0a0118",
+          "groundBottom": "#030008",
+          "panel": "#12041f"
+        },
+        "fonts": {
+          "title": {
+            "family": "Monoton"
+          },
+          "body": {
+            "family": "Montserrat"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ff2bd6",
+              "x": 0,
+              "y": 100,
+              "size": 70,
+              "opacity": 0.25
+            },
+            {
+              "color": "#22e5ff",
+              "x": 100,
+              "y": 0,
+              "size": 60,
+              "opacity": 0.18
+            },
+            {
+              "color": "#7c3aed",
+              "x": 50,
+              "y": 50,
+              "size": 90,
+              "opacity": 0.08
+            }
+          ],
+          "ornament": "skyline"
+        },
+        "decoration": {
+          "type": "stars"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "race"
+          },
+          "dashboard": {
+            "layout": "tiles"
+          },
+          "round": {
+            "layout": "marquee"
+          },
+          "welcome": {
+            "intro": "broadcast"
+          }
+        },
+        "style": {
+          "corners": "sharp",
+          "effects": "neon"
+        },
+        "celebration": {
+          "type": "fireworks"
+        },
+        "sounds": {
+          "pack": "arcade"
+        }
+      },
+      "names": {
+        "en": "Neon arcade",
+        "cs": "Neonová herna",
+        "sk": "Neon játékterem"
+      },
+      "style": {
+        "--color-primary-500": "#e81cc4",
+        "--color-primary-50": "color-mix(in oklab, #e81cc4 10%, white)",
+        "--color-primary-100": "color-mix(in oklab, #e81cc4 20%, white)",
+        "--color-primary-200": "color-mix(in oklab, #e81cc4 36%, white)",
+        "--color-primary-300": "color-mix(in oklab, #e81cc4 56%, white)",
+        "--color-primary-400": "color-mix(in oklab, #e81cc4 78%, white)",
+        "--color-primary-600": "color-mix(in oklab, #e81cc4, black 16%)",
+        "--color-primary-700": "color-mix(in oklab, #e81cc4, black 32%)",
+        "--color-primary-800": "color-mix(in oklab, #e81cc4, black 46%)",
+        "--color-primary-900": "color-mix(in oklab, #e81cc4, black 58%)",
+        "--color-primary-950": "color-mix(in oklab, #e81cc4, black 72%)",
+        "--glow-primary": "232 28 196",
+        "--glow-primary-deep": "104 13 88",
+        "--color-accent-500": "#22e5ff",
+        "--color-accent-50": "color-mix(in oklab, #22e5ff 10%, white)",
+        "--color-accent-100": "color-mix(in oklab, #22e5ff 20%, white)",
+        "--color-accent-200": "color-mix(in oklab, #22e5ff 36%, white)",
+        "--color-accent-300": "color-mix(in oklab, #22e5ff 56%, white)",
+        "--color-accent-400": "color-mix(in oklab, #22e5ff 78%, white)",
+        "--color-accent-600": "color-mix(in oklab, #22e5ff, black 16%)",
+        "--color-accent-700": "color-mix(in oklab, #22e5ff, black 32%)",
+        "--color-accent-800": "color-mix(in oklab, #22e5ff, black 46%)",
+        "--color-accent-900": "color-mix(in oklab, #22e5ff, black 58%)",
+        "--color-accent-950": "color-mix(in oklab, #22e5ff, black 72%)",
+        "--glow-accent": "34 229 255",
+        "--color-ground": "#0a0118",
+        "--color-ground-top": "#1a0533",
+        "--color-ground-bottom": "#030008",
+        "--color-panel": "#12041f",
+        "--theme-font": "\"Montserrat\", \"League Spartan\"",
+        "--theme-title-font": "\"Monoton\", var(--theme-font, \"League Spartan\")"
+      },
+      "classes": "qn-corners-sharp qn-effects-neon"
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "spring-garden",
+        "name": {
+          "en": "Spring garden",
+          "cs": "Jarní zahrada",
+          "sk": "Tavaszi kert"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Fresh green with blossom pink and elegant headings, for spring and Easter quizzes.",
+          "cs": "Svěží zelená s květinově růžovou a elegantními nadpisy, pro jarní a velikonoční kvízy.",
+          "sk": "Friss zöld virágrózsaszínnel és elegáns címekkel, tavaszi és húsvéti kvízekhez."
+        },
+        "tags": [
+          "spring",
+          "easter"
+        ],
+        "colors": {
+          "primary": "#16a34a",
+          "accent": "#f9a8d4",
+          "groundTop": "#0d2414",
+          "ground": "#07150b",
+          "groundBottom": "#020703",
+          "panel": "#0b1d10"
+        },
+        "fonts": {
+          "title": {
+            "family": "Pacifico"
+          },
+          "body": {
+            "family": "Nunito"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#f472b6",
+              "x": 100,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#22c55e",
+              "x": 0,
+              "y": 0,
+              "size": 60,
+              "opacity": 0.12
+            }
+          ],
+          "ornament": "meadow"
+        },
+        "decoration": {
+          "type": "petals"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "medals"
+          },
+          "dashboard": {
+            "layout": "timeline"
+          },
+          "round": {
+            "layout": "slam"
+          },
+          "welcome": {
+            "intro": "polaroid"
+          }
+        },
+        "style": {
+          "corners": "round",
+          "headings": "plain"
+        },
+        "celebration": {
+          "type": "confetti"
+        },
+        "sounds": {
+          "pack": "chimes"
+        }
+      },
+      "names": {
+        "en": "Spring garden",
+        "cs": "Jarní zahrada",
+        "sk": "Tavaszi kert"
+      },
+      "style": {
+        "--color-primary-500": "#16a34a",
+        "--color-primary-50": "color-mix(in oklab, #16a34a 10%, white)",
+        "--color-primary-100": "color-mix(in oklab, #16a34a 20%, white)",
+        "--color-primary-200": "color-mix(in oklab, #16a34a 36%, white)",
+        "--color-primary-300": "color-mix(in oklab, #16a34a 56%, white)",
+        "--color-primary-400": "color-mix(in oklab, #16a34a 78%, white)",
+        "--color-primary-600": "color-mix(in oklab, #16a34a, black 16%)",
+        "--color-primary-700": "color-mix(in oklab, #16a34a, black 32%)",
+        "--color-primary-800": "color-mix(in oklab, #16a34a, black 46%)",
+        "--color-primary-900": "color-mix(in oklab, #16a34a, black 58%)",
+        "--color-primary-950": "color-mix(in oklab, #16a34a, black 72%)",
+        "--glow-primary": "22 163 74",
+        "--glow-primary-deep": "10 73 33",
+        "--color-accent-500": "#f9a8d4",
+        "--color-accent-50": "color-mix(in oklab, #f9a8d4 10%, white)",
+        "--color-accent-100": "color-mix(in oklab, #f9a8d4 20%, white)",
+        "--color-accent-200": "color-mix(in oklab, #f9a8d4 36%, white)",
+        "--color-accent-300": "color-mix(in oklab, #f9a8d4 56%, white)",
+        "--color-accent-400": "color-mix(in oklab, #f9a8d4 78%, white)",
+        "--color-accent-600": "color-mix(in oklab, #f9a8d4, black 16%)",
+        "--color-accent-700": "color-mix(in oklab, #f9a8d4, black 32%)",
+        "--color-accent-800": "color-mix(in oklab, #f9a8d4, black 46%)",
+        "--color-accent-900": "color-mix(in oklab, #f9a8d4, black 58%)",
+        "--color-accent-950": "color-mix(in oklab, #f9a8d4, black 72%)",
+        "--glow-accent": "249 168 212",
+        "--color-ground": "#07150b",
+        "--color-ground-top": "#0d2414",
+        "--color-ground-bottom": "#020703",
+        "--color-panel": "#0b1d10",
+        "--theme-font": "\"Nunito\", \"League Spartan\"",
+        "--theme-title-font": "\"Pacifico\", var(--theme-font, \"League Spartan\")"
+      },
+      "classes": "qn-corners-round qn-headings-plain"
+    }
+  ],
+  "themeForQuiz": [
+    {
+      "id": "default",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": "confetti"
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {},
+        "id": "default",
+        "name": {
+          "en": "Classic",
+          "cs": "Klasický",
+          "sk": "Klasszikus"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        }
+      }
+    },
+    {
+      "id": "halloween",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [
+          "halloween"
+        ],
+        "colors": {
+          "primary": "#8b3dff",
+          "accent": "#ff7a1a",
+          "groundTop": "#1d0c30",
+          "ground": "#0b0614",
+          "groundBottom": "#050208",
+          "panel": "#120a1d"
+        },
+        "fonts": {
+          "title": {
+            "family": "Rubik Wet Paint"
+          },
+          "body": {
+            "family": "Grenze"
+          }
+        },
+        "decoration": {
+          "type": "bats"
+        },
+        "style": {},
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "spooky"
+        },
+        "scenes": {},
+        "id": "halloween",
+        "name": {
+          "en": "Halloween",
+          "cs": "Halloween",
+          "sk": "Halloween"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#7c2bd9",
+              "x": 8,
+              "y": 92,
+              "size": 70,
+              "opacity": 0.24
+            },
+            {
+              "color": "#ff6a00",
+              "x": 70,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#3dd68c",
+              "x": 100,
+              "y": 40,
+              "size": 40,
+              "opacity": 0.05
+            }
+          ],
+          "ornament": "graveyard"
+        }
+      }
+    },
+    {
+      "id": "christmas",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [
+          "christmas"
+        ],
+        "colors": {
+          "primary": "#e0303a",
+          "accent": "#f5c542",
+          "groundTop": "#0f2a1d",
+          "ground": "#06150e",
+          "groundBottom": "#020805",
+          "panel": "#0a1d14"
+        },
+        "fonts": {
+          "title": {
+            "family": "Berkshire Swash"
+          },
+          "body": {
+            "family": "Playfair Display"
+          }
+        },
+        "decoration": {
+          "type": "snow"
+        },
+        "style": {},
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "festive"
+        },
+        "scenes": {},
+        "id": "christmas",
+        "name": {
+          "en": "Christmas",
+          "cs": "Vánoce",
+          "sk": "Karácsony"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#e0303a",
+              "x": 0,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#f5c542",
+              "x": 100,
+              "y": 0,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": "lights"
+        }
+      }
+    },
+    {
+      "id": "unknown",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": "confetti"
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {},
+        "id": "default",
+        "name": {
+          "en": "Classic",
+          "cs": "Klasický",
+          "sk": "Klasszikus"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        }
+      }
+    },
+    {
+      "id": "custom",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "deep-ocean",
+        "name": {
+          "en": "Deep ocean",
+          "cs": "Hlubina oceánu",
+          "sk": "Mély óceán"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+          "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+          "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+        },
+        "tags": [
+          "calm",
+          "blue"
+        ],
+        "colors": {
+          "primary": "#0284c7",
+          "accent": "#5eead4",
+          "groundTop": "#062a3d",
+          "ground": "#031621",
+          "groundBottom": "#01080d",
+          "panel": "#05202e"
+        },
+        "fonts": {
+          "title": {
+            "family": "Oswald"
+          },
+          "body": {
+            "family": "Nunito"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#14b8a6",
+              "x": 30,
+              "y": 100,
+              "size": 80,
+              "opacity": 0.2
+            },
+            {
+              "color": "#0ea5e9",
+              "x": 95,
+              "y": 20,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": "waves"
+        },
+        "decoration": {
+          "type": "bubbles"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "spotlight"
+          },
+          "dashboard": {
+            "layout": "tiles"
+          },
+          "round": {
+            "layout": "curtain"
+          },
+          "welcome": {
+            "intro": "spotlight"
+          }
+        },
+        "style": {
+          "cards": "glass"
+        },
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "chimes"
+        }
+      }
+    }
+  ],
+  "packs": [
+    {
+      "name": "root",
+      "base64": "UEsDBBQAAAAAALCKbV3SCJTQBAAAAAQAAAARAAAAYXNzZXRzL2ZvbnQud29mZjJmb250UEsDBBQAAAAAALCKbV1fBD3FBQAAAAUAAAANAAAAYXNzZXRzL2JnLnBuZ2ltYWdlUEsDBBQAAAAAALCKbV0RhQttLgYAAC4GAAAKAAAAdGhlbWUuanNvbnsKICAiZm9ybWF0IjogInF1aXpuaWdodC10aGVtZSIsCiAgInZlcnNpb24iOiAxLAogICJpZCI6ICJkZWVwLW9jZWFuIiwKICAibmFtZSI6IHsKICAgICJlbiI6ICJEZWVwIG9jZWFuIiwKICAgICJjcyI6ICJIbHViaW5hIG9jZcOhbnUiLAogICAgInNrIjogIk3DqWx5IMOzY2XDoW4iCiAgfSwKICAiYXV0aG9yIjogIlF1aXogTmlnaHQiLAogICJkZXNjcmlwdGlvbiI6IHsKICAgICJlbiI6ICJDYWxtIGJsdWVzIGFuZCB0ZWFsIGxpZ2h0IGZyb20gYmVsb3csIGVhc3kgb24gdGhlIGV5ZXMgZm9yIGEgbG9uZyBldmVuaW5nLiIsCiAgICAiY3MiOiAiS2xpZG7DqSBtb2Ryw6kgb2RzdMOtbnkgYSB0eXJreXNvdsOpIHN2xJt0bG8gemVzcG9kdSwgxaFldHJuw6kgayBvxI3DrW0gbmEgZGxvdWjDvSB2ZcSNZXIuIiwKICAgICJzayI6ICJOeXVnb2R0IGvDqWtlayDDqXMgYWx1bHLDs2wgasO2dsWRIHTDvHJraXogZsOpbnksIGvDrW3DqWxpIGEgc3plbWV0IGVneSBob3NzesO6IGVzdMOpbi4iCiAgfSwKICAidGFncyI6IFsKICAgICJjYWxtIiwKICAgICJibHVlIgogIF0sCiAgImNvbG9ycyI6IHsKICAgICJwcmltYXJ5IjogIiMwMjg0YzciLAogICAgImFjY2VudCI6ICIjNWVlYWQ0IiwKICAgICJncm91bmRUb3AiOiAiIzA2MmEzZCIsCiAgICAiZ3JvdW5kIjogIiMwMzE2MjEiLAogICAgImdyb3VuZEJvdHRvbSI6ICIjMDEwODBkIiwKICAgICJwYW5lbCI6ICIjMDUyMDJlIgogIH0sCiAgImZvbnRzIjogewogICAgImJvZHkiOiB7CiAgICAgICJmaWxlIjogImFzc2V0cy9mb250LndvZmYyIgogICAgfQogIH0sCiAgImJhY2tncm91bmQiOiB7CiAgICAiaW1hZ2UiOiAiYXNzZXRzL2JnLnBuZyIsCiAgICAiaW1hZ2VPcGFjaXR5IjogMC41LAogICAgImltYWdlQmx1ciI6IDAsCiAgICAiZ2xvd3MiOiBbCiAgICAgIHsKICAgICAgICAiY29sb3IiOiAiIzE0YjhhNiIsCiAgICAgICAgIngiOiAzMCwKICAgICAgICAieSI6IDEwMCwKICAgICAgICAic2l6ZSI6IDgwLAogICAgICAgICJvcGFjaXR5IjogMC4yCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiY29sb3IiOiAiIzBlYTVlOSIsCiAgICAgICAgIngiOiA5NSwKICAgICAgICAieSI6IDIwLAogICAgICAgICJzaXplIjogNTAsCiAgICAgICAgIm9wYWNpdHkiOiAwLjEKICAgICAgfQogICAgXSwKICAgICJvcm5hbWVudCI6ICJ3YXZlcyIKICB9LAogICJkZWNvcmF0aW9uIjogewogICAgInR5cGUiOiAiYnViYmxlcyIKICB9LAogICJzY2VuZXMiOiB7CiAgICAibGVhZGVyYm9hcmQiOiB7CiAgICAgICJsYXlvdXQiOiAic3BvdGxpZ2h0IgogICAgfSwKICAgICJkYXNoYm9hcmQiOiB7CiAgICAgICJsYXlvdXQiOiAidGlsZXMiCiAgICB9LAogICAgInJvdW5kIjogewogICAgICAibGF5b3V0IjogImN1cnRhaW4iCiAgICB9LAogICAgIndlbGNvbWUiOiB7CiAgICAgICJpbnRybyI6ICJzcG90bGlnaHQiCiAgICB9CiAgfSwKICAic3R5bGUiOiB7CiAgICAiY2FyZHMiOiAiZ2xhc3MiCiAgfSwKICAiY2VsZWJyYXRpb24iOiB7CiAgICAidHlwZSI6ICJkZWNvcmF0aW9uIgogIH0sCiAgInNvdW5kcyI6IHsKICAgICJwYWNrIjogImNoaW1lcyIKICB9Cn1QSwECFAAUAAAAAACwim1d0giU0AQAAAAEAAAAEQAAAAAAAAAAAAAAAAAAAAAAYXNzZXRzL2ZvbnQud29mZjJQSwECFAAUAAAAAACwim1dXwQ9xQUAAAAFAAAADQAAAAAAAAAAAAAAAAAzAAAAYXNzZXRzL2JnLnBuZ1BLAQIUABQAAAAAALCKbV0RhQttLgYAAC4GAAAKAAAAAAAAAAAAAAAAAGMAAAB0aGVtZS5qc29uUEsFBgAAAAADAAMAsgAAALkGAAAAAA==",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "deep-ocean",
+        "name": {
+          "en": "Deep ocean",
+          "cs": "Hlubina oceánu",
+          "sk": "Mély óceán"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+          "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+          "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+        },
+        "tags": [
+          "calm",
+          "blue"
+        ],
+        "colors": {
+          "primary": "#0284c7",
+          "accent": "#5eead4",
+          "groundTop": "#062a3d",
+          "ground": "#031621",
+          "groundBottom": "#01080d",
+          "panel": "#05202e"
+        },
+        "fonts": {
+          "body": {
+            "file": "assets/font.woff2"
+          }
+        },
+        "background": {
+          "image": "assets/bg.png",
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#14b8a6",
+              "x": 30,
+              "y": 100,
+              "size": 80,
+              "opacity": 0.2
+            },
+            {
+              "color": "#0ea5e9",
+              "x": 95,
+              "y": 20,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": "waves"
+        },
+        "decoration": {
+          "type": "bubbles"
+        },
+        "style": {
+          "cards": "glass"
+        },
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "chimes"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "spotlight"
+          },
+          "dashboard": {
+            "layout": "tiles"
+          },
+          "round": {
+            "layout": "curtain"
+          },
+          "welcome": {
+            "intro": "spotlight"
+          }
+        }
+      },
+      "problems": [],
+      "assets": [
+        {
+          "name": "assets/font.woff2",
+          "bytes": [
+            102,
+            111,
+            110,
+            116
+          ]
+        },
+        {
+          "name": "assets/bg.png",
+          "bytes": [
+            105,
+            109,
+            97,
+            103,
+            101
+          ]
+        }
+      ]
+    },
+    {
+      "name": "folder",
+      "base64": "UEsDBBQAAAAIALCKbV3SCJTQBgAAAAQAAAAYAAAAZm9sZGVyL2Fzc2V0cy9mb250LndvZmYyS8vPKwEAUEsDBBQAAAAIALCKbV1fBD3FBwAAAAUAAAAUAAAAZm9sZGVyL2Fzc2V0cy9iZy5wbmfLzE1MTwUAUEsDBBQAAAAIALCKbV0RhQtt2gIAAC4GAAARAAAAZm9sZGVyL3RoZW1lLmpzb259VLFy00AQ7fmKHadNjK3EwUkZKJhhCMMMHUNxktay0OlW3J1sZCafkIKaKqWLVJmhYKBS8l/snSRLZhIqze17u/t27+m+PQMYLUjnwo7OYfSlTDcqTZb2yC4xx9Ghg1eoTUqK8ak/p7GjxojFEUUoVMNSgvnn4AryCR199Io50HM4HhkXfy3LMFXCQfWNKjvQZA58W29lBfWdx0aMXPn6orRL0o7wnkXCpVPZdI7RRDotbKNxT8BLIXMIZYkGhIrBopAgXSYsNDGCktaHgMJUQAp4ZsCKubwQECBJJYArVKlKxvsDvJFprOot5BRr/lBsbH2rKk6ylc4qQyuOmtX9DysJNmgKistDeLhBq11aBnR/Xd/mwDuIJZXL+g+s8P4a9a5Ps4vLqkwotpDV2wwzqLc8hyylru8kfK5/rh6+g61/64wXsqi3qjpk5m3OC0xZitnwFVrApIIlGbOpfwGyzq0a91u1InEDfWyH43V1AtzWHO+T50UkSTtmu95Cp7nQldN4MAnmJ9GLLk9EESpvpoMZoohPOiDRVKr4AxVN0mkgjuN9rAGOp6fBdB+4IGspb+DpZD7Z5RVCoWzis2ASeMHNYAtSdqA3pNiJbU4OTqVz60gYg9Y8d+zxmhaLwFXgGrs6oYiynbq2GI+eDLPDZFyopNPk0XeFiFLrWk7GsyFwIUtn4kk3HxuwvwDYCexW7mebnoRzcdrW99hXjh+3NXzAdZpOhhGTbpzG+TBGA1VBG/ZjPtl6gmKGZ/+2PmtH2rUOHuk8e6rztOvsv95fjqHdC9I4Zy1WaPq7jDEiLfb/b1sV/grCMgzlkGzYfnzeESV7EHVIQvc36MKiotI345/T+jehvfpWTyzM8j9Zlg3ku/YZ+y7ZY0eltiL1r1nPX6OMaPBoOosoq+kxUf14tvLObaeLWKB/kRLJZuy3EKHE8KmdDfbZ13Xihz84+94rX6Z5u95nV38BUEsDBBQAAAAIALCKbV35SCyUCAAAAAYAAAAKAAAAdW51c2VkLnR4dCvNKy1OTQEAUEsBAhQAFAAAAAgAsIptXdIIlNAGAAAABAAAABgAAAAAAAAAAAAAAAAAAAAAAGZvbGRlci9hc3NldHMvZm9udC53b2ZmMlBLAQIUABQAAAAIALCKbV1fBD3FBwAAAAUAAAAUAAAAAAAAAAAAAAAAADwAAABmb2xkZXIvYXNzZXRzL2JnLnBuZ1BLAQIUABQAAAAIALCKbV0RhQtt2gIAAC4GAAARAAAAAAAAAAAAAAAAAHUAAABmb2xkZXIvdGhlbWUuanNvblBLAQIUABQAAAAIALCKbV35SCyUCAAAAAYAAAAKAAAAAAAAAAAAAAAAAH4DAAB1bnVzZWQudHh0UEsFBgAAAAAEAAQA/wAAAK4DAAAAAA==",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "deep-ocean",
+        "name": {
+          "en": "Deep ocean",
+          "cs": "Hlubina oceánu",
+          "sk": "Mély óceán"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+          "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+          "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+        },
+        "tags": [
+          "calm",
+          "blue"
+        ],
+        "colors": {
+          "primary": "#0284c7",
+          "accent": "#5eead4",
+          "groundTop": "#062a3d",
+          "ground": "#031621",
+          "groundBottom": "#01080d",
+          "panel": "#05202e"
+        },
+        "fonts": {
+          "body": {
+            "file": "assets/font.woff2"
+          }
+        },
+        "background": {
+          "image": "assets/bg.png",
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#14b8a6",
+              "x": 30,
+              "y": 100,
+              "size": 80,
+              "opacity": 0.2
+            },
+            {
+              "color": "#0ea5e9",
+              "x": 95,
+              "y": 20,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": "waves"
+        },
+        "decoration": {
+          "type": "bubbles"
+        },
+        "style": {
+          "cards": "glass"
+        },
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "chimes"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "spotlight"
+          },
+          "dashboard": {
+            "layout": "tiles"
+          },
+          "round": {
+            "layout": "curtain"
+          },
+          "welcome": {
+            "intro": "spotlight"
+          }
+        }
+      },
+      "problems": [
+        {
+          "code": "unused_file",
+          "detail": "unused.txt"
+        }
+      ],
+      "assets": [
+        {
+          "name": "assets/font.woff2",
+          "bytes": [
+            102,
+            111,
+            110,
+            116
+          ]
+        },
+        {
+          "name": "assets/bg.png",
+          "bytes": [
+            105,
+            109,
+            97,
+            103,
+            101
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bare",
+      "base64": "UEsDBBQAAAAAALCKbV0T7WJ6CwIAAAsCAAAKAAAAdGhlbWUuanNvbnsKICAiZm9ybWF0IjogInF1aXpuaWdodC10aGVtZSIsCiAgInZlcnNpb24iOiAxLAogICJhdXRob3IiOiAiUXVpeiBOaWdodCIsCiAgImRlc2NyaXB0aW9uIjoge30sCiAgInRhZ3MiOiBbXSwKICAiY29sb3JzIjoge30sCiAgImZvbnRzIjoge30sCiAgImRlY29yYXRpb24iOiB7CiAgICAidHlwZSI6IG51bGwKICB9LAogICJzdHlsZSI6IHt9LAogICJjZWxlYnJhdGlvbiI6IHsKICAgICJ0eXBlIjogImNvbmZldHRpIgogIH0sCiAgInNvdW5kcyI6IHsKICAgICJwYWNrIjogbnVsbAogIH0sCiAgInNjZW5lcyI6IHt9LAogICJpZCI6ICJkZWZhdWx0IiwKICAibmFtZSI6IHsKICAgICJlbiI6ICJDbGFzc2ljIiwKICAgICJjcyI6ICJLbGFzaWNrw70iLAogICAgInNrIjogIktsYXNzemlrdXMiCiAgfSwKICAiYmFja2dyb3VuZCI6IHsKICAgICJpbWFnZSI6IG51bGwsCiAgICAiaW1hZ2VPcGFjaXR5IjogMC41LAogICAgImltYWdlQmx1ciI6IDAsCiAgICAiZ2xvd3MiOiBbXSwKICAgICJvcm5hbWVudCI6IG51bGwKICB9Cn1QSwECFAAUAAAAAACwim1dE+1iegsCAAALAgAACgAAAAAAAAAAAAAAAAAAAAAAdGhlbWUuanNvblBLBQYAAAAAAQABADgAAAAzAgAAAAA=",
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "default",
+        "name": {
+          "en": "Classic",
+          "cs": "Klasický",
+          "sk": "Klasszikus"
+        },
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        },
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": "confetti"
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {}
+      },
+      "problems": [],
+      "assets": []
+    }
+  ],
+  "errors": [
+    {
+      "name": "random",
+      "base64": "cmFuZG9t",
+      "error": "bad_json"
+    },
+    {
+      "name": "missing",
+      "base64": "UEsDBBQAAAAIALCKbV2DFtyMAwAAAAEAAAAJAAAAb3RoZXIudHh0qwAAUEsBAhQAFAAAAAgAsIptXYMW3IwDAAAAAQAAAAkAAAAAAAAAAAAAAAAAAAAAAG90aGVyLnR4dFBLBQYAAAAAAQABADcAAAAqAAAAAAA=",
+      "error": "no_theme"
+    }
+  ],
+  "packName": [
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [],
+        "colors": {},
+        "fonts": {},
+        "decoration": {
+          "type": null
+        },
+        "style": {},
+        "celebration": {
+          "type": "confetti"
+        },
+        "sounds": {
+          "pack": null
+        },
+        "scenes": {},
+        "id": "default",
+        "name": {
+          "en": "Classic",
+          "cs": "Klasický",
+          "sk": "Klasszikus"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [],
+          "ornament": null
+        }
+      },
+      "name": "theme-default.zip"
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [
+          "halloween"
+        ],
+        "colors": {
+          "primary": "#8b3dff",
+          "accent": "#ff7a1a",
+          "groundTop": "#1d0c30",
+          "ground": "#0b0614",
+          "groundBottom": "#050208",
+          "panel": "#120a1d"
+        },
+        "fonts": {
+          "title": {
+            "family": "Rubik Wet Paint"
+          },
+          "body": {
+            "family": "Grenze"
+          }
+        },
+        "decoration": {
+          "type": "bats"
+        },
+        "style": {},
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "spooky"
+        },
+        "scenes": {},
+        "id": "halloween",
+        "name": {
+          "en": "Halloween",
+          "cs": "Halloween",
+          "sk": "Halloween"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#7c2bd9",
+              "x": 8,
+              "y": 92,
+              "size": 70,
+              "opacity": 0.24
+            },
+            {
+              "color": "#ff6a00",
+              "x": 70,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#3dd68c",
+              "x": 100,
+              "y": 40,
+              "size": 40,
+              "opacity": 0.05
+            }
+          ],
+          "ornament": "graveyard"
+        }
+      },
+      "name": "theme-halloween.zip"
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "author": "Quiz Night",
+        "description": {},
+        "tags": [
+          "christmas"
+        ],
+        "colors": {
+          "primary": "#e0303a",
+          "accent": "#f5c542",
+          "groundTop": "#0f2a1d",
+          "ground": "#06150e",
+          "groundBottom": "#020805",
+          "panel": "#0a1d14"
+        },
+        "fonts": {
+          "title": {
+            "family": "Berkshire Swash"
+          },
+          "body": {
+            "family": "Playfair Display"
+          }
+        },
+        "decoration": {
+          "type": "snow"
+        },
+        "style": {},
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "festive"
+        },
+        "scenes": {},
+        "id": "christmas",
+        "name": {
+          "en": "Christmas",
+          "cs": "Vánoce",
+          "sk": "Karácsony"
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#e0303a",
+              "x": 0,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#f5c542",
+              "x": 100,
+              "y": 0,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": "lights"
+        }
+      },
+      "name": "theme-christmas.zip"
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "deep-ocean",
+        "name": {
+          "en": "Deep ocean",
+          "cs": "Hlubina oceánu",
+          "sk": "Mély óceán"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+          "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+          "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+        },
+        "tags": [
+          "calm",
+          "blue"
+        ],
+        "colors": {
+          "primary": "#0284c7",
+          "accent": "#5eead4",
+          "groundTop": "#062a3d",
+          "ground": "#031621",
+          "groundBottom": "#01080d",
+          "panel": "#05202e"
+        },
+        "fonts": {
+          "title": {
+            "family": "Oswald"
+          },
+          "body": {
+            "family": "Nunito"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#14b8a6",
+              "x": 30,
+              "y": 100,
+              "size": 80,
+              "opacity": 0.2
+            },
+            {
+              "color": "#0ea5e9",
+              "x": 95,
+              "y": 20,
+              "size": 50,
+              "opacity": 0.1
+            }
+          ],
+          "ornament": "waves"
+        },
+        "decoration": {
+          "type": "bubbles"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "spotlight"
+          },
+          "dashboard": {
+            "layout": "tiles"
+          },
+          "round": {
+            "layout": "curtain"
+          },
+          "welcome": {
+            "intro": "spotlight"
+          }
+        },
+        "style": {
+          "cards": "glass"
+        },
+        "celebration": {
+          "type": "decoration"
+        },
+        "sounds": {
+          "pack": "chimes"
+        }
+      },
+      "name": "theme-deep-ocean.zip"
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "neon-arcade",
+        "name": {
+          "en": "Neon arcade",
+          "cs": "Neonová herna",
+          "sk": "Neon játékterem"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Hot pink and cyan glowing in the dark, for a loud party quiz.",
+          "cs": "Zářivě růžová a azurová ve tmě, pro hlučný párty kvíz.",
+          "sk": "Rikító rózsaszín és cián a sötétben, egy hangos parti kvízhez."
+        },
+        "tags": [
+          "party",
+          "neon"
+        ],
+        "colors": {
+          "primary": "#e81cc4",
+          "accent": "#22e5ff",
+          "groundTop": "#1a0533",
+          "ground": "#0a0118",
+          "groundBottom": "#030008",
+          "panel": "#12041f"
+        },
+        "fonts": {
+          "title": {
+            "family": "Monoton"
+          },
+          "body": {
+            "family": "Montserrat"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#ff2bd6",
+              "x": 0,
+              "y": 100,
+              "size": 70,
+              "opacity": 0.25
+            },
+            {
+              "color": "#22e5ff",
+              "x": 100,
+              "y": 0,
+              "size": 60,
+              "opacity": 0.18
+            },
+            {
+              "color": "#7c3aed",
+              "x": 50,
+              "y": 50,
+              "size": 90,
+              "opacity": 0.08
+            }
+          ],
+          "ornament": "skyline"
+        },
+        "decoration": {
+          "type": "stars"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "race"
+          },
+          "dashboard": {
+            "layout": "tiles"
+          },
+          "round": {
+            "layout": "marquee"
+          },
+          "welcome": {
+            "intro": "broadcast"
+          }
+        },
+        "style": {
+          "corners": "sharp",
+          "effects": "neon"
+        },
+        "celebration": {
+          "type": "fireworks"
+        },
+        "sounds": {
+          "pack": "arcade"
+        }
+      },
+      "name": "theme-neon-arcade.zip"
+    },
+    {
+      "theme": {
+        "format": "quiznight-theme",
+        "version": 1,
+        "id": "spring-garden",
+        "name": {
+          "en": "Spring garden",
+          "cs": "Jarní zahrada",
+          "sk": "Tavaszi kert"
+        },
+        "author": "Quiz Night",
+        "description": {
+          "en": "Fresh green with blossom pink and elegant headings, for spring and Easter quizzes.",
+          "cs": "Svěží zelená s květinově růžovou a elegantními nadpisy, pro jarní a velikonoční kvízy.",
+          "sk": "Friss zöld virágrózsaszínnel és elegáns címekkel, tavaszi és húsvéti kvízekhez."
+        },
+        "tags": [
+          "spring",
+          "easter"
+        ],
+        "colors": {
+          "primary": "#16a34a",
+          "accent": "#f9a8d4",
+          "groundTop": "#0d2414",
+          "ground": "#07150b",
+          "groundBottom": "#020703",
+          "panel": "#0b1d10"
+        },
+        "fonts": {
+          "title": {
+            "family": "Pacifico"
+          },
+          "body": {
+            "family": "Nunito"
+          }
+        },
+        "background": {
+          "image": null,
+          "imageOpacity": 0.5,
+          "imageBlur": 0,
+          "glows": [
+            {
+              "color": "#f472b6",
+              "x": 100,
+              "y": 100,
+              "size": 60,
+              "opacity": 0.14
+            },
+            {
+              "color": "#22c55e",
+              "x": 0,
+              "y": 0,
+              "size": 60,
+              "opacity": 0.12
+            }
+          ],
+          "ornament": "meadow"
+        },
+        "decoration": {
+          "type": "petals"
+        },
+        "scenes": {
+          "leaderboard": {
+            "layout": "medals"
+          },
+          "dashboard": {
+            "layout": "timeline"
+          },
+          "round": {
+            "layout": "slam"
+          },
+          "welcome": {
+            "intro": "polaroid"
+          }
+        },
+        "style": {
+          "corners": "round",
+          "headings": "plain"
+        },
+        "celebration": {
+          "type": "confetti"
+        },
+        "sounds": {
+          "pack": "chimes"
+        }
+      },
+      "name": "theme-spring-garden.zip"
+    }
+  ],
+  "workshop": {
+    "version": 1,
+    "themes": [
+      {
+        "path": "themes/deep-ocean/",
+        "addedAt": "2026-10-23",
+        "theme": {
+          "format": "quiznight-theme",
+          "version": 1,
+          "id": "deep-ocean",
+          "name": {
+            "en": "Deep ocean",
+            "cs": "Hlubina oceánu",
+            "sk": "Mély óceán"
+          },
+          "author": "Quiz Night",
+          "description": {
+            "en": "Calm blues and teal light from below, easy on the eyes for a long evening.",
+            "cs": "Klidné modré odstíny a tyrkysové světlo zespodu, šetrné k očím na dlouhý večer.",
+            "sk": "Nyugodt kékek és alulról jövő türkiz fény, kíméli a szemet egy hosszú estén."
+          },
+          "tags": [
+            "calm",
+            "blue"
+          ],
+          "colors": {
+            "primary": "#0284c7",
+            "accent": "#5eead4",
+            "groundTop": "#062a3d",
+            "ground": "#031621",
+            "groundBottom": "#01080d",
+            "panel": "#05202e"
+          },
+          "fonts": {
+            "title": {
+              "family": "Oswald"
+            },
+            "body": {
+              "family": "Nunito"
+            }
+          },
+          "background": {
+            "image": null,
+            "imageOpacity": 0.5,
+            "imageBlur": 0,
+            "glows": [
+              {
+                "color": "#14b8a6",
+                "x": 30,
+                "y": 100,
+                "size": 80,
+                "opacity": 0.2
+              },
+              {
+                "color": "#0ea5e9",
+                "x": 95,
+                "y": 20,
+                "size": 50,
+                "opacity": 0.1
+              }
+            ],
+            "ornament": "waves"
+          },
+          "decoration": {
+            "type": "bubbles"
+          },
+          "style": {
+            "cards": "glass"
+          },
+          "celebration": {
+            "type": "decoration"
+          },
+          "sounds": {
+            "pack": "chimes"
+          },
+          "scenes": {
+            "leaderboard": {
+              "layout": "spotlight"
+            },
+            "dashboard": {
+              "layout": "tiles"
+            },
+            "round": {
+              "layout": "curtain"
+            },
+            "welcome": {
+              "intro": "spotlight"
+            }
+          }
+        }
+      },
+      {
+        "path": "themes/neon-arcade/",
+        "addedAt": "2026-10-23",
+        "theme": {
+          "format": "quiznight-theme",
+          "version": 1,
+          "id": "neon-arcade",
+          "name": {
+            "en": "Neon arcade",
+            "cs": "Neonová herna",
+            "sk": "Neon játékterem"
+          },
+          "author": "Quiz Night",
+          "description": {
+            "en": "Hot pink and cyan glowing in the dark, for a loud party quiz.",
+            "cs": "Zářivě růžová a azurová ve tmě, pro hlučný párty kvíz.",
+            "sk": "Rikító rózsaszín és cián a sötétben, egy hangos parti kvízhez."
+          },
+          "tags": [
+            "party",
+            "neon"
+          ],
+          "colors": {
+            "primary": "#e81cc4",
+            "accent": "#22e5ff",
+            "groundTop": "#1a0533",
+            "ground": "#0a0118",
+            "groundBottom": "#030008",
+            "panel": "#12041f"
+          },
+          "fonts": {
+            "title": {
+              "family": "Monoton"
+            },
+            "body": {
+              "family": "Montserrat"
+            }
+          },
+          "background": {
+            "image": null,
+            "imageOpacity": 0.5,
+            "imageBlur": 0,
+            "glows": [
+              {
+                "color": "#ff2bd6",
+                "x": 0,
+                "y": 100,
+                "size": 70,
+                "opacity": 0.25
+              },
+              {
+                "color": "#22e5ff",
+                "x": 100,
+                "y": 0,
+                "size": 60,
+                "opacity": 0.18
+              },
+              {
+                "color": "#7c3aed",
+                "x": 50,
+                "y": 50,
+                "size": 90,
+                "opacity": 0.08
+              }
+            ],
+            "ornament": "skyline"
+          },
+          "decoration": {
+            "type": "stars"
+          },
+          "style": {
+            "corners": "sharp",
+            "effects": "neon"
+          },
+          "celebration": {
+            "type": "fireworks"
+          },
+          "sounds": {
+            "pack": "arcade"
+          },
+          "scenes": {
+            "leaderboard": {
+              "layout": "race"
+            },
+            "dashboard": {
+              "layout": "tiles"
+            },
+            "round": {
+              "layout": "marquee"
+            },
+            "welcome": {
+              "intro": "broadcast"
+            }
+          }
+        }
+      },
+      {
+        "path": "themes/spring-garden/",
+        "addedAt": "2026-10-23",
+        "theme": {
+          "format": "quiznight-theme",
+          "version": 1,
+          "id": "spring-garden",
+          "name": {
+            "en": "Spring garden",
+            "cs": "Jarní zahrada",
+            "sk": "Tavaszi kert"
+          },
+          "author": "Quiz Night",
+          "description": {
+            "en": "Fresh green with blossom pink and elegant headings, for spring and Easter quizzes.",
+            "cs": "Svěží zelená s květinově růžovou a elegantními nadpisy, pro jarní a velikonoční kvízy.",
+            "sk": "Friss zöld virágrózsaszínnel és elegáns címekkel, tavaszi és húsvéti kvízekhez."
+          },
+          "tags": [
+            "spring",
+            "easter"
+          ],
+          "colors": {
+            "primary": "#16a34a",
+            "accent": "#f9a8d4",
+            "groundTop": "#0d2414",
+            "ground": "#07150b",
+            "groundBottom": "#020703",
+            "panel": "#0b1d10"
+          },
+          "fonts": {
+            "title": {
+              "family": "Pacifico"
+            },
+            "body": {
+              "family": "Nunito"
+            }
+          },
+          "background": {
+            "image": null,
+            "imageOpacity": 0.5,
+            "imageBlur": 0,
+            "glows": [
+              {
+                "color": "#f472b6",
+                "x": 100,
+                "y": 100,
+                "size": 60,
+                "opacity": 0.14
+              },
+              {
+                "color": "#22c55e",
+                "x": 0,
+                "y": 0,
+                "size": 60,
+                "opacity": 0.12
+              }
+            ],
+            "ornament": "meadow"
+          },
+          "decoration": {
+            "type": "petals"
+          },
+          "style": {
+            "corners": "round",
+            "headings": "plain"
+          },
+          "celebration": {
+            "type": "confetti"
+          },
+          "sounds": {
+            "pack": "chimes"
+          },
+          "scenes": {
+            "leaderboard": {
+              "layout": "medals"
+            },
+            "dashboard": {
+              "layout": "timeline"
+            },
+            "round": {
+              "layout": "slam"
+            },
+            "welcome": {
+              "intro": "polaroid"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

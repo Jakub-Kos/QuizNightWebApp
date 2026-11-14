@@ -1,0 +1,716 @@
+[
+  {
+    "fn": "createQuiz",
+    "args": [
+      {}
+    ],
+    "output": {
+      "id": "fixed-id",
+      "title": "",
+      "createdAt": 123456,
+      "updatedAt": 123456,
+      "questionsCsv": "",
+      "questionsSheetUrl": "",
+      "scoresSheetUrl": "",
+      "teams": [],
+      "manualScores": {},
+      "rules": {
+        "enabled": true,
+        "items": null
+      },
+      "prizes": {
+        "enabled": true,
+        "first": "",
+        "second": "",
+        "third": "",
+        "extra": ""
+      },
+      "drive": null,
+      "settings": {
+        "showTime": true,
+        "startTime": "20:00",
+        "splitDelay": 3000,
+        "cycleDuration": 8000,
+        "headerInterval": 5000,
+        "language": "cs",
+        "welcomeLayout": "auto",
+        "introPause": 2600
+      }
+    }
+  },
+  {
+    "fn": "createQuiz",
+    "args": [
+      {
+        "title": "Český kvíz",
+        "settings": {
+          "language": "en",
+          "cycleDuration": 42
+        }
+      }
+    ],
+    "output": {
+      "id": "fixed-id",
+      "title": "Český kvíz",
+      "createdAt": 123456,
+      "updatedAt": 123456,
+      "questionsCsv": "",
+      "questionsSheetUrl": "",
+      "scoresSheetUrl": "",
+      "teams": [],
+      "manualScores": {},
+      "rules": {
+        "enabled": true,
+        "items": null
+      },
+      "prizes": {
+        "enabled": true,
+        "first": "",
+        "second": "",
+        "third": "",
+        "extra": ""
+      },
+      "drive": null,
+      "settings": {
+        "showTime": true,
+        "startTime": "20:00",
+        "splitDelay": 3000,
+        "cycleDuration": 42,
+        "headerInterval": 5000,
+        "language": "en",
+        "welcomeLayout": "auto",
+        "introPause": 2600
+      }
+    }
+  },
+  {
+    "fn": "resolveTeams",
+    "args": [
+      [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        }
+      ]
+    ],
+    "output": [
+      {
+        "id": "a",
+        "name": "Žluťoučký kůň",
+        "image": null,
+        "icon": "Brain",
+        "color": "from-purple-600 to-indigo-900",
+        "initials": "ŽK"
+      },
+      {
+        "id": "b",
+        "name": "Hvězda II",
+        "color": "from-blue-600 to-cyan-800",
+        "icon": "Rocket",
+        "image": "foto.JPG",
+        "initials": "HI"
+      },
+      {
+        "name": "A",
+        "icon": "Brain",
+        "id": 4,
+        "image": null,
+        "color": "from-emerald-600 to-teal-900",
+        "initials": "A"
+      }
+    ]
+  },
+  {
+    "fn": "teamHex",
+    "args": [
+      {
+        "id": "a",
+        "name": "Žluťoučký kůň"
+      },
+      0
+    ],
+    "output": "#9333ea"
+  },
+  {
+    "fn": "teamHex",
+    "args": [
+      {
+        "id": "b",
+        "name": "Hvězda II",
+        "color": "from-blue-600 to-cyan-800",
+        "icon": "Rocket",
+        "image": "foto.JPG"
+      },
+      1
+    ],
+    "output": "#2563eb"
+  },
+  {
+    "fn": "teamHex",
+    "args": [
+      {
+        "name": " "
+      },
+      2
+    ],
+    "output": "#2563eb"
+  },
+  {
+    "fn": "teamHex",
+    "args": [
+      {
+        "name": "A",
+        "icon": "unknown"
+      },
+      3
+    ],
+    "output": "#059669"
+  },
+  {
+    "fn": "newTeam",
+    "args": [
+      {
+        "name": "Čáp"
+      }
+    ],
+    "output": {
+      "id": "fixed-id",
+      "name": "Čáp",
+      "quote": "",
+      "players": 0,
+      "image": null,
+      "color": null,
+      "icon": "Brain",
+      "isNew": true
+    }
+  },
+  {
+    "fn": "importTeamsCsv",
+    "args": [
+      "Team name,Players,Quote,Photo\n\"Žluťoučký kůň\",5,\"A, B\",foto.JPG\n\nNew,2,pivo,https://example.com/p.jpg",
+      [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        }
+      ]
+    ],
+    "output": {
+      "teams": [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň",
+          "players": 5,
+          "quote": "A, B",
+          "image": "foto.JPG"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        },
+        {
+          "id": "fixed-id",
+          "name": "New",
+          "quote": "pivo",
+          "players": 2,
+          "image": null,
+          "color": null,
+          "icon": "Brain",
+          "isNew": true
+        }
+      ],
+      "added": 1,
+      "updated": 1
+    }
+  },
+  {
+    "fn": "importTeamsCsv",
+    "args": [
+      "Team,Players\nA,3x\nA,4",
+      [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        }
+      ]
+    ],
+    "output": {
+      "teams": [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown",
+          "players": 4
+        }
+      ],
+      "added": 0,
+      "updated": 2
+    }
+  },
+  {
+    "fn": "importHistoryCsv",
+    "args": [
+      "Team,rank 1,pořadí 2,accuracy\nŽluťoučký kůň,1,?,82.5%\nHvězda II,2,3,\"65,5%\"\n",
+      [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        }
+      ]
+    ],
+    "output": {
+      "teams": [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň",
+          "isNew": false,
+          "rankHistory": [
+            1,
+            "?"
+          ],
+          "bestRank": 1,
+          "podium": {
+            "first": 1,
+            "second": 0,
+            "third": 0
+          },
+          "correctRate": 82.5
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG",
+          "isNew": false,
+          "rankHistory": [
+            2,
+            3
+          ],
+          "bestRank": 2,
+          "podium": {
+            "first": 0,
+            "second": 1,
+            "third": 1
+          },
+          "correctRate": 65.5
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        }
+      ],
+      "matched": 2,
+      "total": 2
+    }
+  },
+  {
+    "fn": "addTeamsFromScores",
+    "args": [
+      {
+        "teams": [
+          {
+            "name": "ŽLUŤOUČKÝ KŮŇ"
+          },
+          {
+            "name": "Nový"
+          }
+        ]
+      },
+      [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        }
+      ]
+    ],
+    "output": {
+      "teams": [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        },
+        {
+          "id": "fixed-id",
+          "name": "Nový",
+          "quote": "",
+          "players": 0,
+          "image": null,
+          "color": null,
+          "icon": "Brain",
+          "isNew": true
+        }
+      ],
+      "added": 1,
+      "existing": 1
+    }
+  },
+  {
+    "fn": "teamImageName",
+    "args": [
+      {
+        "id": "a",
+        "name": "Žluťoučký kůň"
+      },
+      "PHOTO.JPG"
+    ],
+    "output": "team-a.jpg"
+  },
+  {
+    "fn": "teamForScores",
+    "args": [
+      [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        }
+      ],
+      {
+        "id": "b",
+        "name": "x"
+      }
+    ],
+    "output": {
+      "id": "b",
+      "name": "Hvězda II",
+      "color": "from-blue-600 to-cyan-800",
+      "icon": "Rocket",
+      "image": "foto.JPG"
+    }
+  },
+  {
+    "fn": "teamForScores",
+    "args": [
+      [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        }
+      ],
+      {
+        "name": " žluťoučký kůň "
+      }
+    ],
+    "output": {
+      "id": "a",
+      "name": "Žluťoučký kůň"
+    }
+  },
+  {
+    "fn": "teamForScores",
+    "args": [
+      [
+        {
+          "id": "a",
+          "name": "Žluťoučký kůň"
+        },
+        {
+          "id": "b",
+          "name": "Hvězda II",
+          "color": "from-blue-600 to-cyan-800",
+          "icon": "Rocket",
+          "image": "foto.JPG"
+        },
+        {
+          "name": " "
+        },
+        {
+          "name": "A",
+          "icon": "unknown"
+        }
+      ],
+      {
+        "name": "missing"
+      }
+    ],
+    "output": null
+  },
+  {
+    "fn": "isPresent",
+    "args": [
+      {}
+    ],
+    "output": true
+  },
+  {
+    "fn": "isPresent",
+    "args": [
+      {
+        "present": false
+      }
+    ],
+    "output": false
+  },
+  {
+    "fn": "isPresent",
+    "args": [
+      {
+        "present": true
+      }
+    ],
+    "output": true
+  },
+  {
+    "fn": "seatDirection",
+    "args": [
+      null
+    ],
+    "output": null
+  },
+  {
+    "fn": "directionText",
+    "args": [
+      null,
+      {
+        "att_dir_front": "ahead",
+        "att_dir_left": "{deg} left",
+        "att_dir_right": "{deg} right"
+      }
+    ],
+    "output": null
+  },
+  {
+    "fn": "seatDirection",
+    "args": [
+      {
+        "angle": 0,
+        "dist": 0.5
+      }
+    ],
+    "output": {
+      "deg": 0,
+      "side": "front"
+    }
+  },
+  {
+    "fn": "directionText",
+    "args": [
+      {
+        "angle": 0,
+        "dist": 0.5
+      },
+      {
+        "att_dir_front": "ahead",
+        "att_dir_left": "{deg} left",
+        "att_dir_right": "{deg} right"
+      }
+    ],
+    "output": "ahead"
+  },
+  {
+    "fn": "seatDirection",
+    "args": [
+      {
+        "angle": -42.5
+      }
+    ],
+    "output": {
+      "deg": 45,
+      "side": "left"
+    }
+  },
+  {
+    "fn": "directionText",
+    "args": [
+      {
+        "angle": -42.5
+      },
+      {
+        "att_dir_front": "ahead",
+        "att_dir_left": "{deg} left",
+        "att_dir_right": "{deg} right"
+      }
+    ],
+    "output": "45 left"
+  },
+  {
+    "fn": "seatDirection",
+    "args": [
+      {
+        "angle": 2.4
+      }
+    ],
+    "output": {
+      "deg": 0,
+      "side": "front"
+    }
+  },
+  {
+    "fn": "directionText",
+    "args": [
+      {
+        "angle": 2.4
+      },
+      {
+        "att_dir_front": "ahead",
+        "att_dir_left": "{deg} left",
+        "att_dir_right": "{deg} right"
+      }
+    ],
+    "output": "ahead"
+  },
+  {
+    "fn": "seatDirection",
+    "args": [
+      {
+        "angle": 87
+      }
+    ],
+    "output": {
+      "deg": 85,
+      "side": "right"
+    }
+  },
+  {
+    "fn": "directionText",
+    "args": [
+      {
+        "angle": 87
+      },
+      {
+        "att_dir_front": "ahead",
+        "att_dir_left": "{deg} left",
+        "att_dir_right": "{deg} right"
+      }
+    ],
+    "output": "85 right"
+  }
+]

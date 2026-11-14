@@ -1,0 +1,2839 @@
+[
+  {
+    "name": "public/questions.csv",
+    "input": "Kolo,Q#,Otázka,Typ Odpovědi,A,B,C,D,Správná odpověď,Zdroj\nKolo 1 - Aktuální přehled,1,\"Jaké je druhové jméno virální opičky Punch, která se proslavila svou láskou k plyšovému orangutanovi poté, co ji odvrhla její biologická matka? Pozn.: Druhové jméno je např. orangutan bornejský případně latinsky Pongo pygmaeus.\",Written,,,,,\"Makak červenolící, též japonský, lat. Macaca fuscata\",\n,2,\"Jak se jmenuje aktuální vesmírný program americké NASA, v rámci kterého má poprvé po více než 50 letech obletět Měsíc lidská posádka (konkrétně během chystané mise s pořadovým číslem II)?\",Written,,,,,Artemis,\n,3,\"Letošní poločasovou show na Super Bowlu obstaral rapper a zpěvák Bad Bunny, který se stal vůbec prvním sólovým latinskoamerickým umělcem v této hlavní roli. Z jakého nezačleněného ostrovního území USA v Karibiku tento interpret pochází?\",Written,,,,,Portoriko,\n,4,\"Jaký se jmenuje hlavní opoziční strana, která má dle průzkumů šanci vyhrát nad vládním Fidesz Viktora Orbána v následujících maďarských parlamentních volbách?\",Written,,,,,\"Respekt a svoboda, Tisztelet és Szabadság Párt nebo Tisza\",\n,5,\"Izrael a Írán nesdílejí hranice. Minimálně které dvě země byste museli překonat, abyste se z Izraele do Íránu dostali?\",Written,,,,,Sýrii a Irák nebo Jordánsko a Irák,\n,6,Z jakého důvodu nosil francouzský prezident na ekonomickém fóru v Davosu brýle?,Written,,,,,Měl prasklou žilku v oku,\n,7,Ve kterém městě se v březnu 2026 koná Mistrovství světa v krasobruslení?,Written,,,,,Praha,\n,8,\"Který velký fotbalový turnaj se uskuteční v létě 2026 v USA, Kanadě a Mexiku?\",Written,,,,,MS vo futbale 2026,\n,9,Začátkem roku 2026 vyšla nová série populárního romantického seriálu Bridgerton. Na které streamovací platformě je tento seriál k dispozici?,Written,,,,,Netflix,\n,10,Jaký výrazný prvek přibyl v uplynulých dnech na budově slovenského ministerstva obrany známém též jako Kukurica?,Written,,,,,LED panel,\nKolo 2 - True Crime,1,\"Po kom nebo po čem je v České republice pojmenován tzv. „švarcsystém“, tedy nelegální zaměstnávání lidí na živnostenský list (IČO)?\",ABCD,\"Po bývalém ministrovi financí z 90. let, který proti této praxi tvrdě bojoval.\",\"Jde o počeštělý německý výraz „Schwarzsystem“, což v překladu znamená černý systém nebo práce načerno.\",\"Po podnikateli Miroslavu Švarcovi, majiteli stavební firmy, který tento způsob spolupráce v 90. letech masivně proslavil.\",Jde o zkratku ze slovního spojení „Špatně Vykázaná A Realizovaná Činnost“.,C,\n,2,\"V jedné z nejbizarnějších kriminálních kauz české sportovní historie, fotbalovém korupčním skandálu z roku 2004, zlidověly díky policejním odposlechům žižkovského bosse Ivana Horníka tajné výrazy pro úplatky. Zatímco tisícikorunám se v lize běžně říkalo „kapříci“, pro částku 30 tisíc korun použil Horník měnu ze sadu, když do telefonu rozhodčímu sliboval takzvaný „třicetník...“. Jakého ovoce?\",ABCD,Jablek,Hrušek,Švestek,Třešní,A,\n,3,\"Americký matematik Theodore Kaczynski terorizoval USA po téměř dvě desetiletí tím, že rozesílal podomácku vyrobené bomby poštou, často univerzitám nebo aerolinkám. Pod jakou přezdívkou, kterou mu dala FBI, vešel do dějin?\",Written,,,,,Unabomber,\n,4,\"V roce 1985 děsil Prahu teprve šestnáctiletý sériový vrah Jiří Straka, který kvůli tehdejší masové sportovní akci získal přezdívku „spartakiádní vrah“. Jak zní přesný název aktuálního českého seriálu z platformy Voyo, který se věnuje jeho dopadení a navazuje na předchozí hit o případu Ladislava Hojera?\",Written,,,,,Metoda Markovič: Straka,\n,5,\"Slavný mafiánský boss Al Capone nebyl nakonec uvězněn za vraždy nebo pašování alkoholu, ale za jeden úplně jiný zločin. Za jaký?\",Written,,,,,Daňové úniky (krácení daní),\n,6,\"V roce 1971 unesl elegantně oblečený muž známý jako D. B. Cooper letadlo, získal výkupné 200 tisíc dolarů a následně vyskočil s padákem do noční bouře. Nikdy nebyl dopaden a případ zůstává jedním z nejslavnějších nevyřešených zločinů FBI. Jaká byla vůbec jediná hmatatelná stopa spojená s jeho útěkem, která se s odstupem let (v roce 1980) našla v přírodě?\",ABCD,Jeho rozevřený padák zachycený ve větvích stromů na severozápadě USA.,\"Část rozpadajících se bankovek z výkupného, které našel malý chlapec na břehu řeky.\",\"Jeho typické černé sluneční brýle a polobotky, pohozené u lesní cesty.\",\"Lidská kostra v obleku, u které se ale nepodařilo potvrdit DNA.\",B,\n,7,\"V první polovině 90. let se takzvaný orlický gang zbavoval těl svých obětí tím, že je házel na dno přehrady Orlík. Přehrada je sice velmi rozlehlá, ale vrazi si pro shazování vybrali jeden konkrétní, velmi známý a vysoký ocelový most, ze kterého měli jistotu, že těla dopadnou do obrovské hloubky a už je nikdo nenajde. Jak se tento most jmenuje?\",ABCD,Zvíkovský most,Cholínský most,Žďákovský most,Železniční most u Červené (Červenský most),C,\n,8,\"Simon Leviev, známý z hitového dokumentu Podvodník z Tinderu, lákal z žen po celé Evropě miliony dolarů. Aby je ohromil svým falešným bohatstvím a luxusním životním stylem, vydával se za syna miliardáře a dědice obřího impéria. S jakou komoditou měla jeho falešná rodinná firma (LLD) obchodovat?\",ABCD,S ropou,Se zlatem,S kryptoměnami,S diamanty,D,\n,9,\"Nejznámější český trestanec Jiří Kajínek se proslavil v roce 2000, kdy se mu jako jednomu z mála podařilo uprchnout z jedné z nejpřísněji střežených věznic u nás. Z jaké věznice utekl?\",Written,,,,,Z Mírova (Věznice Mírov),\n,10,\"Soudní proces s O. J. Simpsonem přinesl jeden z nejslavnějších citátů v historii americké justice. Obhájce Johnnie Cochran tehdy směrem k porotě pronesl: „If it doesn't fit, you must acquit“. O jaký předmět tehdy šlo?\",Written,,,,,Kožená rukavice (stačí rukavice),\nKolo 3 - Olympiada,1,Ve kterém z těchto měst se OH nekonaly?,ABCD,Salt Lake City,Chicago,Los Angeles,Londýn,B,\n,2,Norsko na letošní olympiádě získalo nejvíce medailí. Kolik jich bylo?,Numeric,,,,,41,\n,3,Na kolikátém místě skončila na letošní olympiádě česká smíšená dvojice v curlingu?,Numeric,,,,,8,\n,4,Který sportovec nasbíral za tuto olympiádu nejvíce medailí?,Written,,,,,\"Johannes Hoesflot Klaebo (6 zlatých, Norsko)\",\n,5,\"Jaký je světový rekord v hodu oštěpem Jana Železného z roku 1996, který ho drží dodnes?\",Written,,,,,\"98,48 m\",\n,6,V jakém městě se konaly první novodobé olympijské hry v roce 1896?,Written,,,,,Athény,\n,7,Jaké zvíře překvapilo surfaře u Tahiti při OH 2024?,Written,,,,,Velryba,\n,8,\"Jak se jmenuje stadion, kde byly zahájeny OH 2026?\",ABCD,San Siro Stadium,Allianz Stadium,Stadio Olimpico,Renato Dall'Ara Stadium,A,\n,9,Na kterých OH byl poprvé stejný počet sportovců a sportovkyň?,Written,,,,,Paříž 2024,\n,10,Který zcela nový sport přinesly OH 2026?,Written,,,,,Skialpinismus (ski mountaineering),\nKolo 4 - 10 nejčastějších jmen v Česku za rok 2024,1,Top 5 chlapčenských,Top5,,,,,Jakub,\n,2,,,,,,,Matyáš,\n,3,,,,,,,Jan,\n,4,,,,,,,Adam,\n,5,,,,,,,Matej,\n,6,Top 5 dievčenských,Top5,,,,,Eliška,\n,7,,,,,,,Viktorie,\n,8,,,,,,,Sofie,\n,9,,,,,,,Anna,\n,10,,,,,,,Natálie,\nKolo 5 - Time Guesser,1,Kdy a kde? (město. ± 1 rok),Image,,,,,\"Berlín, 1989\",pad_BM2.webp\n,2,Kdy a kde? (město. ± 1 rok),Image,,,,,\"New York, 2001\",9_11.jpeg\n,3,Kdy a kde? (město. ± 1 rok),Image,,,,,\"Praha, 1989\",1989.jpg\n,4,Kdy a kde? (město. ± 1 rok),Image,,,,,\"Washington D.C, 2021\",Capitol.avif\n,5,Kdy a kde? (město. ± 1 rok),Image,,,,,\"Rím, 2020\",Lockdown.jpg\n,6,Kdy a kde? (město. ± 1 rok),Image,,,,,Paříž 1944,1944paris.jpg\n,7,Kdy a kde? (město. ± 1 rok),Image,,,,,Nay Pyi Taw 2021 (Myanmar),myanmar2021.png\n,8,Kdy a kde? (město. ± 1 rok),Image,,,,,Peking 1989,Tiananmen89.jpg\n,9,Kdy a kde? (město. ± 1 rok),Image,,,,,Moskva 1993,Rus93.jpg\n,10,Kdy a kde? (město. ± 1 rok),Image,,,,,Kyiv 2014,kyiv14.jpg\nKolo 6 - AZ kvíz,1,\"Jak se jmenuje slavná divadelní hra irského dramatika George Bernarda Shawa, podle které později vznikl muzikál My Fair Lady?\",Image,,,,,Pygmalion,hexagon-P.png\n,2,\"Jak se nazývá věda, která zkoumá jazyk, literaturu a ústní lidovou slovesnost národa v daném kulturním a historickém kontextu?\",Image,,,,,Filologie,hexagon-F.png\n,3,\"Který vzácný plyn, jehož název z řečtiny v překladu znamená „skrytý“, má chemickou značku Kr?\",Image,,,,,Krypton,hexagon-K.png\n,4,\"Jaké je příjmení francouzského prokletého básníka, který v 19. století způsobil skandál svou sbírkou Květy zla?\",Image,,,,,Baudelaire,hexagon-B.png\n,5,\"Jaká mytologická bytost s tělem lva a ženskou hlavou hlídala vchod do starověkých Théb a zabíjela ty, kdo neuhodli její hádanku?\",Image,,,,,Sfinga,hexagon-S.png\n,6,\"Jak se nazývá chemicko-technologický proces, při kterém se surový přírodní kaučuk mění na pružnou pryž (gumu) přidáním síry a působením tepla?\",Image,,,,,Vulkanizace,hexagon-V.png\n,7,\"Jaké bylo příjmení jihoafrického bojovníka proti apartheidu, který strávil 27 let ve vězení, než se stal prvním černošským prezidentem své země?\",Image,,,,,Mandela,hexagon-M.png\n,8,\"Strom z čeledi borovicovitých, rozšířený hlavně ve Středomoří, dosahuje vysokého stáří a je ceněn pro lehké, měkké a vonné dřevo. Je národním stromem Libanonu a nachází se na jeho státním znaku i vlajce. O který strom se jedná??\",Image,,,,,Cedr,hexagon-C.png\n,9,\"Jaké čestné jméno, znamenající „Vznešený“, přijal první římský císař Gaius Octavius po svém upevnění moci?\",Image,,,,,Augustus,hexagon-A.png\n,10,Jak se odborně (cizím slovem) nazývá nažloutlá tělní tekutina – česky míza – která koluje ve vlastních cévách a má klíčový význam pro imunitu?,Image,,,,,Lymfa,hexagon-L.png\nKolo X - TEST,1,Example Q1,ABCD,A,B,C,D,A,\n,2,Example Q2,Yes/No,,,,,Yes,\n,3,Example Q3,Written,Název,,,,Eiffel Tower,\n,4,Example Q4,Numeric,Číslo,,,,8,\n,5,Kolik lidí ma klobouk,PImage,,,,,Eiffel Tower,1944paris.jpg\n,6,Kdo dal gól,PVideo,,,,,B,video.mp4\n,7,Co je na obrázku,Image,,,,,Eiffel Tower,1944paris.jpg\n,8,Co je to za znělku,Audio,,,,,Eiffel Tower,audio.m4a\n,9,Co je na videu,Video,,,,,Eiffel Tower,video.mp4\n,10,Example Q10,Written,,,,,Eiffel Tower,",
+    "output": [
+      {
+        "id": "round-1",
+        "number": "1",
+        "title": "Aktuální přehled",
+        "rows": [
+          [
+            "Kolo 1 - Aktuální přehled",
+            "1",
+            "Jaké je druhové jméno virální opičky Punch, která se proslavila svou láskou k plyšovému orangutanovi poté, co ji odvrhla její biologická matka? Pozn.: Druhové jméno je např. orangutan bornejský případně latinsky Pongo pygmaeus.",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Makak červenolící, též japonský, lat. Macaca fuscata",
+            ""
+          ],
+          [
+            "",
+            "2",
+            "Jak se jmenuje aktuální vesmírný program americké NASA, v rámci kterého má poprvé po více než 50 letech obletět Měsíc lidská posádka (konkrétně během chystané mise s pořadovým číslem II)?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Artemis",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "Letošní poločasovou show na Super Bowlu obstaral rapper a zpěvák Bad Bunny, který se stal vůbec prvním sólovým latinskoamerickým umělcem v této hlavní roli. Z jakého nezačleněného ostrovního území USA v Karibiku tento interpret pochází?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Portoriko",
+            ""
+          ],
+          [
+            "",
+            "4",
+            "Jaký se jmenuje hlavní opoziční strana, která má dle průzkumů šanci vyhrát nad vládním Fidesz Viktora Orbána v následujících maďarských parlamentních volbách?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Respekt a svoboda, Tisztelet és Szabadság Párt nebo Tisza",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "Izrael a Írán nesdílejí hranice. Minimálně které dvě země byste museli překonat, abyste se z Izraele do Íránu dostali?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Sýrii a Irák nebo Jordánsko a Irák",
+            ""
+          ],
+          [
+            "",
+            "6",
+            "Z jakého důvodu nosil francouzský prezident na ekonomickém fóru v Davosu brýle?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Měl prasklou žilku v oku",
+            ""
+          ],
+          [
+            "",
+            "7",
+            "Ve kterém městě se v březnu 2026 koná Mistrovství světa v krasobruslení?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Praha",
+            ""
+          ],
+          [
+            "",
+            "8",
+            "Který velký fotbalový turnaj se uskuteční v létě 2026 v USA, Kanadě a Mexiku?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "MS vo futbale 2026",
+            ""
+          ],
+          [
+            "",
+            "9",
+            "Začátkem roku 2026 vyšla nová série populárního romantického seriálu Bridgerton. Na které streamovací platformě je tento seriál k dispozici?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Netflix",
+            ""
+          ],
+          [
+            "",
+            "10",
+            "Jaký výrazný prvek přibyl v uplynulých dnech na budově slovenského ministerstva obrany známém též jako Kukurica?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "LED panel",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Jaké je druhové jméno virální opičky Punch, která se proslavila svou láskou k plyšovému orangutanovi poté, co ji odvrhla její biologická matka? Pozn.: Druhové jméno je např. orangutan bornejský případně latinsky Pongo pygmaeus.",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Makak červenolící, též japonský, lat. Macaca fuscata",
+            "media": null
+          },
+          {
+            "id": "2",
+            "text": "Jak se jmenuje aktuální vesmírný program americké NASA, v rámci kterého má poprvé po více než 50 letech obletět Měsíc lidská posádka (konkrétně během chystané mise s pořadovým číslem II)?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Artemis",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "Letošní poločasovou show na Super Bowlu obstaral rapper a zpěvák Bad Bunny, který se stal vůbec prvním sólovým latinskoamerickým umělcem v této hlavní roli. Z jakého nezačleněného ostrovního území USA v Karibiku tento interpret pochází?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Portoriko",
+            "media": null
+          },
+          {
+            "id": "4",
+            "text": "Jaký se jmenuje hlavní opoziční strana, která má dle průzkumů šanci vyhrát nad vládním Fidesz Viktora Orbána v následujících maďarských parlamentních volbách?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Respekt a svoboda, Tisztelet és Szabadság Párt nebo Tisza",
+            "media": null
+          },
+          {
+            "id": "5",
+            "text": "Izrael a Írán nesdílejí hranice. Minimálně které dvě země byste museli překonat, abyste se z Izraele do Íránu dostali?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Sýrii a Irák nebo Jordánsko a Irák",
+            "media": null
+          },
+          {
+            "id": "6",
+            "text": "Z jakého důvodu nosil francouzský prezident na ekonomickém fóru v Davosu brýle?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Měl prasklou žilku v oku",
+            "media": null
+          },
+          {
+            "id": "7",
+            "text": "Ve kterém městě se v březnu 2026 koná Mistrovství světa v krasobruslení?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Praha",
+            "media": null
+          },
+          {
+            "id": "8",
+            "text": "Který velký fotbalový turnaj se uskuteční v létě 2026 v USA, Kanadě a Mexiku?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "MS vo futbale 2026",
+            "media": null
+          },
+          {
+            "id": "9",
+            "text": "Začátkem roku 2026 vyšla nová série populárního romantického seriálu Bridgerton. Na které streamovací platformě je tento seriál k dispozici?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Netflix",
+            "media": null
+          },
+          {
+            "id": "10",
+            "text": "Jaký výrazný prvek přibyl v uplynulých dnech na budově slovenského ministerstva obrany známém též jako Kukurica?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "LED panel",
+            "media": null
+          }
+        ]
+      },
+      {
+        "id": "round-2",
+        "number": "2",
+        "title": "True Crime",
+        "rows": [
+          [
+            "Kolo 2 - True Crime",
+            "1",
+            "Po kom nebo po čem je v České republice pojmenován tzv. „švarcsystém“, tedy nelegální zaměstnávání lidí na živnostenský list (IČO)?",
+            "ABCD",
+            "Po bývalém ministrovi financí z 90. let, který proti této praxi tvrdě bojoval.",
+            "Jde o počeštělý německý výraz „Schwarzsystem“, což v překladu znamená černý systém nebo práce načerno.",
+            "Po podnikateli Miroslavu Švarcovi, majiteli stavební firmy, který tento způsob spolupráce v 90. letech masivně proslavil.",
+            "Jde o zkratku ze slovního spojení „Špatně Vykázaná A Realizovaná Činnost“.",
+            "C",
+            ""
+          ],
+          [
+            "",
+            "2",
+            "V jedné z nejbizarnějších kriminálních kauz české sportovní historie, fotbalovém korupčním skandálu z roku 2004, zlidověly díky policejním odposlechům žižkovského bosse Ivana Horníka tajné výrazy pro úplatky. Zatímco tisícikorunám se v lize běžně říkalo „kapříci“, pro částku 30 tisíc korun použil Horník měnu ze sadu, když do telefonu rozhodčímu sliboval takzvaný „třicetník...“. Jakého ovoce?",
+            "ABCD",
+            "Jablek",
+            "Hrušek",
+            "Švestek",
+            "Třešní",
+            "A",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "Americký matematik Theodore Kaczynski terorizoval USA po téměř dvě desetiletí tím, že rozesílal podomácku vyrobené bomby poštou, často univerzitám nebo aerolinkám. Pod jakou přezdívkou, kterou mu dala FBI, vešel do dějin?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Unabomber",
+            ""
+          ],
+          [
+            "",
+            "4",
+            "V roce 1985 děsil Prahu teprve šestnáctiletý sériový vrah Jiří Straka, který kvůli tehdejší masové sportovní akci získal přezdívku „spartakiádní vrah“. Jak zní přesný název aktuálního českého seriálu z platformy Voyo, který se věnuje jeho dopadení a navazuje na předchozí hit o případu Ladislava Hojera?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Metoda Markovič: Straka",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "Slavný mafiánský boss Al Capone nebyl nakonec uvězněn za vraždy nebo pašování alkoholu, ale za jeden úplně jiný zločin. Za jaký?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Daňové úniky (krácení daní)",
+            ""
+          ],
+          [
+            "",
+            "6",
+            "V roce 1971 unesl elegantně oblečený muž známý jako D. B. Cooper letadlo, získal výkupné 200 tisíc dolarů a následně vyskočil s padákem do noční bouře. Nikdy nebyl dopaden a případ zůstává jedním z nejslavnějších nevyřešených zločinů FBI. Jaká byla vůbec jediná hmatatelná stopa spojená s jeho útěkem, která se s odstupem let (v roce 1980) našla v přírodě?",
+            "ABCD",
+            "Jeho rozevřený padák zachycený ve větvích stromů na severozápadě USA.",
+            "Část rozpadajících se bankovek z výkupného, které našel malý chlapec na břehu řeky.",
+            "Jeho typické černé sluneční brýle a polobotky, pohozené u lesní cesty.",
+            "Lidská kostra v obleku, u které se ale nepodařilo potvrdit DNA.",
+            "B",
+            ""
+          ],
+          [
+            "",
+            "7",
+            "V první polovině 90. let se takzvaný orlický gang zbavoval těl svých obětí tím, že je házel na dno přehrady Orlík. Přehrada je sice velmi rozlehlá, ale vrazi si pro shazování vybrali jeden konkrétní, velmi známý a vysoký ocelový most, ze kterého měli jistotu, že těla dopadnou do obrovské hloubky a už je nikdo nenajde. Jak se tento most jmenuje?",
+            "ABCD",
+            "Zvíkovský most",
+            "Cholínský most",
+            "Žďákovský most",
+            "Železniční most u Červené (Červenský most)",
+            "C",
+            ""
+          ],
+          [
+            "",
+            "8",
+            "Simon Leviev, známý z hitového dokumentu Podvodník z Tinderu, lákal z žen po celé Evropě miliony dolarů. Aby je ohromil svým falešným bohatstvím a luxusním životním stylem, vydával se za syna miliardáře a dědice obřího impéria. S jakou komoditou měla jeho falešná rodinná firma (LLD) obchodovat?",
+            "ABCD",
+            "S ropou",
+            "Se zlatem",
+            "S kryptoměnami",
+            "S diamanty",
+            "D",
+            ""
+          ],
+          [
+            "",
+            "9",
+            "Nejznámější český trestanec Jiří Kajínek se proslavil v roce 2000, kdy se mu jako jednomu z mála podařilo uprchnout z jedné z nejpřísněji střežených věznic u nás. Z jaké věznice utekl?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Z Mírova (Věznice Mírov)",
+            ""
+          ],
+          [
+            "",
+            "10",
+            "Soudní proces s O. J. Simpsonem přinesl jeden z nejslavnějších citátů v historii americké justice. Obhájce Johnnie Cochran tehdy směrem k porotě pronesl: „If it doesn't fit, you must acquit“. O jaký předmět tehdy šlo?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Kožená rukavice (stačí rukavice)",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Po kom nebo po čem je v České republice pojmenován tzv. „švarcsystém“, tedy nelegální zaměstnávání lidí na živnostenský list (IČO)?",
+            "type": "ABCD",
+            "options": {
+              "A": "Po bývalém ministrovi financí z 90. let, který proti této praxi tvrdě bojoval.",
+              "B": "Jde o počeštělý německý výraz „Schwarzsystem“, což v překladu znamená černý systém nebo práce načerno.",
+              "C": "Po podnikateli Miroslavu Švarcovi, majiteli stavební firmy, který tento způsob spolupráce v 90. letech masivně proslavil.",
+              "D": "Jde o zkratku ze slovního spojení „Špatně Vykázaná A Realizovaná Činnost“."
+            },
+            "answer": "C",
+            "media": null
+          },
+          {
+            "id": "2",
+            "text": "V jedné z nejbizarnějších kriminálních kauz české sportovní historie, fotbalovém korupčním skandálu z roku 2004, zlidověly díky policejním odposlechům žižkovského bosse Ivana Horníka tajné výrazy pro úplatky. Zatímco tisícikorunám se v lize běžně říkalo „kapříci“, pro částku 30 tisíc korun použil Horník měnu ze sadu, když do telefonu rozhodčímu sliboval takzvaný „třicetník...“. Jakého ovoce?",
+            "type": "ABCD",
+            "options": {
+              "A": "Jablek",
+              "B": "Hrušek",
+              "C": "Švestek",
+              "D": "Třešní"
+            },
+            "answer": "A",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "Americký matematik Theodore Kaczynski terorizoval USA po téměř dvě desetiletí tím, že rozesílal podomácku vyrobené bomby poštou, často univerzitám nebo aerolinkám. Pod jakou přezdívkou, kterou mu dala FBI, vešel do dějin?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Unabomber",
+            "media": null
+          },
+          {
+            "id": "4",
+            "text": "V roce 1985 děsil Prahu teprve šestnáctiletý sériový vrah Jiří Straka, který kvůli tehdejší masové sportovní akci získal přezdívku „spartakiádní vrah“. Jak zní přesný název aktuálního českého seriálu z platformy Voyo, který se věnuje jeho dopadení a navazuje na předchozí hit o případu Ladislava Hojera?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Metoda Markovič: Straka",
+            "media": null
+          },
+          {
+            "id": "5",
+            "text": "Slavný mafiánský boss Al Capone nebyl nakonec uvězněn za vraždy nebo pašování alkoholu, ale za jeden úplně jiný zločin. Za jaký?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Daňové úniky (krácení daní)",
+            "media": null
+          },
+          {
+            "id": "6",
+            "text": "V roce 1971 unesl elegantně oblečený muž známý jako D. B. Cooper letadlo, získal výkupné 200 tisíc dolarů a následně vyskočil s padákem do noční bouře. Nikdy nebyl dopaden a případ zůstává jedním z nejslavnějších nevyřešených zločinů FBI. Jaká byla vůbec jediná hmatatelná stopa spojená s jeho útěkem, která se s odstupem let (v roce 1980) našla v přírodě?",
+            "type": "ABCD",
+            "options": {
+              "A": "Jeho rozevřený padák zachycený ve větvích stromů na severozápadě USA.",
+              "B": "Část rozpadajících se bankovek z výkupného, které našel malý chlapec na břehu řeky.",
+              "C": "Jeho typické černé sluneční brýle a polobotky, pohozené u lesní cesty.",
+              "D": "Lidská kostra v obleku, u které se ale nepodařilo potvrdit DNA."
+            },
+            "answer": "B",
+            "media": null
+          },
+          {
+            "id": "7",
+            "text": "V první polovině 90. let se takzvaný orlický gang zbavoval těl svých obětí tím, že je házel na dno přehrady Orlík. Přehrada je sice velmi rozlehlá, ale vrazi si pro shazování vybrali jeden konkrétní, velmi známý a vysoký ocelový most, ze kterého měli jistotu, že těla dopadnou do obrovské hloubky a už je nikdo nenajde. Jak se tento most jmenuje?",
+            "type": "ABCD",
+            "options": {
+              "A": "Zvíkovský most",
+              "B": "Cholínský most",
+              "C": "Žďákovský most",
+              "D": "Železniční most u Červené (Červenský most)"
+            },
+            "answer": "C",
+            "media": null
+          },
+          {
+            "id": "8",
+            "text": "Simon Leviev, známý z hitového dokumentu Podvodník z Tinderu, lákal z žen po celé Evropě miliony dolarů. Aby je ohromil svým falešným bohatstvím a luxusním životním stylem, vydával se za syna miliardáře a dědice obřího impéria. S jakou komoditou měla jeho falešná rodinná firma (LLD) obchodovat?",
+            "type": "ABCD",
+            "options": {
+              "A": "S ropou",
+              "B": "Se zlatem",
+              "C": "S kryptoměnami",
+              "D": "S diamanty"
+            },
+            "answer": "D",
+            "media": null
+          },
+          {
+            "id": "9",
+            "text": "Nejznámější český trestanec Jiří Kajínek se proslavil v roce 2000, kdy se mu jako jednomu z mála podařilo uprchnout z jedné z nejpřísněji střežených věznic u nás. Z jaké věznice utekl?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Z Mírova (Věznice Mírov)",
+            "media": null
+          },
+          {
+            "id": "10",
+            "text": "Soudní proces s O. J. Simpsonem přinesl jeden z nejslavnějších citátů v historii americké justice. Obhájce Johnnie Cochran tehdy směrem k porotě pronesl: „If it doesn't fit, you must acquit“. O jaký předmět tehdy šlo?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Kožená rukavice (stačí rukavice)",
+            "media": null
+          }
+        ]
+      },
+      {
+        "id": "round-3",
+        "number": "3",
+        "title": "Olympiada",
+        "rows": [
+          [
+            "Kolo 3 - Olympiada",
+            "1",
+            "Ve kterém z těchto měst se OH nekonaly?",
+            "ABCD",
+            "Salt Lake City",
+            "Chicago",
+            "Los Angeles",
+            "Londýn",
+            "B",
+            ""
+          ],
+          [
+            "",
+            "2",
+            "Norsko na letošní olympiádě získalo nejvíce medailí. Kolik jich bylo?",
+            "Numeric",
+            "",
+            "",
+            "",
+            "",
+            "41",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "Na kolikátém místě skončila na letošní olympiádě česká smíšená dvojice v curlingu?",
+            "Numeric",
+            "",
+            "",
+            "",
+            "",
+            "8",
+            ""
+          ],
+          [
+            "",
+            "4",
+            "Který sportovec nasbíral za tuto olympiádu nejvíce medailí?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Johannes Hoesflot Klaebo (6 zlatých, Norsko)",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "Jaký je světový rekord v hodu oštěpem Jana Železného z roku 1996, který ho drží dodnes?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "98,48 m",
+            ""
+          ],
+          [
+            "",
+            "6",
+            "V jakém městě se konaly první novodobé olympijské hry v roce 1896?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Athény",
+            ""
+          ],
+          [
+            "",
+            "7",
+            "Jaké zvíře překvapilo surfaře u Tahiti při OH 2024?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Velryba",
+            ""
+          ],
+          [
+            "",
+            "8",
+            "Jak se jmenuje stadion, kde byly zahájeny OH 2026?",
+            "ABCD",
+            "San Siro Stadium",
+            "Allianz Stadium",
+            "Stadio Olimpico",
+            "Renato Dall'Ara Stadium",
+            "A",
+            ""
+          ],
+          [
+            "",
+            "9",
+            "Na kterých OH byl poprvé stejný počet sportovců a sportovkyň?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Paříž 2024",
+            ""
+          ],
+          [
+            "",
+            "10",
+            "Který zcela nový sport přinesly OH 2026?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Skialpinismus (ski mountaineering)",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Ve kterém z těchto měst se OH nekonaly?",
+            "type": "ABCD",
+            "options": {
+              "A": "Salt Lake City",
+              "B": "Chicago",
+              "C": "Los Angeles",
+              "D": "Londýn"
+            },
+            "answer": "B",
+            "media": null
+          },
+          {
+            "id": "2",
+            "text": "Norsko na letošní olympiádě získalo nejvíce medailí. Kolik jich bylo?",
+            "type": "Numeric",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "41",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "Na kolikátém místě skončila na letošní olympiádě česká smíšená dvojice v curlingu?",
+            "type": "Numeric",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "8",
+            "media": null
+          },
+          {
+            "id": "4",
+            "text": "Který sportovec nasbíral za tuto olympiádu nejvíce medailí?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Johannes Hoesflot Klaebo (6 zlatých, Norsko)",
+            "media": null
+          },
+          {
+            "id": "5",
+            "text": "Jaký je světový rekord v hodu oštěpem Jana Železného z roku 1996, který ho drží dodnes?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "98,48 m",
+            "media": null
+          },
+          {
+            "id": "6",
+            "text": "V jakém městě se konaly první novodobé olympijské hry v roce 1896?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Athény",
+            "media": null
+          },
+          {
+            "id": "7",
+            "text": "Jaké zvíře překvapilo surfaře u Tahiti při OH 2024?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Velryba",
+            "media": null
+          },
+          {
+            "id": "8",
+            "text": "Jak se jmenuje stadion, kde byly zahájeny OH 2026?",
+            "type": "ABCD",
+            "options": {
+              "A": "San Siro Stadium",
+              "B": "Allianz Stadium",
+              "C": "Stadio Olimpico",
+              "D": "Renato Dall'Ara Stadium"
+            },
+            "answer": "A",
+            "media": null
+          },
+          {
+            "id": "9",
+            "text": "Na kterých OH byl poprvé stejný počet sportovců a sportovkyň?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Paříž 2024",
+            "media": null
+          },
+          {
+            "id": "10",
+            "text": "Který zcela nový sport přinesly OH 2026?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Skialpinismus (ski mountaineering)",
+            "media": null
+          }
+        ]
+      },
+      {
+        "id": "round-4",
+        "number": "4",
+        "title": "10 nejčastějších jmen v Česku za rok 2024",
+        "rows": [
+          [
+            "Kolo 4 - 10 nejčastějších jmen v Česku za rok 2024",
+            "1",
+            "Top 5 chlapčenských",
+            "Top5",
+            "",
+            "",
+            "",
+            "",
+            "Jakub",
+            ""
+          ],
+          [
+            "",
+            "2",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Matyáš",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Jan",
+            ""
+          ],
+          [
+            "",
+            "4",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Adam",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Matej",
+            ""
+          ],
+          [
+            "",
+            "6",
+            "Top 5 dievčenských",
+            "Top5",
+            "",
+            "",
+            "",
+            "",
+            "Eliška",
+            ""
+          ],
+          [
+            "",
+            "7",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Viktorie",
+            ""
+          ],
+          [
+            "",
+            "8",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Sofie",
+            ""
+          ],
+          [
+            "",
+            "9",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Anna",
+            ""
+          ],
+          [
+            "",
+            "10",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Natálie",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Top 5 chlapčenských",
+            "type": "Top5",
+            "options": {},
+            "answer": [
+              "Jakub",
+              "Matyáš",
+              "Jan",
+              "Adam",
+              "Matej"
+            ],
+            "media": null,
+            "declared": null
+          },
+          {
+            "id": "6",
+            "text": "Top 5 dievčenských",
+            "type": "Top5",
+            "options": {},
+            "answer": [
+              "Eliška",
+              "Viktorie",
+              "Sofie",
+              "Anna",
+              "Natálie"
+            ],
+            "media": null,
+            "declared": null
+          }
+        ]
+      },
+      {
+        "id": "round-5",
+        "number": "5",
+        "title": "Time Guesser",
+        "rows": [
+          [
+            "Kolo 5 - Time Guesser",
+            "1",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Berlín, 1989",
+            "pad_BM2.webp"
+          ],
+          [
+            "",
+            "2",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "New York, 2001",
+            "9_11.jpeg"
+          ],
+          [
+            "",
+            "3",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Praha, 1989",
+            "1989.jpg"
+          ],
+          [
+            "",
+            "4",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Washington D.C, 2021",
+            "Capitol.avif"
+          ],
+          [
+            "",
+            "5",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Rím, 2020",
+            "Lockdown.jpg"
+          ],
+          [
+            "",
+            "6",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Paříž 1944",
+            "1944paris.jpg"
+          ],
+          [
+            "",
+            "7",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Nay Pyi Taw 2021 (Myanmar)",
+            "myanmar2021.png"
+          ],
+          [
+            "",
+            "8",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Peking 1989",
+            "Tiananmen89.jpg"
+          ],
+          [
+            "",
+            "9",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Moskva 1993",
+            "Rus93.jpg"
+          ],
+          [
+            "",
+            "10",
+            "Kdy a kde? (město. ± 1 rok)",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Kyiv 2014",
+            "kyiv14.jpg"
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Berlín, 1989",
+            "media": "pad_BM2.webp"
+          },
+          {
+            "id": "2",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "New York, 2001",
+            "media": "9_11.jpeg"
+          },
+          {
+            "id": "3",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Praha, 1989",
+            "media": "1989.jpg"
+          },
+          {
+            "id": "4",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Washington D.C, 2021",
+            "media": "Capitol.avif"
+          },
+          {
+            "id": "5",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Rím, 2020",
+            "media": "Lockdown.jpg"
+          },
+          {
+            "id": "6",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Paříž 1944",
+            "media": "1944paris.jpg"
+          },
+          {
+            "id": "7",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Nay Pyi Taw 2021 (Myanmar)",
+            "media": "myanmar2021.png"
+          },
+          {
+            "id": "8",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Peking 1989",
+            "media": "Tiananmen89.jpg"
+          },
+          {
+            "id": "9",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Moskva 1993",
+            "media": "Rus93.jpg"
+          },
+          {
+            "id": "10",
+            "text": "Kdy a kde? (město. ± 1 rok)",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Kyiv 2014",
+            "media": "kyiv14.jpg"
+          }
+        ]
+      },
+      {
+        "id": "round-6",
+        "number": "6",
+        "title": "AZ kvíz",
+        "rows": [
+          [
+            "Kolo 6 - AZ kvíz",
+            "1",
+            "Jak se jmenuje slavná divadelní hra irského dramatika George Bernarda Shawa, podle které později vznikl muzikál My Fair Lady?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Pygmalion",
+            "hexagon-P.png"
+          ],
+          [
+            "",
+            "2",
+            "Jak se nazývá věda, která zkoumá jazyk, literaturu a ústní lidovou slovesnost národa v daném kulturním a historickém kontextu?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Filologie",
+            "hexagon-F.png"
+          ],
+          [
+            "",
+            "3",
+            "Který vzácný plyn, jehož název z řečtiny v překladu znamená „skrytý“, má chemickou značku Kr?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Krypton",
+            "hexagon-K.png"
+          ],
+          [
+            "",
+            "4",
+            "Jaké je příjmení francouzského prokletého básníka, který v 19. století způsobil skandál svou sbírkou Květy zla?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Baudelaire",
+            "hexagon-B.png"
+          ],
+          [
+            "",
+            "5",
+            "Jaká mytologická bytost s tělem lva a ženskou hlavou hlídala vchod do starověkých Théb a zabíjela ty, kdo neuhodli její hádanku?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Sfinga",
+            "hexagon-S.png"
+          ],
+          [
+            "",
+            "6",
+            "Jak se nazývá chemicko-technologický proces, při kterém se surový přírodní kaučuk mění na pružnou pryž (gumu) přidáním síry a působením tepla?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Vulkanizace",
+            "hexagon-V.png"
+          ],
+          [
+            "",
+            "7",
+            "Jaké bylo příjmení jihoafrického bojovníka proti apartheidu, který strávil 27 let ve vězení, než se stal prvním černošským prezidentem své země?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Mandela",
+            "hexagon-M.png"
+          ],
+          [
+            "",
+            "8",
+            "Strom z čeledi borovicovitých, rozšířený hlavně ve Středomoří, dosahuje vysokého stáří a je ceněn pro lehké, měkké a vonné dřevo. Je národním stromem Libanonu a nachází se na jeho státním znaku i vlajce. O který strom se jedná??",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Cedr",
+            "hexagon-C.png"
+          ],
+          [
+            "",
+            "9",
+            "Jaké čestné jméno, znamenající „Vznešený“, přijal první římský císař Gaius Octavius po svém upevnění moci?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Augustus",
+            "hexagon-A.png"
+          ],
+          [
+            "",
+            "10",
+            "Jak se odborně (cizím slovem) nazývá nažloutlá tělní tekutina – česky míza – která koluje ve vlastních cévách a má klíčový význam pro imunitu?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Lymfa",
+            "hexagon-L.png"
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Jak se jmenuje slavná divadelní hra irského dramatika George Bernarda Shawa, podle které později vznikl muzikál My Fair Lady?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Pygmalion",
+            "media": "hexagon-P.png"
+          },
+          {
+            "id": "2",
+            "text": "Jak se nazývá věda, která zkoumá jazyk, literaturu a ústní lidovou slovesnost národa v daném kulturním a historickém kontextu?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Filologie",
+            "media": "hexagon-F.png"
+          },
+          {
+            "id": "3",
+            "text": "Který vzácný plyn, jehož název z řečtiny v překladu znamená „skrytý“, má chemickou značku Kr?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Krypton",
+            "media": "hexagon-K.png"
+          },
+          {
+            "id": "4",
+            "text": "Jaké je příjmení francouzského prokletého básníka, který v 19. století způsobil skandál svou sbírkou Květy zla?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Baudelaire",
+            "media": "hexagon-B.png"
+          },
+          {
+            "id": "5",
+            "text": "Jaká mytologická bytost s tělem lva a ženskou hlavou hlídala vchod do starověkých Théb a zabíjela ty, kdo neuhodli její hádanku?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Sfinga",
+            "media": "hexagon-S.png"
+          },
+          {
+            "id": "6",
+            "text": "Jak se nazývá chemicko-technologický proces, při kterém se surový přírodní kaučuk mění na pružnou pryž (gumu) přidáním síry a působením tepla?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Vulkanizace",
+            "media": "hexagon-V.png"
+          },
+          {
+            "id": "7",
+            "text": "Jaké bylo příjmení jihoafrického bojovníka proti apartheidu, který strávil 27 let ve vězení, než se stal prvním černošským prezidentem své země?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Mandela",
+            "media": "hexagon-M.png"
+          },
+          {
+            "id": "8",
+            "text": "Strom z čeledi borovicovitých, rozšířený hlavně ve Středomoří, dosahuje vysokého stáří a je ceněn pro lehké, měkké a vonné dřevo. Je národním stromem Libanonu a nachází se na jeho státním znaku i vlajce. O který strom se jedná??",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Cedr",
+            "media": "hexagon-C.png"
+          },
+          {
+            "id": "9",
+            "text": "Jaké čestné jméno, znamenající „Vznešený“, přijal první římský císař Gaius Octavius po svém upevnění moci?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Augustus",
+            "media": "hexagon-A.png"
+          },
+          {
+            "id": "10",
+            "text": "Jak se odborně (cizím slovem) nazývá nažloutlá tělní tekutina – česky míza – která koluje ve vlastních cévách a má klíčový význam pro imunitu?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Lymfa",
+            "media": "hexagon-L.png"
+          }
+        ]
+      },
+      {
+        "id": "round-7",
+        "number": "X",
+        "title": "TEST",
+        "rows": [
+          [
+            "Kolo X - TEST",
+            "1",
+            "Example Q1",
+            "ABCD",
+            "A",
+            "B",
+            "C",
+            "D",
+            "A",
+            ""
+          ],
+          [
+            "",
+            "2",
+            "Example Q2",
+            "Yes/No",
+            "",
+            "",
+            "",
+            "",
+            "Yes",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "Example Q3",
+            "Written",
+            "Název",
+            "",
+            "",
+            "",
+            "Eiffel Tower",
+            ""
+          ],
+          [
+            "",
+            "4",
+            "Example Q4",
+            "Numeric",
+            "Číslo",
+            "",
+            "",
+            "",
+            "8",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "Kolik lidí ma klobouk",
+            "PImage",
+            "",
+            "",
+            "",
+            "",
+            "Eiffel Tower",
+            "1944paris.jpg"
+          ],
+          [
+            "",
+            "6",
+            "Kdo dal gól",
+            "PVideo",
+            "",
+            "",
+            "",
+            "",
+            "B",
+            "video.mp4"
+          ],
+          [
+            "",
+            "7",
+            "Co je na obrázku",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Eiffel Tower",
+            "1944paris.jpg"
+          ],
+          [
+            "",
+            "8",
+            "Co je to za znělku",
+            "Audio",
+            "",
+            "",
+            "",
+            "",
+            "Eiffel Tower",
+            "audio.m4a"
+          ],
+          [
+            "",
+            "9",
+            "Co je na videu",
+            "Video",
+            "",
+            "",
+            "",
+            "",
+            "Eiffel Tower",
+            "video.mp4"
+          ],
+          [
+            "",
+            "10",
+            "Example Q10",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Eiffel Tower",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Example Q1",
+            "type": "ABCD",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "A",
+            "media": null
+          },
+          {
+            "id": "2",
+            "text": "Example Q2",
+            "type": "Yes/No",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Yes",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "Example Q3",
+            "type": "Written",
+            "options": {
+              "A": "Název",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Eiffel Tower",
+            "media": null
+          },
+          {
+            "id": "4",
+            "text": "Example Q4",
+            "type": "Numeric",
+            "options": {
+              "A": "Číslo",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "8",
+            "media": null
+          },
+          {
+            "id": "5",
+            "text": "Kolik lidí ma klobouk",
+            "type": "PImage",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Eiffel Tower",
+            "media": "1944paris.jpg"
+          },
+          {
+            "id": "6",
+            "text": "Kdo dal gól",
+            "type": "PVideo",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "B",
+            "media": "video.mp4"
+          },
+          {
+            "id": "7",
+            "text": "Co je na obrázku",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Eiffel Tower",
+            "media": "1944paris.jpg"
+          },
+          {
+            "id": "8",
+            "text": "Co je to za znělku",
+            "type": "Audio",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Eiffel Tower",
+            "media": "audio.m4a"
+          },
+          {
+            "id": "9",
+            "text": "Co je na videu",
+            "type": "Video",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Eiffel Tower",
+            "media": "video.mp4"
+          },
+          {
+            "id": "10",
+            "text": "Example Q10",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Eiffel Tower",
+            "media": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "public/templates/questions-template.csv",
+    "input": "Kolo,Q#,Otázka,Typ Odpovědi,A,B,C,D,Správná odpověď,Zdroj\nKolo 1 - Ukázkové kolo,1,Jaké je hlavní město Francie?,Written,,,,,Paříž,\n,2,Kolik nohou má pavouk?,Numeric,,,,,8,\n,3,Která planeta je největší?,ABCD,Mars,Jupiter,Venuše,Merkur,B,\n,4,Je velryba savec?,Yes/No,,,,,Yes,\n,5,Co je na obrázku?,Image,,,,,Eiffelova věž,obrazek.jpg\n,6,Kde byla fotka pořízena?,PImage,,,,,Řím,foto.jpg\n,7,Kdo zpívá tuto píseň?,Audio,,,,,Queen,pisen.mp3\n,8,Co se stane dál?,Video,,,,,Gól,klip.mp4\n,9,Kdo dal tento gól?,PVideo,,,,,Messi,gol.mp4\n,10,Vyjmenujte 5 největších zemí světa,Top5,,,,,Rusko,\n,11,,,,,,,Kanada,\n,12,,,,,,,Čína,\n,13,,,,,,,USA,\n,14,,,,,,,Brazílie,\n,15,Seřaďte vynálezy od nejstaršího,Sort,Knihtisk,,,,C,\n,16,,,Parní stroj,,,,A,\n,17,,,Telefon,,,,D,\n,18,,,Internet,,,,B,\nKolo 2 - Druhé kolo,1,Kolik je 2 + 2?,Numeric,,,,,4,\n,2,Kdo napsal Babičku?,Written,,,,,Božena Němcová,\n,3,Kde byly pořízeny tyto fotky?,Handout,,,,,list-odpovedi.jpg,list.jpg\n",
+    "output": [
+      {
+        "id": "round-1",
+        "number": "1",
+        "title": "Ukázkové kolo",
+        "rows": [
+          [
+            "Kolo 1 - Ukázkové kolo",
+            "1",
+            "Jaké je hlavní město Francie?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Paříž",
+            ""
+          ],
+          [
+            "",
+            "2",
+            "Kolik nohou má pavouk?",
+            "Numeric",
+            "",
+            "",
+            "",
+            "",
+            "8",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "Která planeta je největší?",
+            "ABCD",
+            "Mars",
+            "Jupiter",
+            "Venuše",
+            "Merkur",
+            "B",
+            ""
+          ],
+          [
+            "",
+            "4",
+            "Je velryba savec?",
+            "Yes/No",
+            "",
+            "",
+            "",
+            "",
+            "Yes",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "Co je na obrázku?",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "Eiffelova věž",
+            "obrazek.jpg"
+          ],
+          [
+            "",
+            "6",
+            "Kde byla fotka pořízena?",
+            "PImage",
+            "",
+            "",
+            "",
+            "",
+            "Řím",
+            "foto.jpg"
+          ],
+          [
+            "",
+            "7",
+            "Kdo zpívá tuto píseň?",
+            "Audio",
+            "",
+            "",
+            "",
+            "",
+            "Queen",
+            "pisen.mp3"
+          ],
+          [
+            "",
+            "8",
+            "Co se stane dál?",
+            "Video",
+            "",
+            "",
+            "",
+            "",
+            "Gól",
+            "klip.mp4"
+          ],
+          [
+            "",
+            "9",
+            "Kdo dal tento gól?",
+            "PVideo",
+            "",
+            "",
+            "",
+            "",
+            "Messi",
+            "gol.mp4"
+          ],
+          [
+            "",
+            "10",
+            "Vyjmenujte 5 největších zemí světa",
+            "Top5",
+            "",
+            "",
+            "",
+            "",
+            "Rusko",
+            ""
+          ],
+          [
+            "",
+            "11",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Kanada",
+            ""
+          ],
+          [
+            "",
+            "12",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Čína",
+            ""
+          ],
+          [
+            "",
+            "13",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "USA",
+            ""
+          ],
+          [
+            "",
+            "14",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Brazílie",
+            ""
+          ],
+          [
+            "",
+            "15",
+            "Seřaďte vynálezy od nejstaršího",
+            "Sort",
+            "Knihtisk",
+            "",
+            "",
+            "",
+            "C",
+            ""
+          ],
+          [
+            "",
+            "16",
+            "",
+            "",
+            "Parní stroj",
+            "",
+            "",
+            "",
+            "A",
+            ""
+          ],
+          [
+            "",
+            "17",
+            "",
+            "",
+            "Telefon",
+            "",
+            "",
+            "",
+            "D",
+            ""
+          ],
+          [
+            "",
+            "18",
+            "",
+            "",
+            "Internet",
+            "",
+            "",
+            "",
+            "B",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Jaké je hlavní město Francie?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Paříž",
+            "media": null
+          },
+          {
+            "id": "2",
+            "text": "Kolik nohou má pavouk?",
+            "type": "Numeric",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "8",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "Která planeta je největší?",
+            "type": "ABCD",
+            "options": {
+              "A": "Mars",
+              "B": "Jupiter",
+              "C": "Venuše",
+              "D": "Merkur"
+            },
+            "answer": "B",
+            "media": null
+          },
+          {
+            "id": "4",
+            "text": "Je velryba savec?",
+            "type": "Yes/No",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Yes",
+            "media": null
+          },
+          {
+            "id": "5",
+            "text": "Co je na obrázku?",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Eiffelova věž",
+            "media": "obrazek.jpg"
+          },
+          {
+            "id": "6",
+            "text": "Kde byla fotka pořízena?",
+            "type": "PImage",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Řím",
+            "media": "foto.jpg"
+          },
+          {
+            "id": "7",
+            "text": "Kdo zpívá tuto píseň?",
+            "type": "Audio",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Queen",
+            "media": "pisen.mp3"
+          },
+          {
+            "id": "8",
+            "text": "Co se stane dál?",
+            "type": "Video",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Gól",
+            "media": "klip.mp4"
+          },
+          {
+            "id": "9",
+            "text": "Kdo dal tento gól?",
+            "type": "PVideo",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Messi",
+            "media": "gol.mp4"
+          },
+          {
+            "id": "10",
+            "text": "Vyjmenujte 5 největších zemí světa",
+            "type": "Top5",
+            "options": {},
+            "answer": [
+              "Rusko",
+              "Kanada",
+              "Čína",
+              "USA",
+              "Brazílie"
+            ],
+            "media": null,
+            "declared": null
+          },
+          {
+            "id": "15",
+            "text": "Seřaďte vynálezy od nejstaršího",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "Knihtisk",
+                "letter": "C",
+                "media": null
+              },
+              {
+                "text": "Parní stroj",
+                "letter": "A",
+                "media": null
+              },
+              {
+                "text": "Telefon",
+                "letter": "D",
+                "media": null
+              },
+              {
+                "text": "Internet",
+                "letter": "B",
+                "media": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "round-2",
+        "number": "2",
+        "title": "Druhé kolo",
+        "rows": [
+          [
+            "Kolo 2 - Druhé kolo",
+            "1",
+            "Kolik je 2 + 2?",
+            "Numeric",
+            "",
+            "",
+            "",
+            "",
+            "4",
+            ""
+          ],
+          [
+            "",
+            "2",
+            "Kdo napsal Babičku?",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "Božena Němcová",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "Kde byly pořízeny tyto fotky?",
+            "Handout",
+            "",
+            "",
+            "",
+            "",
+            "list-odpovedi.jpg",
+            "list.jpg"
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Kolik je 2 + 2?",
+            "type": "Numeric",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "4",
+            "media": null
+          },
+          {
+            "id": "2",
+            "text": "Kdo napsal Babičku?",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "Božena Němcová",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "Kde byly pořízeny tyto fotky?",
+            "type": "Handout",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "list-odpovedi.jpg",
+            "media": "list.jpg"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "public/templates/scores-template.csv",
+    "input": "Název týmu,Kolo 1,Kolo 2,Počet bodů\nSovy,10,8,18\nLišky,7.5,9,16.5\nMedvědi,9,6,15\n",
+    "output": []
+  },
+  {
+    "name": "public/templates/teams-template.csv",
+    "input": "Název týmu,Počet hráčů,Motto\nSovy,4,Kdo? My!\nLišky,5,Rychlé a chytré\nMedvědi,3,\n",
+    "output": []
+  },
+  {
+    "name": "validation edges",
+    "input": "Round 1 - TEST,1,,ABCD,,,,,X,\n,1,,Yes/No,,,,,maybe,\n,3,,Numeric,,,,,foo,\n,4,,Unknown,,,,,,\n,5,,Handout,,,,,song.mp3,\n,6,,Image,,,,,,song.mp3\n,7,,Top3,,,,,one,\n,8,,Sort,,,,,item,\n",
+    "output": [
+      {
+        "id": "round-1",
+        "number": "1",
+        "title": "TEST",
+        "rows": [
+          [
+            "Round 1 - TEST",
+            "1",
+            "",
+            "ABCD",
+            "",
+            "",
+            "",
+            "",
+            "X",
+            ""
+          ],
+          [
+            "",
+            "1",
+            "",
+            "Yes/No",
+            "",
+            "",
+            "",
+            "",
+            "maybe",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "",
+            "Numeric",
+            "",
+            "",
+            "",
+            "",
+            "foo",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "",
+            "Handout",
+            "",
+            "",
+            "",
+            "",
+            "song.mp3",
+            ""
+          ],
+          [
+            "",
+            "6",
+            "",
+            "Image",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "song.mp3"
+          ],
+          [
+            "",
+            "7",
+            "",
+            "Top3",
+            "",
+            "",
+            "",
+            "",
+            "one",
+            ""
+          ],
+          [
+            "",
+            "8",
+            "",
+            "Sort",
+            "",
+            "",
+            "",
+            "",
+            "item",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "",
+            "type": "ABCD",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "X",
+            "media": null
+          },
+          {
+            "id": "1",
+            "text": "",
+            "type": "Yes/No",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "maybe",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "",
+            "type": "Numeric",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "foo",
+            "media": null
+          },
+          {
+            "id": "5",
+            "text": "",
+            "type": "Handout",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "song.mp3",
+            "media": null
+          },
+          {
+            "id": "6",
+            "text": "",
+            "type": "Image",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "",
+            "media": "song.mp3"
+          },
+          {
+            "id": "7",
+            "text": "",
+            "type": "Top5",
+            "options": {},
+            "answer": [
+              "one"
+            ],
+            "media": null,
+            "declared": 3
+          },
+          {
+            "id": "8",
+            "text": "",
+            "type": "Sort",
+            "options": {},
+            "answer": "",
+            "media": null,
+            "items": [
+              {
+                "text": "item",
+                "letter": null,
+                "media": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "types BOM CRLF quotes blank lines",
+    "input": "﻿Round 2 - Quoted,1,\"A, B\nC \"\"quote\"\"\",Written,,,,,answer,\r\n\r\n,1,Text,Written,A,B,C,D,,\r\n,2,Text,Numeric,A,B,C,D,1,\r\n,3,Text,ABCD,A,B,C,D,A,\r\n,4,Text,Yes/No,A,B,C,D,yes,\r\n,5,Text,Top5,A,B,C,D,one,\r\n,99,,,,,,,two,\r\n,100,,,,,,,three,\r\n,6,Text,Top3,A,B,C,D,one,\r\n,7,Text,Handout,A,B,C,D,,\r\n,8,Text,PImage,A,B,C,D,ok,\r\n,9,Text,PVideo,A,B,C,D,ok,\r\n,10,Text,Audio,A,B,C,D,ok,\r\n,11,Text,Image,A,B,C,D,ok,\r\n,12,Text,Video,A,B,C,D,ok,\r\n,13,Text,Odd,A,B,C,D,ok,",
+    "output": [
+      {
+        "id": "round-1",
+        "number": "2",
+        "title": "Quoted",
+        "rows": [
+          [
+            "Round 2 - Quoted",
+            "1",
+            "A, B\nC \"quote\"",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "answer",
+            ""
+          ],
+          [
+            "",
+            "1",
+            "Text",
+            "Written",
+            "A",
+            "B",
+            "C",
+            "D",
+            "",
+            ""
+          ],
+          [
+            "",
+            "2",
+            "Text",
+            "Numeric",
+            "A",
+            "B",
+            "C",
+            "D",
+            "1",
+            ""
+          ],
+          [
+            "",
+            "3",
+            "Text",
+            "ABCD",
+            "A",
+            "B",
+            "C",
+            "D",
+            "A",
+            ""
+          ],
+          [
+            "",
+            "4",
+            "Text",
+            "Yes/No",
+            "A",
+            "B",
+            "C",
+            "D",
+            "yes",
+            ""
+          ],
+          [
+            "",
+            "5",
+            "Text",
+            "Top5",
+            "A",
+            "B",
+            "C",
+            "D",
+            "one",
+            ""
+          ],
+          [
+            "",
+            "99",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "two",
+            ""
+          ],
+          [
+            "",
+            "100",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "three",
+            ""
+          ],
+          [
+            "",
+            "6",
+            "Text",
+            "Top3",
+            "A",
+            "B",
+            "C",
+            "D",
+            "one",
+            ""
+          ],
+          [
+            "",
+            "7",
+            "Text",
+            "Handout",
+            "A",
+            "B",
+            "C",
+            "D",
+            "",
+            ""
+          ],
+          [
+            "",
+            "8",
+            "Text",
+            "PImage",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "9",
+            "Text",
+            "PVideo",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "10",
+            "Text",
+            "Audio",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "11",
+            "Text",
+            "Image",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "12",
+            "Text",
+            "Video",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ],
+          [
+            "",
+            "13",
+            "Text",
+            "Odd",
+            "A",
+            "B",
+            "C",
+            "D",
+            "ok",
+            ""
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "A, B\nC \"quote\"",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "answer",
+            "media": null
+          },
+          {
+            "id": "1",
+            "text": "Text",
+            "type": "Written",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "",
+            "media": null
+          },
+          {
+            "id": "2",
+            "text": "Text",
+            "type": "Numeric",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "1",
+            "media": null
+          },
+          {
+            "id": "3",
+            "text": "Text",
+            "type": "ABCD",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "A",
+            "media": null
+          },
+          {
+            "id": "4",
+            "text": "Text",
+            "type": "Yes/No",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "yes",
+            "media": null
+          },
+          {
+            "id": "5",
+            "text": "Text",
+            "type": "Top5",
+            "options": {},
+            "answer": [
+              "one",
+              "two",
+              "three"
+            ],
+            "media": null,
+            "declared": null
+          },
+          {
+            "id": "6",
+            "text": "Text",
+            "type": "Top5",
+            "options": {},
+            "answer": [
+              "one"
+            ],
+            "media": null,
+            "declared": 3
+          },
+          {
+            "id": "7",
+            "text": "Text",
+            "type": "Handout",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "",
+            "media": null
+          },
+          {
+            "id": "8",
+            "text": "Text",
+            "type": "PImage",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "9",
+            "text": "Text",
+            "type": "PVideo",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "10",
+            "text": "Text",
+            "type": "Audio",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "11",
+            "text": "Text",
+            "type": "Image",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "12",
+            "text": "Text",
+            "type": "Video",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          },
+          {
+            "id": "13",
+            "text": "Text",
+            "type": "Odd",
+            "options": {
+              "A": "A",
+              "B": "B",
+              "C": "C",
+              "D": "D"
+            },
+            "answer": "ok",
+            "media": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ragged",
+    "input": "Round 1,1,Text,Written\n,2,Answer,Written,,,,,yes,extra,ignored",
+    "output": [
+      {
+        "id": "round-1",
+        "number": "1",
+        "title": "",
+        "rows": [
+          [
+            "Round 1",
+            "1",
+            "Text",
+            "Written"
+          ],
+          [
+            "",
+            "2",
+            "Answer",
+            "Written",
+            "",
+            "",
+            "",
+            "",
+            "yes",
+            "extra",
+            "ignored"
+          ]
+        ],
+        "questions": [
+          {
+            "id": "1",
+            "text": "Text",
+            "type": "Written",
+            "options": {},
+            "media": null
+          },
+          {
+            "id": "2",
+            "text": "Answer",
+            "type": "Written",
+            "options": {
+              "A": "",
+              "B": "",
+              "C": "",
+              "D": ""
+            },
+            "answer": "yes",
+            "media": "extra"
+          }
+        ]
+      }
+    ]
+  }
+]

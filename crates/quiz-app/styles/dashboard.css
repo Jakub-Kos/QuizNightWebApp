@@ -1,0 +1,25 @@
+.dash-card { flex: 1; transition: flex .7s var(--dash-spring, ease), opacity .7s var(--dash-spring, ease); }
+.dash-card:hover { flex: 4; }
+div:has(> .dash-card:hover) > .dash-card:not(:hover) { opacity: .4; }
+.dash-shade { background: rgb(0 0 0 / .8); opacity: .5; }
+.dash-card:hover .dash-shade { background: linear-gradient(to bottom, rgb(var(--glow-primary) / .3), black); opacity: 1; }
+.dash-number { top: 10%; left: 50%; transform: translateX(-50%); opacity: .15; transition: all .5s ease; }
+.dash-card:hover .dash-number { top: 5%; transform: translateX(-50%) scale(1.5); opacity: .05; }
+.dash-collapsed { transition: opacity .1s; }
+.dash-card:hover .dash-collapsed { opacity: 0; }
+.dash-expanded { opacity: 0; transform: translateY(20px); pointer-events: none; transition: opacity .2s, transform .2s; }
+.dash-card:hover .dash-expanded {
+  opacity: 1; transform: translateY(0); pointer-events: auto;
+  animation: dashboard-expand .4s .2s both; animation-delay: calc(.2s + var(--i) * 0s);
+}
+@keyframes dashboard-expand { from { opacity: 0; transform: translateY(30px); } }
+@media (prefers-reduced-motion: reduce) {
+  .dash-card, .dash-card * { animation: none !important; transition: none !important; }
+}
+
+.dash-card[class*="bg-[#051005]"]:hover .dash-shade {
+  background: linear-gradient(to bottom, rgb(20 83 45 / .3), black);
+}
+
+.dash-collapsed { animation: dashboard-collapse .4s .5s both; }
+@keyframes dashboard-collapse { from { opacity: 0; } }

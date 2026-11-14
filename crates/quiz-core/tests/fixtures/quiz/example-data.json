@@ -1,0 +1,275 @@
+{
+  "en": {
+    "types": [
+      "Written",
+      "Numeric",
+      "ABCD",
+      "Yes/No",
+      "Image",
+      "PImage",
+      "Audio",
+      "Video",
+      "PVideo",
+      "Top5",
+      "Sort",
+      "Handout"
+    ],
+    "examples": {
+      "Written": {
+        "text": "What is the capital of France?",
+        "answer": "Paris"
+      },
+      "Numeric": {
+        "text": "How many legs does a spider have?",
+        "answer": "8"
+      },
+      "ABCD": {
+        "text": "Which planet is the largest?",
+        "options": {
+          "A": "Mars",
+          "B": "Jupiter",
+          "C": "Venus",
+          "D": "Mercury"
+        },
+        "answer": "B"
+      },
+      "Yes/No": {
+        "text": "Is a whale a mammal?",
+        "answer": "Yes"
+      },
+      "Image": {
+        "text": "Where and when was this photo taken?",
+        "answer": "Berlin, 1989"
+      },
+      "PImage": {
+        "text": "In which city did this happen?",
+        "answer": "Paris"
+      },
+      "Audio": {
+        "text": "Name this jingle",
+        "answer": "Quiz Night jingle"
+      },
+      "Video": {
+        "text": "What is shown in this clip?",
+        "answer": "A test pattern"
+      },
+      "PVideo": {
+        "text": "How many seconds did the clip last?",
+        "answer": "5"
+      },
+      "Sort": {
+        "text": "Put these inventions in order, oldest first",
+        "items": [
+          "Printing press",
+          "Steam engine",
+          "Telephone",
+          "Aeroplane",
+          "Internet"
+        ],
+        "letters": [
+          "C",
+          "A",
+          "E",
+          "B",
+          "D"
+        ]
+      },
+      "Handout": {
+        "text": "Where were these photos taken?",
+        "answer": "handout-answers.jpg"
+      },
+      "Top5": {
+        "text": "Name the 5 largest countries",
+        "answer": [
+          "Russia",
+          "Canada",
+          "China",
+          "USA",
+          "Brazil"
+        ]
+      }
+    }
+  },
+  "cs": {
+    "types": [
+      "Written",
+      "Numeric",
+      "ABCD",
+      "Yes/No",
+      "Image",
+      "PImage",
+      "Audio",
+      "Video",
+      "PVideo",
+      "Top5",
+      "Sort",
+      "Handout"
+    ],
+    "examples": {
+      "Written": {
+        "text": "Jaké je hlavní město Francie?",
+        "answer": "Paříž"
+      },
+      "Numeric": {
+        "text": "Kolik nohou má pavouk?",
+        "answer": "8"
+      },
+      "ABCD": {
+        "text": "Která planeta je největší?",
+        "options": {
+          "A": "Mars",
+          "B": "Jupiter",
+          "C": "Venuše",
+          "D": "Merkur"
+        },
+        "answer": "B"
+      },
+      "Yes/No": {
+        "text": "Je velryba savec?",
+        "answer": "Yes"
+      },
+      "Image": {
+        "text": "Kde a kdy byla fotka pořízena?",
+        "answer": "Berlín, 1989"
+      },
+      "PImage": {
+        "text": "Ve kterém městě se to stalo?",
+        "answer": "Paříž"
+      },
+      "Audio": {
+        "text": "Co je to za znělku?",
+        "answer": "Znělka Quiz Night"
+      },
+      "Video": {
+        "text": "Co je na videu?",
+        "answer": "Testovací obrazec"
+      },
+      "PVideo": {
+        "text": "Kolik sekund trvalo video?",
+        "answer": "5"
+      },
+      "Sort": {
+        "text": "Seřaďte vynálezy od nejstaršího",
+        "items": [
+          "Knihtisk",
+          "Parní stroj",
+          "Telefon",
+          "Letadlo",
+          "Internet"
+        ],
+        "letters": [
+          "C",
+          "A",
+          "E",
+          "B",
+          "D"
+        ]
+      },
+      "Handout": {
+        "text": "Kde byly pořízeny tyto fotky?",
+        "answer": "handout-answers.jpg"
+      },
+      "Top5": {
+        "text": "Vyjmenujte 5 největších zemí světa",
+        "answer": [
+          "Rusko",
+          "Kanada",
+          "Čína",
+          "USA",
+          "Brazílie"
+        ]
+      }
+    }
+  },
+  "sk": {
+    "types": [
+      "Written",
+      "Numeric",
+      "ABCD",
+      "Yes/No",
+      "Image",
+      "PImage",
+      "Audio",
+      "Video",
+      "PVideo",
+      "Top5",
+      "Sort",
+      "Handout"
+    ],
+    "examples": {
+      "Written": {
+        "text": "Mi Franciaország fővárosa?",
+        "answer": "Párizs"
+      },
+      "Numeric": {
+        "text": "Hány lába van a póknak?",
+        "answer": "8"
+      },
+      "ABCD": {
+        "text": "Melyik a legnagyobb bolygó?",
+        "options": {
+          "A": "Mars",
+          "B": "Jupiter",
+          "C": "Vénusz",
+          "D": "Merkúr"
+        },
+        "answer": "B"
+      },
+      "Yes/No": {
+        "text": "Emlős a bálna?",
+        "answer": "Yes"
+      },
+      "Image": {
+        "text": "Hol és mikor készült a fotó?",
+        "answer": "Berlin, 1989"
+      },
+      "PImage": {
+        "text": "Melyik városban történt?",
+        "answer": "Párizs"
+      },
+      "Audio": {
+        "text": "Mi ez a szignál?",
+        "answer": "Quiz Night szignál"
+      },
+      "Video": {
+        "text": "Mi látható a videón?",
+        "answer": "Tesztábra"
+      },
+      "PVideo": {
+        "text": "Hány másodperces volt a videó?",
+        "answer": "5"
+      },
+      "Sort": {
+        "text": "Rakd sorrendbe a találmányokat, a legrégebbivel kezdve",
+        "items": [
+          "Könyvnyomtatás",
+          "Gőzgép",
+          "Telefon",
+          "Repülőgép",
+          "Internet"
+        ],
+        "letters": [
+          "C",
+          "A",
+          "E",
+          "B",
+          "D"
+        ]
+      },
+      "Handout": {
+        "text": "Hol készültek ezek a fotók?",
+        "answer": "handout-answers.jpg"
+      },
+      "Top5": {
+        "text": "Sorold fel a világ 5 legnagyobb országát",
+        "answer": [
+          "Oroszország",
+          "Kanada",
+          "Kína",
+          "USA",
+          "Brazília"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "input": "Round3 - A-B",
+    "output": {
+      "word": "",
+      "number": "Round3",
+      "title": "A-B"
+    }
+  },
+  {
+    "input": "Kolo 2 - Čau",
+    "output": {
+      "word": "Kolo",
+      "number": "2",
+      "title": "Čau"
+    }
+  },
+  {
+    "input": "roundé - title",
+    "output": {
+      "word": "round",
+      "number": "é",
+      "title": "title"
+    }
+  },
+  {
+    "input": "other",
+    "output": {
+      "word": "",
+      "number": "other",
+      "title": ""
+    }
+  }
+]

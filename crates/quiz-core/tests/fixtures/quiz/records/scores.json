@@ -1,0 +1,871 @@
+[
+  {
+    "fn": "scoredRounds",
+    "name": "none",
+    "args": [
+      []
+    ],
+    "output": []
+  },
+  {
+    "fn": "scoredRounds",
+    "name": "one",
+    "args": [
+      [
+        {
+          "number": "1",
+          "id": "1",
+          "title": "Round 1",
+          "rows": [],
+          "questions": [
+            {
+              "id": "q",
+              "text": "Q",
+              "options": {},
+              "type": "Written",
+              "answer": "A"
+            }
+          ]
+        }
+      ]
+    ],
+    "output": [
+      {
+        "number": "1",
+        "id": "1",
+        "title": "Round 1",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "fn": "scoredRounds",
+    "name": "out of order",
+    "args": [
+      [
+        {
+          "number": "12",
+          "id": "12",
+          "title": "Round 12",
+          "rows": [],
+          "questions": [
+            {
+              "id": "q",
+              "text": "Q",
+              "options": {},
+              "type": "Written",
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "number": "1",
+          "id": "1",
+          "title": "Round 1",
+          "rows": [],
+          "questions": [
+            {
+              "id": "q",
+              "text": "Q",
+              "options": {},
+              "type": "Written",
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "number": "3",
+          "id": "3",
+          "title": "Round 3",
+          "rows": [],
+          "questions": [
+            {
+              "id": "q",
+              "text": "Q",
+              "options": {},
+              "type": "Written",
+              "answer": "A"
+            }
+          ]
+        }
+      ]
+    ],
+    "output": [
+      {
+        "number": "12",
+        "id": "12",
+        "title": "Round 12",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      },
+      {
+        "number": "1",
+        "id": "1",
+        "title": "Round 1",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      },
+      {
+        "number": "3",
+        "id": "3",
+        "title": "Round 3",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "fn": "scoredRounds",
+    "name": "zero scores",
+    "args": [
+      [
+        {
+          "number": "2",
+          "id": "2",
+          "title": "Round 2",
+          "rows": [],
+          "questions": [
+            {
+              "id": "q",
+              "text": "Q",
+              "options": {},
+              "type": "Written",
+              "answer": "A"
+            }
+          ]
+        }
+      ]
+    ],
+    "output": [
+      {
+        "number": "2",
+        "id": "2",
+        "title": "Round 2",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "fn": "manualLeaderboard",
+    "name": "ties ids absent decimals and unknown team",
+    "args": [
+      [
+        {
+          "id": 1,
+          "name": " A "
+        },
+        {
+          "id": "2",
+          "name": "B"
+        },
+        {
+          "id": 3,
+          "name": "C"
+        },
+        {
+          "id": "4",
+          "name": "D"
+        },
+        {
+          "id": 5,
+          "name": "E"
+        },
+        {
+          "id": 6,
+          "name": "No points"
+        },
+        {
+          "id": 7,
+          "name": "Absent",
+          "present": false
+        }
+      ],
+      [
+        {
+          "number": "2",
+          "id": "2",
+          "title": "Round 2",
+          "rows": [],
+          "questions": [
+            {
+              "id": "q",
+              "text": "Q",
+              "options": {},
+              "type": "Written",
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "number": "1",
+          "id": "1",
+          "title": "Round 1",
+          "rows": [],
+          "questions": [
+            {
+              "id": "q",
+              "text": "Q",
+              "options": {},
+              "type": "Written",
+              "answer": "A"
+            }
+          ]
+        }
+      ],
+      {
+        "1": {
+          "1": 7.5
+        },
+        "2": {
+          "1": 7.5
+        },
+        "3": {
+          "2": 3
+        },
+        "4": {
+          "2": 3
+        },
+        "5": {
+          "1": 1
+        },
+        "7": {
+          "1": 99
+        },
+        "unknown": {
+          "1": 100
+        }
+      },
+      "rOuND"
+    ],
+    "output": {
+      "rounds": [
+        "Round 2",
+        "Round 1"
+      ],
+      "teams": [
+        {
+          "name": "A",
+          "scores": {
+            "Round 2": 0,
+            "Round 1": 7.5
+          }
+        },
+        {
+          "name": "B",
+          "scores": {
+            "Round 2": 0,
+            "Round 1": 7.5
+          }
+        },
+        {
+          "name": "C",
+          "scores": {
+            "Round 2": 3,
+            "Round 1": 0
+          }
+        },
+        {
+          "name": "D",
+          "scores": {
+            "Round 2": 3,
+            "Round 1": 0
+          }
+        },
+        {
+          "name": "E",
+          "scores": {
+            "Round 2": 0,
+            "Round 1": 1
+          }
+        },
+        {
+          "name": "No points",
+          "scores": {
+            "Round 2": 0,
+            "Round 1": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fn": "sampleLeaderboard",
+    "name": "0",
+    "args": [
+      [],
+      [],
+      null,
+      [
+        "Demo A",
+        "Demo B"
+      ]
+    ],
+    "output": {
+      "rounds": [
+        "Kolo 1",
+        "Kolo 2",
+        "Kolo 3",
+        "Kolo 4"
+      ],
+      "teams": [
+        {
+          "name": "Demo A",
+          "scores": {
+            "Kolo 1": 0,
+            "Kolo 2": 4.5,
+            "Kolo 3": 3,
+            "Kolo 4": 0.5
+          }
+        },
+        {
+          "name": "Demo B",
+          "scores": {
+            "Kolo 1": 8.5,
+            "Kolo 2": 4,
+            "Kolo 3": 5,
+            "Kolo 4": 4.5
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fn": "sampleLeaderboard",
+    "name": "1",
+    "args": [
+      [
+        {
+          "name": "Team 0"
+        }
+      ],
+      [],
+      null,
+      [
+        "Demo A",
+        "Demo B"
+      ]
+    ],
+    "output": {
+      "rounds": [
+        "Kolo 1",
+        "Kolo 2",
+        "Kolo 3",
+        "Kolo 4"
+      ],
+      "teams": [
+        {
+          "name": "Team 0",
+          "scores": {
+            "Kolo 1": 0,
+            "Kolo 2": 4.5,
+            "Kolo 3": 3,
+            "Kolo 4": 0.5
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fn": "sampleLeaderboard",
+    "name": "8",
+    "args": [
+      [
+        {
+          "name": "Team 0"
+        },
+        {
+          "name": "Team 1"
+        },
+        {
+          "name": "Team 2"
+        },
+        {
+          "name": "Team 3"
+        },
+        {
+          "name": "Team 4"
+        },
+        {
+          "name": "Team 5"
+        },
+        {
+          "name": "Team 6"
+        },
+        {
+          "name": "Team 7"
+        }
+      ],
+      [],
+      null,
+      [
+        "Demo A",
+        "Demo B"
+      ]
+    ],
+    "output": {
+      "rounds": [
+        "Kolo 1",
+        "Kolo 2",
+        "Kolo 3",
+        "Kolo 4"
+      ],
+      "teams": [
+        {
+          "name": "Team 0",
+          "scores": {
+            "Kolo 1": 0,
+            "Kolo 2": 4.5,
+            "Kolo 3": 3,
+            "Kolo 4": 0.5
+          }
+        },
+        {
+          "name": "Team 1",
+          "scores": {
+            "Kolo 1": 8.5,
+            "Kolo 2": 4,
+            "Kolo 3": 5,
+            "Kolo 4": 4.5
+          }
+        },
+        {
+          "name": "Team 2",
+          "scores": {
+            "Kolo 1": 4.5,
+            "Kolo 2": 3,
+            "Kolo 3": 2,
+            "Kolo 4": 7
+          }
+        },
+        {
+          "name": "Team 3",
+          "scores": {
+            "Kolo 1": 1.5,
+            "Kolo 2": 4,
+            "Kolo 3": 6,
+            "Kolo 4": 8.5
+          }
+        },
+        {
+          "name": "Team 4",
+          "scores": {
+            "Kolo 1": 4,
+            "Kolo 2": 1,
+            "Kolo 3": 2,
+            "Kolo 4": 7.5
+          }
+        },
+        {
+          "name": "Team 5",
+          "scores": {
+            "Kolo 1": 6,
+            "Kolo 2": 5.5,
+            "Kolo 3": 5,
+            "Kolo 4": 2.5
+          }
+        },
+        {
+          "name": "Team 6",
+          "scores": {
+            "Kolo 1": 3,
+            "Kolo 2": 8,
+            "Kolo 3": 0,
+            "Kolo 4": 2
+          }
+        },
+        {
+          "name": "Team 7",
+          "scores": {
+            "Kolo 1": 6,
+            "Kolo 2": 7,
+            "Kolo 3": 0,
+            "Kolo 4": 4
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fn": "sampleLeaderboard",
+    "name": "empty word fallback",
+    "args": [
+      [],
+      [],
+      "",
+      [
+        "Demo"
+      ]
+    ],
+    "output": {
+      "rounds": [
+        "Kolo 1",
+        "Kolo 2",
+        "Kolo 3",
+        "Kolo 4"
+      ],
+      "teams": [
+        {
+          "name": "Demo",
+          "scores": {
+            "Kolo 1": 0,
+            "Kolo 2": 4.5,
+            "Kolo 3": 3,
+            "Kolo 4": 0.5
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fn": "sampleLeaderboard",
+    "name": "explicit labels",
+    "args": [
+      [
+        {
+          "id": 1,
+          "name": " A "
+        },
+        {
+          "id": "2",
+          "name": "B"
+        },
+        {
+          "id": 3,
+          "name": "C"
+        },
+        {
+          "id": "4",
+          "name": "D"
+        },
+        {
+          "id": 5,
+          "name": "E"
+        },
+        {
+          "id": 6,
+          "name": "No points"
+        },
+        {
+          "id": 7,
+          "name": "Absent",
+          "present": false
+        }
+      ],
+      [
+        "X",
+        "Y"
+      ],
+      "",
+      []
+    ],
+    "output": {
+      "rounds": [
+        "X",
+        "Y"
+      ],
+      "teams": [
+        {
+          "name": "A",
+          "scores": {
+            "X": 0,
+            "Y": 4.5
+          }
+        },
+        {
+          "name": "B",
+          "scores": {
+            "X": 3,
+            "Y": 0.5
+          }
+        },
+        {
+          "name": "C",
+          "scores": {
+            "X": 8.5,
+            "Y": 4
+          }
+        },
+        {
+          "name": "D",
+          "scores": {
+            "X": 5,
+            "Y": 4.5
+          }
+        },
+        {
+          "name": "E",
+          "scores": {
+            "X": 4.5,
+            "Y": 3
+          }
+        },
+        {
+          "name": "No points",
+          "scores": {
+            "X": 2,
+            "Y": 7
+          }
+        },
+        {
+          "name": "Absent",
+          "scores": {
+            "X": 1.5,
+            "Y": 4
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fn": "hasPoints",
+    "name": "empty",
+    "args": [
+      {
+        "teams": [
+          {
+            "name": "A",
+            "scores": {}
+          }
+        ],
+        "rounds": []
+      }
+    ],
+    "output": false
+  },
+  {
+    "fn": "hasPoints",
+    "name": "zeros",
+    "args": [
+      {
+        "teams": [
+          {
+            "name": "A",
+            "scores": {
+              "a": 0,
+              "b": 0
+            }
+          }
+        ],
+        "rounds": []
+      }
+    ],
+    "output": false
+  },
+  {
+    "fn": "hasPoints",
+    "name": "points",
+    "args": [
+      {
+        "teams": [
+          {
+            "name": "A",
+            "scores": {
+              "a": 0,
+              "b": 7.5
+            }
+          }
+        ],
+        "rounds": []
+      }
+    ],
+    "output": true
+  },
+  {
+    "fn": "hasPoints",
+    "name": "negative",
+    "args": [
+      {
+        "teams": [
+          {
+            "name": "A",
+            "scores": {
+              "a": -2
+            }
+          }
+        ],
+        "rounds": []
+      }
+    ],
+    "output": false
+  },
+  {
+    "fn": "roundLabel",
+    "name": "1:Kolo",
+    "args": [
+      {
+        "number": "1",
+        "id": "1",
+        "title": "Round 1",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      },
+      "Kolo"
+    ],
+    "output": "Kolo 1"
+  },
+  {
+    "fn": "roundLabel",
+    "name": "1:rOuND",
+    "args": [
+      {
+        "number": "1",
+        "id": "1",
+        "title": "Round 1",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      },
+      "rOuND"
+    ],
+    "output": "Round 1"
+  },
+  {
+    "fn": "roundLabel",
+    "name": "1:",
+    "args": [
+      {
+        "number": "1",
+        "id": "1",
+        "title": "Round 1",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      },
+      ""
+    ],
+    "output": " 1"
+  },
+  {
+    "fn": "roundLabel",
+    "name": "12:Kolo",
+    "args": [
+      {
+        "number": "12",
+        "id": "12",
+        "title": "Round 12",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      },
+      "Kolo"
+    ],
+    "output": "Kolo 12"
+  },
+  {
+    "fn": "roundLabel",
+    "name": "12:rOuND",
+    "args": [
+      {
+        "number": "12",
+        "id": "12",
+        "title": "Round 12",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      },
+      "rOuND"
+    ],
+    "output": "Round 12"
+  },
+  {
+    "fn": "roundLabel",
+    "name": "12:",
+    "args": [
+      {
+        "number": "12",
+        "id": "12",
+        "title": "Round 12",
+        "rows": [],
+        "questions": [
+          {
+            "id": "q",
+            "text": "Q",
+            "options": {},
+            "type": "Written",
+            "answer": "A"
+          }
+        ]
+      },
+      ""
+    ],
+    "output": " 12"
+  }
+]
